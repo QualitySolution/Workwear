@@ -5,7 +5,7 @@ namespace Workwear.HibernateMapping.Stock {
 	public class NomenclatureSizesMap : ClassMap<NomenclatureSizes>{
 		public NomenclatureSizesMap ()
 		{
-			Table ("stock_expense_detail");
+			Table ("nomenclature_sizes");
 
 			if(Workwear.HibernateMapping.MappingParams.UseIdsForTest)
 				Id (x => x.Id).Column ("id").GeneratedBy.HiLo("0");

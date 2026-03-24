@@ -14,6 +14,8 @@ namespace Workwear.Views.Stock
 
 		private global::QS.Widgets.MenuButton menuInternal;
 
+		private global::Gamma.GtkWidgets.yNotebook tabs;
+
 		private global::Gtk.Table table2;
 
 		private global::Gamma.GtkWidgets.yCheckButton checkWashable;
@@ -63,6 +65,8 @@ namespace Workwear.Views.Stock
 		private global::Gamma.GtkWidgets.yLabel ylabelClothesSex;
 
 		private global::Gamma.GtkWidgets.ySpinButton yspinbuttonSaleCost;
+
+		private global::Gtk.Label label13;
 
 		protected virtual void Build()
 		{
@@ -127,6 +131,11 @@ namespace Workwear.Views.Stock
 			w7.Expand = false;
 			w7.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.tabs = new global::Gamma.GtkWidgets.yNotebook();
+			this.tabs.CanFocus = true;
+			this.tabs.Name = "tabs";
+			this.tabs.CurrentPage = 0;
+			// Container child tabs.Gtk.Notebook+NotebookChild
 			this.table2 = new global::Gtk.Table(((uint)(12)), ((uint)(2)), false);
 			this.table2.Name = "table2";
 			this.table2.RowSpacing = ((uint)(6));
@@ -434,9 +443,16 @@ namespace Workwear.Views.Stock
 			w31.RightAttach = ((uint)(2));
 			w31.XOptions = ((global::Gtk.AttachOptions)(4));
 			w31.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.dialog1_VBox.Add(this.table2);
-			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table2]));
-			w32.Position = 1;
+			this.tabs.Add(this.table2);
+			// Notebook tab
+			this.label13 = new global::Gtk.Label();
+			this.label13.Name = "label13";
+			this.label13.LabelProp = global::Mono.Unix.Catalog.GetString("Основное");
+			this.tabs.SetTabLabel(this.table2, this.label13);
+			this.label13.ShowAll();
+			this.dialog1_VBox.Add(this.tabs);
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.tabs]));
+			w33.Position = 1;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

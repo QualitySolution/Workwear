@@ -2,6 +2,7 @@ using System;
 using Gamma.Binding.Converters;
 using Gtk;
 using NLog;
+using QS.Utilities;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
 using Workwear.Domain.Sizes;
@@ -69,16 +70,13 @@ namespace Workwear.Views.Stock {
 				yentryItemsCatalogId.ViewModel = ViewModel.EntryCatalogItemsViewModel;
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
-
-			var protectionToolsView = viewResolver.Resolve(ViewModel.ProtectionToolsViewModel);
-			dialog1_VBox.Add(protectionToolsView);
-			protectionToolsView.Show();
-
-			if(ViewModel.VisibleServices) {
-				var servicesToolsView = viewResolver.Resolve(ViewModel.ServicesViewModel);
-				dialog1_VBox.Add(servicesToolsView);
-				servicesToolsView.Show();
-			}
+			
+			tabs.AppendPage(viewResolver.Resolve(ViewModel.ProtectionToolsViewModel), "Номенклатуры норм");
+			if(ViewModel.ShowServices)
+				tabs.AppendPage(viewResolver.Resolve(ViewModel.ServicesViewModel), "Оказываемые услуги");
+			if(ViewModel.ShowNomenclatureSizes)
+            	tabs.AppendPage(viewResolver.Resolve(ViewModel.NomenclatureSizesViewModel), "Варианты размеров");
+            tabs.Binding.AddBinding(ViewModel, v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
 		}
 
 		void MakeMenu()

@@ -218,7 +218,7 @@ namespace Workwear.Domain.Stock {
 
 		public virtual void AddService(Service service) {
 			if(UseServices.Any(p => DomainHelper.EqualDomainObjects(p, service))) {
-				logger.Warn("Услуга уже добавлен. Пропускаем...");
+				logger.Warn("Услуга уже добавлена. Пропускаем...");
 				return;
 			}
 			UseServices.Add(service);

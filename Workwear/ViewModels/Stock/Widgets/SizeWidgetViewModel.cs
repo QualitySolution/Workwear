@@ -74,6 +74,16 @@ namespace Workwear.ViewModels.Stock.Widgets
 			}
 		}
 
+		private bool visibleAmount = true;
+		public virtual bool VisibleAmount {
+			get => visibleAmount;
+			set {
+				if(SetField(ref visibleAmount, value)) {
+					UpdateAmounts();
+				}
+			}
+		}
+
 		public bool SensitiveAddButton => SizeItems.Any(x => x.IsUsed && x.Amount > 0);
 		public string TotalText => $"Размеров выбрано: {SizeItems.Count(x => x.IsUsed)}\nКоличество итого: {SizeItems.Where(x => x.IsUsed).Sum(x => x.Amount)}";
 		#endregion

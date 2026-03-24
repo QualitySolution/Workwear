@@ -31,6 +31,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly FeaturesService featuresService;
 		private readonly ProductsManagerService productsService;
 		private readonly IInteractiveService interactive;
+		private readonly ILifetimeScope autofacScope;
 		private readonly ModalProgressCreator progressCreator;
 		private readonly SizeTypeReplaceModel sizeTypeReplaceModel;
 
@@ -47,6 +48,7 @@ namespace Workwear.ViewModels.Stock
 			SizeTypeReplaceModel sizeTypeReplaceModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
+			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.productsService = productsService;
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -62,6 +64,14 @@ namespace Workwear.ViewModels.Stock
 				.MakeByType()
 				.Finish();
 			
+			var thisViewModel = new TypedParameter(typeof(NomenclatureViewModel), this);
+				ProtectionToolsViewModel = autofacScope.Resolve<NomenclatureProtectionToolsViewModel>(thisViewModel);
+			if(ShowServices)
+				ServicesViewModel = autofacScope.Resolve<NomenclatureServicesViewModel>(thisViewModel);
+			if(ShowNomenclatureSizes)
+				NomenclatureSizesViewModel = autofacScope.Resolve<NomenclatureSizesViewModel>(thisViewModel);
+
+			
 			if(featuresService.Available(WorkwearFeature.Catalog) && productsService != null) {
 				EntryCatalogItemsViewModel = viewModelBuilder.ForProperty(x => x.Product)
 					.UseViewModelJournal<ProductJournalViewModel>()
@@ -75,10 +85,6 @@ namespace Workwear.ViewModels.Stock
 					new ValidationContext(Entity, 
 						new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, 
 							{nameof(IUnitOfWork), UoW} })));
-
-			var parentParameter = new TypedParameter(typeof(NomenclatureViewModel), this);
-			ProtectionToolsViewModel = autofacScope.Resolve<NomenclatureProtectionToolsViewModel>(parentParameter);
-			ServicesViewModel = autofacScope.Resolve<NomenclatureServicesViewModel>(parentParameter);
 				
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
@@ -107,10 +113,16 @@ namespace Workwear.ViewModels.Stock
 				SetField(ref product, value);
 			}
 		}
+		private int currentTab = 0;
+		public virtual int CurrentTab {
+			get => currentTab;
+			set => SetField(ref currentTab, value);
+		}
 		#endregion
 		#region ChildrenViewModels	
 		public NomenclatureProtectionToolsViewModel ProtectionToolsViewModel;
 		public NomenclatureServicesViewModel ServicesViewModel;
+		public NomenclatureSizesViewModel NomenclatureSizesViewModel;
 		#endregion
 		#region Visible
 		public bool VisibleClothesSex => true; //Поле стало в базе обязательным для всех номенклатур.
@@ -119,7 +131,8 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		public bool VisibleBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 		public bool VisibleWashable => featuresService.Available(WorkwearFeature.ClothingService);
-		public bool VisibleServices => featuresService.Available(WorkwearFeature.ClothingService);
+		public bool ShowServices => featuresService.Available(WorkwearFeature.ClothingService);
+		public bool ShowNomenclatureSizes => featuresService.Available(WorkwearFeature.StockForecasting);
 		public bool VisibleCatalogId => featuresService.Available(WorkwearFeature.Catalog);
 		#endregion
 		#region Sensitive
