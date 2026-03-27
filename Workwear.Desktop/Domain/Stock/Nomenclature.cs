@@ -145,6 +145,19 @@ namespace Workwear.Domain.Stock {
 					}
 				}
 			}
+
+			if(NomenclatureSizes.Any()) {
+				var duplicates = NomenclatureSizes
+					.GroupBy(x => (x.Height, x.Size))
+					.Where(g => g.Count() > 1)
+					.SelectMany(x => x)
+					.ToList();
+				
+				foreach(var item in duplicates.Select(x => x.Title).Distinct()) {
+					yield return new ValidationResult(
+						$"Не должно быть повторяющихся вариантов размеров. {item} повторяется.");
+				}
+			}
 		}
 		#endregion
 		#region Функции

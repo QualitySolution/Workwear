@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.Stock {
-	public class NomenclatureSizes : PropertyChangedBase, IDomainObject {
+	public class NomenclatureSizes : PropertyChangedBase, IDomainObject, IDocItemSizeInfo {
 		
 		#region Cвойства
 		public virtual int Id { get; set; }
@@ -23,18 +24,26 @@ namespace Workwear.Domain.Stock {
 		}
 		
 		private Size height;
+
 		[Display(Name = "Рост одежды")]
 		public virtual Size Height {
 			get => height;
 			set => SetField(ref height, value);
 		}
-		
+
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
 			get => comment;
 			set => SetField(ref comment, value);
 		}
+		
+		public virtual Size WearSize => Size;
+		public virtual SizeType WearSizeType => Nomenclature?.Type?.SizeType;
+		public virtual SizeType HeightType => Nomenclature?.Type?.HeightType;
+		public virtual int Amount { get; set; } = 0;
+		public virtual string Title => Size?.Name + (Size != null && Height != null ? "/" : "") + Height?.Name;
+
 		#endregion
 	}
 }

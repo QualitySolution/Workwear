@@ -31,7 +31,6 @@ namespace Workwear.ViewModels.Stock
 		private readonly FeaturesService featuresService;
 		private readonly ProductsManagerService productsService;
 		private readonly IInteractiveService interactive;
-		private readonly ILifetimeScope autofacScope;
 		private readonly ModalProgressCreator progressCreator;
 		private readonly SizeTypeReplaceModel sizeTypeReplaceModel;
 
@@ -48,7 +47,6 @@ namespace Workwear.ViewModels.Stock
 			SizeTypeReplaceModel sizeTypeReplaceModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.productsService = productsService;
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
@@ -170,6 +168,7 @@ namespace Workwear.ViewModels.Stock
 				if(!sizeTypeReplaceModel.TryReplaceSizes(UoW, interactive, progressCreator, new []{Entity}, Entity.Type.SizeType, Entity.Type.HeightType))
 					return false;
 			}
+			
 			UoW.Save();
 			lastSizeType = Entity.Type.SizeType;
 			lastHeightType = Entity.Type.HeightType;

@@ -45,11 +45,11 @@ namespace Workwear.ViewModels.Stock.Widgets
 		/// Конфигурирует списки ростов и размеров
 		/// </summary>
 		private void ConfigureSizes() {
-			if (selectItemInput.HeightType != null) {
+			if (selectItemInput?.HeightType != null) {
 				WearHeights = sizeService.GetSize(uoW, selectItemInput.HeightType,false, true).ToList();
 				IsUseHeight = true;
 			}
-			WearSizes = selectItemInput.WearSizeType != null ? 
+			WearSizes = selectItemInput?.WearSizeType != null ? 
 				sizeService.GetSize(uoW, selectItemInput.WearSizeType,false, true).ToList() : new List<Size>();
 
 			SizeItems = WearSizes.Select(s => new AddSizeItem(s)).ToList();
@@ -77,15 +77,12 @@ namespace Workwear.ViewModels.Stock.Widgets
 		private bool visibleAmount = true;
 		public virtual bool VisibleAmount {
 			get => visibleAmount;
-			set {
-				if(SetField(ref visibleAmount, value)) {
-					UpdateAmounts();
-				}
-			}
+			set => SetField(ref visibleAmount, value);
 		}
 
-		public bool SensitiveAddButton => SizeItems.Any(x => x.IsUsed && x.Amount > 0);
-		public string TotalText => $"Размеров выбрано: {SizeItems.Count(x => x.IsUsed)}\nКоличество итого: {SizeItems.Where(x => x.IsUsed).Sum(x => x.Amount)}";
+		public bool SensitiveAddButton => SizeItems.Any(x => x.IsUsed && (x.Amount > 0) || !VisibleAmount);
+		public string TotalText => $"Размеров выбрано: {SizeItems.Count(x => x.IsUsed)}" +
+		                           (VisibleAmount ? $"\nКоличество итого: {SizeItems.Where(x => x.IsUsed).Sum(x => x.Amount)}" : "");
 		#endregion
 
 		#region Actions
