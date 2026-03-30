@@ -11,7 +11,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     tab1.*,
@@ -42,6 +42,7 @@ FROM (
          WHERE operation_issued_by_employee.issued != 0
            AND operation_issued_by_employee.operation_time BETWEEN @start AND @finish
            AND emp_size.id IS NOT NULL
+           AND ((-1 IN (@nomenclature_ids)) OR operation_issued_by_employee.nomenclature_id IN (@nomenclature_ids))
          GROUP BY
              nomenclature.id,
              nomenclature.number,
@@ -85,7 +86,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="nomenclature_id">
           <DataField>nomenclature_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -518,7 +519,7 @@ ORDER BY
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
