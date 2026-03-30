@@ -40,6 +40,12 @@ namespace Workwear.HibernateMapping.Stock
 				.Table("clothing_service_services_nomenclature")
 				.ParentKeyColumn("nomenclature_id")
 				.ChildKeyColumn("service_id");
+			
+			HasMany (x => x.NomenclatureSizes)
+				.Inverse()
+				.KeyColumn ("nomenclature_id").Not.KeyNullable ()
+				.Cascade.AllDeleteOrphan ()
+				.LazyLoad ();
 		}
 	}
 }

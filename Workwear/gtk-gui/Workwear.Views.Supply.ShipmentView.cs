@@ -479,7 +479,7 @@ namespace Workwear.Views.Supply
 			this.yhbox5.Add(this.ylabelAmount);
 			global::Gtk.Box.BoxChild w40 = ((global::Gtk.Box.BoxChild)(this.yhbox5[this.ylabelAmount]));
 			w40.PackType = ((global::Gtk.PackType)(1));
-			w40.Position = 4;
+			w40.Position = 5;
 			w40.Expand = false;
 			w40.Fill = false;
 			this.yvbox3.Add(this.yhbox5);
