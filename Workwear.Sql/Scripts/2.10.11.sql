@@ -18,5 +18,5 @@ create table nomenclature_sizes
 		foreign key (height_id) references sizes (id)
 			on update cascade on delete set null
 )
-	comment 'Сечетания размера и роста доступные для номенклатуры';
+	comment 'Сочетания размера и роста доступные для номенклатуры';
 

@@ -148,7 +148,7 @@ namespace Workwear.Domain.Stock {
 
 			if(NomenclatureSizes.Any()) {
 				var duplicates = NomenclatureSizes
-					.GroupBy(x => (x.Height, x.Size))
+					.GroupBy(x => (x.Height, Size: x.WearSize))
 					.Where(g => g.Count() > 1)
 					.SelectMany(x => x)
 					.ToList();

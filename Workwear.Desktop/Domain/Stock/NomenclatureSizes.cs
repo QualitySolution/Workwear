@@ -18,7 +18,7 @@ namespace Workwear.Domain.Stock {
 		
 		private Size wearSize;
 		[Display(Name = "Размер")]
-		public virtual Size Size {
+		public virtual Size WearSize {
 			get => wearSize;
 			set => SetField(ref wearSize, value);
 		}
@@ -38,11 +38,10 @@ namespace Workwear.Domain.Stock {
 			set => SetField(ref comment, value);
 		}
 		
-		public virtual Size WearSize => Size;
 		public virtual SizeType WearSizeType => Nomenclature?.Type?.SizeType;
 		public virtual SizeType HeightType => Nomenclature?.Type?.HeightType;
 		public virtual int Amount { get; set; } = 0;
-		public virtual string Title => Size?.Name + (Size != null && Height != null ? "/" : "") + Height?.Name;
+		public virtual string Title => WearSize?.Name + (WearSize != null && Height != null ? "/" : "") + Height?.Name;
 
 		#endregion
 	}

@@ -45,8 +45,8 @@ namespace Workwear.ViewModels.Stock.NomenclatureChildren {
 		private void AddResultSizes(AddedSizesEventArgs args) {
 			foreach(var s in args.SizesWithAmount) {
 				if(!Items.Any(x => DomainHelper.EqualDomainObjects(x.Height, args.Height)
-				                  && DomainHelper.EqualDomainObjects(x.Size, s.Size))) {
-					Items.Add(new NomenclatureSizes(){Nomenclature = parent.Entity, Height = args.Height, Size = s.Size});
+				                  && DomainHelper.EqualDomainObjects(x.WearSize, s.Size))) {
+					Items.Add(new NomenclatureSizes(){Nomenclature = parent.Entity, Height = args.Height, WearSize = s.Size});
 				}
 			}
 		}

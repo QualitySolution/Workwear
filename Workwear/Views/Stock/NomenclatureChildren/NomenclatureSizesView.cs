@@ -13,7 +13,7 @@ namespace Workwear.Views.Stock.NomenclatureChildren {
 
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<NomenclatureSizes>.Create()
 				.AddColumn("Размер").MinWidth(60)
-					.AddComboRenderer(x => x.Size).SetDisplayFunc(x => x.Name).Editing()
+					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name).Editing()
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature.Type.SizeType).ToList())
 				.AddColumn("Размер").MinWidth(60)
                 	.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name).Editing()

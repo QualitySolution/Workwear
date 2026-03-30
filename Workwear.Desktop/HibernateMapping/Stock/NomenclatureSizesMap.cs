@@ -13,7 +13,7 @@ namespace Workwear.HibernateMapping.Stock {
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			References (x => x.Nomenclature).Column ("nomenclature_id").Not.Nullable ();
-			References(x => x.Size).Column("size_id");
+			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
 			
 			Map(x => x.Comment).Column("comment");
