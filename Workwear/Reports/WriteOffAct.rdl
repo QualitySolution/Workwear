@@ -27,25 +27,25 @@ FROM
          CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) as 'ФИО',
          DATE_FORMAT(employees.dismiss_date, '%d.%m.%Y') as 'Уволен',
          IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
-                        IFNULL(stock_return.date, opis.auto_writeoff_date)) as 'Дата',
+            IFNULL(stock_return.date, opis.auto_writeoff_date)) as 'Дата', #только для сортировки
          DATE_FORMAT(IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
-            IFNULL(stock_return.date, opis.auto_writeoff_date)),'%d.%m.%Y') as 'Дата_строка',
-         opwo.returned as 'Списано',
+                        IFNULL(stock_return.date, opis.auto_writeoff_date)),'%d.%m.%Y') as 'Дата_строка',
+         IF(opwo.id is null, opis.issued, opis.returned ) as 'Списано', #Автосписание или ручное списание
          CONCAT(IF(opis.returned != 0, opis.wear_percent, 1) * 100, '%') as 'Износ', #У автосписанного износ 100
-         DATE_FORMAT(opis.operation_time, '%d.%m.%Y') as 'Выдача',
-         opis.issued as 'Выдано',
-         IF(opis.manual_operation, '+', '') as 'Ручная',
+         IF(opwo.id is null, DATE_FORMAT(opis.operation_time, '%d.%m.%Y'), DATE_FORMAT(opwo.operation_time, '%d.%m.%Y')) as 'Выдача', #Автосписание или ручное списание
+         IF(opwo.id is null, opis.issued, opwo.issued) as 'Выдано',
+         IF(opwo.id is null, IF(opis.manual_operation, '+', ''), IF(opwo.manual_operation, '+', '')) as 'Ручная',
          DATE_FORMAT(IFNULL(stock_write_off.creation_date, stock_return.creation_date),'%d.%m.%Y') as 'Создан документ',
          users.name as 'Автор',
          IFNULL(stock_write_off.comment, stock_return.comment) as 'Коментарий документа',
          IFNULL(stock_write_off_detail.cause, stock_return_items.comment_return)as 'Комментарий операции',
          nomenclature.sale_cost as 'Стоимость номенклатуры',
-         opis.returned * nomenclature.sale_cost as 'Сумма списанного',
+         IF(opwo.id is null, opis.issued, opis.returned ) * nomenclature.sale_cost as 'Сумма списанного',
          IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_return.id IS NOT NULL, 'I', '-'))) as 'Тип'
-     FROM operation_issued_by_employee opis
+     FROM operation_issued_by_employee opis #операция списания (или автосписанная операция выдачи) 
               LEFT JOIN stock_write_off_detail on opis.id = stock_write_off_detail.employee_issue_operation_id
               LEFT JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
-              LEFT JOIN operation_issued_by_employee opwo on opwo.id = opis.issued_operation_id
+              LEFT JOIN operation_issued_by_employee opwo on opwo.id = opis.issued_operation_id #списываемая операция
               LEFT JOIN stock_return_items on opis.id = stock_return_items.employee_issue_operation_id
               LEFT JOIN stock_return on stock_return_items.stock_return_id = stock_return.id
               LEFT JOIN users on (stock_write_off.user_id = users.id or stock_return.user_id = users.id)
@@ -275,7 +275,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>12pt</Height>
+              <Height>26.7pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -290,6 +290,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -307,6 +308,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -324,6 +326,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -341,6 +344,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -358,6 +362,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -375,6 +380,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -392,6 +398,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -409,6 +416,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -426,6 +434,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -443,6 +452,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -460,6 +470,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -477,6 +488,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -494,6 +506,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -511,6 +524,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -528,6 +542,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -535,7 +550,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
-                      <Value>Создан документ</Value>
+                      <Value>Создано списание/возврат</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -545,6 +560,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -562,6 +578,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -579,6 +596,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -596,6 +614,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -613,6 +632,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -630,6 +650,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
+                        <VerticalAlign >Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -830,6 +851,8 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor  />
+                        <BorderWidth  />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -845,6 +868,8 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
                         <TextAlign>Right</TextAlign>
+                        <BorderColor  />
+                        <BorderWidth  />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -962,10 +987,10 @@ ORDER BY `Тип`, `Дата`;</CommandText>
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>0.8pt</Top>
+        <Top>0.0pt</Top>
       </Table>
     </ReportItems>
-    <Height>36.8pt</Height>
+    <Height>47.4pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
