@@ -198,10 +198,10 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			if(hasNomenclatureSizes) {
 				// Ищем совпадение пары (размер + рост) среди зарегистрированных вариантов номенклатуры
 				var match = nomenclatureSizesList.FirstOrDefault(ns =>
-					SizeService.IsSuitable(employeeSize, ns.Size) &&
+					SizeService.IsSuitable(employeeSize, ns.WearSize) &&
 					SizeService.IsSuitable(employeeHeight, ns.Height));
 				if(match != null)
-					return (match.Size, match.Height, SizeMatchStatus.Green);
+					return (match.WearSize, match.Height, SizeMatchStatus.Green);
 			}
 
 			// Ищем через ShowInNomenclature размеры
