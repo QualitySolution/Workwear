@@ -236,7 +236,7 @@ namespace Workwear.ViewModels.Import
 							Name = notFoundNomenclature.NomenclatureName,
 							Number = notFoundNomenclature.Article,
 							Type = type,
-							Comment = "Созданно при загрузке поступления из файла"
+							Comment = "Создана при загрузке поступления из файла"
 						};
 						UoW.Save(nomenclature);
 					}
