@@ -78,6 +78,7 @@ FROM (SELECT
                         AND gi2.employee_group_id IN (@employee_groups_ids))) )
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
+        AND (@issue_type = '' OR item_types.issue_type = @issue_type)
         AND (NOT @exclude_in_vacation
           OR (NOT EXISTS(SELECT *
                          FROM employees_vacations AS vac
@@ -130,6 +131,9 @@ FROM (SELECT
           </QueryParameter>
           <QueryParameter Name="group_by_norm_amount">
             <Value>=Parameters!group_by_norm_amount</Value>
+          </QueryParameter>
+          <QueryParameter Name="issue_type">
+            <Value>=Parameters!issue_type</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1113,6 +1117,13 @@ FROM (SELECT
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="issue_type">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
