@@ -291,6 +291,12 @@ namespace Workwear.ViewModels.Regulations {
 			Entity.CopyFromDutyNorm(dutyNorm);
 			Entity.UpdateItems(dutyNormIssueModel);
 		}
+
+		public void WriteOffWear() =>
+			NavigationManager.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
+
+		public void ReturnWear() =>
+			NavigationManager.OpenViewModel<ReturnViewModel, IEntityUoWBuilder, DutyNorm>(this, EntityUoWBuilder.ForCreate(), Entity);
 	}
 	
 	public class DutyNormHistoryNode : OperationToDocumentReference {

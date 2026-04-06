@@ -149,6 +149,18 @@ namespace Workwear.Views.Regulations {
 			ViewModel.AddExpense();
 		protected void OnButtonUpdateDateClicked(object sender, EventArgs e) =>
 			ViewModel.UpdateItems();
+
+		protected void OnButtonReturnWearClicked(object sender, EventArgs e) {
+			buttonReturnWear.Sensitive = false;
+			ViewModel.ReturnWear();
+			buttonReturnWear.Sensitive = true;
+		}
+
+		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e) {
+			buttonWriteOffWear.Sensitive = false;
+			ViewModel.WriteOffWear();
+			buttonWriteOffWear.Sensitive = true;
+		}
 		#endregion
 	}
 }
