@@ -2,7 +2,7 @@
 using Gamma.ColumnConfig;
 using Gtk;
 using QS.Views.Dialog;
-using Workwear.Domain.Operations;
+using QSWidgetLib;
 using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Regulations;
 
@@ -99,17 +99,36 @@ namespace Workwear.Views.Regulations {
 		
 		#region Вкладка История выдач
 		private void ConfigureHistoty() { 
-			ytreeviewHistory.ColumnsConfig = FluentColumnsConfig<DutyNormIssueOperation>.Create()
-				.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.OperationTime.ToShortDateString())
+			ytreeviewHistory.ColumnsConfig = FluentColumnsConfig<DutyNormHistoryNode>.Create()
+				.AddColumn("Дата").AddReadOnlyTextRenderer(x => x.DateString)
+				.AddColumn("Документ").AddReadOnlyTextRenderer(x => x.DocName)
 				.AddColumn("Номенклатура").Resizable()
-					.AddTextRenderer(e => e.Nomenclature != null ? e.Nomenclature.Name : "").WrapWidth(1000)
+					.AddTextRenderer(e => e.NomenclatureName ?? "").WrapWidth(1000)
 				.AddColumn("Номенклатура нормы").Resizable()
-					.AddTextRenderer(e => e.ProtectionTools != null ? e.ProtectionTools.Name : "").WrapWidth(1000)
+					.AddTextRenderer(e => e.ProtectionToolsName ?? "").WrapWidth(1000)
 				.AddColumn("% износа").AddTextRenderer(e => e.WearPercent.ToString("P0"))
 				.AddColumn("Получено").AddNumericRenderer(e => e.Issued)
-				.AddColumn("Дата автосписания").AddReadOnlyTextRenderer(x => x.AutoWriteoffDate?.ToShortDateString() ?? "")
+				.AddColumn("Списано").AddNumericRenderer(e => e.Returned)
+				.AddColumn("Дата автосписания").AddReadOnlyTextRenderer(x => x.AutoWriteoffDateString ?? "")
 				.Finish();
-			ytreeviewHistory.ItemsDataSource = ViewModel.Operations;
+			ytreeviewHistory.ItemsDataSource = ViewModel.HistoryNodes;
+			ytreeviewHistory.ButtonReleaseEvent += YtreeviewMovements_ButtonReleaseEvent;
+		}
+
+		void YtreeviewMovements_ButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args) {
+			if(args.Event.Button == 3) {
+				var menu = new Menu();
+				var selected = ytreeviewHistory.GetSelectedObject<DutyNormHistoryNode>();
+
+				var itemOpenDoc = new MenuItemId<DutyNormHistoryNode>("Редактировать");
+				itemOpenDoc.ID = selected;
+				itemOpenDoc.Sensitive = selected?.DocumentType != null;
+				itemOpenDoc.Activated += (sender, e) => ViewModel.OpenDoc(selected);
+				menu.Add(itemOpenDoc);
+				
+				menu.ShowAll();
+				menu.Popup();
+			}
 		}
 		#endregion
 		
@@ -128,7 +147,8 @@ namespace Workwear.Views.Regulations {
 			ViewModel.SaveAndPrint((DutyNormSheetPrint)e.ItemEnum);
 		protected void OnButtonSaveAndGiveClicked(object sender, EventArgs e) =>
 			ViewModel.AddExpense();
-
+		protected void OnButtonUpdateDateClicked(object sender, EventArgs e) =>
+			ViewModel.UpdateItems();
 		#endregion
 	}
 }
