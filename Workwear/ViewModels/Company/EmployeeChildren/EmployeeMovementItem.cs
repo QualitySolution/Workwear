@@ -36,9 +36,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		[PropertyChangedAlso(nameof(AutoWriteOffDateTextColored))]
 		public bool UseAutoWriteOff {
-			get {
-				return Operation.UseAutoWriteoff;
-			}
+			get => Operation.UseAutoWriteoff;
 			set {
 				Operation.UseAutoWriteoff = value;
 				OnPropertyChanged();
@@ -67,7 +65,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public string  DocumentTitle {
 			get {
 				if(EmployeeIssueReference?.DocumentType != null)
-					return EmployeeIssueReference.DocumentTitle;//$"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}";
+					return EmployeeIssueReference.DocumentTitle;
 				if(Operation.ManualOperation)
 					return "Ручная операция";
 				return String.Empty;
@@ -82,10 +80,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			}
 		}
 
-		public string ProtectionTools {
-			get {
-				return Operation?.ProtectionTools?.Name ?? String.Empty;
-			}
-		}
+		public string ProtectionTools => Operation?.ProtectionTools?.Name ?? String.Empty;
 	}
 }

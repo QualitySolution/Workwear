@@ -26,6 +26,9 @@ using Workwear.ViewModels.Operations;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
+	/// <summary>
+	/// Вкладка "История Выдач"
+	/// </summary>
 	public class EmployeeMovementsViewModel : ViewModelBase, IDisposable
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
