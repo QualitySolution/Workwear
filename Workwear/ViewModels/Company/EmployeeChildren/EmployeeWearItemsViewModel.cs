@@ -26,6 +26,9 @@ using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
+	/// <summary>
+	/// Вкладка "Спецодежда по нормам"
+	/// </summary>
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
