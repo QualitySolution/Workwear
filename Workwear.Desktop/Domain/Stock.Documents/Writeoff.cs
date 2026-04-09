@@ -75,9 +75,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		public virtual string Title{
-			get{ return String.Format ("Акт списания №{0} от {1:d}", DocNumberText, Date);}
-		}
+		public virtual string Title => $"Возврат от работника №{DocNumberText} от {Date:d}";
 
 		#region IValidatableObject implementation
 
