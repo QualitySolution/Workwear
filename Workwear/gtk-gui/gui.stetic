@@ -29990,7 +29990,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Regulations.DutyNormView" design-size="543 537">
+  <widget class="Gtk.Bin" id="Workwear.Views.Regulations.DutyNormView" design-size="778 537">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -30081,7 +30081,7 @@
           <widget class="Gamma.GtkWidgets.yNotebook" id="tabs">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">1</property>
             <child>
               <widget class="Gtk.Table" id="table1">
                 <property name="MemberName" />
@@ -30543,6 +30543,40 @@
                       </packing>
                     </child>
                     <child>
+                      <widget class="Gtk.Button" id="buttonReturnWear">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-redo Menu</property>
+                        <property name="Label" translatable="yes">Возврат на склад</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonReturnWearClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Button" id="buttonWriteOffWear">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-delete Menu</property>
+                        <property name="Label" translatable="yes">Списание</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonWriteOffWearClicked" />
+                      </widget>
+                      <packing>
+                        <property name="Position">3</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
                       <placeholder />
                     </child>
                     <child>
@@ -30557,7 +30591,25 @@
                       </widget>
                       <packing>
                         <property name="PackType">End</property>
-                        <property name="Position">3</property>
+                        <property name="Position">5</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gamma.GtkWidgets.yButton" id="buttonUpdateDate">
+                        <property name="MemberName" />
+                        <property name="CanFocus">True</property>
+                        <property name="Type">TextAndIcon</property>
+                        <property name="Icon">stock:gtk-convert Menu</property>
+                        <property name="Label" translatable="yes">Обновить даты</property>
+                        <property name="UseUnderline">True</property>
+                        <signal name="Clicked" handler="OnButtonUpdateDateClicked" />
+                      </widget>
+                      <packing>
+                        <property name="PackType">End</property>
+                        <property name="Position">6</property>
                         <property name="AutoSize">True</property>
                         <property name="Expand">False</property>
                         <property name="Fill">False</property>
