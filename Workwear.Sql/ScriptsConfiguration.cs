@@ -240,7 +240,7 @@ namespace Workwear.Sql
 			configuration.AddUpdate(
 				new Version(2, 8, 35),
 				new Version(2, 8, 36),
-				"Workwear.Sql.Scripts.2.8.35.sql" //Здесь все правильно, это фейковый шаг для запуска обновления кодировок в базе.
+				"Workwear.Sql.Scripts.2.8.36.sql"
 			);
 			return configuration;
 		}

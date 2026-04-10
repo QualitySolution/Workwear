@@ -565,7 +565,7 @@ AUTO_INCREMENT = 1;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_income` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `operation` ENUM('Enter','Return','Object') NOT NULL,
+  `operation` ENUM('Enter','Return') NOT NULL,
   `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `number` VARCHAR(15) NULL DEFAULT NULL,
   `date` DATE NOT NULL,
@@ -1152,7 +1152,7 @@ create table stock_write_off_members(
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `operation` ENUM('Employee','Object') NOT NULL DEFAULT 'Employee',
+  `operation` ENUM('Employee') NOT NULL DEFAULT 'Employee',
   `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL,
   `wear_card_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -2347,7 +2347,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.35');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.8.36');
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
 
 COMMIT;
