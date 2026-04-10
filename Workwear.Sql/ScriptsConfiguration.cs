@@ -239,6 +239,11 @@ namespace Workwear.Sql
 			);
 			configuration.AddUpdate(
 				new Version(2, 8, 35),
+				new Version(2, 8, 36),
+				"Workwear.Sql.Scripts.2.8.36.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 35),
 				new Version(2, 9),
 				"Workwear.Sql.Scripts.2.9.sql",
 			delegate (DbConnection connection) {
