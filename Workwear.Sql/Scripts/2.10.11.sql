@@ -20,3 +20,8 @@ create table nomenclature_sizes
 )
 	comment 'Сочетания размера и роста доступные для номенклатуры';
 
+-- Добавление альтернативного имени для услуг обслуживания
+ALTER TABLE clothing_service_services
+	ADD COLUMN alternative_name VARCHAR(64) NULL AFTER `name`;
+
+

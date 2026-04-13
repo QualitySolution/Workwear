@@ -196,6 +196,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Shipment:
 				case WorkwearFeature.Visits:
 				case WorkwearFeature.IssuanceRequest:
+				case WorkwearFeature.ReportServiceServiced:
 					return ProductEdition == 4;
 				//Предприятие + СпецАутсорсинг
 				case WorkwearFeature.BatchProcessing:
@@ -283,6 +284,8 @@ namespace Workwear.Tools.Features
 		ReportOrder,
 		[Display(Name="Отчет Список сотрудников")]
 		ReportWearCard,
+		[Display(Name = "Отчет Оказанные услуги")]
+		ReportServiceServiced,
 		#endregion
 		#region С облаком
 		[IsCloudFeature]

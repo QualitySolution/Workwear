@@ -22,27 +22,43 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    IF(@use_subdivision, subdivisions.code, cost_center.code) as mvz_code,
-    IF(@use_subdivision, subdivisions.name, cost_center.name) as mvz_name,
-    CONCAT_WS(' ' ,employees.last_name, employees.first_name, employees.patronymic_name) as fio,
-    employees.personnel_number as tabel,
-    barcodes.title as barcode,
-    nomenclature.name as nomenclature,
-    clothing_service_services.name as type,
+    mvz_code,
+    mvz_name,
+    fio,
+    tabel,
+    barcode,
+    nomenclature,
+    type,
+    COUNT(*) as s,
     1 as amount,
-    clothing_service_services_claim.cost as cost,
-    clothing_service_services_claim.cost * 1 /*amount*/ as sum_cost,
-    DATE_FORMAT(clothing_service_services_claim.service_date, '%d.%m.%Y') as date
-FROM clothing_service_services_claim
-    LEFT JOIN clothing_service_claim on clothing_service_services_claim.claim_id = clothing_service_claim.id
-    LEFT JOIN clothing_service_services on clothing_service_services_claim.service_id = clothing_service_services.id
-    LEFT JOIN employees on clothing_service_claim.employee_id = employees.id
-    LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
-    LEFT JOIN employees_cost_allocation on (employees.id = employees_cost_allocation.employee_id AND employees_cost_allocation.percent = 1)
-    LEFT JOIN cost_center on employees_cost_allocation.cost_center_id = cost_center.id
-    LEFT JOIN barcodes on clothing_service_claim.barcode_id = barcodes.id
-    LEFT JOIN nomenclature on barcodes.nomenclature_id = nomenclature.id
-WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothing_service_services_claim.service_date &lt; @end_date</CommandText>
+    SUM(cost) as cost,
+    IF(@sum_cost, SUM(cost), cost) as sum_cost,
+    date
+FROM (
+    SELECT
+        IF(@use_subdivision, subdivisions.code, cost_center.code) as mvz_code,
+        IF(@use_subdivision, subdivisions.name, cost_center.name) as mvz_name,
+        CONCAT_WS(' ' ,employees.last_name, employees.first_name, employees.patronymic_name) as fio,
+        employees.personnel_number as tabel,
+        barcodes.title as barcode,
+        nomenclature.name as nomenclature,
+        IF(@show_alternative_name, COALESCE(clothing_service_services.alternative_name, clothing_service_services.name), clothing_service_services.name) as type,
+        clothing_service_services_claim.cost as cost,
+        clothing_service_services_claim.id as claim_row_id,
+        clothing_service_services_claim.claim_id as claim_id,
+        DATE_FORMAT(clothing_service_services_claim.service_date, '%d.%m.%Y') as date
+    FROM clothing_service_services_claim
+             LEFT JOIN clothing_service_claim on clothing_service_services_claim.claim_id = clothing_service_claim.id
+             LEFT JOIN clothing_service_services on clothing_service_services_claim.service_id = clothing_service_services.id
+             LEFT JOIN employees on clothing_service_claim.employee_id = employees.id
+             LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
+             LEFT JOIN employees_cost_allocation on (employees.id = employees_cost_allocation.employee_id AND employees_cost_allocation.percent = 1)
+             LEFT JOIN cost_center on employees_cost_allocation.cost_center_id = cost_center.id
+             LEFT JOIN barcodes on clothing_service_claim.barcode_id = barcodes.id
+             LEFT JOIN nomenclature on barcodes.nomenclature_id = nomenclature.id
+    WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothing_service_services_claim.service_date &lt; @end_date
+) AS table1
+GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
             <Value>=Parameters!start_date</Value>
@@ -52,6 +68,12 @@ WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothin
           </QueryParameter>
           <QueryParameter Name="use_subdivision">
             <Value>=Parameters!use_subdivision</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_alternative_name">
+            <Value>=Parameters!show_alternative_name</Value>
+          </QueryParameter>
+          <QueryParameter Name="sum_cost">
+            <Value>=Parameters!sum_cost</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -129,7 +151,7 @@ WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothin
             <Width>94.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>118.5pt</Width>
+            <Width>116.1pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>68.3pt</Width>
@@ -138,10 +160,10 @@ WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothin
             <Width>69.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>124.5pt</Width>
+            <Width>120.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>46.9pt</Width>
+            <Width>53.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>43.2pt</Width>
@@ -1039,6 +1061,30 @@ WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothin
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="use_subdivision">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_alternative_name">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="sum_cost">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>

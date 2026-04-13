@@ -23,6 +23,13 @@ namespace Workwear.Domain.ClothingService {
 			set => SetField(ref name, value);
 		}
 
+		private string alternativeName;
+		[Display(Name = "Альтернативное имя")]
+		public virtual string AlternativeName {
+			get => alternativeName;
+			set => SetField(ref alternativeName, value);
+		}
+
 		private decimal cost;
 		[Display(Name = "Стоимость")]
 		public virtual decimal Cost {
