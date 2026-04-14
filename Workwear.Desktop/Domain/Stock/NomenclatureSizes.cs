@@ -4,6 +4,10 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.Stock {
+	[Appellative(Gender = GrammaticalGender.Masculine,
+		NominativePlural = "размеры номенклатуры",
+		Nominative = "размер номенклатуры"
+	)]
 	public class NomenclatureSizes : PropertyChangedBase, IDomainObject, IDocItemSizeInfo {
 		
 		#region Cвойства
