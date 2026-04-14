@@ -2705,7 +2705,7 @@ create table employees_selected_nomenclatures
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ---------------------------------------------
--- Разсеры номенклатур
+-- Размеры номенклатур
 -- --------------------------------------------
 create table nomenclature_sizes
 (
