@@ -24,8 +24,6 @@ namespace Workwear.Views.ClothingService
 
 		private global::Gamma.GtkWidgets.yTextView ytextComment;
 
-		private global::Gtk.Label label_alternative_name;
-
 		private global::Gtk.Label label1;
 
 		private global::Gtk.Label label8;
@@ -37,6 +35,8 @@ namespace Workwear.Views.ClothingService
 		private global::Gamma.GtkWidgets.yEntry yentryAlternativeName;
 
 		private global::Gamma.GtkWidgets.yEntry yentryName;
+
+		private global::Gamma.GtkWidgets.yLabel ylabel_alternative_name;
 
 		private global::Gamma.GtkWidgets.ySpinButton yspinbuttonSaleCost;
 
@@ -127,7 +127,7 @@ namespace Workwear.Views.ClothingService
 			this.comboState = new global::Gamma.Widgets.yEnumComboBox();
 			this.comboState.Name = "comboState";
 			this.comboState.ShowSpecialStateAll = false;
-			this.comboState.ShowSpecialStateNot = false;
+			this.comboState.ShowSpecialStateNot = true;
 			this.comboState.UseShortTitle = false;
 			this.comboState.DefaultFirst = false;
 			this.table.Add(this.comboState);
@@ -156,29 +156,17 @@ namespace Workwear.Views.ClothingService
 			w10.RightAttach = ((uint)(2));
 			w10.XOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table.Gtk.Table+TableChild
-			this.label_alternative_name = new global::Gtk.Label();
-			this.label_alternative_name.Name = "label_alternative_name";
-			this.label_alternative_name.Xalign = 1F;
-			this.label_alternative_name.Yalign = 0F;
-			this.label_alternative_name.LabelProp = global::Mono.Unix.Catalog.GetString("Альтернативное имя:");
-			this.table.Add(this.label_alternative_name);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table[this.label_alternative_name]));
-			w11.TopAttach = ((uint)(1));
-			w11.BottomAttach = ((uint)(2));
-			w11.XOptions = ((global::Gtk.AttachOptions)(4));
-			w11.YOptions = ((global::Gtk.AttachOptions)(4));
-			// Container child table.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label();
 			this.label1.Name = "label1";
 			this.label1.Xalign = 1F;
 			this.label1.Yalign = 0F;
 			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
 			this.table.Add(this.label1);
-			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table[this.label1]));
-			w12.TopAttach = ((uint)(4));
-			w12.BottomAttach = ((uint)(5));
-			w12.XOptions = ((global::Gtk.AttachOptions)(4));
-			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table[this.label1]));
+			w11.TopAttach = ((uint)(4));
+			w11.BottomAttach = ((uint)(5));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table.Gtk.Table+TableChild
 			this.label8 = new global::Gtk.Label();
 			this.label8.Name = "label8";
@@ -186,31 +174,31 @@ namespace Workwear.Views.ClothingService
 			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString("Наименование<span foreground=\"red\">*</span>:");
 			this.label8.UseMarkup = true;
 			this.table.Add(this.label8);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table[this.label8]));
-			w13.XOptions = ((global::Gtk.AttachOptions)(4));
-			w13.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table[this.label8]));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table.Gtk.Table+TableChild
 			this.labelCost = new global::Gtk.Label();
 			this.labelCost.Name = "labelCost";
 			this.labelCost.Xalign = 1F;
 			this.labelCost.LabelProp = global::Mono.Unix.Catalog.GetString("Стоимость:");
 			this.table.Add(this.labelCost);
-			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table[this.labelCost]));
-			w14.TopAttach = ((uint)(2));
-			w14.BottomAttach = ((uint)(3));
-			w14.XOptions = ((global::Gtk.AttachOptions)(4));
-			w14.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table[this.labelCost]));
+			w13.TopAttach = ((uint)(2));
+			w13.BottomAttach = ((uint)(3));
+			w13.XOptions = ((global::Gtk.AttachOptions)(4));
+			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table.Gtk.Table+TableChild
 			this.labelState = new global::Gtk.Label();
 			this.labelState.Name = "labelState";
 			this.labelState.Xalign = 1F;
 			this.labelState.LabelProp = global::Mono.Unix.Catalog.GetString("Проставлять при статусе:");
 			this.table.Add(this.labelState);
-			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table[this.labelState]));
-			w15.TopAttach = ((uint)(3));
-			w15.BottomAttach = ((uint)(4));
-			w15.XOptions = ((global::Gtk.AttachOptions)(4));
-			w15.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table[this.labelState]));
+			w14.TopAttach = ((uint)(3));
+			w14.BottomAttach = ((uint)(4));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table.Gtk.Table+TableChild
 			this.yentryAlternativeName = new global::Gamma.GtkWidgets.yEntry();
 			this.yentryAlternativeName.CanFocus = true;
@@ -219,13 +207,13 @@ namespace Workwear.Views.ClothingService
 			this.yentryAlternativeName.MaxLength = 240;
 			this.yentryAlternativeName.InvisibleChar = '●';
 			this.table.Add(this.yentryAlternativeName);
-			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table[this.yentryAlternativeName]));
-			w16.TopAttach = ((uint)(1));
-			w16.BottomAttach = ((uint)(2));
-			w16.LeftAttach = ((uint)(1));
-			w16.RightAttach = ((uint)(2));
-			w16.XOptions = ((global::Gtk.AttachOptions)(4));
-			w16.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table[this.yentryAlternativeName]));
+			w15.TopAttach = ((uint)(1));
+			w15.BottomAttach = ((uint)(2));
+			w15.LeftAttach = ((uint)(1));
+			w15.RightAttach = ((uint)(2));
+			w15.XOptions = ((global::Gtk.AttachOptions)(4));
+			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table.Gtk.Table+TableChild
 			this.yentryName = new global::Gamma.GtkWidgets.yEntry();
 			this.yentryName.CanFocus = true;
@@ -234,9 +222,20 @@ namespace Workwear.Views.ClothingService
 			this.yentryName.MaxLength = 240;
 			this.yentryName.InvisibleChar = '●';
 			this.table.Add(this.yentryName);
-			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table[this.yentryName]));
-			w17.LeftAttach = ((uint)(1));
-			w17.RightAttach = ((uint)(2));
+			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table[this.yentryName]));
+			w16.LeftAttach = ((uint)(1));
+			w16.RightAttach = ((uint)(2));
+			w16.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table.Gtk.Table+TableChild
+			this.ylabel_alternative_name = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabel_alternative_name.Name = "ylabel_alternative_name";
+			this.ylabel_alternative_name.Xalign = 1F;
+			this.ylabel_alternative_name.LabelProp = global::Mono.Unix.Catalog.GetString("Альтернативное имя:");
+			this.table.Add(this.ylabel_alternative_name);
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table[this.ylabel_alternative_name]));
+			w17.TopAttach = ((uint)(1));
+			w17.BottomAttach = ((uint)(2));
+			w17.XOptions = ((global::Gtk.AttachOptions)(4));
 			w17.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table.Gtk.Table+TableChild
 			this.yspinbuttonSaleCost = new global::Gamma.GtkWidgets.ySpinButton(0D, 99999999D, 1D);

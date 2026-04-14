@@ -313,7 +313,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox42">
-                      <Value>Уена (без</Value>
+                      <Value>Цена (без</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>

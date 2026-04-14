@@ -44,9 +44,9 @@ namespace Workwear.Domain.ClothingService {
 			set => SetField(ref code, value);
 		}
 		
-		private ClaimState withState = ClaimState.InTransit;
+		private ClaimState? withState = ClaimState.InTransit;
 		[Display (Name = "Статус подразумивающий услугу")]
-		public virtual ClaimState WithState {
+		public virtual ClaimState? WithState {
 			get => withState;
 			set => SetField(ref withState, value);
 		}
