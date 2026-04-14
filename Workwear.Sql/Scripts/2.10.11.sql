@@ -18,7 +18,8 @@ create table nomenclature_sizes
 		foreign key (height_id) references sizes (id)
 			on update cascade on delete set null
 )
-	comment 'Сочетания размера и роста доступные для номенклатуры';
+	comment 'Сочетания размера и роста доступные для номенклатуры'
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Добавление альтернативного имени для услуг обслуживания
 ALTER TABLE clothing_service_services
