@@ -51,8 +51,6 @@ namespace workwear.Journal
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
 					.AddColumn("Изменен").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g")).XAlign(0.5f)
 					.AddColumn("Номенклатура").Resizable().AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight().WrapWidth(500)
-					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
-					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
 					.AddColumn("Предпочтительный постамат выдачи").Visible(jvm.FeaturesService.Available(WorkwearFeature.Postomats))
 						.AddTextRenderer(x => jvm.GetTerminalLabel(x.ReferredTerminalId))
 					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")

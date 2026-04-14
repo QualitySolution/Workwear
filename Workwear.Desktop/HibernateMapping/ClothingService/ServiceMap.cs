@@ -9,6 +9,7 @@ namespace Workwear.HibernateMapping.ClothingService {
 			Table("clothing_service_services");
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 			Map(x => x.Name).Column("name");
+			Map(x => x.AlternativeName).Column("alternative_name");
 			Map(x => x.Cost).Column("cost");
 			Map(x => x.Code).Column("code");
 			Map(x => x.WithState).Column("with_state");

@@ -20,11 +20,16 @@ namespace Workwear.ReportParameters.ViewModels {
 			) : base(rdlViewerViewModel) 
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
-			
+
+			var hiddenReportTypes = new List<object>();
 			if(!featuresService.Available(WorkwearFeature.Postomats)) {
 				HiddenStates = new object[] { ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
-				HiddenReportType = new object[] { ClothingServiceReportType.PostamatUse };
+				hiddenReportTypes.Add(ClothingServiceReportType.PostamatUse);
             }
+			if(!featuresService.Available(WorkwearFeature.ReportServiceServiced))
+				hiddenReportTypes.Add(ClothingServiceReportType.Serviced);
+			if(hiddenReportTypes.Count > 0)
+				HiddenReportType = hiddenReportTypes.ToArray();
 		}
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#report-service-claims");
@@ -44,6 +49,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(VisibleShowComment))]
 		[PropertyChangedAlso(nameof(VisibleShowZero))]
 		[PropertyChangedAlso(nameof(VisibleSubdivisionAsMVZ))]
+		[PropertyChangedAlso(nameof(VisibleAlternativeName))]
+		[PropertyChangedAlso(nameof(VisibleSumCost))]
 		[PropertyChangedAlso(nameof(Title))]
 		[PropertyChangedAlso(nameof(ShowClosedLabel))]
 		public virtual ClothingServiceReportType ReportType {
@@ -109,13 +116,15 @@ namespace Workwear.ReportParameters.ViewModels {
 						{ "start_date", StartDate },
 						{ "finish_date", EndDate },
 					};
-				case ClothingServiceReportType.Serviced:
-					return new Dictionary<string, object> {
-						{ "report_name", Title },
-						{ "start_date", StartDate },
-						{ "end_date", EndDate },
-						{ "use_subdivision", SubdivisionAsMVZ },
-					};
+			case ClothingServiceReportType.Serviced:
+				return new Dictionary<string, object> {
+					{ "report_name", Title },
+					{ "start_date", StartDate },
+					{ "end_date", EndDate },
+					{ "use_subdivision", SubdivisionAsMVZ },
+					{ "show_alternative_name", ShowAlternativeName },
+					{ "sum_cost", SumCost },
+				};
 				default: throw new InvalidOperationException(nameof(SetParameters));
 			}
 		}
@@ -215,6 +224,20 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool VisibleShowStatus => reportType == ClothingServiceReportType.ClaimForStatus;
 		public bool VisibleShowZero => reportType == ClothingServiceReportType.ClaimCount && !GroupSubdivision;
 		public bool VisibleSubdivisionAsMVZ => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleAlternativeName => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleSumCost => reportType == ClothingServiceReportType.Serviced;
+
+		private bool showAlternativeName;
+		public virtual bool ShowAlternativeName {
+			get => showAlternativeName;
+			set => SetField(ref showAlternativeName, value);
+		}
+
+		private bool sumCost;
+		public virtual bool SumCost {
+			get => sumCost;
+			set => SetField(ref sumCost, value);
+		}
 	}
 	public enum ClothingServiceReportType {
 		[ReportIdentifier("ClothingService.ClothingServiceStatusReport")]

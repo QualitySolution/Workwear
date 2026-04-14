@@ -62,6 +62,16 @@ namespace Workwear.ReportParameters.Views {
             ycheckbuttonSubdivisionAsMVZ.Binding
 	            .AddBinding(ViewModel, vm => vm.VisibleSubdivisionAsMVZ, v => v.Visible)
 	            .AddBinding(ViewModel, vm => vm.SubdivisionAsMVZ, w => w.Active).InitializeFromSource();
+            ylabelAlternativeName.Binding
+	            .AddBinding(ViewModel, vm => vm.VisibleAlternativeName, v => v.Visible).InitializeFromSource();
+            ycheckbuttonAlternativeName.Binding
+	            .AddBinding(ViewModel, vm => vm.VisibleAlternativeName, v => v.Visible)
+	            .AddBinding(ViewModel, vm => vm.ShowAlternativeName, w => w.Active).InitializeFromSource();
+            ylabelshowSumCost.Binding
+	            .AddBinding(ViewModel, vm => vm.VisibleSumCost, v => v.Visible).InitializeFromSource();
+            ycheckbuttonSumCost.Binding
+	            .AddBinding(ViewModel, vm => vm.VisibleSumCost, v => v.Visible)
+	            .AddBinding(ViewModel, vm => vm.SumCost, w => w.Active).InitializeFromSource();
             buttonRun.Clicked += OnButtonRunClicked;
 			buttonRun.Binding
 				.AddBinding(ViewModel, vm=>vm.SensetiveLoad, w=>w.Sensitive).InitializeFromSource();

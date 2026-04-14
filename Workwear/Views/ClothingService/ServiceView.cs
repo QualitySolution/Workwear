@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using QS.Views.Dialog;
 using Workwear.Domain.ClothingService;
@@ -14,6 +13,11 @@ namespace Workwear.Views.ClothingService {
 			
 			yentryName.Binding
 				.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
+			ylabel_alternative_name.Binding
+				.AddBinding(ViewModel, v=> v.ShowAlternativeName, w => w.Visible).InitializeFromSource();
+			yentryAlternativeName.Binding
+				.AddBinding(ViewModel, v=> v.ShowAlternativeName, w => w.Visible)	
+				.AddBinding(Entity, e => e.AlternativeName, w => w.Text).InitializeFromSource();
 			yspinbuttonSaleCost.Binding
 				.AddBinding(Entity, e => e.Cost, w=> w.ValueAsDecimal).InitializeFromSource();
 			ytextComment.Binding
@@ -21,8 +25,8 @@ namespace Workwear.Views.ClothingService {
 			comboState.ItemsEnum = typeof(ClaimState);
 			comboState.HiddenItems = new object[] { ClaimState.WaitService, ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
 			comboState.Binding
-				.AddBinding(Entity, v => v.WithState, w => w.SelectedItem).InitializeFromSource();
-			
+				.AddBinding(ViewModel, v => v.SelectState, w => w.SelectedItem).InitializeFromSource();
+
 			ytreeNomenclatures.ColumnsConfig = FluentColumnsConfig<Nomenclature>.Create()
 				.AddColumn("ИД").AddReadOnlyTextRenderer(n => n.Id.ToString())
 				.AddColumn("Название").AddTextRenderer(p => p.Name).WrapWidth(600)
