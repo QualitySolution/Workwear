@@ -257,6 +257,8 @@ namespace Workwear
 				.AddClearDependence<WriteoffItem>(x => x.Height)
 				.AddClearDependence<WriteoffItem>(x => x.WearSize)
 				.AddDeleteDependence<EmployeeSize>(x => x.Size)
+				.AddDeleteDependence<NomenclatureSizes>(x => x.Height)
+				.AddDeleteDependence<NomenclatureSizes>(x => x.WearSize)
 				;
 
 			DeleteConfig.AddHibernateDeleteInfo<SizeType>()
@@ -266,6 +268,8 @@ namespace Workwear
 				.AddClearDependence<ItemsType>(x => x.HeightType);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeSize>();
+
+			DeleteConfig.AddHibernateDeleteInfo<NomenclatureSizes>();
 			#endregion
 			#region Statements
 
@@ -320,6 +324,7 @@ namespace Workwear
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
+				.AddDeleteDependence<NomenclatureSizes>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Nomenclature)
 				.AddDeleteDependence<ReturnItem> (x => x.Nomenclature)

@@ -11,6 +11,7 @@ using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -73,6 +74,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"show_employees", ShowEmployees },
 			{"show_stock", ShowStock },
 			{"show_dismissed", ShowDismissed},
+			{"issue_type", IssueType?.ToString() },
 		};
 
 		#region Параметры
@@ -85,6 +87,7 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		public bool VisibleShowStock => ReportType == ProvisionReportType.Flat;
 		public bool VisibleShowEmployee => ReportType == ProvisionReportType.Flat;
+		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
 		public bool VisibleShowSex => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
 		public bool VisibleShowSize => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
 		public bool VisibleGroupByNormAmount => ReportType == ProvisionReportType.Flat || ReportType == ProvisionReportType.Common;
@@ -102,6 +105,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		private DateTime? reportDate = DateTime.Today;
 		public virtual DateTime? ReportDate {
 			get => reportDate;
+		}
+		
+		private IssueType? issueType;
+		public virtual IssueType? IssueType {
+			get => issueType;
+			set => SetField(ref issueType, value);
 		}
 		
 		private bool excludeInVacation;

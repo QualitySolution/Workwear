@@ -2633,6 +2633,7 @@ create table clothing_service_services
 (
 	id   	int unsigned auto_increment,
 	name 	varchar(60)       not null,
+	alternative_name VARCHAR(64) NULL,
 	cost 	decimal default 0 not null,
 	code    varchar(13)       null,
 	`with_state` ENUM('WaitService','InReceiptTerminal','InTransit','DeliveryToLaundry','InRepair','InWashing','InDryCleaning','AwaitIssue','DeliveryToDispenseTerminal','InDispenseTerminal','Returned') NULL COMMENT 'Применять при проставлении статуса заявки на обслуживание',
@@ -2701,6 +2702,31 @@ create table employees_selected_nomenclatures
 			on update cascade on delete cascade
 )
 	comment 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче'
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ---------------------------------------------
+-- Размеры номенклатур
+-- --------------------------------------------
+create table nomenclature_sizes
+(
+	id              int unsigned auto_increment,
+	nomenclature_id int unsigned not null,
+	size_id         int unsigned null,
+	height_id       int unsigned null,
+	comment         text         null,
+	constraint nomenclature_sizes_pk
+		primary key (id),
+	constraint nomenclature_sizes_nomenclature_id_fk
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade on delete cascade,
+	constraint nomenclature_sizes_sizes_id_fk
+		foreign key (size_id) references sizes (id)
+			on update cascade on delete set null,
+	constraint nomenclature_sizes_sizes_id_fk_2
+		foreign key (height_id) references sizes (id)
+			on update cascade on delete set null
+)
+	comment 'Сочетания размера и роста доступные для номенклатуры'
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
@@ -2903,7 +2929,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.9');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.11');
 
 COMMIT;
 

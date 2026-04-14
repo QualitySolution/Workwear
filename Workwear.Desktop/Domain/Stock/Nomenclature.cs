@@ -145,6 +145,19 @@ namespace Workwear.Domain.Stock {
 					}
 				}
 			}
+
+			if(NomenclatureSizes.Any()) {
+				var duplicates = NomenclatureSizes
+					.GroupBy(x => (x.Height, Size: x.WearSize))
+					.Where(g => g.Count() > 1)
+					.SelectMany(x => x)
+					.ToList();
+				
+				foreach(var item in duplicates.Select(x => x.Title).Distinct()) {
+					yield return new ValidationResult(
+						$"Не должно быть повторяющихся вариантов размеров. {item} повторяется.");
+				}
+			}
 		}
 		#endregion
 		#region Функции
@@ -199,6 +212,15 @@ namespace Workwear.Domain.Stock {
 		}
 		#endregion
 		
+		#region Размеры номенклатуры
+		private IObservableList<NomenclatureSizes> nomenclatureSizes = new ObservableList<NomenclatureSizes>();
+		[Display(Name = "Варианты размеров номенклатуры")]
+		public virtual IObservableList<NomenclatureSizes> NomenclatureSizes {
+			get => nomenclatureSizes;
+			set => SetField(ref nomenclatureSizes, value);
+		}
+		#endregion
+		
 		#region Обслуживание одежды
 		private IObservableList<Service> useServices = new ObservableList<Service>();
 		[Display(Name = "Услуги обслуживания")]
@@ -209,7 +231,7 @@ namespace Workwear.Domain.Stock {
 
 		public virtual void AddService(Service service) {
 			if(UseServices.Any(p => DomainHelper.EqualDomainObjects(p, service))) {
-				logger.Warn("Услуга уже добавлен. Пропускаем...");
+				logger.Warn("Услуга уже добавлена. Пропускаем...");
 				return;
 			}
 			UseServices.Add(service);

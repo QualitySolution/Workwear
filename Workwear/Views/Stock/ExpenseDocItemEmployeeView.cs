@@ -151,7 +151,7 @@ namespace Workwear.Views.Stock
 			itemChangeProtectionTools.Sensitive = ViewModel.CanEdit;
 			menu.Add(itemChangeProtectionTools);
 			
-			if(ViewModel.featuresService.Available(WorkwearFeature.Barcodes) && selected.Nomenclature.UseBarcode) {
+			if(ViewModel.featuresService.Available(WorkwearFeature.Barcodes) && selected?.Nomenclature != null && selected.Nomenclature.UseBarcode) {
 				var itemRemoveBarcode = new MenuItem("Отвязать метку");
 				var subItemRemoveBarcode = new Menu();
 

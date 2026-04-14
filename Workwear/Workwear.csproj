@@ -206,6 +206,7 @@
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureServicesViewModel.cs" />
+    <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureSizesViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\BarcodeAddWidgetViewModel.cs" />
     <Compile Include="ViewModels\Supply\ShipmentDiffCauseViewModel.cs" />
     <Compile Include="ViewModels\Supply\ShipmentPeriodViewModel.cs" />
@@ -569,6 +570,8 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.IssuedSizesView.cs" />
     <Compile Include="ReportParameters\Views\AmountIssuedDutyNormsView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.AmountIssuedDutyNormsView.cs" />
+    <Compile Include="Views\Stock\NomenclatureChildren\NomenclatureSizesView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureSizesView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

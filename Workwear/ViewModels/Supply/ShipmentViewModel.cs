@@ -140,11 +140,7 @@ namespace Workwear.ViewModels.Supply {
 
 		#region Проброс свойств документа
 
-		public virtual string DocID {
-			get {
-				return Entity.Id == 0 ? "Новый" : Entity.Id.ToString();
-			}
-		}
+		public virtual string DocID => Entity.Id == 0 ? "Новый" : Entity.Id.ToString();
 		public virtual UserBase CreatedByUser => Entity.CreatedbyUser;
 		public virtual DateTime? StartPeriod { get => Entity.StartPeriod; set => Entity.StartPeriod = value; }
 		public virtual DateTime? EndPeriod { get => Entity.EndPeriod; set => Entity.EndPeriod = value; }
@@ -291,10 +287,10 @@ namespace Workwear.ViewModels.Supply {
 		}
 
 		public void SetDiffCause() {
-			NavigationManager.OpenViewModel<ShipmentDiffCauseViewModel, ShipmentItem[], IUnitOfWork>(this, SelectedItems, UoW);
+			NavigationManager.OpenViewModel<ShipmentDiffCauseViewModel, ShipmentItem[]>(this, SelectedItems);
 		}
 		public void SetPeriod() {
-			NavigationManager.OpenViewModel<ShipmentPeriodViewModel, ShipmentItem[], IUnitOfWork>(this, SelectedItems, UoW);
+			NavigationManager.OpenViewModel<ShipmentPeriodViewModel, ShipmentItem[]>(this, SelectedItems);
 		}
 		#endregion
 

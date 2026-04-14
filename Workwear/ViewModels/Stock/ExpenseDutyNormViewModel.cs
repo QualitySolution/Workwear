@@ -187,11 +187,11 @@ namespace Workwear.ViewModels.Stock {
 					item.UpdateOperation(UoW);
 			}
 		}
-		
-/// <summary>
-/// Заполнение документа по текущим потребностям
-/// </summary>
-/// <param name="dutyNorm">Норма для которой заполняется. Если null документ будет очищен.</param>
+
+		/// <summary>
+		/// Заполнение документа по текущим потребностям
+		/// </summary>
+		/// <param name="dutyNorm">Норма для которой заполняется. Если null документ будет очищен.</param>
 		private void FillUnderreceivedp(DutyNorm dutyNorm) {
 			Entity.Items.Clear();
 			if(dutyNorm == null)

@@ -10,6 +10,18 @@ using Workwear.Models.Operations;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.Models.Analytics.WarehouseForecasting {
+	/// <summary>
+	/// Статус подбора размера номенклатуры по размеру сотрудника.
+	/// </summary>
+	public enum SizeMatchStatus {
+		/// <summary>Размер найден в <see cref="Nomenclature.NomenclatureSizes"/> конкретной номенклатуры или среди общих размеров номенклатур.</summary>
+		Green = 0,
+		/// <summary>Найден общий размер номенклатуры, но комбинация не добавлена в конкретную номенклатуру.</summary>
+		Orange = 1,
+		/// <summary>Подходящий размер номенклатуры не найден — оставлен размер сотрудника.</summary>
+		Red = 2
+	}
+
 	public class WarehouseForecastingItem : PropertyChangedBase {
 		private readonly IForecastColumnsModel columnsModel;
 		private List<FutureIssue> futureIssues;
@@ -88,6 +100,18 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		}
 		
 		public ClothesSex Sex { get; set; }
+
+		private SizeMatchStatus sizeMatchStatus = SizeMatchStatus.Green;
+		/// <summary>Статус подбора размера номенклатуры по размеру сотрудника.</summary>
+		public SizeMatchStatus SizeMatchStatus {
+			get => sizeMatchStatus;
+			set => SetField(ref sizeMatchStatus, value);
+		}
+		/// <summary>Цвет для отображения размера в зависимости от статуса подбора.</summary>
+		public string SizeStatusColor =>
+			SizeMatchStatus == SizeMatchStatus.Red ? "red" :
+			SizeMatchStatus == SizeMatchStatus.Orange ? "orange" :
+			"darkgreen";
 		#endregion
 
 		public StockBalance[] StocksExact { get; set; }
@@ -148,6 +172,70 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		}
 		#endregion
 		
+		#region Разрешение размера
+		/// <summary>
+		/// Разрешает размер сотрудника в размер номенклатуры с учётом <see cref="Nomenclature.NomenclatureSizes"/>.
+		/// <para>
+		/// Если <see cref="Nomenclature.NomenclatureSizes"/> не пуст — ищет совпадение только среди зарегистрированных
+		/// размеров: точное или через <see cref="Size.SuitableSizes"/>. Статус <see cref="SizeMatchStatus.Green"/>.
+		/// Если совпадение не найдено — статус <see cref="SizeMatchStatus.Red"/>.
+		/// </para>
+		/// <para>
+		/// Если <see cref="Nomenclature.NomenclatureSizes"/> пуст — ищет подходящий размер среди всех
+		/// <paramref name="allNomenclatureSizes"/> (ShowInNomenclature=true). Статус <see cref="SizeMatchStatus.Green"/>.
+		/// Если найден размер из ShowInNomenclature, но NomenclatureSizes была не пуста — статус <see cref="SizeMatchStatus.Orange"/>.
+		/// Если ничего не найдено — оставляется размер сотрудника, статус <see cref="SizeMatchStatus.Red"/>.
+		/// </para>
+		/// Важно: если есть рост, совпадение ищется по паре размер+рост вместе.
+		/// </summary>
+		public static (Size size, Size height, SizeMatchStatus status) ResolveSizeForNomenclature(
+			Nomenclature nomenclature, Size employeeSize, Size employeeHeight,
+			IEnumerable<Size> allNomenclatureSizes) {
+
+			var nomenclatureSizesList = nomenclature?.NomenclatureSizes;
+			bool hasNomenclatureSizes = nomenclatureSizesList?.Any() == true;
+
+			if(hasNomenclatureSizes) {
+				// Ищем совпадение пары (размер + рост) среди зарегистрированных вариантов номенклатуры
+				var match = nomenclatureSizesList.FirstOrDefault(ns =>
+					SizeService.IsSuitable(employeeSize, ns.WearSize) &&
+					SizeService.IsSuitable(employeeHeight, ns.Height));
+				if(match != null)
+					return (match.WearSize, match.Height, SizeMatchStatus.Green);
+			}
+
+			// Ищем через ShowInNomenclature размеры
+			if(allNomenclatureSizes != null) {
+				var nomSizesList = allNomenclatureSizes as IList<Size> ?? allNomenclatureSizes.ToList();
+				if(nomSizesList.Any()) {
+					// Для размера: фильтруем по типу размера сотрудника
+					Size resolvedSize = employeeSize == null ? null
+						: nomSizesList
+							.Where(s => s.SizeType.Id == employeeSize.SizeType.Id)
+							.FirstOrDefault(s => SizeService.IsSuitable(employeeSize, s));
+
+					// Для роста: фильтруем по типу размера сотрудника
+					Size resolvedHeight = employeeHeight == null ? null
+						: nomSizesList
+							.Where(s => s.SizeType.Id == employeeHeight.SizeType.Id)
+							.FirstOrDefault(h => SizeService.IsSuitable(employeeHeight, h));
+
+					bool sizeOk = employeeSize == null || resolvedSize != null;
+					bool heightOk = employeeHeight == null || resolvedHeight != null;
+
+					if(sizeOk && heightOk) {
+						// Если NomenclatureSizes была не пуста — мы нашли размер не в ней → Orange
+						var status = hasNomenclatureSizes ? SizeMatchStatus.Orange : SizeMatchStatus.Green;
+						return (resolvedSize, resolvedHeight, status);
+					}
+				}
+			}
+
+			// Ничего не нашли — оставляем размер сотрудника
+			return (employeeSize, employeeHeight, SizeMatchStatus.Red);
+		}
+		#endregion
+
 		#region Рассчеты
 		public void FillForecast() {
 			Unissued = 0;

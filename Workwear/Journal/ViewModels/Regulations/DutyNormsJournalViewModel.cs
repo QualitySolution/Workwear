@@ -36,7 +36,6 @@ namespace workwear.Journal.ViewModels.Regulations {
 			ICurrentPermissionService currentPermissionService = null) 
 			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService) {
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
-			UseSlider = true;
 			JournalFilter = Filter = autofacScope.Resolve<DutyNormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
 		}
