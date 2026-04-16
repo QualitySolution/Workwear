@@ -36,6 +36,8 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton checkBySubdivision;
 
+		private global::Gamma.GtkWidgets.yCheckButton checkByDepartment;
+
 		private global::Gamma.GtkWidgets.yCheckButton checkByEmployee;
 
 		private global::Gamma.GtkWidgets.yCheckButton checkBySize;
@@ -52,13 +54,19 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gtk.Expander expander1;
 
-		private global::Workwear.ReportParameters.Views.ChoiceSubdivisionView choicesubdivisionview1;
+		private global::QS.Views.Control.ChoiceListView choicesubdivisionview1;
 
 		private global::Gtk.Label GtkLabel12;
 
+		private global::Gtk.Expander expanderDepartment;
+
+		private global::QS.Views.Control.ChoiceListView choicedepartmentview;
+
+		private global::Gtk.Label labelDepartment;
+
 		private global::Gtk.Expander expander2;
 
-		private global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView choiceemployeegroupview3;
+		private global::QS.Views.Control.ChoiceListView choiceemployeegroupview1;
 
 		private global::Gtk.Label GtkLabel14;
 
@@ -260,6 +268,18 @@ namespace workwear.ReportParameters.Views
 			w15.Expand = false;
 			w15.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
+			this.checkByDepartment = new global::Gamma.GtkWidgets.yCheckButton();
+			this.checkByDepartment.CanFocus = true;
+			this.checkByDepartment.Name = "checkByDepartment";
+			this.checkByDepartment.Label = global::Mono.Unix.Catalog.GetString("Детализировать по отделам");
+			this.checkByDepartment.DrawIndicator = true;
+			this.checkByDepartment.UseUnderline = true;
+			this.vbox2.Add(this.checkByDepartment);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkByDepartment]));
+			w16.Position = 3;
+			w16.Expand = false;
+			w16.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
 			this.checkByEmployee = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkByEmployee.CanFocus = true;
 			this.checkByEmployee.Name = "checkByEmployee";
@@ -267,10 +287,10 @@ namespace workwear.ReportParameters.Views
 			this.checkByEmployee.DrawIndicator = true;
 			this.checkByEmployee.UseUnderline = true;
 			this.vbox2.Add(this.checkByEmployee);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkByEmployee]));
-			w16.Position = 3;
-			w16.Expand = false;
-			w16.Fill = false;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkByEmployee]));
+			w17.Position = 4;
+			w17.Expand = false;
+			w17.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.checkBySize = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkBySize.TooltipMarkup = "Отображать выдачи разных размеров разными строками.";
@@ -280,10 +300,10 @@ namespace workwear.ReportParameters.Views
 			this.checkBySize.DrawIndicator = true;
 			this.checkBySize.UseUnderline = true;
 			this.vbox2.Add(this.checkBySize);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkBySize]));
-			w17.Position = 4;
-			w17.Expand = false;
-			w17.Fill = false;
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkBySize]));
+			w18.Position = 5;
+			w18.Expand = false;
+			w18.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.checkUseAlterName = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkUseAlterName.TooltipMarkup = "При наличии отображать альтернативное наименование размеров";
@@ -293,10 +313,10 @@ namespace workwear.ReportParameters.Views
 			this.checkUseAlterName.DrawIndicator = true;
 			this.checkUseAlterName.UseUnderline = true;
 			this.vbox2.Add(this.checkUseAlterName);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkUseAlterName]));
-			w18.Position = 5;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkUseAlterName]));
+			w19.Position = 6;
+			w19.Expand = false;
+			w19.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.checkShowCost = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkShowCost.TooltipMarkup = "В отчете показывать столбец с оценочной стоимостью.";
@@ -306,10 +326,10 @@ namespace workwear.ReportParameters.Views
 			this.checkShowCost.DrawIndicator = true;
 			this.checkShowCost.UseUnderline = true;
 			this.vbox2.Add(this.checkShowCost);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkShowCost]));
-			w19.Position = 6;
-			w19.Expand = false;
-			w19.Fill = false;
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkShowCost]));
+			w20.Position = 7;
+			w20.Expand = false;
+			w20.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.checkShowCostCenter = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkShowCostCenter.TooltipMarkup = "Добавить в отчет группировку по месту возникновения затрат";
@@ -319,10 +339,10 @@ namespace workwear.ReportParameters.Views
 			this.checkShowCostCenter.DrawIndicator = true;
 			this.checkShowCostCenter.UseUnderline = true;
 			this.vbox2.Add(this.checkShowCostCenter);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkShowCostCenter]));
-			w20.Position = 7;
-			w20.Expand = false;
-			w20.Fill = false;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkShowCostCenter]));
+			w21.Position = 8;
+			w21.Expand = false;
+			w21.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.checkShowOnlyWithoutNorm = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkShowOnlyWithoutNorm.TooltipMarkup = "Отобразить в отчёте только выданное в ручную, например сверех нормы";
@@ -332,10 +352,10 @@ namespace workwear.ReportParameters.Views
 			this.checkShowOnlyWithoutNorm.DrawIndicator = true;
 			this.checkShowOnlyWithoutNorm.UseUnderline = true;
 			this.vbox2.Add(this.checkShowOnlyWithoutNorm);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkShowOnlyWithoutNorm]));
-			w21.Position = 8;
-			w21.Expand = false;
-			w21.Fill = false;
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.checkShowOnlyWithoutNorm]));
+			w22.Position = 9;
+			w22.Expand = false;
+			w22.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.ycheckChild = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckChild.TooltipMarkup = "Включать в отчет так же дочерние подразделения выбранных подразделений.";
@@ -345,17 +365,17 @@ namespace workwear.ReportParameters.Views
 			this.ycheckChild.DrawIndicator = true;
 			this.ycheckChild.UseUnderline = true;
 			this.vbox2.Add(this.ycheckChild);
-			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckChild]));
-			w22.Position = 9;
-			w22.Expand = false;
-			w22.Fill = false;
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.ycheckChild]));
+			w23.Position = 10;
+			w23.Expand = false;
+			w23.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.expander1 = new global::Gtk.Expander(null);
 			this.expander1.CanFocus = true;
 			this.expander1.Name = "expander1";
 			this.expander1.Expanded = true;
 			// Container child expander1.Gtk.Container+ContainerChild
-			this.choicesubdivisionview1 = new global::Workwear.ReportParameters.Views.ChoiceSubdivisionView();
+			this.choicesubdivisionview1 = new global::QS.Views.Control.ChoiceListView();
 			this.choicesubdivisionview1.Events = ((global::Gdk.EventMask)(256));
 			this.choicesubdivisionview1.Name = "choicesubdivisionview1";
 			this.expander1.Add(this.choicesubdivisionview1);
@@ -365,26 +385,44 @@ namespace workwear.ReportParameters.Views
 			this.GtkLabel12.UseUnderline = true;
 			this.expander1.LabelWidget = this.GtkLabel12;
 			this.vbox2.Add(this.expander1);
-			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expander1]));
-			w24.Position = 10;
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expander1]));
+			w25.Position = 11;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.expanderDepartment = new global::Gtk.Expander(null);
+			this.expanderDepartment.CanFocus = true;
+			this.expanderDepartment.Name = "expanderDepartment";
+			// Container child expanderDepartment.Gtk.Container+ContainerChild
+			this.choicedepartmentview = new global::QS.Views.Control.ChoiceListView();
+			this.choicedepartmentview.Events = ((global::Gdk.EventMask)(256));
+			this.choicedepartmentview.Name = "choicedepartmentview";
+			this.expanderDepartment.Add(this.choicedepartmentview);
+			this.labelDepartment = new global::Gtk.Label();
+			this.labelDepartment.Name = "labelDepartment";
+			this.labelDepartment.LabelProp = global::Mono.Unix.Catalog.GetString("Отдел:");
+			this.labelDepartment.UseUnderline = true;
+			this.expanderDepartment.LabelWidget = this.labelDepartment;
+			this.vbox2.Add(this.expanderDepartment);
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expanderDepartment]));
+			w27.Position = 12;
+			w27.Expand = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.expander2 = new global::Gtk.Expander(null);
 			this.expander2.CanFocus = true;
 			this.expander2.Name = "expander2";
 			// Container child expander2.Gtk.Container+ContainerChild
-			this.choiceemployeegroupview3 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
-			this.choiceemployeegroupview3.Events = ((global::Gdk.EventMask)(256));
-			this.choiceemployeegroupview3.Name = "choiceemployeegroupview3";
-			this.expander2.Add(this.choiceemployeegroupview3);
+			this.choiceemployeegroupview1 = new global::QS.Views.Control.ChoiceListView();
+			this.choiceemployeegroupview1.Events = ((global::Gdk.EventMask)(256));
+			this.choiceemployeegroupview1.Name = "choiceemployeegroupview1";
+			this.expander2.Add(this.choiceemployeegroupview1);
 			this.GtkLabel14 = new global::Gtk.Label();
 			this.GtkLabel14.Name = "GtkLabel14";
 			this.GtkLabel14.LabelProp = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
 			this.GtkLabel14.UseUnderline = true;
 			this.expander2.LabelWidget = this.GtkLabel14;
 			this.vbox2.Add(this.expander2);
-			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expander2]));
-			w26.Position = 11;
-			w26.Expand = false;
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.expander2]));
+			w29.Position = 13;
+			w29.Expand = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.buttonPrintReport = new global::Gamma.GtkWidgets.yButton();
 			this.buttonPrintReport.Sensitive = false;
@@ -393,11 +431,11 @@ namespace workwear.ReportParameters.Views
 			this.buttonPrintReport.UseUnderline = true;
 			this.buttonPrintReport.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox2.Add(this.buttonPrintReport);
-			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
-			w27.PackType = ((global::Gtk.PackType)(1));
-			w27.Position = 12;
-			w27.Expand = false;
-			w27.Fill = false;
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.buttonPrintReport]));
+			w30.PackType = ((global::Gtk.PackType)(1));
+			w30.Position = 14;
+			w30.Expand = false;
+			w30.Fill = false;
 			this.Add(this.vbox2);
 			if ((this.Child != null))
 			{
@@ -405,6 +443,7 @@ namespace workwear.ReportParameters.Views
 			}
 			this.Hide();
 			this.expander1.Activated += new global::System.EventHandler(this.OnExpander1Activated);
+			this.expanderDepartment.Activated += new global::System.EventHandler(this.OnExpanderDepartmentActivated);
 			this.expander2.Activated += new global::System.EventHandler(this.OnExpander2Activated);
 			this.buttonPrintReport.Clicked += new global::System.EventHandler(this.OnButtonPrintReportClicked);
 		}

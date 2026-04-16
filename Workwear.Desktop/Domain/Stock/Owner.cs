@@ -8,7 +8,8 @@ namespace Workwear.Domain.Stock
 		Gender = GrammaticalGender.Masculine,
 		NominativePlural = "собственники имущества",
 		Nominative = "собственник имущества",
-		Genitive = "собственника имущества")] 
+		Genitive = "собственника имущества",
+		GenitivePlural = "собственников имущества")]
 	[HistoryTrace]
 	public class Owner : PropertyChangedBase, IDomainObject
 	{

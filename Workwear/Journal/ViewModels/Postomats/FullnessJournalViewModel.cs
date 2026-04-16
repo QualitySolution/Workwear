@@ -9,11 +9,16 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
+using QS.ViewModels.Extension;
+using Workwear.Tools;
 
 namespace workwear.Journal.ViewModels.Postomats {
-	public class FullnessJournalViewModel : JournalViewModelBase {
+	public class FullnessJournalViewModel : JournalViewModelBase, IDialogDocumentation {
 		private readonly PostomatManagerService postomatService;
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-fullness");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 		public FullnessJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigation,
@@ -37,7 +42,6 @@ namespace workwear.Journal.ViewModels.Postomats {
 		}
 
 		#region Функции для табличного просмотра
-
 		public string GetLongestPickupTooltip(FullnessInfo node) {
 			var longest = node.Cells.OrderByDescending(x => x.CreateTime).FirstOrDefault();
 			if(longest == null) {
@@ -49,6 +53,16 @@ namespace workwear.Journal.ViewModels.Postomats {
 			       $"\n{longest.NomenclatureName}";
 		}
 
+		public string GetCellsTooltip(FullnessInfo node) {
+			var cellsList = new List<string>();
+			foreach(var cell in node.Cells.Where(c => !c.IsEmpty)) {
+				cellsList.Add($"{cell.CellTitle} - {cell.CreateTime?.ToDateTime():g} - {cell.EmployeeFullName} - {cell.NomenclatureName}");
+			}
+			if (cellsList.Count == 0) 
+				return null;
+			
+			return String.Join("\n", cellsList);
+		}
 		#endregion
 	}
 }

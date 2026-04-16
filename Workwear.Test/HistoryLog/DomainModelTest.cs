@@ -1,7 +1,7 @@
 using System.Collections;
 using NHibernate.Mapping;
 using NUnit.Framework;
-using QS.Testing.HistoryLog.Testing;
+using QS.HistoryLog.Testing;
 
 namespace Workwear.Test.HistoryLog
 {

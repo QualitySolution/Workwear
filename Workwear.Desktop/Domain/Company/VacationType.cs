@@ -8,7 +8,8 @@ namespace Workwear.Domain.Company
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "виды отпусков",
 		Nominative = "вид отпуска",
-		Genitive = "вида отпуска"
+		Genitive = "вида отпуска",
+		GenitivePlural = "видов отпусков"
 		)]
 	[HistoryTrace]
 	public class VacationType : PropertyChangedBase, IDomainObject

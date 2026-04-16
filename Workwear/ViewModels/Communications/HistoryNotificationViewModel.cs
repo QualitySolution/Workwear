@@ -5,11 +5,13 @@ using QS.Cloud.WearLk.Manage;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Communications
 {
-	public class HistoryNotificationViewModel: UowDialogViewModelBase
+	public class HistoryNotificationViewModel: UowDialogViewModelBase, IDialogDocumentation
 	{
 		public IList<MessageItem> MessageItems { get; }
 		private readonly string employeePhone;
@@ -26,5 +28,10 @@ namespace Workwear.ViewModels.Communications
 				: new List<MessageItem>();
 			Title = $"Сообщения: {employee.Title}";
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("mobile-app.adoc#notification-log");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 	}
 }

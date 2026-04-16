@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -22,6 +22,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Communications;
@@ -38,7 +39,7 @@ using Workwear.ViewModels.IdentityCards;
 
 namespace Workwear.ViewModels.Company
 {
-	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject
+	public class EmployeeViewModel : EntityDialogViewModelBase<EmployeeCard>, IValidatableObject, IDialogDocumentation
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -164,7 +165,7 @@ namespace Workwear.ViewModels.Company
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание карточки для нового сотрудника");
 			}
@@ -176,6 +177,7 @@ namespace Workwear.ViewModels.Company
 			var parameter = new TypedParameter(typeof(EmployeeViewModel), this);
 			NormsViewModel = AutofacScope.Resolve<EmployeeNormsViewModel>(parameter);
 			WearItemsViewModel = AutofacScope.Resolve<EmployeeWearItemsViewModel>(parameter);
+			DutyNormsViewModel = AutofacScope.Resolve<EmployeeDutyNormsViewModel>(parameter);
 			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
@@ -189,8 +191,10 @@ namespace Workwear.ViewModels.Company
 			lkLastPhone = Entity.PhoneNumber;
 			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
 			
-			Validations.Add(new ValidationRequest(this));
 			Performance.CheckPoint("Создание View");
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(this));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object>{{nameof(FeaturesService), featuresService}})));
 		}
 
 		public readonly ProgressPerformanceHelper Performance;
@@ -208,13 +212,15 @@ namespace Workwear.ViewModels.Company
 
 		#region Visible
 
-		public bool VisibleListedItem => !UoW.IsNew;
-		public bool VisibleHistory => !UoW.IsNew;
+		public bool VisibleListedItem => Entity.Id != 0;
+		public bool VisibleHistory => Entity.Id != 0;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
 		public bool VisibleOverNorm => featuresService.Available(WorkwearFeature.OverNorm);
 		public bool VisibleEmployeeGroups => featuresService.Available(WorkwearFeature.EmployeeGroups);
+		public bool VisibleDutyNorm => featuresService.Available(WorkwearFeature.DutyNorms) && Entity.RelatedDutyNorms.Count > 0;
+		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
 		public bool VisibleColorsLegend => CurrentTab == 3;
 
 		private bool visiblePhoto;
@@ -230,7 +236,6 @@ namespace Workwear.ViewModels.Company
 			set => SetField(ref visibleSpecCoinsViews, value);
 		}
 
-		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
 		#endregion
 
 		#region Sensetive
@@ -346,6 +351,8 @@ namespace Workwear.ViewModels.Company
 
 		public bool IsDocNumberInIssueSign => baseParameters.IsDocNumberInIssueSign;
 		public bool IsDocNumberInReturnSign => baseParameters.IsDocNumberInReturnSign;
+		public DateTime? StartDateOfOperations => baseParameters.StartDateOfOperations;
+		public bool IsGenericName => baseParameters.IsGenericName;
 
 		#region CardUid
 		public virtual string CardUid {
@@ -489,18 +496,22 @@ namespace Workwear.ViewModels.Company
 																	// 0 - Информация
 																	// 1 - Размеры
 		public EmployeeNormsViewModel NormsViewModel;				//2
-		public EmployeeWearItemsViewModel WearItemsViewModel; 		//3
-		public EmployeeCostCentersViewModel CostCenterViewModel;	//4
-		public EmployeeInGroupsViewModel InGroupsViewModel;			//5
-		public EmployeeListedItemsViewModel ListedItemsViewModel;	//6
-		public EmployeeMovementsViewModel MovementsViewModel;       //7
-////1289 После сделать дочерней		
-		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //8
+		public EmployeeMovementsViewModel MovementsViewModel;       //8
+////1289 После сделать дочерней. Исправить нумерацию
+//		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //8*
 		public EmployeeVacationsViewModel VacationsViewModel;       //9
+		public EmployeeWearItemsViewModel WearItemsViewModel;		//3
+		public EmployeeDutyNormsViewModel DutyNormsViewModel;		//4
+		public EmployeeCostCentersViewModel CostCenterViewModel;	//5
+		public EmployeeInGroupsViewModel InGroupsViewModel;			//6
+		public EmployeeListedItemsViewModel ListedItemsViewModel;	//7
+		public EmployeeMovementsViewModel MovementsViewModel;       //8
+		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //9
+		public EmployeeVacationsViewModel VacationsViewModel;       //10
 
 
 		private int lastTab;
-		private int currentTab;
+		private int currentTab = 0;
 		[PropertyChangedAlso(nameof(VisibleColorsLegend))]
 		public virtual int CurrentTab {
 			get => currentTab;
@@ -513,7 +524,7 @@ namespace Workwear.ViewModels.Company
 				case 2: NormsViewModel.OnShow();
 					break;
 				case 3:
-					if (UoW.IsNew)
+					if (Entity.Id == 0)
 						if (interactive.Question("Перед работой с имуществом сотрудника необходимо сохранить карточку. Сохранить?",
 							    "Сохранить сотрудника?") && Save())
 						{
@@ -524,18 +535,25 @@ namespace Workwear.ViewModels.Company
 					else
 						WearItemsViewModel.OnShow();;
 					break;
-				case 4: CostCenterViewModel.OnShow();
+				case 4: DutyNormsViewModel.OnShow();
 					break;
-				case 5: InGroupsViewModel.OnShow();
+				case 5: CostCenterViewModel.OnShow();
 					break;
-				case 6: ListedItemsViewModel.OnShow();
+				case 6: InGroupsViewModel.OnShow();
 					break;
-				case 7: EmployeeOverNormViewModel.OnShow();
+				case 7:
+					if(Entity.Id != 0)
+						ListedItemsViewModel.OnShow();
 					break;
-				case 8: MovementsViewModel.OnShow();
+				case 8: 
+					if(Entity.Id != 0)
+						MovementsViewModel.OnShow();
 					break;
-				case 9:
-					if(UoW.IsNew) {
+				case 9: EmployeeOverNormViewModel.OnShow();
+					break;
+					break;
+				case 10:
+					if( Entity.Id == 0) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {
 							VacationsViewModel.OnShow();
@@ -594,7 +612,6 @@ namespace Workwear.ViewModels.Company
 						return false;
 				}
 			}
-			
 			return SyncLkPassword();
 		}
 
@@ -658,6 +675,8 @@ namespace Workwear.ViewModels.Company
 					{"isDocNumberInIssueSign", IsDocNumberInIssueSign},
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
 					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
+					{"startDateOfOperations", StartDateOfOperations},
+					{"isGenericName", IsGenericName}
 				}
 			};
 
@@ -703,6 +722,11 @@ namespace Workwear.ViewModels.Company
 				WearItemsViewModel.SizeChanged();
 			}
 		}
+		#endregion
+
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#employee-card");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 	}
 	public class DepartmentJournalViewModelSelector : IEntitySelector {

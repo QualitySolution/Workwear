@@ -10,7 +10,6 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
-using IdToStringConverter = Gamma.Binding.Converters.IdToStringConverter;
 
 namespace Workwear.Views.Stock
 {
@@ -35,33 +34,39 @@ namespace Workwear.Views.Stock
 					.AddBinding(vm => vm.DocNumberText, w => w.Text)
 					.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
 					.InitializeFromSource();
-				checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource(); 
+				checkAuto.Binding
+					.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active)
+					.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource(); 
 				ylabelCreatedBy.Binding
-					.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp)
-					.InitializeFromSource ();
+					.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource ();
 				ydateDoc.Binding
-					.AddBinding(Entity, e => e.Date, w => w.Date)
+					.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date)
+					.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+					.AddBinding(ViewModel,vm => vm.CanChangeDocDate, w => w.IsEditable)
 					.InitializeFromSource();
 				ytextComment.Binding
 					.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
-					.InitializeFromSource();
+					.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
 				labelSum.Binding
-					.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
-					.InitializeFromSource();
-				buttonDel.Binding
-					.AddBinding(ViewModel, vm => vm.DelSensitive, w => w.Sensitive)
-					.InitializeFromSource();
+					.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp).InitializeFromSource();
 
-				buttonAddStore.Sensitive = ViewModel.Employee is null;
-				buttonAddStore.Clicked += OnButtonAddStoreClicked;
-				buttonAddWorker.Clicked += OnButtonAddFromEmployeeClicked;
-				buttonDel.Clicked += OnButtonDelClicked;
+				buttonAddStore.Sensitive = ViewModel.CanEdit && ViewModel.Employee == null && ViewModel.DutyNorm == null;
+				buttonAddWorker.Sensitive = ViewModel.CanEdit && ViewModel.DutyNorm == null;
+				buttonAddDutyNorm.Sensitive = ViewModel.CanEdit && ViewModel.Employee is null;
 				
-				ytreeMembers.Selection.Changed += Members_Selection_Changed;
-				ybuttonAddMember.Clicked += OnButtonAddMembersClicked;
-				ybuttonDelMember.Clicked += OnButtonDelMembersClicked;
-				buttonPrint.Clicked += OnButtonPrintClicked;
+				buttonAddStore.Clicked += (s,e) => ViewModel.AddFromStock();
+				buttonAddWorker.Clicked += (s,e) => ViewModel.AddFromEmployee();
+				buttonAddDutyNorm.Clicked += (s,e) => ViewModel.AddFromDutyNorm();
+				buttonDel.Clicked += (s,e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<WriteoffItem>());
+				buttonDel.Sensitive = false;
+
+				ybuttonAddMember.Sensitive = ViewModel.CanEdit;
+				ybuttonAddMember.Clicked += (s, e) => ViewModel.AddMembers();
+				ybuttonDelMember.Clicked += (s,e)  => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<Leader>());
+				ybuttonDelMember.Sensitive = false;
+				buttonPrint.Clicked += (s,e) => ViewModel.Print();
 		}
+
 		private void ConfigureItems()
 		{
 			ytreeItems.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<WriteoffItem> ()
@@ -69,30 +74,41 @@ namespace Workwear.Views.Stock
 						.AddSetter((w, item) => w.Foreground = item.Nomenclature != null ? "black" : "blue")
 						.WrapWidth(700)
 					.AddColumn("Размер").MinWidth(60)
-						.AddReadOnlyTextRenderer(x => x.WearSize?.Name)
+						.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
+						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
+						.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.SizeType != null)
 					.AddColumn("Рост").MinWidth(70)
-						.AddReadOnlyTextRenderer(x => x.Height?.Name)
-					.AddColumn("Собственники")
+						.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
+						.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(ViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
+						.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.SizeType != null)
+					.AddColumn("Собственник")
 						.Visible(ViewModel.FeaturesService.Available(WorkwearFeature.Owners))
-						.AddReadOnlyTextRenderer(x => x.Owner?.Name ?? "Нет")
-					.AddColumn ("Процент износа").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
-						.Editing(new Adjustment(0, 0, 999, 1, 10, 0)).WidthChars(6).Digits(0)
+						.AddComboRenderer(x => x.Owner)
+						.SetDisplayFunc(x => x.Name)
+						.FillItems(ViewModel.Owners, "Нет")
+						.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.CanSetOwner)
+					.AddColumn ("Износ").AddNumericRenderer(e => e.WearPercent, new MultiplierToPercentConverter())
+						.Editing(new Adjustment(0, 0, 999, 1, 10, 0), ViewModel.CanEdit).WidthChars(6).Digits(0)
 						.AddTextRenderer(e => "%", expand: false)
-					.AddColumn ("Списано из").AddTextRenderer (e => e.LastOwnText)
-					.AddColumn ("Количество").AddNumericRenderer (e => e.Amount).Editing (new Adjustment(0, 0, 100000, 1, 10, 1)).WidthChars(7)
-					.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
+					.AddColumn ("Количество").AddNumericRenderer (e => e.Amount)
+						.Editing (new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit).WidthChars(7)
+						.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
+					.AddColumn ("Списано из").AddTextRenderer (e => e.WriteoffFromText)
 					.AddColumn("Причина списания")
 						.AddComboRenderer(x=>x.CausesWriteOff)
 						.SetDisplayFunc(x=>x.Name)
 						.FillItems(ViewModel.CausesWriteOffs, "Нет")
-						.Editing()
-					.AddColumn("Комментарий").AddTextRenderer(e=>e.Comment)
+						.Editing(ViewModel.CanEdit)
+					.AddColumn("Комментарий")
+						.AddTextRenderer(e=>e.Comment)
+						.Editable(ViewModel.CanEdit)
 					.Finish ();
 			
 			ytreeItems.Binding
 				.AddBinding(Entity, vm => vm.Items, w => w.ItemsDataSource)
 				.InitializeFromSource();
-			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
+			ytreeItems.Selection.Changed += (s,e) =>
+				buttonDel.Sensitive = ViewModel.CanEdit && ytreeItems.Selection.CountSelectedRows() > 0;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 		}
 		
@@ -102,6 +118,8 @@ namespace Workwear.Views.Stock
 				.AddColumn("Должность").AddTextRenderer(l => l.Position)
 				.Finish();
 			ytreeMembers.ItemsDataSource = Entity.Members;
+			ytreeMembers.Selection.Changed += (s,e) => 
+				ybuttonDelMember.Sensitive = ViewModel.CanEdit && ytreeMembers.Selection.CountSelectedRows() > 0;
 		}
 
 		#region Methods
@@ -123,21 +141,6 @@ namespace Workwear.Views.Stock
 			var item = ((MenuItemId<WriteoffItem>) sender).ID;
 			ViewModel.NavigationManager.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(
 				ViewModel, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
-		}
-
-		private void YtreeItems_Selection_Changed(object sender, EventArgs e) => 
-			ViewModel.DelSensitive = ytreeItems.Selection.CountSelectedRows() > 0;
-		protected void OnButtonAddStoreClicked(object sender, EventArgs e) => ViewModel.AddFromStock();
-
-		private void OnButtonDelClicked(object sender, EventArgs e) => 
-			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<WriteoffItem>());
-
-		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
-		private void OnButtonAddFromEmployeeClicked(object sender, EventArgs e) => ViewModel.AddFromEmployee();
-		private void OnButtonAddMembersClicked(object sender, EventArgs e) => ViewModel.AddMembers();
-		private void OnButtonDelMembersClicked(object sender, EventArgs e) => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<Leader>());
-		private void Members_Selection_Changed(object sender, EventArgs e){
-			ybuttonDelMember.Sensitive = ytreeMembers.Selection.CountSelectedRows() > 0;
 		}
 		#endregion
 	}

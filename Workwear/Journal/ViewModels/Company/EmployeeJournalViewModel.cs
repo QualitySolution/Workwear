@@ -8,19 +8,22 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.Utilities.Numeric;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Company;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
 {
-	public class EmployeeJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeJournalNode>
+	public class EmployeeJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeJournalNode>, IDialogDocumentation
 	{
 		/// <summary>
 		/// Для хранения пользовательской информации как в WinForms
@@ -28,16 +31,24 @@ namespace workwear.Journal.ViewModels.Company
 		public object Tag;
 
 		public readonly FeaturesService FeaturesService;
+		private readonly PhoneFormatter phoneFormatter;
 		public EmployeeFilterViewModel Filter { get; private set; }
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#employees");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(EmployeeCard));
+		#endregion
 
 		public EmployeeJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, 
-										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService, ICurrentPermissionService currentPermissionService = null) 
+										IDeleteEntityService deleteEntityService, ILifetimeScope autofacScope, FeaturesService featuresService,
+										PhoneFormatter phoneFormatter, ICurrentPermissionService currentPermissionService = null) 
 										: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			UseSlider = false;
 			
 			JournalFilter = Filter = autofacScope.Resolve<EmployeeFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			this.FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.phoneFormatter = phoneFormatter ?? throw new ArgumentNullException(nameof(phoneFormatter));
 		}
 
 		protected override IQueryOver<EmployeeCard> ItemsQuery(IUnitOfWork uow)
@@ -49,16 +60,16 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeCard employeeAlias = null;
 			Norm normAlias = null;
 			Department departmentAlias = null;
-
+			
 			var vacationSubquery = QueryOver.Of<EmployeeVacation>()
 				.Where(ev => ev.Employee.Id == employeeAlias.Id)
-				.Where(ev => ev.BeginDate <= DateTime.Today && ev.EndDate >= DateTime.Today)
+				.Where(ev => ev.BeginDate <= Filter.Date && ev.EndDate >= Filter.Date)
 				.Select(ev => ev.Id)
 				.Take(1);
 			
 			var employees = uow.Session.QueryOver<EmployeeCard>(() => employeeAlias);
 			if(Filter.ShowOnlyWork)
-				employees.Where(x => x.DismissDate == null);
+				employees.Where(x => x.DismissDate == null || x.DismissDate > Filter.Date);
 			if(Filter.ExcludeInVacation)
 				employees.WithSubquery.WhereNotExists(vacationSubquery);
 			if(Filter.Subdivision != null)
@@ -85,6 +96,8 @@ namespace workwear.Journal.ViewModels.Company
  					)
 					.WithLikeMode(MatchMode.Exact)
 					.By(() => employeeAlias.CardNumber)
+					.By(() => employeeAlias.Email)
+					.ByPrepareValue(s => phoneFormatter.FormatString(s), () => employeeAlias.PhoneNumber)
 					.Finish()
 				)
 
@@ -103,6 +116,7 @@ namespace workwear.Journal.ViewModels.Company
 					.Select(() => employeeAlias.DismissDate).WithAlias(() => resultAlias.DismissDate)
 					.Select(() => postAlias.Name).WithAlias(() => resultAlias.Post)
 	   				.Select(() => subdivisionAlias.Name).WithAlias(() => resultAlias.Subdivision)
+	   				.Select(() => subdivisionAlias.EmployeesColor).WithAlias(() => resultAlias.ColorMark)
 					.Select(x => x.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(() => departmentAlias.Name).WithAlias(() => resultAlias.Department)
 					.SelectSubQuery(vacationSubquery).WithAlias(() => resultAlias.VacationId)
@@ -144,6 +158,7 @@ namespace workwear.Journal.ViewModels.Company
 		public string Post { get; set; }
 		[SearchHighlight]
 		public string Subdivision { get; set; }
+		public string ColorMark { get; set; }
 
 		public bool Dismiss { get { return DismissDate.HasValue; } }
 

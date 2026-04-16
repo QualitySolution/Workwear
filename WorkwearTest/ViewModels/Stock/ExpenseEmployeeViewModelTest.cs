@@ -9,6 +9,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Services;
@@ -20,6 +21,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Models.Operations;
+using Workwear.Models.Print;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -44,15 +46,17 @@ namespace WorkwearTest.ViewModels.Stock
 
 		#region Helpers
 		ContainerBuilder MakeContainer(IUserService userService, CurrentUserSettings currentUserSettings) {
-			var navigation = Substitute.For<INavigationManager>();
-			var validator = new ValidatorForTests();
-			var interactive = Substitute.For<IInteractiveService>();
-			var commonMessages = Substitute.For<CommonMessages>(interactive);
-			var featuresService = Substitute.For<FeaturesService>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			var sizeService = Substitute.For<SizeService>();
 			var deleteService = Substitute.For<IDeleteEntityService>();
+			var featuresService = Substitute.For<FeaturesService>();
+			var interactive = Substitute.For<IInteractiveService>();
+			var navigation = Substitute.For<INavigationManager>();
 			var progress = Substitute.For<IProgressBarDisplayable>();
+			var sizeService = Substitute.For<SizeService>();
+			var validator = new ValidatorForTests();
+			var commonMessages = Substitute.For<CommonMessages>(interactive);
+			var permissions = Substitute.For<ICurrentPermissionService>();
+			permissions.ValidateEntityPermission(Arg.Any<Type>()).Returns(new SimplePermissionResult(true, true, true, true));
 
 			var builder = new ContainerBuilder();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
@@ -63,6 +67,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.Register(x => featuresService).As<FeaturesService>();
 			builder.Register(x => interactive).As<IInteractiveQuestion>().As<IInteractiveService>();
 			builder.Register(x => navigation).As<INavigationManager>();
+			builder.Register(x => permissions).As<ICurrentPermissionService>();
 			builder.Register(x => progress).As<IProgressBarDisplayable>();
 			builder.Register(x => sizeService).As<SizeService>();
 			builder.Register(x => userService).As<IUserService>();
@@ -70,8 +75,9 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
-			builder.RegisterType<ExpenseDocItemsEmployeeViewModel>().AsSelf();
+			builder.RegisterType<ExpenseEmployeeItemsViewModel>().AsSelf();
 			builder.RegisterType<ExpenseEmployeeViewModel>().AsSelf();
+			builder.RegisterType<IssuedSheetPrintModel>().AsSelf();
 			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
 			builder.RegisterType<StockBalanceModel>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
@@ -367,6 +373,7 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
+				employee.DismissDate = null;
 				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
@@ -383,12 +390,12 @@ namespace WorkwearTest.ViewModels.Stock
 				//Диалог создания документа выдачи.
 				using (var scope = container.BeginLifetimeScope()) {
 					var vmCreateIssue = scope.Resolve<ExpenseEmployeeViewModel>(
-						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate()),
+						new TypedParameter(typeof(EmployeeCard), employee)
 					);
 					vmCreateIssue.Entity.Date = new DateTime(2022, 04, 1);
 					vmCreateIssue.Entity.Warehouse = vmCreateIssue.UoW.GetById<Warehouse>(warehouse.Id);
-					vmCreateIssue.Entity.Employee = vmCreateIssue.UoW.GetById<EmployeeCard>(employee.Id);
-				
+					
 					Assert.That(vmCreateIssue.Entity.Items.Count, Is.EqualTo(2));
 					var itemLast = vmCreateIssue.Entity.Items.First(x => x.ProtectionTools.Id == protectionTools.Id);
 					itemLast.Amount = 1;
@@ -487,6 +494,7 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
+				employee.DismissDate = null;
 				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
@@ -502,14 +510,15 @@ namespace WorkwearTest.ViewModels.Stock
 				//Диалог создания документа выдачи.
 				using (var scope = container.BeginLifetimeScope()) {
 					var vmCreateIssue = scope.Resolve<ExpenseEmployeeViewModel>(
-						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate()), 
+						new TypedParameter(typeof(EmployeeCard), employee)
 					);
 
 					vmCreateIssue.Entity.Date = new DateTime(2022, 04, 1);
 					vmCreateIssue.Entity.Warehouse = vmCreateIssue.UoW.GetById<Warehouse>(warehouse.Id);
-					vmCreateIssue.Entity.Employee = vmCreateIssue.UoW.GetById<EmployeeCard>(employee.Id);
-				
+					
 					Assert.That(vmCreateIssue.Entity.Items.Count, Is.EqualTo(2));
+					
 					var itemLast = vmCreateIssue.Entity.Items.First(x => x.ProtectionTools.Id == protectionTools.Id);
 					itemLast.Amount = 1;
 					

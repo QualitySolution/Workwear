@@ -16,10 +16,12 @@ using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Journal.Search;
 using QS.Utilities;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Widgets;
@@ -28,9 +30,9 @@ using ArgumentNullException = System.ArgumentNullException;
 namespace workwear.Journal.ViewModels.Stock
 {
 	/// <summary>
-	/// Stock balance journal view model. Для подробного отображения баланса склада
+	/// Для подробного отображения баланса склада
 	/// </summary>
-	public class StockBalanceJournalViewModel : JournalViewModelBase
+	public class StockBalanceJournalViewModel : JournalViewModelBase, IDialogDocumentation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		public bool ShowSummary;
@@ -38,7 +40,10 @@ namespace workwear.Journal.ViewModels.Stock
 		public readonly FeaturesService FeaturesService;
 
 		public StockBalanceFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#stock-balance");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip("Складские остатки");
+		#endregion
 		public StockBalanceJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
@@ -140,7 +145,7 @@ SELECT
 	             nomenclature.sale_cost     AS SaleCost
           FROM nomenclature
                    JOIN operation_warehouse AS operation
-                             on (operation.operation_time < ADDDATE(@report_date, INTERVAL 1 DAY)
+                             on (operation.operation_time < @report_date
                                  AND operation.nomenclature_id = nomenclature.id
                                  AND (@all_warehouse
                                      OR operation.warehouse_receipt_id = @warehouse_id
@@ -201,7 +206,7 @@ SELECT
 		{
 			foreach(var node in nodes) {
 				var journal = NavigationManager
-					.OpenViewModel<StockMovmentsJournalViewModel>(this);
+					.OpenViewModel<StockMovementsJournalViewModel>(this);
 				journal.ViewModel.Filter.SetAndRefilterAtOnce(
 					filter => filter.Warehouse = Filter.Warehouse, 
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));

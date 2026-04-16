@@ -1,18 +1,23 @@
-﻿using System;
-using NHibernate;
+﻿using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company {
-	public class EmployeeGroupJournalViewModel : EntityJournalViewModelBase<EmployeeGroup, EmployeeGroupViewModel, EmployeeGroupJournalNode>{
+	public class EmployeeGroupJournalViewModel : EntityJournalViewModelBase<EmployeeGroup, EmployeeGroupViewModel, EmployeeGroupJournalNode>, IDialogDocumentation {
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#employees-groups");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(EmployeeGroup));
+		#endregion
 		public EmployeeGroupJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 

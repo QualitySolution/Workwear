@@ -11,6 +11,9 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
+	/// <summary>
+	/// Вкладка "Числится за сотрудником"
+	/// </summary>
 	public class EmployeeListedItemsViewModel : ViewModelBase
 	{
 		public EmployeeListedItemsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation, FeaturesService featuresService)
@@ -69,7 +72,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!employeeViewModel.Save())
 				return;
-
 			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 

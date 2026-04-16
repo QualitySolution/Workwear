@@ -1,7 +1,6 @@
 using System;
 using QS.DBScripts.Models;
 using QS.Dialog;
-using Workwear.Test.Sql;
 using Workwear.Test.Sql.Models;
 
 namespace QS.DBScripts.Controllers
@@ -19,7 +18,7 @@ namespace QS.DBScripts.Controllers
 
 		public bool StartCreation(DbSample sample)
 		{
-			var creationScript = new CreationScript(TestsConfiguration.MakeSQLScriptPath(sample.SqlFile), sample.TypedVersion);
+			var creationScript = new CreationScript(sample.SqlFile, sample.TypedVersion);
 			var createModel = new MySqlDbCreateModel(this, creationScript);
 			return createModel.RunCreation(server.AddressAndPort, sample.DbName, server.Login, server.Password);
 		}

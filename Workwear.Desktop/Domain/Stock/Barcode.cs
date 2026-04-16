@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,19 +7,19 @@ using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 
-namespace Workwear.Domain.Stock
-{
-	[Appellative (Gender = GrammaticalGender.Masculine,
-		NominativePlural = "штрихкоды",
-		Nominative = "штрихкод",
-		Genitive = "штрихкода"
-		)]
+namespace Workwear.Domain.Stock {
+	[Appellative(Gender = GrammaticalGender.Masculine,
+		NominativePlural = "метки (штрихкоды)",
+		Nominative = "метка (штрихкод)",
+		Genitive = "метки (штрихкода)",
+		GenitivePlural = "меток (штрихкодов)"
+	)]
 	[HistoryTrace]
-	public class Barcode : PropertyChangedBase, IDomainObject
-	{
+	public class Barcode : PropertyChangedBase, IDomainObject {
 		public virtual int Id { get; }
 
 		private DateTime createDate = DateTime.Today;
+
 		[Display(Name = "Дата создания")]
 		public virtual DateTime CreateDate {
 			get => createDate;
@@ -32,8 +32,17 @@ namespace Workwear.Domain.Stock
 			get => title;
 			set => SetField(ref title, value);
 		}
-		
+
+		private BarcodeTypes type;
+		[Display(Name = "Тип метки")]
+		public virtual BarcodeTypes Type {
+			get => type;
+			set => SetField(ref type, value);
+		}
+
+
 		private Nomenclature nomenclature;
+
 		[Display(Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
@@ -69,8 +78,8 @@ namespace Workwear.Domain.Stock
 			get { return comment; }
 			set { SetField(ref comment, value, () => Comment); }
 		}
-
-		#region Операции
+		
+		#region Списки
 
 		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
 		[Display(Name = "Операции")]
@@ -86,5 +95,12 @@ namespace Workwear.Domain.Stock
 		public virtual DateTime LastOperationTime => BarcodeOperations.Max(x => x.OperationDate);
 
 		#endregion
+	}
+	
+	public enum BarcodeTypes {
+		[Display(Name = "Линейный EAN-13")]
+		EAN13,
+		[Display(Name ="RFID EPC 96bit ")]
+		EPC96 
 	}
 }

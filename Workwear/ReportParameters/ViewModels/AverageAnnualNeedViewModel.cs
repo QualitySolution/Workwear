@@ -5,15 +5,18 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Extension;
+using System.ComponentModel;
+using System.Linq;
+using QS.ViewModels.Control;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
-using Workwear.ReportParameters.ViewModels;
-using System.ComponentModel;
+using Workwear.Tools;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class AverageAnnualNeedViewModel : ReportParametersViewModelBase, IDisposable
+	public class AverageAnnualNeedViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;
@@ -33,11 +36,18 @@ namespace workwear.ReportParameters.ViewModels
 			ShowSex = false;
 			ShowSize = true;
 			Summary = true;
-			
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#average-annual-need");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
+		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"subdivision_id", SubdivisionEntry.Entity?.Id ?? -1 },
 					{"issue_type", IssueType?.ToString() },
@@ -73,7 +83,7 @@ namespace workwear.ReportParameters.ViewModels
 
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		#endregion
 
 		public void Dispose()

@@ -7,28 +7,35 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
-using Workwear.ReportParameters.ViewModels;
+using Workwear.Repository.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels {
-	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable
+	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
+		private readonly ProtectionToolsRepository protectionToolsRepository;
 
 		public RequestSheetViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
-			FeaturesService featuresService)
+			FeaturesService featuresService,
+			ProtectionToolsRepository protectionToolsRepository)
 			: base(rdlViewerViewModel)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 			
 			Title = "Заявка на спецодежду";
 			Identifier = "RequestSheet";
@@ -50,11 +57,20 @@ namespace workwear.ReportParameters.ViewModels {
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
 
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uow);
+			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(uow);
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(uow);
+			
+			var employeeGroupsList = uow.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#request-sheet");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 
 		private readonly IUnitOfWork uow;
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -68,8 +84,8 @@ namespace workwear.ReportParameters.ViewModels {
 		#region Entry
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		#endregion
 
 		#region Свойства View
@@ -143,6 +159,12 @@ namespace workwear.ReportParameters.ViewModels {
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
+
+		private bool showSize;
+		public virtual bool ShowSize {
+			get => showSize;
+			set=>SetField(ref showSize, value);
+		}
 		
 		public bool SensetiveSubdivision => department == null;
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
@@ -165,7 +187,8 @@ namespace workwear.ReportParameters.ViewModels {
 					{"show_sex", ShowSex },
 					{"exclude_in_vacation", excludeInVacation },
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
-					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
+					{"show_size", ShowSize},
 					};
 
 		public void Dispose()

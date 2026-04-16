@@ -22,6 +22,7 @@ namespace Workwear.HibernateMapping.Regulations
 			Map (x => x.PeriodCount).Column ("period_count");
 			Map(x => x.NormParagraph).Column("norm_paragraph");
 			Map(x => x.Comment).Column("comment");
+			Map(x => x.IsDisabled).Column("is_disabled");
 
 			References (x => x.Norm).Column ("norm_id").Not.Nullable ();
 			References (x => x.ProtectionTools).Column ("protection_tools_id").Not.Nullable();

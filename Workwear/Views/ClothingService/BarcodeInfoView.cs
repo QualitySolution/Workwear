@@ -1,5 +1,4 @@
-﻿using System;
-using Workwear.ViewModels.ClothingService;
+﻿using Workwear.ViewModels.ClothingService;
 
 namespace Workwear.Views.ClothingService {
 	[System.ComponentModel.ToolboxItem(true)]

@@ -2,13 +2,15 @@ using System.Collections.Generic;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class EmployeeIssueGraphViewModel : DialogViewModelBase
+	public class EmployeeIssueGraphViewModel : DialogViewModelBase, IDialogDocumentation
     {
         public IList<GraphInterval> Intervals { get; }
         public EmployeeIssueGraphViewModel(
@@ -21,5 +23,10 @@ namespace Workwear.ViewModels.Stock
                 Intervals = IssueGraph.MakeIssueGraph(unitOfWork, employee, protectionTools).Intervals;
             Title = $"Хронология {employee.ShortName} - {protectionTools.Name}";
         }
+        
+        #region IDialogDocumentation
+        public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#issue");
+        public string ButtonTooltip => DocHelper.GetDialogDocTooltip("Хронология по потребности");
+        #endregion
     }
 }

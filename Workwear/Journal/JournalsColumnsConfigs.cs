@@ -4,9 +4,12 @@ using System.Reflection;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
+using QS.Cloud.WearLk.Manage;
 using QS.Journal.GtkUI;
+using QS.Utilities;
 using QS.Utilities.Numeric;
 using Workwear.Journal.ViewModels.Analytics;
+using Workwear.Journal.ViewModels.Catalog;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -14,8 +17,9 @@ using workwear.Journal.ViewModels.Postomats;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
-using Workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Supply;
 using workwear.Journal.ViewModels.Tools;
+using workwear.Journal.ViewModels.Visits;
 using Workwear.Tools.Features;
 
 namespace workwear.Journal
@@ -41,22 +45,31 @@ namespace workwear.Journal
 			TreeViewColumnsConfigFactory.Register<ClaimsJournalViewModel>(
 				jvm => FluentColumnsConfig<ClaimsJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).XAlign(0.5f)
-					.AddColumn("Штрихкод").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
+					.AddColumn("Метка(штрихкод)").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Табельный").AddTextRenderer(node => node.EmployeePersonnelNumber).SearchHighlight().XAlign(1.0f)
 					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
 					.AddColumn("Изменен").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g")).XAlign(0.5f)
-					.AddColumn("Номенклатура").AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight()
-					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
-					.AddColumn("Дефект").AddTextRenderer(node => node.Defect)
+					.AddColumn("Номенклатура").Resizable().AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight().WrapWidth(500)
 					.AddColumn("Предпочтительный постамат выдачи").Visible(jvm.FeaturesService.Available(WorkwearFeature.Postomats))
 						.AddTextRenderer(x => jvm.GetTerminalLabel(x.ReferredTerminalId))
+					.AddColumn("Ремонт").AddTextRenderer(node => node.NeedForRepair ? "Да" : "Нет")
+					.AddColumn("Дефект").Resizable().AddTextRenderer(node => node.Defect).WrapWidth(400)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 				);
-
+			
+			TreeViewColumnsConfigFactory.Register<ServicesJournalViewModel>(
+				() => FluentColumnsConfig<ServiceJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node => node.Name).SearchHighlight()
+					.AddColumn("Стоимость").AddTextRenderer(node => node.CostText)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
+					.Finish()
+				);
 			#endregion
+			
 			#region Communications
 			TreeViewColumnsConfigFactory.Register<EmployeeNotificationJournalViewModel>(
 				() => FluentColumnsConfig<EmployeeNotificationJournalNode>.Create()
@@ -93,7 +106,8 @@ namespace workwear.Journal
 					.AddColumn("Табельный №").AddTextRenderer(x => x.PersonnelNumber)
 					.AddColumn("Ф.И.О.").AddTextRenderer(x => x.EmployeeText)
 					.AddColumn("Телефон").AddTextRenderer(x => x.EmployeePhone)
-					.AddColumn("Баланс").AddTextRenderer(x => x.EmployeeBalanceText)
+					.AddColumn("Баланс").AddTextRenderer(x => x.EmployeeBalanceText, expand: false)
+						.AddPixbufRenderer(x => new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.speccoin.png"), expand: false)
 					.Finish()
 			);
 			
@@ -140,7 +154,9 @@ namespace workwear.Journal
 					.AddColumn("Подразделение").Resizable().AddTextRenderer(node => node.Subdivision)
 					.AddColumn("Отдел").Resizable().AddTextRenderer(node => node.Department).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment)
-					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColor(x))
+					.RowCells()
+						.AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = ForegroundColor(x))
+						.AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.ColorMark)
 					.Finish()
 			);
 
@@ -192,6 +208,7 @@ namespace workwear.Journal
 					.AddColumn("Сотрудников").Resizable().AddReadOnlyTextRenderer(n => n.Employees.ToString()).XAlign(0.5f)
 					.AddColumn("Головное подразделение").Resizable().AddTextRenderer(node => node.ParentName)
 					.AddColumn("Адрес").AddTextRenderer(node => node.Address).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).WrapWidth(700).SearchHighlight()
 					.Finish()
 			);
 
@@ -260,6 +277,7 @@ namespace workwear.Journal
 							.AddSetter((c, n) => c.Foreground = n.Cells.Min(cell => cell.CreateTime)?.ToDateTime() < jvm.RequestTime.AddMonths(-1) ? "red" : 
 								(n.Cells.Min(cell => cell.CreateTime)?.ToDateTime() < jvm.RequestTime.AddDays(-7) ? "orange" : "green"))
 					.AddColumn("Заполненность")
+						.ToolTipText(jvm.GetCellsTooltip)
 						.AddProgressRenderer(n => n.Capacity == 0 ? 0 : (int)(100f * n.Filling / n.Capacity))
 						.Text(x => $"{x.Filling} из {x.Capacity}")
 					.Finish()
@@ -288,8 +306,26 @@ namespace workwear.Journal
 					.AddColumn("Начало действия").AddTextRenderer(node => node.DateFromString)
 					.AddColumn("Окончание действия").AddTextRenderer(node => node.DateToString)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
+			
+			TreeViewColumnsConfigFactory.Register<DutyNormBalanceJournalViewModel>(
+				(jwm)=>FluentColumnsConfig<DutyNormBalanceJournalNode>.Create()
+					.AddColumn("Дежурная норма").Resizable()
+					.Visible(jwm.Filter.DutyNorm is null).AddTextRenderer(node=>node.DutyNormName).SearchHighlight()
+					.AddColumn("Наименование").Resizable()
+					.AddTextRenderer(node=>node.ItemName).WrapWidth(1000).SearchHighlight()
+						.AddSetter((w, item) => w.Foreground = item.NomenclatureName != null ? "black" : "blue")
+					.AddColumn("Размер").AddTextRenderer(node=>node.WearSize)
+					.AddColumn("Рост").AddTextRenderer(node=>node.Height)
+					.AddColumn("Количество").AddTextRenderer(node=>node.BalanceText)
+					.AddColumn("Стоимость").AddTextRenderer(node=>node.AvgCostText)
+					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
+						.AddSetter ((w, e) => w.Text = (e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : "до износа"))
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.AutoWriteoffDate < jwm.Filter.Date ? "gray": "black")
+					.Finish()
+				);
 
 			TreeViewColumnsConfigFactory.Register<NormConditionJournalViewModel>(
 				() => FluentColumnsConfig<NormConditionJournalNode>.Create()
@@ -315,6 +351,7 @@ namespace workwear.Journal
 					.AddColumn("Тип номенклатуры").AddTextRenderer(node => node.TypeName)
 					.AddColumn("Смывающее").AddTextRenderer(n => n.WashingText)
 					.AddColumn("Категория для аналитики").AddTextRenderer(node => node.CategoryForAnalytic)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, node) => c.Foreground = node.Archival? "gray": "black")
 					.Finish()
 			);
 			TreeViewColumnsConfigFactory.Register<VacationTypeJournalViewModel>(
@@ -367,10 +404,12 @@ namespace workwear.Journal
 						.AddTextRenderer(node => node.SaleCostText)
 					.AddColumn("Средняя оценка").Visible(jvm.FeaturesService.Available(WorkwearFeature.Ratings))
 						.AddTextRenderer(node => node.RatingText)
-					.AddColumn("Штрихкод").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
+					.AddColumn("Метка(штрихкод)").Visible(jvm.FeaturesService.Available(WorkwearFeature.Barcodes))
 						.AddTextRenderer(n => n.UseBarcodeText)
 					.AddColumn("Можно стирать").Visible(jvm.FeaturesService.Available(WorkwearFeature.ClothingService))
 						.AddTextRenderer(n => n.WashableText)
+					.AddColumn("Идентификатор в каталоге").Visible(jvm.FeaturesService.Available(WorkwearFeature.Catalog))
+						.AddTextRenderer(n => n.UseBarcodeText)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
@@ -413,12 +452,13 @@ namespace workwear.Journal
 					.AddColumn("Склад").Resizable().Visible(jvm.FeaturesService.Available(WorkwearFeature.Warehouses)).AddTextRenderer(x => x.Warehouse)
 					.AddColumn("Автор").Resizable().AddTextRenderer(node => node.Author).SearchHighlight()
 					.AddColumn("Детали").Resizable().AddTextRenderer(node => node.Description).SearchHighlight()
-					.AddColumn("Дата создания").AddTextRenderer(x => x.CreationDateString)
-					.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).SearchHighlight()
+					.AddColumn("Дата создания").AddTextRenderer(node => node.CreationDateString)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, node) => c.Foreground = node.Color)
 					.Finish()
 			);
 
-			TreeViewColumnsConfigFactory.Register<StockMovmentsJournalViewModel>(
+			TreeViewColumnsConfigFactory.Register<StockMovementsJournalViewModel>(
 				(jvm) => FluentColumnsConfig<StockMovementsJournalNode>.Create()
 					.AddColumn("Ведомость").Resizable().AddTextRenderer(node => $"{node.IssueSheetNumberText}").SearchHighlight()
 					.AddColumn("Дата").ToolTipText(n => n.RowTooltip).AddTextRenderer(node => node.OperationTimeText)
@@ -470,6 +510,7 @@ namespace workwear.Journal
 					.Finish()
 				);
 			#endregion
+			
 			#region Sizes
 			TreeViewColumnsConfigFactory.Register<SizeJournalViewModel>(
 				() => FluentColumnsConfig<SizeJournalNode>.Create()
@@ -507,6 +548,53 @@ namespace workwear.Journal
 					.AddColumn("Отдел").Resizable().AddTextRenderer(node => node.Department).WrapWidth(400)
 					.AddColumn("Подразделение").AddTextRenderer(node => node.Subdivision)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Background = x.Dismiss ? "White Smoke" : null)
+					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<ProductJournalViewModel>(
+				() => FluentColumnsConfig<Product>.Create()
+					.AddColumn("Идентификатор").Resizable().AddTextRenderer(p => p.CatalogId)
+					.AddColumn("Наименование").Resizable().AddTextRenderer(p => p.Name)
+					//.AddColumn("Производитель").Resizable().AddTextRenderer(p => p.Producer)
+					.Finish()
+			);
+			#endregion
+
+			#region Supply
+
+			TreeViewColumnsConfigFactory.Register<ShipmentJournalViewModel>(
+				(jvm) => FluentColumnsConfig<ShipmentJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Период").AddTextRenderer(node=> DateHelper.GetDateRangeText(node.StartPeriod, node.EndPeriod))
+					.AddColumn("Создал").AddTextRenderer(node=>node.Author).SearchHighlight()
+					.AddColumn("Дата создания").AddTextRenderer(node=>node.CreationDate.ToShortDateString())
+					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
+					.AddColumn("Статус").AddTextRenderer(node=>node.StatusText)
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
+					.Finish()
+				);
+			#endregion
+			
+			#region Visits
+
+			TreeViewColumnsConfigFactory.Register<VisitJournalViewModel>(
+				(jvm) => FluentColumnsConfig<VisitJournalNode>.Create()
+					.AddColumn("Запланировано").AddTextRenderer(node=>node.VisitDate.ToShortDateString())
+					.AddColumn("Дата создания").AddTextRenderer(node=>node.CreateDate.ToShortDateString())
+					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FIO).SearchHighlight()
+					.AddColumn("Табельный").AddReadOnlyTextRenderer(x => x.Tabel).SearchHighlight()
+					.AddColumn("Комментарий").AddTextRenderer(node=>node.Comment).SearchHighlight()
+					.Finish()
+			);
+			
+			TreeViewColumnsConfigFactory.Register<IssuanceRequestJournalViewModel>(
+				jvm => FluentColumnsConfig<IssuanceRequestJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node => $"{node.Id}").SearchHighlight()
+					.AddColumn("Дата поступления заявки").AddTextRenderer(node => node.ReceiptDate.ToShortDateString()).SearchHighlight()
+					.AddColumn("Статус").AddTextRenderer(node => node.StatusString)
+					.AddColumn("Автор").AddTextRenderer(node => node.Author)
+					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.RowColor)
 					.Finish()
 			);
 			#endregion

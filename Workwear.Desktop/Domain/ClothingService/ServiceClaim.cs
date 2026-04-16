@@ -10,9 +10,10 @@ using Workwear.Domain.Stock;
 namespace Workwear.Domain.ClothingService {
 	[HistoryTrace]
 	[Appellative(Gender = GrammaticalGender.Feminine,
-		NominativePlural = "заявки на обслуживание",
-		Nominative = "заявка на обслуживание",
-		Genitive = "заявки на обслуживание")]
+		NominativePlural = "заявки на обслуживание спецодежды",
+		Nominative = "заявка на обслуживание спецодежды",
+		Genitive = "заявки на обслуживание спецодежды",
+		GenitivePlural = "заявок на обслуживание спецодежды")]
 	public class ServiceClaim : PropertyChangedBase, IDomainObject {
 		#region Cвойства
 		public virtual int Id { get; set; }
@@ -25,7 +26,7 @@ namespace Workwear.Domain.ClothingService {
 		}
 		
 		private Barcode barcode;
-		[Display(Name = "Штрихкод")]
+		[Display(Name = "Метка(штрихкод)")]
 		public virtual Barcode Barcode {
 			get { return barcode; }
 			set { SetField(ref barcode, value, () => Barcode); }
@@ -71,6 +72,13 @@ namespace Workwear.Domain.ClothingService {
 		public virtual IObservableList<StateOperation> States {
 			get { return states; }
 			set { SetField(ref states, value, () => States); }
+		}
+				
+		private IObservableList<ProvidedService> providedServices = new ObservableList<ProvidedService>();
+		[Display(Name = "Перечень услуг")]
+		public virtual IObservableList<ProvidedService> ProvidedServices {
+			get { return providedServices; }
+			set { SetField(ref providedServices, value); }
 		}
 		#endregion
 

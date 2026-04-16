@@ -22,11 +22,13 @@ node {
       sh 'rm -rf Workwear.Test/TestResults'
       sh 'rm -rf Workwear.Test.Sql/TestResults' //Удаляем старые результаты тестов здесь, чтобы не оставались когда sql тесты не запускаются.
       try {  
-         sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" Workwear.Test/Workwear.Test.csproj'
+         sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" --settings coverlet.runsettings Workwear.Test/Workwear.Test.csproj'
       } catch (e) {}
       finally{
-      	 discoverGitReferenceBuild()
-         recordCoverage ignoreParsingErrors: true, tools: [[parser: 'COBERTURA', pattern: 'Workwear.Test/TestResults/*/coverage.cobertura.xml']]
+         discoverReferenceBuild()
+         recordCoverage id: 'coverage-prev', name: 'Coverage (vs previous build)', ignoreParsingErrors: true, tools: [[parser: 'COBERTURA', pattern: 'Workwear.Test/TestResults/*/coverage.cobertura.xml']]
+         discoverGitReferenceBuild()
+         recordCoverage id: 'coverage-master', name: 'Coverage (vs master)', ignoreParsingErrors: true, tools: [[parser: 'COBERTURA', pattern: 'Workwear.Test/TestResults/*/coverage.cobertura.xml']]
          mstest testResultsFile:"**/*.trx", keepLongStdio: true
       }
    }
@@ -75,7 +77,7 @@ node {
          }
       }
       stage('Publish'){
-         sh 'scp WinInstall/workwear-*.exe a218160_qso@a218160.ftp.mchost.ru:subdomains/files/httpdocs/Workwear/'
+         sh 'scp WinInstall/workwear-*.exe root@odysseus.srv.qsolution.ru:/var/www/files/Workwear/'
       }
    }
 }

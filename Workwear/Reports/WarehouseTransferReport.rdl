@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description>Отчет по перемещениям между складами</Description>
   <Author>Тимирева Екатерина</Author>
-  <PageHeight>11in</PageHeight>
-  <PageWidth>14in</PageWidth>
+  <PageHeight>8.3in</PageHeight>
+  <PageWidth>11.7in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -33,7 +33,7 @@ FROM operation_warehouse
          LEFT JOIN warehouse w1 ON operation_warehouse.warehouse_receipt_id = w1.id
          LEFT JOIN warehouse w2 ON operation_warehouse.warehouse_expense_id = w2.id
         LEFT JOIN owners ON operation_warehouse.owner_id = owners.id
-WHERE operation_warehouse.operation_time &gt;= @start_date AND operation_warehouse.operation_time &lt;= @end_date                                                                                                        
+WHERE DATE(operation_warehouse.operation_time) BETWEEN @start_date AND @end_date                                                                                                      
   AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @owner_id)
   AND (@allExpenseWarehouses OR (@withoutExpenseWarehouse AND operation_warehouse.warehouse_expense_id IS NULL) OR
 operation_warehouse.warehouse_expense_id = @warehouse_expense_id)
@@ -124,10 +124,10 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
     <Height>.5in</Height>
     <ReportItems>
       <Textbox Name="Textbox1">
-        <Top>7.23pt</Top>
+        <Top>7.98pt</Top>
         <Left>7.23pt</Left>
-        <Width>956.12pt</Width>
-        <Height>21.80pt</Height>
+        <Width>800.38pt</Width>
+        <Height>21.05pt</Height>
         <Value>= "Складские операции за " + Format(Convert.ToDateTime({?start_date}), "dd.MM.yyyy") + " - "  + Format(Convert.ToDateTime({?end_date}), "dd.MM.yyyy")</Value>
         <Style>
           <FontSize>15pt</FontSize>
@@ -153,34 +153,34 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>69.1pt</Width>
+            <Width>57.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>104.3pt</Width>
+            <Width>77.2pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>108.4pt</Width>
+            <Width>85.4pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>73.5pt</Width>
+            <Width>70.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>1in</Width>
+            <Width>68.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>202.0pt</Width>
+            <Width>199.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>76.3pt</Width>
+            <Width>73.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>67.6pt</Width>
+            <Width>43.8pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>84.8pt</Width>
+            <Width>66.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>111.2pt</Width>
+            <Width>65.2pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -196,6 +196,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -207,11 +208,12 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>Склад списания</Value>
+                      <Value>Склад</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -223,11 +225,12 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox4">
-                      <Value>Склад получения</Value>
+                      <Value>Склад</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -244,6 +247,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -260,6 +264,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -276,6 +281,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -292,6 +298,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -303,11 +310,12 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox8">
-                      <Value>Количество</Value>
+                      <Value>Кол-во</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -319,11 +327,52 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox9">
-                      <Value>Цена без НДС</Value>
+                      <Value>Цена</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Bottom >None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <CanGrow >true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox10">
+                      <Value>Стоимость</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom >None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+            <TableRow >
+              <Height>12pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox14">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -334,12 +383,149 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox10">
-                      <Value>Стоимость без НДС</Value>
-                      <Style>
+                    <Textbox Name="Textbox15">
+                      <Value>списания</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
                           <Default>Solid</Default>
+                          <Top >None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox16">
+                      <Value>получения</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox17">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox18">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox19">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox20">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value></Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox22">
+                      <Value>без НДС</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox23">
+                      <Value>без НДС</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top >None</Top>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -368,6 +554,9 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -384,6 +573,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -400,6 +590,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -415,6 +606,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                       <CanGrow >true</CanGrow>
                     </Textbox>
@@ -432,6 +624,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -448,6 +641,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -465,6 +659,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -482,6 +677,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -498,6 +694,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -514,6 +711,7 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -523,10 +721,10 @@ operation_warehouse.warehouse_receipt_id = @warehouse_receipt_id);</CommandText>
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
-        <Top>0.8pt</Top>
+        <Top>1.6pt</Top>
       </Table>
     </ReportItems>
-    <Height>31.3pt</Height>
+    <Height>43.7pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>

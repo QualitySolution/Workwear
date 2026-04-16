@@ -24,6 +24,7 @@ namespace Workwear.Views.Postomats
 			ytextComment.Binding.AddBinding(Entity, p => p.Comment, w => w.Buffer.Text).InitializeFromSource();
 			
 			treeItems.ColumnsConfig = ColumnsConfigFactory.Create<PostomatDocumentWithdrawItem>()
+				.AddColumn("Табельный").AddReadOnlyTextRenderer(x => x.Employee?.PersonnelNumber)
 				.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.Employee?.ShortName)
 				.AddColumn("Наименование").AddReadOnlyTextRenderer(x => x.Nomenclature?.Name)
 				.AddColumn("Штрихкод").AddReadOnlyTextRenderer(x => x.Barcode?.Title)

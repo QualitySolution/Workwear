@@ -9,8 +9,6 @@ using QS.ErrorReporting;
 using QS.Project.Versioning;
 using QSProjectsLib;
 using QSTelemetry;
-using Workwear;
-using Workwear.Tools;
 
 namespace workwear
 {

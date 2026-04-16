@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
-using QS.DomainModel.UoW;
 using QS.Utilities;
-using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Models.Operations;
 using Workwear.Tools;
@@ -143,7 +141,7 @@ namespace Workwear.Domain.Regulations {
 		public virtual int Issued(DateTime onDate) => Graph.AmountAtEndOfDay(onDate);
 		
 		/// <summary>
-		/// Необходимое к выдачи количество.
+		/// Необходимое к выдаче количество.
 		/// </summary>
 		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
 			if(Graph == null)
@@ -152,37 +150,31 @@ namespace Workwear.Domain.Regulations {
 			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
 		}
 
-		/// <summary>
-		/// Обновляет данные о выданом .
-		/// </summary>
-		/// <returns>Наличие изменений</returns>
-		public virtual void Update(IUnitOfWork uow) {
-			if(Id == 0)
-				Graph = new IssueGraph();
-			else {
-				var query = uow.Session.QueryOver<DutyNormIssueOperation>()
-					.Where(o => o.DutyNorm == DutyNorm && o.ProtectionTools == ProtectionTools);
-				Graph = new IssueGraph(query.List<IGraphIssueOperation>());
-			}
+		public virtual void UpdateNextIssue() {
 			NextIssue = CalculateNextIssue();
-			OnPropertyChanged(nameof(Issued));
 		}
 
 		/// <summary>
-		/// Расчитывает дату следующей выдачи.
+		/// Рассчитывает дату следующей выдачи.
 		/// </summary>
 		public virtual DateTime? CalculateNextIssue() {
+			if(Graph == null)
+				throw new NullReferenceException("Перед выполнением расчета CalculateNextIssue, Graph должен быть заполнен!");
 			DateTime? wantIssue = new DateTime();
 			if(Graph.Intervals.Any()) {
 				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				wantIssue = listReverse.First().StartDate;
-				//Ищем первый с конца интервал где не хватает выданного до нормы.
-				foreach(var interval in listReverse) {
-					if(interval.CurrentCount < Amount)
-						wantIssue = interval.StartDate;
-					else
-						break;
-				}
+
+				if(listReverse.First().CurrentCount >= Amount)
+					//Если количество в последнем интервале достаточно, значит нет автосписания
+					wantIssue = null;
+				else
+					foreach(var interval in listReverse) 
+						//Ищем первый с конца интервал где не хватает выданного до нормы.
+						if(interval.CurrentCount < Amount)
+							wantIssue = interval.StartDate;
+						else
+							break;
 			}
 
 			if(wantIssue == default(DateTime))
@@ -194,7 +186,7 @@ namespace Workwear.Domain.Regulations {
 		
 		#region Методы и расчётные свойства для view
 		public virtual string Title => $@"{Amount} {ProtectionTools?.Type?.Units?.MakeAmountShortStr(Amount)}
-			 ""{ProtectionTools.Name}"" на {PeriodCount} {PeriodText}";
+			 ""{ProtectionTools?.Name}"" на {PeriodCount} {PeriodText}";
 		public virtual double AmountPerYear
 		{
 			get{
@@ -245,6 +237,20 @@ namespace Workwear.Domain.Regulations {
 			}
 		}
 		
+		public virtual string LifeText {
+			get {
+				switch(NormPeriod) {
+					case DutyNormPeriodType.Year:
+					case DutyNormPeriodType.Month:
+						return $"{PeriodCount} {PeriodText}";
+					case DutyNormPeriodType.Wearout:
+						return "До износа";
+					default:
+						return String.Empty;
+				}
+			}
+		}
+
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);
@@ -254,8 +260,7 @@ namespace Workwear.Domain.Regulations {
 					return "orange";
 				if (amount == 0)
 					return "red";
-				else
-					return "black";
+				return protectionTools.Archival ? "gray" : "black";
 			}
 		}
 
@@ -265,8 +270,7 @@ namespace Workwear.Domain.Regulations {
 					return "darkred";
 				if(DateTime.Today > NextIssue?.AddDays(10))
 					return "orange";
-				else
-					return "black";
+				return protectionTools.Archival ? "gray" : "black";
 			}
 		}
 		public virtual string AmountUnitText(int a) {
@@ -283,6 +287,31 @@ namespace Workwear.Domain.Regulations {
 					return String.Empty;
 			}
 		}
+
+		public virtual string NextIssueText => NextIssue != null ? $"{NextIssue:d}" : String.Empty;
 		#endregion
+
+		/// <summary>
+		/// Возвращает копию текущего объекта с привязкой к дежурной норме
+		/// </summary>
+		/// <returns>Копия текущего объекта DutyNormItem.</returns>
+		/// <param name="DutyNorm">Дежурная норма, которой будет привязан возвращаемый объект DutyNormItem</param>
+		public virtual DutyNormItem Copy(DutyNorm dutyNorm) 
+		{
+			DutyNormItem newDutyNormItem = new DutyNormItem();
+			
+			newDutyNormItem.dutyNorm = dutyNorm;
+			newDutyNormItem.protectionTools = protectionTools;
+			newDutyNormItem.amount = amount;
+			newDutyNormItem.normPeriod = normPeriod;
+			newDutyNormItem.periodCount = periodCount;
+			newDutyNormItem.normParagraph = normParagraph;
+			newDutyNormItem.comment = comment;
+			newDutyNormItem.Graph = new IssueGraph();
+			var issued = newDutyNormItem.Issued(DateTime.Now);
+			newDutyNormItem.AmountUnitText(issued);
+			
+			return newDutyNormItem;
+		}
 	}
 }

@@ -13,10 +13,12 @@ using QS.Project.Domain;
 using QS.Utilities.Debug;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
+using Workwear.Models.Regulations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
@@ -26,7 +28,7 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Regulations
 {
-	public class NormViewModel : EntityDialogViewModelBase<Norm>, ISelectItem
+	public class NormViewModel : EntityDialogViewModelBase<Norm>, ISelectItem, IDialogDocumentation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueRepository employeeIssueRepository;
@@ -51,6 +53,7 @@ namespace Workwear.ViewModels.Regulations
 			ModalProgressCreator progressCreator,
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
+			NormToDutyNormModel normToDutyNormModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -105,7 +108,8 @@ namespace Workwear.ViewModels.Regulations
 					x => x.Amount,
 					x => x.NormCondition,
 					x => x.NormPeriod,
-					x => x.PeriodCount);
+					x => x.PeriodCount,
+					x => x.IsDisabled);
 
 			this.changeWatcher.BatchSubscribe(e => needUpdateEmployees = true)
 				.IfEntity<Norm>()
@@ -117,6 +121,11 @@ namespace Workwear.ViewModels.Regulations
 			performance.PrintAllPoints(logger);
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#norms");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		/// <summary>
 		/// Копирует существующую в базе норму по id
 		/// </summary>
@@ -353,6 +362,14 @@ namespace Workwear.ViewModels.Regulations
 		{
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(normItem.ProtectionTools.Id));
 		}
+
+		public void DisableNormItem(NormItem normItem) {
+			normItem.IsDisabled = true;
+		}
+
+		public void EnableNormItem(NormItem normItem) {
+			normItem.IsDisabled = false;
+		}
 		#endregion
 		#endregion
 		#region Сохранение
@@ -402,6 +419,7 @@ namespace Workwear.ViewModels.Regulations
 			}
 
 			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
+			
 			if (employees.Any() && needUpdateEmployees) 
 			{
 				logger.Info("Пересчитываем сотрудников");
@@ -418,6 +436,7 @@ namespace Workwear.ViewModels.Regulations
 				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
 				logger.Info("Ok");
 			}
+			
 			return true;
 		}
 		#endregion

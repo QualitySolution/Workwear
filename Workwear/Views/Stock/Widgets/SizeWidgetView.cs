@@ -26,6 +26,7 @@ namespace Workwear.Views.Stock.Widgets {
 			else {
 				GrowthInfoBox.Visible = false;
 			}
+			
 			ConfigureCheckBoxPlace();
 		}
 		/// <summary>
@@ -42,8 +43,10 @@ namespace Workwear.Views.Stock.Widgets {
 			var label2 = new Label { LabelProp = "Добавить?" };
 			CheckBoxPlace.Attach(label2, 2, 3, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
-			var label3 = new Label { LabelProp = "Количество" };
+			var label3 = new yLabel() { LabelProp = "Количество" };
 			CheckBoxPlace.Attach(label3, 3, 4, 0, 0 + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
+			label3.Binding.AddBinding(ViewModel, x=>x.VisibleAmount, w => w.Visible)
+				.InitializeFromSource();
 			#endregion
 
 			var items = ViewModel.SizeItems;
@@ -58,9 +61,10 @@ namespace Workwear.Views.Stock.Widgets {
 
 				var spin = new ySpinButton(0,int.MaxValue,1);
 				spin.Value = 0;
-				spin.Binding.AddSource(item)
-					.AddBinding(x => x.IsUsed, w => w.Sensitive)
-					.AddBinding(x => x.Amount, w => w.ValueAsInt)
+				spin.Binding
+					.AddBinding(item,x => x.IsUsed, w => w.Sensitive)
+					.AddBinding(item,x => x.Amount, w => w.ValueAsInt)
+					.AddBinding(ViewModel, x=>x.VisibleAmount, w => w.Visible)
 					.InitializeFromSource();
 				CheckBoxPlace.Attach(spin, 3, 4, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 			}

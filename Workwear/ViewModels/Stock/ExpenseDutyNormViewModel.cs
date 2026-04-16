@@ -9,34 +9,46 @@ using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
+using Workwear.Models.Print;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
+using Workwear.ViewModels.Statements;
 
 namespace Workwear.ViewModels.Stock {
-	public class ExpenseDutyNormViewModel : EntityDialogViewModelBase<ExpenseDutyNorm>{
+	public class ExpenseDutyNormViewModel : PermittingEntityDialogViewModelBase<ExpenseDutyNorm>, IDialogDocumentation{
 		
+		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
-		private static Logger logger = LogManager.GetCurrentClassLogger();
+		private readonly DutyNormIssueModel dutyNormIssueModel;
+		private readonly CurrentUserSettings currentUserSettings;
+		private readonly CommonMessages commonMessages;
+		private readonly IssuedSheetPrintModel printModel;
 		public SizeService SizeService { get; }
 		
 		#region ViewModels
@@ -52,53 +64,75 @@ namespace Workwear.ViewModels.Stock {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			ILifetimeScope autofacScope, 
 			INavigationManager navigation,
-			IInteractiveService interactive, 
+			IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
 			IUserService userService,
+			CurrentUserSettings currentUserSettings,
 			IValidator validator,
 			BaseParameters baseParameters,
+			DutyNormIssueModel dutyNormIssueModel,
 			StockBalanceModel stockBalanceModel,
 			SizeService sizeService, 
-			FeaturesService featutesService,
+			CommonMessages commonMessages,
+			FeaturesService featuresService,
 			StockRepository stockRepository,
+			IssuedSheetPrintModel printModel,
 			DutyNorm dutyNorm = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
+			: base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
+			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
 			this.SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
+			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
+			SetDocumentDateProperty(e => e.Date);
 			
 			var entityEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			var vmEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNormViewModel>(this, this, UoW, navigation, autofacScope);
 
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featutesService, autofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.DutyNorm = dutyNorm;
 				FillUnderreceivedp(dutyNorm);
 			} else {
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
-				Entity.DutyNorm.UpdateItems(UoW);
+				Entity.DutyNorm.UpdateItems(dutyNormIssueModel);
 			}
 			
 			WarehouseEntryViewModel = entityEntryBuilder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			WarehouseEntryViewModel.IsEditable = CanEdit;
+				
 			ResponsibleEmployeeCardEntryViewModel = entityEntryBuilder.ForProperty(x => x.ResponsibleEmployee)
-				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel, EmployeeFilterViewModel>(f => f.Date = Entity.Date)
 				.UseViewModelDialog<EmployeeViewModel>()
 				.Finish();
+			ResponsibleEmployeeCardEntryViewModel.CanCleanEntity = ResponsibleEmployeeCleanSensitive;
+			ResponsibleEmployeeCardEntryViewModel.IsEditable = CanEdit;
+			
 			DutyNormEntryViewModel =
 				vmEntryBuilder.ForProperty(x => x.DutyNorm)
 				.UseViewModelJournalAndAutocompleter<DutyNormsJournalViewModel>()
 				.UseViewModelDialog<DutyNormViewModel>()
 				.Finish();
-
+			DutyNormEntryViewModel.IsEditable = CanEdit;
+				
+			Entity.PropertyChanged += EntityChange;
+			
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 		}
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#duty-issue");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		#region Методы
 		public void AddItems() {
@@ -153,20 +187,20 @@ namespace Workwear.ViewModels.Stock {
 					item.UpdateOperation(UoW);
 			}
 		}
-		
-/// <summary>
-/// Заполнение документа по текущим потребностям
-/// </summary>
-/// <param name="dutyNorm">Норма для которой заполняется. Если null документ будет очищен.</param>
+
+		/// <summary>
+		/// Заполнение документа по текущим потребностям
+		/// </summary>
+		/// <param name="dutyNorm">Норма для которой заполняется. Если null документ будет очищен.</param>
 		private void FillUnderreceivedp(DutyNorm dutyNorm) {
 			Entity.Items.Clear();
 			if(dutyNorm == null)
 				return;
 			
-			dutyNorm.UpdateItems(UoW);
+			dutyNorm.UpdateItems(dutyNormIssueModel);
 			StockBalanceModel.AddNomenclatures(dutyNorm.Items.SelectMany(i => i.ProtectionTools.Nomenclatures));
 			
-			foreach(var item in dutyNorm.Items) {
+			foreach(var item in dutyNorm.Items.Where(x=>x.ProtectionTools.Archival == false)) {
 				item.StockBalanceModel = StockBalanceModel;
 				var position = item.BestChoiceInStock.FirstOrDefault()?.Position;
 				if(position != null)
@@ -204,11 +238,18 @@ namespace Workwear.ViewModels.Stock {
 		#endregion
 		
 		#region Для View свойства, методы и пробросы
-		public bool CanDelSelectedItem => SelectedItem != null;
-		public bool CanChooseStockPositionsSelectedItem => SelectedItem != null && SelectedItem.ProtectionTools != null;
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
+		public bool CanDelSelectedItem => CanEdit && SelectedItem != null;
+		public bool CanChooseStockPositionsSelectedItem => CanEdit && SelectedItem != null && SelectedItem.ProtectionTools != null && Entity.Warehouse != null;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 	
 		public IEnumerable<ProtectionTools> ProtectionToolsListFromNorm => Entity.DutyNorm.ProtectionToolsList;
+		
+		public bool IssuanceSheetCreateSensitive => CanEdit && Entity.IssuanceSheet == null;		
+		public bool IssuanceSheetCreateVisible => Entity.IssuanceSheet == null;
+		public bool IssuanceSheetOpenVisible => Entity.IssuanceSheet != null;
+		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
+		public bool ResponsibleEmployeeCleanSensitive => CanEdit && Entity.IssuanceSheet == null;
 		
 		public virtual DutyNorm DutyNorm {
 			get => Entity.DutyNorm;
@@ -275,6 +316,10 @@ namespace Workwear.ViewModels.Stock {
 			
 			foreach(var item in Entity.Items.Where(x => x.Amount <= 0).ToList()) 
 				DeleteItem(item);
+			
+			Entity.UpdateIssuanceSheet();
+			if(Entity.IssuanceSheet != null)
+				UoW.Save(Entity.IssuanceSheet);
 
 			Entity.UpdateOperations(UoW, interactive);
 			UoW.Session.SaveOrUpdate(Entity);
@@ -283,5 +328,58 @@ namespace Workwear.ViewModels.Stock {
 			return true;
 		}
 		#endregion
+
+		#region Ведомость
+
+		public void OpenIssuanceSheet()
+		{
+			if(UoW.HasChanges) {
+				if(!interactive.Question("Сохранить документ выдачи перед открытием ведомости?") || !Save())
+					return;
+			}
+			MainClass.MainWin.NavigationManager.OpenViewModel<IssuanceSheetViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(Entity.IssuanceSheet.Id));
+		}
+		public void CreateIssuanceSheet()
+		{
+			if(Entity.ResponsibleEmployee == null) {
+				interactive.ShowMessage(ImportanceLevel.Warning,"Ответственный сотрудник должен быть указан");
+				return;
+			}
+
+			if(Validate()) {
+				var defaultOrganization = UoW.GetInSession(currentUserSettings.Settings.DefaultOrganization);
+				var defaultLeader = UoW.GetInSession(currentUserSettings.Settings.DefaultLeader);
+				var defaultResponsiblePerson = UoW.GetInSession(currentUserSettings.Settings.DefaultResponsiblePerson);
+				Entity.CreateIssuanceSheet(defaultOrganization, defaultLeader, defaultResponsiblePerson);
+			}
+			
+		}
+		
+		public void PrintIssuanceSheet(IssuedSheetPrint type)
+		{
+			if(UoW.HasChanges) {
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), type == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
+					return;
+			}
+
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, printModel.GetReportInfo(type, Entity.IssuanceSheet));
+		}
+
+		#endregion
+		
+		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			switch(e.PropertyName) {
+				case nameof(Entity.IssuanceSheet):
+					OnPropertyChanged(nameof(IssuanceSheetCreateVisible));
+					OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
+					OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
+					ResponsibleEmployeeCardEntryViewModel.CanCleanEntity = ResponsibleEmployeeCleanSensitive;
+					break;
+				case nameof(Entity.Warehouse):
+					OnPropertyChanged(nameof(CanChooseStockPositionsSelectedItem));
+					break;
+			}
+		}
 	}
 }

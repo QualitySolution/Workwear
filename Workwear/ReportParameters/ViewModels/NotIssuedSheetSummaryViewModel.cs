@@ -8,32 +8,38 @@ using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
-using QS.Project.Journal;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
-using Workwear.ReportParameters.ViewModels;
+using Workwear.Repository.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class NotIssuedSheetSummaryViewModel : ReportParametersViewModelBase, IDisposable
+	public class NotIssuedSheetSummaryViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
 		IUnitOfWork UoW;
+		private readonly ProtectionToolsRepository protectionToolsRepository;
 		
 		public NotIssuedSheetSummaryViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
-			FeaturesService featuresService)
+			FeaturesService featuresService,
+			ProtectionToolsRepository protectionToolsRepository)
 			: base(rdlViewerViewModel)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 
 			Title = "Справка по невыданному (Суммарно)";
 			UoW = uowFactory.CreateWithoutRoot();
@@ -46,9 +52,13 @@ namespace workwear.ReportParameters.ViewModels
 				.Finish();
 			DepartmentEntry.EntitySelector = new DepartmentJournalViewModelSelector(rdlViewerViewModel, navigation, SubdivisionEntry);
 			
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(UoW);
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
+			
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
+			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
+			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			excludeInVacation = true;
@@ -64,6 +74,11 @@ namespace workwear.ReportParameters.ViewModels
 			}
 			warehouse = warehousesList.First();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#unissued");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
 
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 					{"report_date", ReportDate },
@@ -218,8 +233,8 @@ namespace workwear.ReportParameters.ViewModels
 		#region ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
 		public EntityEntryViewModel<Department> DepartmentEntry;
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
-		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		#endregion
 
 		public void Dispose()

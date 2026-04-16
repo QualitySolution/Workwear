@@ -7,7 +7,8 @@ namespace Workwear.Domain.Stock
 	[Appellative(Gender = GrammaticalGender.Masculine,
 		NominativePlural = "склады",
 		Nominative = "склад",
-		Genitive = "склада"
+		Genitive = "склада",
+		GenitivePlural = "складов"
 		)]
 	[HistoryTrace]
 	public class Warehouse: PropertyChangedBase, IDomainObject

@@ -76,7 +76,7 @@ namespace Workwear.Views.Operations
 
 		private global::Gamma.GtkWidgets.yLabel ylabelBarcodeTitle;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelСommentTitle1;
+		private global::Gamma.GtkWidgets.yLabel ylabelCommentTitle1;
 
 		private global::Gamma.GtkWidgets.ySpinButton yspinbuttonAmmount;
 
@@ -488,13 +488,13 @@ namespace Workwear.Views.Operations
 			w38.XOptions = ((global::Gtk.AttachOptions)(4));
 			w38.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytableSelectedOPeration.Gtk.Table+TableChild
-			this.ylabelСommentTitle1 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelСommentTitle1.Name = "ylabelСommentTitle1";
-			this.ylabelСommentTitle1.Xalign = 1F;
-			this.ylabelСommentTitle1.Yalign = 0F;
-			this.ylabelСommentTitle1.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
-			this.ytableSelectedOPeration.Add(this.ylabelСommentTitle1);
-			global::Gtk.Table.TableChild w39 = ((global::Gtk.Table.TableChild)(this.ytableSelectedOPeration[this.ylabelСommentTitle1]));
+			this.ylabelCommentTitle1 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelCommentTitle1.Name = "ylabelCommentTitle1";
+			this.ylabelCommentTitle1.Xalign = 1F;
+			this.ylabelCommentTitle1.Yalign = 0F;
+			this.ylabelCommentTitle1.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
+			this.ytableSelectedOPeration.Add(this.ylabelCommentTitle1);
+			global::Gtk.Table.TableChild w39 = ((global::Gtk.Table.TableChild)(this.ytableSelectedOPeration[this.ylabelCommentTitle1]));
 			w39.TopAttach = ((uint)(10));
 			w39.BottomAttach = ((uint)(11));
 			w39.XOptions = ((global::Gtk.AttachOptions)(4));

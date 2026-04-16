@@ -6,7 +6,13 @@ namespace Workwear.Views.Communications
 	{
 		private global::Gamma.GtkWidgets.yVBox yvbox1;
 
+		private global::Gtk.Table table1;
+
+		private global::Gamma.GtkWidgets.yButton buttonOpenEmployee;
+
 		private global::QS.Views.Control.EntityEntry entityNomenclature;
+
+		private global::Gamma.GtkWidgets.yLabel labelNomeclature;
 
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
 
@@ -23,14 +29,45 @@ namespace Workwear.Views.Communications
 			this.yvbox1.Name = "yvbox1";
 			this.yvbox1.Spacing = 6;
 			// Container child yvbox1.Gtk.Box+BoxChild
+			this.table1 = new global::Gtk.Table(((uint)(1)), ((uint)(3)), false);
+			this.table1.Name = "table1";
+			this.table1.RowSpacing = ((uint)(6));
+			this.table1.ColumnSpacing = ((uint)(6));
+			// Container child table1.Gtk.Table+TableChild
+			this.buttonOpenEmployee = new global::Gamma.GtkWidgets.yButton();
+			this.buttonOpenEmployee.CanFocus = true;
+			this.buttonOpenEmployee.Name = "buttonOpenEmployee";
+			this.buttonOpenEmployee.UseUnderline = true;
+			this.buttonOpenEmployee.Label = global::Mono.Unix.Catalog.GetString("Открыть сотрудника");
+			this.table1.Add(this.buttonOpenEmployee);
+			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.buttonOpenEmployee]));
+			w1.XOptions = ((global::Gtk.AttachOptions)(4));
+			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.entityNomenclature = new global::QS.Views.Control.EntityEntry();
 			this.entityNomenclature.Events = ((global::Gdk.EventMask)(256));
 			this.entityNomenclature.Name = "entityNomenclature";
-			this.yvbox1.Add(this.entityNomenclature);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.entityNomenclature]));
-			w1.Position = 0;
-			w1.Expand = false;
-			w1.Fill = false;
+			this.table1.Add(this.entityNomenclature);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.entityNomenclature]));
+			w2.LeftAttach = ((uint)(2));
+			w2.RightAttach = ((uint)(3));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.labelNomeclature = new global::Gamma.GtkWidgets.yLabel();
+			this.labelNomeclature.Name = "labelNomeclature";
+			this.labelNomeclature.Xalign = 1F;
+			this.labelNomeclature.LabelProp = global::Mono.Unix.Catalog.GetString("Для номенклатуры:");
+			this.table1.Add(this.labelNomeclature);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.labelNomeclature]));
+			w3.LeftAttach = ((uint)(1));
+			w3.RightAttach = ((uint)(2));
+			w3.XOptions = ((global::Gtk.AttachOptions)(4));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.yvbox1.Add(this.table1);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.table1]));
+			w4.Position = 0;
+			w4.Expand = false;
+			w4.Fill = false;
 			// Container child yvbox1.Gtk.Box+BoxChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -41,14 +78,15 @@ namespace Workwear.Views.Communications
 			this.ytreeviewRatings.Name = "ytreeviewRatings";
 			this.GtkScrolledWindow.Add(this.ytreeviewRatings);
 			this.yvbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow]));
-			w3.Position = 1;
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.GtkScrolledWindow]));
+			w6.Position = 1;
 			this.Add(this.yvbox1);
 			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
 			this.Hide();
+			this.buttonOpenEmployee.Clicked += new global::System.EventHandler(this.OnButtonOpenEmployeeClicked);
 		}
 	}
 }

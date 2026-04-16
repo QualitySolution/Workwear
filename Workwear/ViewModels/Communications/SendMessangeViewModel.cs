@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -20,13 +19,15 @@ using QS.Navigation;
 using QS.Report;
 using QS.Utilities;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using RdlEngine;
 using Workwear.Domain.Communications;
 using Workwear.Domain.Company;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Communications 
 {
-	public class SendMessangeViewModel : WindowDialogViewModelBase 
+	public class SendMessangeViewModel : WindowDialogViewModelBase, IDialogDocumentation
 	{
 		private readonly IList<EmployeeCard> employees;
 		private readonly int? warehouseId;
@@ -67,6 +68,11 @@ namespace Workwear.ViewModels.Communications
 				.Cast<EmailDocument>()
 				.ToList();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("mobile-app.html#send-notification");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip("Отправка уведомлений");
+		#endregion
 
 		#region View Properties
 		public bool SensitiveSendButton =>

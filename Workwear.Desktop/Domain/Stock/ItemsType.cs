@@ -10,7 +10,8 @@ namespace Workwear.Domain.Stock
 	[Appellative (Gender = GrammaticalGender.Masculine,
 		NominativePlural = "типы номенклатуры",
 		Nominative = "тип номенклатуры",
-		Genitive = "типа номенклатуры"
+		Genitive = "типа номенклатуры",
+		GenitivePlural = "типов номенклатуры"
 		)]
 	[HistoryTrace]
 	public class ItemsType : PropertyChangedBase, IDomainObject
@@ -37,9 +38,9 @@ namespace Workwear.Domain.Stock
 			set => SetField (ref units, value);
 		}
 		
-		СlothesType? wearCategory;
+		ClothesType? wearCategory;
 		[Display (Name = "Вид одежды")]
-		public virtual СlothesType? WearCategory {
+		public virtual ClothesType? WearCategory {
 			get { return wearCategory; }
 			set { SetField (ref wearCategory, value, () => WearCategory); }
 		}
@@ -87,7 +88,7 @@ namespace Workwear.Domain.Stock
 		[Display(Name = "Коллективная")]
 		Collective
 	}
-	public enum СlothesType
+	public enum ClothesType
 	{
 		[Display(Name = "Одежда")]
 		Wear,

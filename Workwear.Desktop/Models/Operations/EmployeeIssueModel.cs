@@ -280,7 +280,7 @@ namespace Workwear.Models.Operations {
 		
 		#region Заполение данных в сотрудников
 		/// <summary>
-		/// Заполняет графы и обновлят дату последней выдачи .
+		/// Заполняет графы и обновляет дату последней выдачи.
 		/// </summary>
 		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству сотрудников + 2</param>
 		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null, IProgressBarDisplayable progress = null) {
@@ -369,6 +369,18 @@ namespace Workwear.Models.Operations {
 		{
 			progressStep?.Invoke("Получаем строки потребностей");
 			var items = employees.SelectMany(x => x.WorkwearItems).ToList();
+			FillWearInStockInfo(items, stockBalanceModel, progressStep);
+		}
+
+		/// <summary>
+		/// Заполняет в сотрудниках(не обязательно в одного) информацию по складским остаткам для строк карточек.
+		/// </summary>
+		/// <param name="progressStep">Метод вызывается перед каждым шагом, передавая название шага. Метод выполняет 3 шага.</param>
+			public void FillWearInStockInfo(
+				IEnumerable<EmployeeCardItem> items,
+				StockBalanceModel stockBalanceModel,
+				Action<string> progressStep = null)
+			{
 			progressStep?.Invoke("Получаем список номенклатур");
 			var allNomenclatures = 
 				items.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().ToList();

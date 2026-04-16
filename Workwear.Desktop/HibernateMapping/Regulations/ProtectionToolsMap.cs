@@ -21,17 +21,19 @@ namespace Workwear.HibernateMapping.Regulations
 			Map(x => x.SupplyType).Column("supply_type").Not.Nullable();
 			Map(x => x.DermalPpe).Column("dermal_ppe").Not.Nullable();
 			Map(x => x.Dispenser).Column("dispenser").Not.Nullable();
+			Map(x => x.SizeChangeRestriction).Column("size_change").Nullable();
+			Map(x => x.Archival).Column("archival");
 
 			References(x => x.SupplyNomenclatureUnisex).Column("supply_uni_id").Nullable();
 			References(x => x.SupplyNomenclatureMale).Column("supply_male_id").Nullable();
 			References(x => x.SupplyNomenclatureFemale).Column("supply_female_id").Nullable();
 			References(x => x.CategoryForAnalytic).Column("category_for_analytic_id").Nullable();
 			References(x => x.Type).Column("item_types_id");
-
-			HasManyToMany<Nomenclature>(x => x.Nomenclatures)
-			.Table("protection_tools_nomenclature")
-			.ParentKeyColumn("protection_tools_id")
-			.ChildKeyColumn("nomenclature_id");
-		}
+			
+			HasMany(x => x.ProtectionToolsNomenclatures)
+				.KeyColumn("protection_tools_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.Inverse()
+				.LazyLoad(); }
 	}
 }

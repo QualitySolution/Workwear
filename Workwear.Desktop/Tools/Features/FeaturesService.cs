@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using Gamma.Utilities;
+using QS.BaseParameters;
 using QS.Cloud.Client;
 using QS.Dialog;
 using QS.ErrorReporting;
 using QS.Project.DB;
 using QS.Project.Versioning.Product;
-using QS.Serial;
 using QS.Serial.Encoding;
 
 namespace Workwear.Tools.Features
@@ -26,10 +26,10 @@ namespace Workwear.Tools.Features
 			new ProductEdition(4, "Спецаутсорсинг")
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
+		private readonly ParametersService parametersService;
 		private readonly CloudClientService cloudClientService;
 		private readonly IInteractiveMessage interactive;
 		private readonly IErrorReporter errorReporter;
-		private readonly ILifetimeScope autofacScope;
 		private readonly IDataBaseInfo dataBaseInfo;
 
 		public byte ProductEdition { get; private set; }
@@ -82,19 +82,19 @@ namespace Workwear.Tools.Features
 			}
 		}
 
-		public FeaturesService(ISerialNumberService serialNumberService,
+		public FeaturesService(
+			ParametersService parametersService,
 			SerialNumberEncoder serialNumberEncoder,
 			CloudClientService cloudClientService,
 			IInteractiveMessage interactive,
 			IErrorReporter errorReporter,
-			ILifetimeScope autofacScope,
 			IDataBaseInfo dataBaseInfo = null)
 		{
+			this.parametersService = parametersService ?? throw new ArgumentNullException(nameof(parametersService));
 			this.serialNumberEncoder = serialNumberEncoder ?? throw new ArgumentNullException(nameof(serialNumberEncoder));
 			this.cloudClientService = cloudClientService ?? throw new ArgumentNullException(nameof(cloudClientService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.errorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.dataBaseInfo = dataBaseInfo;
 			if(dataBaseInfo?.IsDemo == true) {
 				ProductEdition = 0;
@@ -103,10 +103,10 @@ namespace Workwear.Tools.Features
 
 			ProductEdition = 1;
 			 
-			if(String.IsNullOrWhiteSpace(serialNumberService.SerialNumber))
+			if(String.IsNullOrWhiteSpace(parametersService.Dynamic.serial_number))
 				return;
 
-			SetProperties(serialNumberService);
+			SetProperties();
 		}
 
 		/// <summary>
@@ -116,9 +116,9 @@ namespace Workwear.Tools.Features
 		{
 		}
 
-		private void SetProperties(ISerialNumberService serialNumberService)
+		private void SetProperties()
 		{
-			serialNumberEncoder.Number = serialNumberService.SerialNumber;
+			serialNumberEncoder.Number = parametersService.Dynamic.serial_number;
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
@@ -136,8 +136,7 @@ namespace Workwear.Tools.Features
 		
 		public void UpdateSerialNumber() 
 		{
-			ISerialNumberService serialNumberService = autofacScope.Resolve<ISerialNumberService>();
-			SetProperties(serialNumberService);
+			SetProperties();
 		}
 		
 		public string GetEditionName(int editionId) 
@@ -177,6 +176,14 @@ namespace Workwear.Tools.Features
 						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("postomats");
+					case WorkwearFeature.Catalog:
+						if(ProductEdition != 4)
+							return false;
+						return AvailableCloudFeatures.Contains("catalog");
+					case WorkwearFeature.EmployeeChoose:
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+							return false;
+						return AvailableCloudFeatures.Contains("choice_nomenclature_lk");
 				}
 			}
 
@@ -186,6 +193,10 @@ namespace Workwear.Tools.Features
 				//Только СпецАутсорсинг
 				case WorkwearFeature.Selling:
 				case WorkwearFeature.Dashboard:
+				case WorkwearFeature.Shipment:
+				case WorkwearFeature.Visits:
+				case WorkwearFeature.IssuanceRequest:
+				case WorkwearFeature.ReportServiceServiced:
 					return ProductEdition == 4;
 				//Предприятие + СпецАутсорсинг
 				case WorkwearFeature.BatchProcessing:
@@ -214,15 +225,16 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Completion:
 				case WorkwearFeature.ConditionNorm:
 				case WorkwearFeature.CustomSizes:
+				case WorkwearFeature.DutyNorms:
+				case WorkwearFeature.EditLockDate:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.ReportIssued:
 				case WorkwearFeature.ReportOrder:
 				case WorkwearFeature.ReportStock:
+				case WorkwearFeature.ReportWearCard:
 				case WorkwearFeature.ReportWrittenOff:
 				case WorkwearFeature.StatementJournal:
 				case WorkwearFeature.Vacation:
-				case WorkwearFeature.DutyNorms:
-				case WorkwearFeature.ReportWearCard:
 					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
 				// Профессиональная + Предприятие
 				case WorkwearFeature.Inspection:
@@ -250,16 +262,18 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Журнал ведомостей")]
 		StatementJournal,
 		#endregion
-		[Display(Name = "Дежурные нормы")]
-		DutyNorms,
-		[Display(Name = "Отпуска")]
-		Vacation,
-		[Display(Name = "Загрузка из Excel")]
-		LoadExcel,
 		[Display(Name = "Условия нормы")]
 		ConditionNorm,
 		[Display(Name = "Пользовательские размеры")]
 		CustomSizes,
+		[Display(Name = "Дежурные нормы")]
+		DutyNorms,
+		[Display(Name = "Дата запрета редактирования")]
+		EditLockDate,
+		[Display(Name = "Загрузка из Excel")]
+		LoadExcel,
+		[Display(Name = "Отпуска")]
+		Vacation,
 		#region Отчеты
 		[Display(Name = "Отчет Складская ведомость")]
 		ReportStock,
@@ -271,6 +285,8 @@ namespace Workwear.Tools.Features
 		ReportOrder,
 		[Display(Name="Отчет Список сотрудников")]
 		ReportWearCard,
+		[Display(Name = "Отчет Оказанные услуги")]
+		ReportServiceServiced,
 		#endregion
 		#region С облаком
 		[IsCloudFeature]
@@ -302,6 +318,9 @@ namespace Workwear.Tools.Features
 		Exchange1C,
 		[Display(Name = "Прогнозирование запасов")]
 		StockForecasting,
+		[IsCloudFeature]
+		[Display(Name = "Выбор сотрудника")]
+		EmployeeChoose,
 		#region Отчеты
 		[Display(Name = "Отчет Справка по складским операциям")]
 		ReportStockOperations,
@@ -311,7 +330,7 @@ namespace Workwear.Tools.Features
 		ReportSupply,
 		#endregion
 		#region Платные
-		[Display(Name = "Штрихкоды")]
+		[Display(Name = "Маркировка(штрихкоды)")]
 		Barcodes,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
@@ -332,6 +351,15 @@ namespace Workwear.Tools.Features
 		Selling,
 		[Display(Name = "Дашборды")]
 		Dashboard,
+		[Display(Name = "Поставки")]
+		Shipment,
+		[IsCloudFeature]
+		[Display(Name = "Каталог спецодежды")]
+		Catalog,
+		[Display(Name = "Посещения склада")]
+		Visits,
+		[Display(Name = "Заявки на выдачу")]
+		IssuanceRequest,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Спецкойны")]

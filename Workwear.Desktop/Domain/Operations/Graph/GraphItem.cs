@@ -41,6 +41,7 @@ namespace Workwear.Domain.Operations.Graph
 		/// <summary>
 		/// Количество числящееся на конец дня, включает списания произведенные в этот день.
 		/// </summary>
+		/// <param name="date">Дата для расчета</param>
 		/// <param name="excludeOperation">Исключить из расчета указанные операции</param>
 		public int AmountAtEndOfDay(DateTime date, IGraphIssueOperation excludeOperation = null)
 		{
@@ -54,6 +55,26 @@ namespace Workwear.Domain.Operations.Graph
 				return 0;
 
 			return IssueOperation.Issued - WriteOffOperations.Where(x => !(x == excludeOperation || (x.Id > 0 && x.Id == excludeOperation?.Id)))
+				.Where(x => x.OperationTime.Date <= date.Date).Sum(x => x.Returned);
+		}
+		
+		/// <summary>
+		/// Количество числящееся на конец дня, включает списания произведенные в этот день.
+		/// </summary>
+		/// <param name="date">Дата для расчета</param>
+		/// <param name="excludeOperationIds">Исключить из расчета указанные операции</param>
+		public int AmountAtEndOfDay(DateTime date, HashSet<int> excludeOperationIds)
+		{
+			if (excludeOperationIds != null && excludeOperationIds.Contains(IssueOperation.Id))
+				return 0;
+
+			if (IssueOperation.OperationTime.Date > date)
+				return 0;
+
+			if (IssueOperation.AutoWriteoffDate.HasValue && IssueOperation.AutoWriteoffDate.Value.Date <= date.Date)
+				return 0;
+
+			return IssueOperation.Issued - WriteOffOperations.Where(x => excludeOperationIds == null || !excludeOperationIds.Contains(x.Id))
 				.Where(x => x.OperationTime.Date <= date.Date).Sum(x => x.Returned);
 		}
 

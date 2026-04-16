@@ -266,18 +266,21 @@ namespace Workwear.Domain.Operations
 			return (beginCost - beginCost * (decimal)removePercent).Clamp(0, decimal.MaxValue);
 		}
 		#endregion
-		#region Методы обновленя операций
+		#region Методы обновления операций
 		public virtual void Update(
 			IUnitOfWork uow, 
 			BaseParameters baseParameters, 
 			IInteractiveQuestion askUser, 
 			ExpenseItem item, 
-			string signCardUid = null)
-		{
+			string signCardUid = null) {
+			if(item.ExpenseDoc.IssueDate == null)
+				throw new NullReferenceException(nameof(item.ExpenseDoc.IssueDate));
+			
 			//Внимание здесь сравниваются даты без времени.
-			if (item.ExpenseDoc.Date.Date != OperationTime.Date)
-				OperationTime = item.ExpenseDoc.Date;
+			if (item.ExpenseDoc.IssueDate.Value.Date != OperationTime.Date)
+				OperationTime = (DateTime)item.ExpenseDoc.IssueDate;
 
+			StartOfUse = OperationTime;
 			Employee = item.ExpenseDoc.Employee;
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
@@ -318,6 +321,7 @@ namespace Workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
+			StartOfUse = OperationTime;
 			Employee = item.Employee;
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
@@ -349,7 +353,7 @@ namespace Workwear.Domain.Operations
 			if(item.Document.Date.Date != OperationTime.Date)
 				OperationTime = item.Document.Date;
 
-			Employee = item.Document.EmployeeCard;
+			Employee = item.EmployeeCard;
 			Nomenclature = item.Nomenclature;
 			WearSize = item.WearSize;
 			Height = item.Height;
@@ -384,10 +388,11 @@ namespace Workwear.Domain.Operations
 			Employee = issueOperation.Employee;
 			Nomenclature = issueOperation.Nomenclature;
 			operationTime = date;
+			StartOfUse = null;
 			Issued = issueOperation.issued;
 			Returned = issueOperation.returned;
 			WarehouseOperation = null;
-			NormItem = issueOperation.normItem;;
+			NormItem = issueOperation.normItem;
 			ExpiryByNorm = null;
 			AutoWriteoffDate = null;
 			protectionTools = issueOperation.protectionTools;
@@ -431,11 +436,10 @@ namespace Workwear.Domain.Operations
 		private bool? lastAnswerRecalculateStartOfUse;
 		
 		public virtual void RecalculateStartOfUse(IssueGraph graph, BaseParameters baseParameters, IInteractiveQuestion askUser) {
+			StartOfUse = OperationTime;
 			if(!CheckRecalculateCondition())
 				return;
 			
-			StartOfUse = operationTime;
-
 			var amountAtEndDay = graph.UsedAmountAtEndOfDay(OperationTime.Date, this);
 			if(amountAtEndDay >= NormItem.Amount) {
 				//Ищем первый интервал где числящееся меньше нормы.
@@ -518,7 +522,7 @@ namespace Workwear.Domain.Operations
 
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if((Nomenclature?.UseBarcode ?? false) && BarcodeOperations.Count != Issued)
-				yield return new ValidationResult("Количество созданных штрихкодов должно соответствовать количеству выданного.");
+				yield return new ValidationResult("Количество созданных меток(штрихкодов) должно соответствовать количеству выданного.");
 			if(manualOperation) {
 				if(OperationTime < new DateTime(1990, 1, 1))
 					yield return new ValidationResult("Можно сохранить дату операции только после 1990г.");

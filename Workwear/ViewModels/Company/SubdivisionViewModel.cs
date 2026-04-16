@@ -6,16 +6,18 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Company
 {
-	public class SubdivisionViewModel : EntityDialogViewModelBase<Subdivision>
+	public class SubdivisionViewModel : EntityDialogViewModelBase<Subdivision>, IDialogDocumentation
 	{
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly ILifetimeScope autofacScope;
@@ -45,6 +47,11 @@ namespace Workwear.ViewModels.Company
 				.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#mvz");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 
 		#region Visible
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
@@ -54,5 +61,18 @@ namespace Workwear.ViewModels.Company
 		public EntityEntryViewModel<Warehouse> EntryWarehouse;
 		public EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 		#endregion
+
+		public bool EmployeesColorOn {
+			get => !String.IsNullOrEmpty(Entity.EmployeesColor);
+			set {
+				if(EmployeesColorOn != value) {
+					if(value)
+						Entity.EmployeesColor = "#FFFFFF";
+					else 
+						Entity.EmployeesColor = null;
+					OnPropertyChanged();
+				}
+			}
+		}
 	}
 }

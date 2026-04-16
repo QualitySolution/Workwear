@@ -8,20 +8,21 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Users;
 using Workwear.Models.Import;
 using Workwear.Repository.Company;
+using Workwear.Tools;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Communications 
 {
-	public class ClaimsViewModel : UowDialogViewModelBase 
+	public class ClaimsViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
-		
 		private readonly ClaimsManagerService claimsManager;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly CurrentUserSettings currentUserSettings;
@@ -44,7 +45,11 @@ namespace Workwear.ViewModels.Communications
 			messagesSelectClaims = new List<ClaimMessage>();
 			Claims = new List<Claim>();
 		}
-		
+
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("mobile-app.html#claims");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
 		#region View
 		

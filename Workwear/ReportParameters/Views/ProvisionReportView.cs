@@ -1,5 +1,6 @@
 ﻿using System;
 using QS.Views;
+using Workwear.Domain.Stock;
 using Workwear.ReportParameters.ViewModels;
 
 namespace Workwear.ReportParameters.Views {
@@ -10,10 +11,15 @@ namespace Workwear.ReportParameters.Views {
 			
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
-			choiceemployeegroupview2.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
-			choiceemployeegroupview2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			expanderEmployeeGroups.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			
+			labelIssueType.Binding.AddBinding(ViewModel, v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
+			comboIssueType.ItemsEnum = typeof(IssueType);
+			comboIssueType.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.IssueType, w => w.SelectedItemOrNull)
+				.AddBinding(v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			ycheckbuttonExcludeInVacation.Binding.AddBinding(ViewModel, v => v.ExcludeInVacation, w => w.Active).InitializeFromSource();
 			ycheckbuttonShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
 			ycheckbuttonShowSex.Binding.AddBinding(ViewModel, v=>v.VisibleShowSex, w=>w.Visible).InitializeFromSource();

@@ -6,7 +6,7 @@ namespace workwear.Tools.IdentityCards
 {
 	public interface ICardReaderService : IDisposable
 	{
-		event EventHandler<CardStateEventArgs> СardStatusRead;
+		event EventHandler<CardStateEventArgs> CardStatusRead;
 
 		List<DeviceInfo> Devices { get; }
 		BindingList<CardType> CardFamilies { get; }

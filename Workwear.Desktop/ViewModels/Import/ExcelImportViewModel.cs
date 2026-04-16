@@ -11,14 +11,16 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Models.Import;
 using Workwear.Repository.Company;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Nhibernate;
 
 namespace Workwear.ViewModels.Import
 {
-	public class ExcelImportViewModel : UowDialogViewModelBase
+	public class ExcelImportViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -59,6 +61,11 @@ namespace Workwear.ViewModels.Import
 			}
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl(ImportModel.DocumentationLink);
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
+		
 		#region Общее
 		private int currentStep;
 		public virtual int CurrentStep {

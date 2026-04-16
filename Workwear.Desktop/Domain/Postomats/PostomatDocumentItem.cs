@@ -31,7 +31,7 @@ namespace Workwear.Domain.Postomats {
 		}
 
 		private Barcode barcode;
-		[Display(Name = "Штрихкод")]
+		[Display(Name = "Метка(штрихкод)")]
 		public virtual Barcode Barcode {
 			get => barcode;
 			set => SetField(ref barcode, value);
@@ -70,6 +70,13 @@ namespace Workwear.Domain.Postomats {
 		public virtual uint LocationCell {
 			get => locationCell;
 			set => SetField(ref locationCell, value);
+		}
+				
+		private DateTime? dispenseTime;
+		[Display(Name = "Дата выдачи")]
+		public virtual DateTime? DispenseTime {
+			get => dispenseTime;
+			set => SetField(ref dispenseTime, value);
 		}
 		#endregion
 		

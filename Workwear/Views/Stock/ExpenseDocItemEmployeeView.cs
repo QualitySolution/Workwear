@@ -4,6 +4,7 @@ using System.Reflection;
 using Gtk;
 using QS.Dialog.GtkUI;
 using QSWidgetLib;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Features;
@@ -19,9 +20,9 @@ namespace Workwear.Views.Stock
 			this.Build();
 		}
 
-		private ExpenseDocItemsEmployeeViewModel viewModel;
+		private ExpenseEmployeeItemsViewModel viewModel;
 
-		public ExpenseDocItemsEmployeeViewModel ViewModel {
+		public ExpenseEmployeeItemsViewModel ViewModel {
 			get => viewModel;
 			set {
 				viewModel = value;
@@ -33,28 +34,29 @@ namespace Workwear.Views.Stock
 		{
 			CreateTable();
 			ytreeItems.ItemsDataSource = ViewModel.ObservableItems;
+			
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
 			ytreeItems.ButtonReleaseEvent += YtreeItems_ButtonReleaseEvent;
 			ytreeItems.Binding.AddBinding(viewModel, v => v.SelectedItem, w => w.SelectedRow);
 
 			labelSum.Binding
-				.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp)
-				.InitializeFromSource();
-
+				.AddBinding(ViewModel, v => v.Sum, w => w.LabelProp).InitializeFromSource();
 			buttonAdd.Binding
-				.AddBinding(ViewModel, vm => vm.CanAddItems, w => w.Sensitive)
-				.InitializeFromSource();
-
-			buttonCreateOrDeleteBarcodes.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
-				.AddBinding(v => v.SensitiveCreateBarcodes, w => w.Sensitive)
-				.AddBinding(v => v.ButtonCreateOrRemoveBarcodesTitle, w => w.Label)
-				.InitializeFromSource();
+				.AddBinding(ViewModel, vm => vm.CanAddItems, w => w.Sensitive).InitializeFromSource();
+			buttonCreateOrRenewBarcodes.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.CanCreateBarcode, w => w.Visible)
+				.AddBinding(v => v.NeedUpdateBarcodes, w => w.Sensitive)
+				.AddBinding(v => v.ButtonCreateOrRenewBarcodesTitle, w => w.Label).InitializeFromSource();
 			buttonPrintBarcodes.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
-				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive)
-				.InitializeFromSource();
+				.AddBinding(v => v.CanPrintBarcode, w => w.Visible)
+				.AddBinding(v => v.SensitiveBarcodesPrint, w => w.Sensitive).InitializeFromSource();
+			buttonSetBarcodes.Binding.AddSource(ViewModel)
+                .AddBinding(v => v.CanSetBarcode, w => w.Visible)
+                .AddBinding(v => v.CanAddBarcodeForSelected, w => w.Sensitive).InitializeFromSource();
 
+			buttonShowAllSize.Binding
+				.AddBinding(ViewModel,v => v.SensitiveShowAllSize, w => w.Sensitive).InitializeFromSource();
+			
 			ViewModel.PropertyChanged += PropertyChanged;
 			ViewModel.CalculateTotal();
 		}
@@ -74,23 +76,24 @@ namespace Workwear.Views.Stock
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.SizeType != null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => ViewModel.SizeService.GetSize(viewModel.expenseEmployeeViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
+					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
 					.SetDisplayFunc(x => x.Name)
 					.FillItems(ViewModel.Owners, "Нет")
-					.Editing()
+					.Editing(ViewModel.CanEdit)	
 				.AddColumn("Износ").AddTextRenderer(e => (e.WearPercent).ToString("P0"))
-				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1))
+				.AddColumn("Количество").AddNumericRenderer(e => e.Amount).Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit)
 					.AddTextRenderer(e => 
 					e.Nomenclature != null && e.Nomenclature.Type != null && e.Nomenclature.Type.Units != null ? e.Nomenclature.Type.Units.Name : null)
-				.AddColumn("Штрихкод").Visible(ViewModel.VisibleBarcodes)
-					.AddTextRenderer(x => x.BarcodesText).AddSetter((c,n) => c.Foreground = n.BarcodesTextColor)
+				.AddColumn("Маркировка").Visible(ViewModel.VisibleBarcodes)
+					.AddTextRenderer(x => x.BarcodeTextFunc())
+					.AddSetter((c,n) => c.Foreground = ViewModel.BarcodesTextColor(n))
 				.AddColumn("Отметка о выдаче").Visible(ViewModel.VisibleSignColumn)
 						.AddPixbufRenderer(x => x.EmployeeIssueOperation == null || 
 						                        String.IsNullOrEmpty(x.EmployeeIssueOperation.SignCardKey) ? null : cardIcon)
@@ -145,21 +148,32 @@ namespace Workwear.Views.Stock
 				subItemChangeProtectionTools.Append(menuItemChangePtFull);
 					
 			itemChangeProtectionTools.Submenu = subItemChangeProtectionTools;
+			itemChangeProtectionTools.Sensitive = ViewModel.CanEdit;
 			menu.Add(itemChangeProtectionTools);
 			
+			if(ViewModel.featuresService.Available(WorkwearFeature.Barcodes) && selected?.Nomenclature != null && selected.Nomenclature.UseBarcode) {
+				var itemRemoveBarcode = new MenuItem("Отвязать метку");
+				var subItemRemoveBarcode = new Menu();
+
+				foreach(BarcodeOperation bOpeation in selected.EmployeeIssueOperation.BarcodeOperations) {
+					var opItem = new MenuItem(bOpeation.Barcode.Title);
+					opItem.ButtonPressEvent += (sender, e) => ViewModel.RemoveBarcodeOperation(selected, bOpeation);
+					subItemRemoveBarcode.Append(opItem);
+				}
+
+				itemRemoveBarcode.Submenu = subItemRemoveBarcode;
+				menu.Add(itemRemoveBarcode);
+			}
+
 			menu.ShowAll();
 			menu.Popup();
 		}
 
-		void ItemOpenProtection_Activated(object sender, EventArgs e)
-		{
+		void ItemOpenProtection_Activated(object sender, EventArgs e) =>
 			viewModel.OpenProtectionTools((sender as MenuItemId<ExpenseItem>).ID);
-		}
-
-		void Item_Activated(object sender, EventArgs e)
-		{
+		void Item_Activated(object sender, EventArgs e) =>
 			viewModel.OpenNomenclature((sender as MenuItemId<ExpenseItem>).ID);
-		}
+		
 		#endregion
 		
 		#region События
@@ -174,25 +188,21 @@ namespace Workwear.Views.Stock
 		#endregion
 
 		#region Кнопки
-		protected void OnButtonDelClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonDelClicked(object sender, EventArgs e) =>
 			viewModel.Delete(ytreeItems.GetSelectedObject<ExpenseItem>());
-		}
 
-		void YtreeItems_Selection_Changed(object sender, EventArgs e)
-		{
-			buttonDel.Sensitive = buttonShowAllSize.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+		void YtreeItems_Selection_Changed(object sender, EventArgs e) {
+			buttonDel.Sensitive = ViewModel.CanEdit && ytreeItems.Selection.CountSelectedRows() > 0;
+			buttonShowAllSize.Sensitive =
+				ViewModel.SensitiveShowAllSize && ViewModel.CanEdit && ytreeItems.Selection.CountSelectedRows() > 0;
 		}
+			
 
-		protected void OnButtonAddClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItem();
-		}
 
-		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e)
-		{
+		protected void OnButtonShowAllSizeClicked(object sender, EventArgs e) =>
 			viewModel.ShowAllSize(ytreeItems.GetSelectedObject<ExpenseItem>());
-		}
 
 		protected void OnButtonColorsLegendClicked(object sender, EventArgs e)
 		{
@@ -202,7 +212,7 @@ namespace Workwear.Views.Stock
 				"<span color='gray'>●</span> — выдача не требуется\n" +
 				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
 				"<span color='Purple'>●</span> — выдается больше необходимого\n" +
-				"<span color='red'>●</span> — отсутствует номенклатура\n" +
+				"<span color='red'>●</span> — отсутствует номенклатура или количество\n" +
 				"<span color='Dark red'>●</span> — указано количество без номенклатуры\n" +
 				"<span color='Burlywood'>●</span> — позиция выдается коллективно\n" +
 				"<span color='#7B3F00'>●</span> — выдача коллективной номенклатуры"
@@ -215,8 +225,12 @@ namespace Workwear.Views.Stock
 		}
 
 		protected void OnButtonPrintBarcodesClicked(object sender, EventArgs e) {
-			ViewModel.PrintBarcodes();
+			ViewModel.PrintBarcodesEAN13();
 			ytreeItems.YTreeModel.EmitModelChanged();
+		}
+
+		protected void OnButtonSetBarcodesClicked(object sender, EventArgs e) {
+			ViewModel.AddBarcodeFromScan(ytreeItems.GetSelectedObject<ExpenseItem>());
 		}
 		#endregion
 	}

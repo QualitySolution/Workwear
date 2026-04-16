@@ -999,7 +999,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox61">
-                      <Value></Value>
+                      <Value>=First({okpo}, 'Sheet')</Value>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -1016,6 +1016,7 @@
                           <Top>2pt</Top>
                           <Bottom>2pt</Bottom>
                         </BorderWidth>
+                        <TextAlign >Center</TextAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -2014,7 +2015,7 @@
     <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
-    <ReportItems >
+    <ReportItems>
       <Textbox Name="Textbox92">
         <Height>12pt</Height>
         <Width>3in</Width>
@@ -2028,7 +2029,7 @@
           <BorderWidth />
         </Style>
       </Textbox>
-      <Textbox Name="Textbox94" >
+      <Textbox Name="Textbox94">
         <Height>12pt</Height>
         <Width>266.45pt</Width>
         <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
@@ -2043,7 +2044,7 @@
           <PaddingRight>0pt</PaddingRight>
         </Style>
         <CanGrow>true</CanGrow>
-        <Visibility >
+        <Visibility>
           <Hidden>=!{?printPromo}</Hidden>
         </Visibility>
       </Textbox>
@@ -2161,6 +2162,7 @@ ORDER BY employees.last_name, employees.first_name, employees.patronymic_name</C
                                                                                                        as doc_number,
     issuance_sheet.date,
     organizations.name as organization,
+    organizations.okpo as okpo,
     subdivisions.name as subdivision,
     subdivisions.code as subdivision_code,
     CONCAT_WS('',
@@ -2242,6 +2244,10 @@ WHERE
         </Field>
         <Field Name="transfer_agent_post">
           <DataField>transfer_agent_post</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="okpo">
+          <DataField>okpo</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>

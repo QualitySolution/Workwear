@@ -3,15 +3,21 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company {
-	public class CostCenterJournalViewModel : EntityJournalViewModelBase<CostCenter, CostCenterViewModel, CostCenterJournalNode>
+	public class CostCenterJournalViewModel : EntityJournalViewModelBase<CostCenter, CostCenterViewModel, CostCenterJournalNode>, IDialogDocumentation
 	{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#mvz");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(CostCenter));
+		#endregion
 		public CostCenterJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
 			INavigationManager navigationManager,

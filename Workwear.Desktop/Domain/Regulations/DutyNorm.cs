@@ -4,19 +4,20 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NLog;
 using QS.DomainModel.Entity;
-using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Stock;
+using Workwear.Models.Operations;
 
 namespace Workwear.Domain.Regulations {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "дежурные нормы",
 		Nominative = "дежурная норма",
 		PrepositionalPlural = "дежурных нормах",
-		Genitive = "дежурной нормы"
+		Genitive = "дежурной нормы",
+		GenitivePlural = "дежурных норм"
 	)]
 	[HistoryTrace]
 	public class DutyNorm : PropertyChangedBase, IDomainObject {
@@ -69,15 +70,12 @@ namespace Workwear.Domain.Regulations {
 			get => dateTo;
 			set => SetField(ref dateTo, value);
 		}
-		
-//TODO Не реализовано				
-		private bool archive;
-		[Display(Name = "Архивная(отключена)")]
-		public virtual bool Archive {
-			get => archive;
-			set => SetField(ref archive, value);
-		}
-		
+		private bool archival;
+		[Display(Name = "Архивная")]
+		public virtual bool Archival {
+			get => archival;
+			set => SetField(ref archival, value);
+		} 
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
@@ -128,12 +126,31 @@ namespace Workwear.Domain.Regulations {
 			return null;
 		}
 
-		public virtual void UpdateItems(IUnitOfWork uow) {
-			foreach(var item in items)
-				item.Update(uow);
+		public virtual void UpdateItems(DutyNormIssueModel issueModel) {
+			issueModel.FillDutyNormItems(Items.ToArray());
+			foreach(var item in Items) 
+				item.UpdateNextIssue();
 			OnPropertyChanged(nameof(Items));
 		}
 		#endregion
+		
+		/// <summary>
+		/// Заполняет текущую дежурную норму данными из дежурной нормы, переданной в параметре. 
+		/// </summary>
+		public virtual void CopyFromDutyNorm(DutyNorm dutyNorm) {
+			ResponsibleLeader = dutyNorm.ResponsibleLeader;
+			ResponsibleEmployee = dutyNorm.ResponsibleEmployee;
+			Subdivision= dutyNorm.Subdivision;
+			Name = dutyNorm.Name;
+			DateFrom = dutyNorm.DateFrom;
+			DateTo = dutyNorm.DateTo;
+			Comment = dutyNorm.Comment;
+
+			foreach(var item in dutyNorm.Items) {
+				Items.Add(item.Copy(this));
+			}
+			
+		}
 
 	}
 }

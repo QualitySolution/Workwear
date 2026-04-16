@@ -4,16 +4,22 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Stock;
+using Workwear.Tools;
 using Workwear.ViewModels.Stock;
 
 namespace workwear.Journal.ViewModels.Stock 
 {
-	public class OwnerJournalViewModel : EntityJournalViewModelBase<Owner, OwnerViewModel, OwnerJournalNode> 
+	public class OwnerJournalViewModel : EntityJournalViewModelBase<Owner, OwnerViewModel, OwnerJournalNode>, IDialogDocumentation
 	{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#owners");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Owner));
+		#endregion
 		public OwnerJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 

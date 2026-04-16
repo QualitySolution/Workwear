@@ -1,5 +1,4 @@
-﻿using System;
-using QS.Views;
+﻿using QS.Views;
 using Workwear.Journal.Filter.ViewModels.Postomats;
 
 namespace Workwear.Journal.Filter.Views.Postomats {

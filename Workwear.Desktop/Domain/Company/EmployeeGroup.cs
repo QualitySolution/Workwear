@@ -11,7 +11,8 @@ namespace Workwear.Domain.Company {
 	[Appellative(Gender = GrammaticalGender.Feminine,
 		NominativePlural = "группы сотрудников",
 		Nominative = "группа сотрудников",
-		Genitive = "группы сотрудников"
+		Genitive = "группы сотрудников",
+		GenitivePlural = "групп сотрудников"
 	)]
 	[HistoryTrace]
 	public class EmployeeGroup: PropertyChangedBase, IDomainObject , IValidatableObject{

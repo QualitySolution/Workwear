@@ -14,7 +14,7 @@ namespace Workwear.Sql
 			return new CreationScript(
 				Assembly.GetAssembly(typeof(ScriptsConfiguration)),
 				"Workwear.Sql.Scripts.new_empty.sql",
-				new Version(2, 9)
+				new Version(2, 10, 11)
 			);
 		}
 
@@ -227,17 +227,97 @@ namespace Workwear.Sql
 				new Version(2, 8, 28),
 				"Workwear.Sql.Scripts.2.8.28.sql"
 			);
-
 			configuration.AddUpdate(
 				new Version(2, 8, 28),
-				new Version(2, 9),
-				"Workwear.Sql.Scripts.2.9.sql"
+				new Version(2, 8, 33),
+				"Workwear.Sql.Scripts.2.8.33.sql"
 			);
-			
+			configuration.AddUpdate(
+				new Version(2, 8, 33),
+				new Version(2, 8, 35),
+				"Workwear.Sql.Scripts.2.8.35.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 35),
+				new Version(2, 8, 36),
+				"Workwear.Sql.Scripts.2.8.36.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 8, 36),
+				new Version(2, 9),
+				"Workwear.Sql.Scripts.2.9.sql",
+			delegate (DbConnection connection) {
+				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employees"); 
+				DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employee_groups"); 
+				DropForeignKeyIfExist(connection, "employee_group_items", "employee_group_items_ibfk_1"); 
+				DropForeignKeyIfExist(connection, "employee_group_items", "employee_group_items_ibfk_2"); 
+				DropForeignKeyIfExist(connection, "stock_income", "fk_stock_income_1_idx"); 
+				DropForeignKeyIfExist(connection, "stock_income", "fk_stock_income_1"); 
+				DropForeignKeyIfExist(connection, "stock_income", "fk_stock_income_warehouse"); 
+			});
 			configuration.AddUpdate(
 				new Version(2, 9),
 				new Version(2, 9, 1),
 				"Workwear.Sql.Scripts.2.9.1.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 9, 1),
+				new Version(2, 9, 2),
+				"Workwear.Sql.Scripts.2.9.2.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 9, 2),
+				new Version(2, 10),
+				"Workwear.Sql.Scripts.2.10.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 10),
+				new Version(2, 10, 1),
+				"Workwear.Sql.Scripts.2.10.1.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 10, 1),
+				new Version(2, 10, 2),
+				"Workwear.Sql.Scripts.2.10.2.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 10, 2),
+				new Version(2, 10, 3),
+				"Workwear.Sql.Scripts.2.10.3.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 10, 3),
+				new Version(2, 10, 4),
+				"Workwear.Sql.Scripts.2.10.4.sql",
+				delegate(DbConnection connection) {
+					DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employees");
+					DropForeignKeyIfExist(connection, "employee_group_items", "foreign_key_employee_groups_items_employee_groups");
+				}
+			);
+			configuration.AddUpdate(
+				new Version(2, 10, 4),
+				new Version(2, 10, 6),
+				"Workwear.Sql.Scripts.2.10.6.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 10, 6),
+				new Version(2, 10, 7),
+				"Workwear.Sql.Scripts.2.10.7.sql"
+			);
+			configuration.AddUpdate(
+				new Version(2, 10, 7),
+				new Version(2, 10, 8),
+				"Workwear.Sql.Scripts.2.10.8.sql"
+			);
+			configuration.AddUpdate(
+            	new Version(2, 10, 8),
+            	new Version(2, 10, 9),
+            	"Workwear.Sql.Scripts.2.10.9.sql"
+            );
+			configuration.AddUpdate(
+				new Version(2, 10, 9),
+				new Version(2, 10, 11),
+				"Workwear.Sql.Scripts.2.10.11.sql"
 			);
 			return configuration;
 		}

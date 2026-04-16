@@ -19,6 +19,7 @@ namespace Workwear.HibernateMapping.Postomats
 			Map(x => x.LocationShelf).Column("loc_shelf");
 			Map(x => x.LocationCell).Column("loc_cell");
 			Map(x => x.CellNumber).Column("cell_number");
+			Map(x => x.DispenseTime).Column("dispense_time");
 
 			References (x => x.Document).Column ("document_id").Not.Nullable ();
 			References (x => x.Employee).Column("employee_id").Not.Nullable ();

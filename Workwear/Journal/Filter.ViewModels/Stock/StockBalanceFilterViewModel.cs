@@ -77,6 +77,11 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 				}
 			}
 		}
+		private bool sensitiveDate = true;
+		public virtual bool SensitiveDate {
+			get => sensitiveDate;
+			set => SetField(ref sensitiveDate, value);
+		}
 
 		private bool showWithBarcodes;
 		public virtual bool ShowWithBarcodes {

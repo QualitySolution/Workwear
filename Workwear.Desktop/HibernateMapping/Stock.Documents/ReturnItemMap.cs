@@ -15,7 +15,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map (x => x.Amount).Column ("quantity");
-			Map (x => x.СommentReturn).Column ("comment_return");
+			Map (x => x.CommentReturn).Column ("comment_return");
 
 			References(x => x.Document).Column("stock_return_id");
 			References (x => x.Nomenclature).Column ("nomenclature_id");
@@ -23,6 +23,9 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Cascade.All().Not.Nullable();
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
+			References(x => x.EmployeeCard).Column("employee_id");
+			References(x => x.DutyNorm).Column("duty_norm_id");
+			References(x=>x.ReturnFromDutyNormOperation).Column("duty_norm_issue_operation_id").Cascade.All();
 		}
 	}
 }

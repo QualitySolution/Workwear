@@ -23,6 +23,9 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			References(x => x.Warehouse).Column("warehouse_id").Not.Nullable();
 			References (x => x.ResponsibleEmployee).Column ("responsible_employee_id");
 
+			HasOne(x => x.IssuanceSheet)
+				.PropertyRef(x => x.ExpenseDutyNorm);
+
 			HasMany (x => x.Items)
 				.Inverse()
 				.KeyColumn ("stock_expense_duty_norm_id").Not.KeyNullable ()

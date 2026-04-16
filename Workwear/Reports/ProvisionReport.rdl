@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
-  <PageHeight>11in</PageHeight>
-  <PageWidth>8.5in</PageWidth>
+  <PageHeight>11.7in</PageHeight>
+  <PageWidth>8.3in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -15,13 +15,14 @@
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT *,
-       ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
+       IF(tabel.protection_tools_dispenser = 1, 100, ROUND(tabel.balance / tabel.need * 100, 0)) AS 'provision_percent'
 FROM (SELECT
           COUNT(*) AS 'count_employee',
           IF(@group_by_subdivision, employees.subdivision_id, NULL) AS 'subdivision_id',
           IF(@group_by_subdivision, subdivisions.name, NULL) AS 'subdivision_name',
           protection_tools.id AS 'protection_tools_id',
           protection_tools.name AS 'protection_tools_name',
+          protection_tools.dispenser AS 'protection_tools_dispenser',
           if(@show_sex,
              IF(employees.sex = 'M','М', IF(employees.sex = 'F','Ж','')),
              null)
@@ -67,7 +68,7 @@ FROM (SELECT
                              employeeHeightAlias.size_type_id = heightTypeAlias.id)
                LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
                JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
-      WHERE employees.dismiss_date IS NULL
+      WHERE (employees.dismiss_date &gt; CURRENT_DATE OR employees.dismiss_date IS NULL)
         AND ((-1 IN (@employee_groups_ids))
           OR (@without_groups AND (NOT EXISTS
               (SELECT * FROM employee_group_items as gi
@@ -77,6 +78,7 @@ FROM (SELECT
                         AND gi2.employee_group_id IN (@employee_groups_ids))) )
         AND ((-1 IN (@protection_tools_ids)) OR (protection_tools.id IN (@protection_tools_ids)))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
+        AND (@issue_type = '' OR item_types.issue_type = @issue_type)
         AND (NOT @exclude_in_vacation
           OR (NOT EXISTS(SELECT *
                          FROM employees_vacations AS vac
@@ -130,6 +132,9 @@ FROM (SELECT
           <QueryParameter Name="group_by_norm_amount">
             <Value>=Parameters!group_by_norm_amount</Value>
           </QueryParameter>
+          <QueryParameter Name="issue_type">
+            <Value>=Parameters!issue_type</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
@@ -148,6 +153,10 @@ FROM (SELECT
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="protection_tools_dispenser">
+          <DataField>protection_tools_dispenser</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
         <Field Name="employee_sex">
           <DataField>employee_sex</DataField>
@@ -203,7 +212,7 @@ FROM (SELECT
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>240.3pt</Width>
+            <Width>232.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>27.4pt</Width>
@@ -212,13 +221,13 @@ FROM (SELECT
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>46.3pt</Width>
+            <Width>44.7pt</Width>
             <Visibility>
               <Hidden>=!{?show_size}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>46.7pt</Width>
+            <Width>47.5pt</Width>
             <Visibility>
               <Hidden>=!{?show_size}</Hidden>
             </Visibility>
@@ -230,10 +239,10 @@ FROM (SELECT
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>46.0pt</Width>
+            <Width>43.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>60.2pt</Width>
+            <Width>53.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>51.9pt</Width>
@@ -766,7 +775,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="balance">
-                      <Value>=Fields!balance.Value</Value>
+                      <Value>=Iif(Fields!balance.Value = 0 and Fields!protection_tools_dispenser.Value = 1, "", Fields!balance.Value)</Value>
                       <CanGrow>false</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -943,7 +952,7 @@ FROM (SELECT
       </Table>
       <Textbox Name="Textbox1">
         <Height>20.30pt</Height>
-        <Width>576.68pt</Width>
+        <Width>560.15pt</Width>
         <Value>= "Отчёт по обеспечености сотрудников на " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
         <ZIndex>1</ZIndex>
         <Left>0.00pt</Left>
@@ -1108,6 +1117,13 @@ FROM (SELECT
       </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="issue_type">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>

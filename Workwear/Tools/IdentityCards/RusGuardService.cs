@@ -121,7 +121,7 @@ namespace workwear.Tools.IdentityCards
 
 		#endregion
 		#region Авто опрос
-		public event EventHandler<CardStateEventArgs> СardStatusRead;
+		public event EventHandler<CardStateEventArgs> CardStatusRead;
 
 		public bool IsAutoPoll { get; private set; }
 
@@ -162,7 +162,7 @@ namespace workwear.Tools.IdentityCards
 			var result = new CardStateEventArgs(pinStates, statusType, cardInfo, cardMemory);
 			if(statusType != RG_DEVICE_STATUS_TYPE.DS_NOCARD)
 				logger.Debug($"Прочитана карта: {result.CardUid}");
-			СardStatusRead?.Invoke(this, result);
+			CardStatusRead?.Invoke(this, result);
 		}
 
 		public void StopAutoPoll()

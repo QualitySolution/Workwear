@@ -1,0 +1,57 @@
+﻿using System;
+using System.Linq;
+using QS.Dialog;
+using QS.Navigation;
+using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
+using Workwear.Domain.Supply;
+
+namespace Workwear.ViewModels.Supply {
+	public class ShipmentPeriodViewModel: DialogViewModelBase, IWindowDialogSettings {
+		private ShipmentItem[] selectedItems;
+		public ShipmentPeriodViewModel(
+			INavigationManager navigation,
+			ShipmentItem[] selectedItems
+		) :  base(navigation) {
+			this.selectedItems = selectedItems ?? throw new ArgumentNullException(nameof(selectedItems));
+			StartPeriod = this.selectedItems.Select(x => x.StartPeriod)
+				.FirstOrDefault(x => x != null);
+			EndPeriod = this.selectedItems.Select(x => x.EndPeriod)
+				.FirstOrDefault(x => x != null);
+			Title = "Заполнение периода";
+		}
+
+		#region Свойства View
+		private DateTime? startPeriod;
+		public DateTime? StartPeriod {
+			get => startPeriod;
+			set => SetField(ref startPeriod, value);
+		}
+		private DateTime? endPeriod;
+		public DateTime? EndPeriod {
+			get => endPeriod;
+			set => SetField(ref endPeriod, value);
+		}
+		#endregion
+
+		#region Действия View
+
+		public void FillPeriod() {
+			foreach(var item in selectedItems) {
+				item.StartPeriod = StartPeriod;
+				item.EndPeriod = EndPeriod;
+			}
+			Close(false, CloseSource.Save);
+		}
+
+		#endregion
+		
+		#region IWindowDialogSettings implementation
+		public bool IsModal { get; } = true;
+		public bool EnableMinimizeMaximize { get; } = false;
+		public bool Resizable { get; } = true;
+		public bool Deletable { get; } = true;
+		public WindowGravity WindowPosition { get; } = WindowGravity.Center;
+		#endregion
+	}
+}

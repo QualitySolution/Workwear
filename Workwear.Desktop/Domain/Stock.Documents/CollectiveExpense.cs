@@ -9,6 +9,7 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
+using Workwear.Domain.Visits;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 
@@ -57,6 +58,13 @@ namespace Workwear.Domain.Stock.Documents
 			set => SetField(ref issuanceSheet, value);
 		}
 
+		private IssuanceRequest issuanceRequest;
+		[Display(Name = "Заявка на выдачу")]
+		public virtual IssuanceRequest IssuanceRequest {
+			get => issuanceRequest;
+			set => SetField(ref issuanceRequest, value);
+		}
+
 		#endregion
 
 		#region Расчетные
@@ -79,6 +87,10 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.All(i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
 					new[] { nameof(Items)});
+						
+			if(Items.Any(i => i.Id != 0 && i.Amount <= 0))
+				yield return new ValidationResult ("Нельзя в соханённом документе изменить в строке количество на 0. Но строку можжно удалить.", 
+					new[] { nameof (Items)});
 
 			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
 				yield return new ValidationResult (
@@ -176,7 +188,7 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void CleanupItems()
 		{
-			foreach(var item in Items.Where(x => x.Amount <= 0).ToList()) {
+			foreach(var item in Items.Where(x =>  x.Id == 0 && x.Amount <= 0).ToList()) {
 				RemoveItem(item);
 			}
 		}

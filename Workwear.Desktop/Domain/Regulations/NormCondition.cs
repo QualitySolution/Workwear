@@ -11,7 +11,8 @@ namespace Workwear.Domain.Regulations
 	[Appellative(Gender = GrammaticalGender.Neuter,
 		NominativePlural = "условия нормы",
 		Nominative = "условие нормы",
-		Genitive = "условия нормы"
+		Genitive = "условия нормы",
+		GenitivePlural = "условий нормы"
 		)]
 	[HistoryTrace]
 	public class NormCondition : PropertyChangedBase, IDomainObject, IValidatableObject

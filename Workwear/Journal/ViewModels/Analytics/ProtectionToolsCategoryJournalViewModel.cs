@@ -3,9 +3,9 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
 using Workwear.Domain.Analytics;
 using Workwear.ViewModels.Analytics;
 

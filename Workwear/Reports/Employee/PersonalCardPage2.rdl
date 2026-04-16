@@ -805,7 +805,7 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    IFNULL(nomenclature.name, protection_tools.name) AS name_siz,
+    IF(@isGenericName, protection_tools.name, IFNULL(nomenclature.name, protection_tools.name)) AS name_siz,
     (
     SELECT
         stock_income_items.certificate
@@ -884,7 +884,8 @@ CONCAT_WS(
     ON
         returned.issued_operation_id = operation_issued_by_employee.id
     WHERE
-        operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0
+        operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !protection_tools.archival
+        AND (@startDateOfOperations = '' OR DATE(operation_issued_by_employee.operation_time) &gt;= NULLIF(@startDateOfOperations, ''))
     GROUP BY
         operation_issued_by_employee.id
     ORDER BY
@@ -898,6 +899,12 @@ CONCAT_WS(
           </QueryParameter>
           <QueryParameter Name="isDocNumberInReturnSign">
             <Value>={?isDocNumberInReturnSign}</Value>
+          </QueryParameter>
+          <QueryParameter Name="startDateOfOperations">
+            <Value>={?startDateOfOperations}</Value>
+          </QueryParameter>
+          <QueryParameter Name="isGenericName">
+            <Value>={?isGenericName}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -973,6 +980,20 @@ CONCAT_WS(
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="startDateOfOperations">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isGenericName">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>

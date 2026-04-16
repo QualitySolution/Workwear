@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 using QS.DomainModel.Entity;
 
 namespace Workwear.Domain.Communications
 {
 	[Appellative(Gender = GrammaticalGender.Masculine,
-		NominativePlural = "шаблоны",
-		Nominative = "шаблон")]
+		NominativePlural = "шаблоны уведомлений",
+		Nominative = "шаблон уведомления",
+		Genitive = "шаблона уведомления",
+		GenitivePlural = "шаблонов уведомлений")]
 	public class MessageTemplate : PropertyChangedBase, IDomainObject
 	{
 		public virtual int Id { get; set; }

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
@@ -13,7 +15,8 @@ namespace Workwear.Domain.Postomats {
 	[Appellative(Gender = GrammaticalGender.Masculine, 
 		NominativePlural = "документы постамата",
 		Nominative = "документ постамата",
-		Genitive = "документ постамата")]
+		Genitive = "документа постамата",
+		GenitivePlural = "документов постамата")]
 	[HistoryTrace]
 	public class PostomatDocument : PropertyChangedBase, IDomainObject, IValidatableObject {
 		#region Cвойства	
@@ -89,7 +92,7 @@ namespace Workwear.Domain.Postomats {
 				Location = location,
 			};
 			Items.Add(newItem);
-			claim.ChangeState(ClaimState.InTransit, TerminalId, user, $"Перемещение в постамат {Postomat.Id}: {Postomat.Name}({Postomat.Location})");
+			claim.ChangeState(ClaimState.DeliveryToDispenseTerminal, TerminalId, user, $"Перемещение в постамат {Postomat.Id}: {Postomat.Name}({Postomat.Location})");
 		}
 
 		#endregion
@@ -98,6 +101,28 @@ namespace Workwear.Domain.Postomats {
 				yield return new ValidationResult("Не выбран постамат.", new[] { nameof(TerminalId) });
 			if(Items.Count == 0)
 				yield return new ValidationResult("Не заполнены строки документа.", new[] { nameof(Items) });
+
+			if(status != DocumentStatus.Deleted) {
+				using(var uow = (validationContext.Items[nameof(IUnitOfWorkFactory)] as IUnitOfWorkFactory)?.CreateWithoutRoot()) {
+					PostomatDocument postomatDocumentAlias = null;
+
+					var fullCells = uow.Query<PostomatDocumentItem>()
+						.Left.JoinAlias(x => x.Document, () => postomatDocumentAlias)
+						.Where(() => postomatDocumentAlias.TerminalId == Postomat.Id)
+						.Where(() => postomatDocumentAlias.Id != this.Id)
+						.Where(x => x.DispenseTime == null)
+						.List()
+						.Select(i => i.Location);
+					foreach(var item in Items)
+						if(fullCells.Contains(item.Location)) {
+							yield return new ValidationResult($"Ячейка {item.Location.Title} уже занята, назначьте другую.",
+								new[] { nameof(Items) });
+							item.Location = new CellLocation(null, 0, 0, 0);
+						}
+					OnPropertyChanged(nameof(Items));
+				}
+			}
+
 			foreach(var item in Items) {
 				if(item.Location.IsEmpty)
 					yield return new ValidationResult($"Не заполнено место хранения для номенклатуры {item.Nomenclature.Name}.", new[] { nameof(Items) });

@@ -40,17 +40,19 @@ namespace workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckExcludeInVacation;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckShowSize;
+
 		private global::Gamma.Widgets.yEnumComboBox yenumIssueType;
 
 		private global::Gtk.Expander expander1;
 
-		private global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView choiceprotectiontoolsview1;
+		private global::QS.Views.Control.ChoiceListView choiceprotectiontoolsview1;
 
 		private global::Gtk.Label GtkLabel11;
 
 		private global::Gtk.Expander expander2;
 
-		private global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView choiceemployeegroupview1;
+		private global::QS.Views.Control.ChoiceListView choiceemployeegroupview1;
 
 		private global::Gtk.Label GtkLabel13;
 
@@ -67,7 +69,7 @@ namespace workwear.ReportParameters.Views
 			this.dialog1_VBox.Name = "dialog1_VBox";
 			this.dialog1_VBox.BorderWidth = ((uint)(2));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table(((uint)(8)), ((uint)(2)), false);
+			this.table1 = new global::Gtk.Table(((uint)(9)), ((uint)(2)), false);
 			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
@@ -264,6 +266,21 @@ namespace workwear.ReportParameters.Views
 			w16.XOptions = ((global::Gtk.AttachOptions)(4));
 			w16.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
+			this.ycheckShowSize = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckShowSize.CanFocus = true;
+			this.ycheckShowSize.Name = "ycheckShowSize";
+			this.ycheckShowSize.Label = global::Mono.Unix.Catalog.GetString("Показать размер");
+			this.ycheckShowSize.DrawIndicator = true;
+			this.ycheckShowSize.UseUnderline = true;
+			this.table1.Add(this.ycheckShowSize);
+			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.ycheckShowSize]));
+			w17.TopAttach = ((uint)(8));
+			w17.BottomAttach = ((uint)(9));
+			w17.LeftAttach = ((uint)(1));
+			w17.RightAttach = ((uint)(2));
+			w17.XOptions = ((global::Gtk.AttachOptions)(4));
+			w17.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.yenumIssueType = new global::Gamma.Widgets.yEnumComboBox();
 			this.yenumIssueType.Name = "yenumIssueType";
 			this.yenumIssueType.ShowSpecialStateAll = true;
@@ -271,25 +288,24 @@ namespace workwear.ReportParameters.Views
 			this.yenumIssueType.UseShortTitle = false;
 			this.yenumIssueType.DefaultFirst = true;
 			this.table1.Add(this.yenumIssueType);
-			global::Gtk.Table.TableChild w17 = ((global::Gtk.Table.TableChild)(this.table1[this.yenumIssueType]));
-			w17.TopAttach = ((uint)(5));
-			w17.BottomAttach = ((uint)(6));
-			w17.LeftAttach = ((uint)(1));
-			w17.RightAttach = ((uint)(2));
-			w17.XOptions = ((global::Gtk.AttachOptions)(4));
-			w17.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table1[this.yenumIssueType]));
+			w18.TopAttach = ((uint)(5));
+			w18.BottomAttach = ((uint)(6));
+			w18.LeftAttach = ((uint)(1));
+			w18.RightAttach = ((uint)(2));
+			w18.XOptions = ((global::Gtk.AttachOptions)(4));
+			w18.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.dialog1_VBox.Add(this.table1);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
-			w18.Position = 0;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.table1]));
+			w19.Position = 0;
+			w19.Expand = false;
+			w19.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.expander1 = new global::Gtk.Expander(null);
 			this.expander1.CanFocus = true;
-			this.expander1.Name = "expander1";
 			this.expander1.Expanded = true;
 			// Container child expander1.Gtk.Container+ContainerChild
-			this.choiceprotectiontoolsview1 = new global::Workwear.ReportParameters.Views.ChoiceProtectionToolsView();
+			this.choiceprotectiontoolsview1 = new global::QS.Views.Control.ChoiceListView();
 			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
 			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
 			this.expander1.Add(this.choiceprotectiontoolsview1);
@@ -299,14 +315,14 @@ namespace workwear.ReportParameters.Views
 			this.GtkLabel11.UseUnderline = true;
 			this.expander1.LabelWidget = this.GtkLabel11;
 			this.dialog1_VBox.Add(this.expander1);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander1]));
-			w20.Position = 1;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander1]));
+			w21.Position = 1;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.expander2 = new global::Gtk.Expander(null);
 			this.expander2.CanFocus = true;
 			this.expander2.Name = "expander2";
 			// Container child expander2.Gtk.Container+ContainerChild
-			this.choiceemployeegroupview1 = new global::Workwear.ReportParameters.Views.ChoiceEmployeeGroupView();
+			this.choiceemployeegroupview1 = new global::QS.Views.Control.ChoiceListView();
 			this.choiceemployeegroupview1.Events = ((global::Gdk.EventMask)(256));
 			this.choiceemployeegroupview1.Name = "choiceemployeegroupview1";
 			this.expander2.Add(this.choiceemployeegroupview1);
@@ -316,9 +332,9 @@ namespace workwear.ReportParameters.Views
 			this.GtkLabel13.UseUnderline = true;
 			this.expander2.LabelWidget = this.GtkLabel13;
 			this.dialog1_VBox.Add(this.expander2);
-			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander2]));
-			w22.Position = 2;
-			w22.Expand = false;
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander2]));
+			w23.Position = 2;
+			w23.Expand = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
@@ -326,11 +342,11 @@ namespace workwear.ReportParameters.Views
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w23.PackType = ((global::Gtk.PackType)(1));
-			w23.Position = 3;
-			w23.Expand = false;
-			w23.Fill = false;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w24.PackType = ((global::Gtk.PackType)(1));
+			w24.Position = 3;
+			w24.Expand = false;
+			w24.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

@@ -72,7 +72,7 @@ namespace Workwear.Domain.Company
 			get => ProtectionTools?.Dispenser ?? false ? String.Empty : nextIssueAnnotation;
 			set => SetField (ref nextIssueAnnotation, value);
 		}
-		#endregion
+		
 		/// <summary>
 		/// Получаем значения остатков на складе для подходящих позиций.
 		/// ВНИМАНИЕ! StockBalanceModel должна быть заполнена!
@@ -90,6 +90,13 @@ namespace Workwear.Domain.Company
 		public virtual IssueGraph Graph { get; set; }
 		#endregion
 		#region Расчетное
+
+		public virtual Nomenclature SelectedNomenclature => EmployeeCard.SelectedNomenclatures
+			.FirstOrDefault(x => DomainHelper.EqualDomainObjects(x.ProtectionTools, ProtectionTools))?.Nomenclature;
+		#endregion
+		public virtual string SelectedNomenclatureText =>
+			ProtectionTools.ProtectionToolsNomenclatures.Any(x => x.CanChoose) && SelectedNomenclature != null 
+				? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : null;
 		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) 
 			=> (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
 		public virtual string AmountColor {
@@ -140,7 +147,7 @@ namespace Workwear.Domain.Company
 		public virtual IEnumerable<StockBalance> BestChoiceInStock {
 			get {
 				var bestChoice = InStock.Where(x => x.Amount > 0).ToList();
-				bestChoice?.Sort(new BestChoiceInStockComparer(ProtectionTools));
+				bestChoice?.Sort(new BestChoiceInStockComparer(ProtectionTools, SelectedNomenclature));
 				return bestChoice;
 			}
 		}
@@ -227,7 +234,7 @@ namespace Workwear.Domain.Company
 		/// <summary>
 		/// Получить необходимое к выдаче количество.
 		/// </summary>
-		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
+		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate, bool ignoreNormConditionPeriod = false, HashSet<int> excludeOperationIds = null) {
 			if(Graph == null)
 				throw new NullReferenceException("Перед выполнением расчета CalculateRequiredIssue, Graph должен быть заполнен!");
 			
@@ -237,13 +244,13 @@ namespace Workwear.Domain.Company
 				return 0;
 			if(employeeCard.OnVacation(onDate))
 				return 0;
-			if (ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
+			if (!ignoreNormConditionPeriod && ActiveNormItem.NormCondition?.IssuanceStart != null && ActiveNormItem.NormCondition?.IssuanceEnd != null) {
 				var nextPeriod = ActiveNormItem.NormCondition.CalculateCurrentPeriod(onDate);
 				if (onDate < nextPeriod.Begin)
 					return 0;
 			}
 
-			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
+			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule), excludeOperationIds));
 		}
 
 		public virtual bool MatchStockPosition(StockPosition stockPosition) {
@@ -297,7 +304,8 @@ namespace Workwear.Domain.Company
 				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				var lastInterval = listReverse.First();
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount) {
-					//Нет автосписания, следующая выдача чисто информативно проставляется по сроку носки
+					//Если количество в последнем интервале достаточно, значит нет автосписания,
+					//следующая выдача чисто информативно проставляется по сроку носки
 					var expiredByNorm = lastInterval.ActiveItems.Where(x => ((EmployeeIssueOperation)x.IssueOperation).ExpiryByNorm != null);
 					if(expiredByNorm.Any())
 						wantIssue = expiredByNorm.Max(x => ((EmployeeIssueOperation)x.IssueOperation).ExpiryByNorm.Value);
@@ -369,16 +377,27 @@ namespace Workwear.Domain.Company
 
 	public class BestChoiceInStockComparer : IComparer<StockBalance> {
 		private readonly ProtectionTools protectionTools;
-		public BestChoiceInStockComparer(ProtectionTools protectionTools) => 
+		private readonly Nomenclature priorityNomenclature;
+
+		public BestChoiceInStockComparer(ProtectionTools protectionTools, Nomenclature priority = null) {
 			this.protectionTools = protectionTools;
-		//Сортируем позиции по следующим критериям
-		//Сначала берем позицию более приоритетного собственника
-		//Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
-		//Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
-		//Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
+			this.priorityNomenclature = priority;
+		}
+		
+		//Сортируем позиции по следующим критериям:
+		//-Сначала приоритетная номеннклатура, если задана
+		//-Позиция более приоритетного собственника
+		//-Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
+		//-Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
+		//-Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
 		public int Compare(StockBalance x, StockBalance y) {
 			if(x is null || y is null)
 				throw new ArgumentNullException();
+			if(priorityNomenclature != null &&
+					!DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, y.Position?.Nomenclature) && (
+					DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, priorityNomenclature) ||
+					DomainHelper.EqualDomainObjects(y.Position?.Nomenclature, priorityNomenclature)))
+				return DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, priorityNomenclature) ? -1 : 1;
 			if(x.Position.Owner?.Priority != y.Position.Owner?.Priority)
 				return (y.Position.Owner?.Priority ?? 0).CompareTo(x.Position.Owner?.Priority ?? 0);
 			var xMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();

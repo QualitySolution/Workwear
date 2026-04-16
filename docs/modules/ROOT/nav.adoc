@@ -13,6 +13,8 @@
 * xref:import.adoc[Импорт данных]
 * xref:export.adoc[Экспорт данных]
 * xref:mobile-app.adoc[Кабинет сотрудника]
+* xref:visits.adoc[Посещение склада]
+* xref:clothing-service.adoc[Обслуживание спецодежды]
 * xref:postomat.adoc[Постаматы]
 
 .Руководство администратора

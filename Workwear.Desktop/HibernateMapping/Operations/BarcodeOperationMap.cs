@@ -1,4 +1,4 @@
-﻿using FluentNHibernate.Mapping;
+using FluentNHibernate.Mapping;
 using Workwear.Domain.Operations;
 
 namespace Workwear.HibernateMapping.Stock
@@ -18,6 +18,8 @@ namespace Workwear.HibernateMapping.Stock
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id").Nullable();
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Nullable();
 			References(x => x.OverNormOperation).Column("over_norm_operation_id").Nullable();
+////1289 нужно проверить             
+			References(x => x.DutyNormIssueOperation).Column("duty_norm_issue_operation_id").Nullable();
 		}
 	}
 }

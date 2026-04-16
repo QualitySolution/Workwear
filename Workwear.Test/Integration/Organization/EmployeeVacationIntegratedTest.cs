@@ -107,6 +107,7 @@ namespace Workwear.Test.Integration.Organization
 				expense.Warehouse = warehouse;
 				expense.Employee = employee;
 				expense.Date = new DateTime(2018, 5, 10);
+				expense.IssueDate = new DateTime(2018, 5, 10);
 				
 				var expenseItem1 = expense.AddItem(position1, 1);
 				expenseItem1.EmployeeCardItem = employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools == protectionTools);

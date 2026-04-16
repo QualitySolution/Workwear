@@ -13,6 +13,7 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
@@ -25,10 +26,12 @@ using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
+	/// <summary>
+	/// Вкладка "Спецодежда по нормам"
+	/// </summary>
 	public class EmployeeWearItemsViewModel : ViewModelBase, IDisposable
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
-		
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
@@ -108,11 +111,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			get => selectedWorkwearItem;
 			set => SetField(ref selectedWorkwearItem, value);
 		}
-
 		#endregion
 
 		#region Sensetive And Visibility
-
+		public bool VisibleEmployeeChoose => FeaturesService.Available(WorkwearFeature.EmployeeChoose);
 		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null && !SelectedWorkwearItem.ProtectionTools.Dispenser;
 
 		#endregion
@@ -283,7 +285,24 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			row.Graph.Refresh();
 			row.UpdateNextIssue(UoW);
 		}
-
+		
+		public void SetEmployeeChoose(EmployeeCardItem item, Nomenclature nomenclature) {
+			var choose = Entity.SelectedNomenclatures
+				.FirstOrDefault(x => DomainHelper.EqualDomainObjects(x.ProtectionTools, item.ProtectionTools));
+    
+			if (choose == null && nomenclature != null) {
+				Entity.SelectedNomenclatures.Add(new EmployeeSelectedNomenclature {
+					Employee = Entity,
+					ProtectionTools = item.ProtectionTools,
+					Nomenclature = nomenclature
+				});
+			} else if (choose != null) {
+				if (nomenclature == null)
+					Entity.SelectedNomenclatures.Remove(choose);
+				else
+					choose.Nomenclature = nomenclature;
+			}
+		}
 		#endregion
 		protected void RefreshWorkItems()
 		{

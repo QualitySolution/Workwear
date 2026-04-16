@@ -8,16 +8,18 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Company
 {
-	public class PostViewModel : EntityDialogViewModelBase<Post>
+	public class PostViewModel : EntityDialogViewModelBase<Post>, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
 		private readonly IInteractiveQuestion interactive;
@@ -55,6 +57,11 @@ namespace Workwear.ViewModels.Company
 									.Finish();
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#posts");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		#region Controls
 		public EntityEntryViewModel<Subdivision> EntrySubdivision;

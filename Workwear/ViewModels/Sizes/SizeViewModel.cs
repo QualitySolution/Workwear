@@ -8,15 +8,17 @@ using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Sizes
 {
-	public class SizeViewModel: EntityDialogViewModelBase<Size>
+	public class SizeViewModel: EntityDialogViewModelBase<Size>, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
 		public SizeService SizeService { get; }
@@ -44,6 +46,11 @@ namespace Workwear.ViewModels.Sizes
 			
 			Entity.SuitableSizes.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(AllSuitable));
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#size-and-height");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		public IList<Size> AllSuitable => Entity.SuitableSizes.Union(Entity.SizesWhereIsThisSizeAsSuitable).ToList();
 

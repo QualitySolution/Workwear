@@ -1,24 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Autofac;
+using FluentNHibernate.Data;
+using Mono.Unix.Native;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
 using QS.Report;
 using QS.Report.ViewModels;
-using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools;
 using Workwear.ViewModels.Stock;
 using Size = Workwear.Domain.Sizes.Size;
 
@@ -26,8 +29,6 @@ namespace Workwear.Journal.ViewModels.Stock
 {
 	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>
 	{
-		private readonly BarcodeService barcodeService;
-		public BarcodeJournalFilterViewModel Filter { get; private set; }
 		public BarcodeJournalViewModel(
 			BarcodeService barcodeService,
 			ILifetimeScope autofacScope, 
@@ -63,9 +64,9 @@ namespace Workwear.Journal.ViewModels.Stock
 			OverNormOperation overNormOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
-			
+////1289 проверить по месту			
 			var query = uow.Session.QueryOver<Barcode>(() => barcodeAlias)
-				.Where(GetSearchCriterion(
+				.Where(MakeSearchCriterion().By(
 					() => barcodeAlias.Title,
 					() => barcodeAlias.Label,
 					() => nomenclatureAlias.Name,
@@ -73,7 +74,9 @@ namespace Workwear.Journal.ViewModels.Stock
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => barcodeAlias.Comment
-				));
+				).WithLikeMode(MatchMode.Exact).By(
+					() => employeeAlias.PersonnelNumber
+				).Finish())
 
 				if(Filter.Nomenclature != null)
 					query.Where(x => x.Nomenclature.Id == Filter.Nomenclature.Id);
@@ -120,6 +123,7 @@ namespace Workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => barcodeOperationAlias.OverNormOperation, () => overNormOperationAlias)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
+					.Select(x => x.Type).WithAlias(() => resultAlias.Type)
 					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
 					.Select(x => x.CreateDate).WithAlias(() => resultAlias.CreateDate)
 					.Select(x => x.Label).WithAlias(() => resultAlias.Label)
@@ -130,7 +134,7 @@ namespace Workwear.Journal.ViewModels.Stock
 					.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
-				).OrderBy(x => x.Title).Asc
+				).OrderBy(x => x.Id).Desc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
 			
 			return query;
@@ -190,7 +194,7 @@ namespace Workwear.Journal.ViewModels.Stock
 
 			NodeActionsList.Add(new JournalAction("Печать",
 				(nodes) => nodes.Cast<BarcodeJournalNode>().Any(),
-				(arg) => true,
+				(nodes) => nodes.Cast<BarcodeJournalNode>().Any(b => b.Type == BarcodeTypes.EAN13),
 				PrintBarcodes));
 		}
 
@@ -213,6 +217,7 @@ namespace Workwear.Journal.ViewModels.Stock
 	public class BarcodeJournalNode 
 	{
 		public int Id { get; set; }
+		public BarcodeTypes Type { get; set; }
 		public string Value { get; set; }
 		public string Nomenclature { get; set; }
 		public string Size { get; set; }

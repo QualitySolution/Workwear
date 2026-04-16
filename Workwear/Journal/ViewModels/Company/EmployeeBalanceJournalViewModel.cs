@@ -29,14 +29,17 @@ namespace workwear.Journal.ViewModels.Company
             IInteractiveService interactiveService, 
             INavigationManager navigation,
             ILifetimeScope autofacScope,
-            EmployeeCard employeeCard = null) : base(unitOfWorkFactory, interactiveService, navigation)
+            EmployeeCard employeeCard = null
+            ) : base(unitOfWorkFactory, interactiveService, navigation)
         {
 	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);
 	        DataLoader = dataLoader;
 	        JournalFilter = Filter = autofacScope.Resolve<EmployeeBalanceFilterViewModel>(
-		        new TypedParameter(typeof(JournalViewModelBase), this));
-	        this.Filter.Employee = employeeCard;
+		        new TypedParameter(typeof(JournalViewModelBase), this),
+		        new TypedParameter(typeof(EmployeeCard), employeeCard)
+		        );
+	        
 	        Title = employeeCard != null 
 		        ? $"Числится за сотрудником - {Filter.Employee.Title}" 
 		        : "Остатки по сотрудникам";
@@ -62,6 +65,12 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeCard employeeCardAlias = null;
 
 			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias);
+			query.Where(GetSearchCriterion(
+				() => employeeCardAlias.LastName,
+				() => employeeCardAlias.FirstName,
+				() => employeeCardAlias.Patronymic,
+				() => nomenclatureAlias.Name)
+			);
 
 			if (Filter.Employee != null)
 				query.Where(e => e.Employee == Filter.Employee);
@@ -80,6 +89,7 @@ namespace workwear.Journal.ViewModels.Company
 				Projections.Property(() => expenseOperationAlias.Issued),
 				Projections.SubQuery(subQueryRemove)
 			);
+////1289 Нужно внимательно проверить изменения            
 			if (Filter.Employee != null)
 				query
 					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)

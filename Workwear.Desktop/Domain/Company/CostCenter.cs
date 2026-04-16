@@ -7,7 +7,8 @@ namespace Workwear.Domain.Company {
 	[Appellative(Gender = GrammaticalGender.Neuter,
 		NominativePlural = "места возникновения затрат",
 		Nominative = "место возникновения затрат",
-		Genitive = "место возникновения затрат"
+		Genitive = "места возникновения затрат",
+		GenitivePlural = "мест возникновения затрат"
 	)]
 	[HistoryTrace]
 	public class CostCenter: PropertyChangedBase, IDomainObject {

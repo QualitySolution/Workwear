@@ -1,42 +1,56 @@
 ﻿using System;
+using System.Collections.Generic;
 using QS.DomainModel.Entity;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class BarcodeInfoViewModel : ViewModelBase {
 		private readonly BarcodeRepository barcodeRepository;
 
-		#region	Свойства модели
-		private string barcodeText;
+		#region Свойства модели
 
-		public BarcodeInfoViewModel(BarcodeRepository barcodeRepository) {
+		private string barcodeText;
+		private readonly BaseParameters baseParameters;
+		public Dictionary<string, (string title, Action action)> ActionBarcodes = new Dictionary<string, (string, Action)>();
+
+		public BarcodeInfoViewModel(BarcodeRepository barcodeRepository, BaseParameters baseParameters) {
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(this.baseParameters));
 		}
 
 		public string BarcodeText {
 			get => barcodeText;
 			set {
 				if(SetField(ref barcodeText, value.Trim())) {
-					if(barcodeText.Length == 13) {
+					if(BarcodeService.CheckBarcode(barcodeText, baseParameters.ClothingMarkingType)) {
+						if(ActionBarcodes.ContainsKey(barcodeText)) {
+							LabelInfo = ActionBarcodes[barcodeText].title;
+							ActionBarcodes[barcodeText].action();
+							BarcodeText = String.Empty;
+							return;
+						}
 						var barcode = barcodeRepository.GetBarcodeByString(barcodeText);
 						if(barcode != null) {
 							LabelInfo = null;
 							Barcode = barcode;
+							BarcodeText = String.Empty;
 						}
 						else {
-							LabelInfo = "Штрихкод не найден";
+							LabelInfo = "Метка не найдена";
 							Barcode = null;
 						}
 					}
 				}
 			}
 		}
-		
-		
+
 		private Barcode barcode;
+
 		[PropertyChangedAlso(nameof(LabelNomenclature))]
 		[PropertyChangedAlso(nameof(LabelTitle))]
 		[PropertyChangedAlso(nameof(LabelCreateDate))]
@@ -51,16 +65,18 @@ namespace Workwear.ViewModels.ClothingService {
 				}
 			}
 		}
-		
+
 		private EmployeeCard employee;
+
 		[PropertyChangedAlso(nameof(LabelEmployee))]
 		public virtual EmployeeCard Employee {
 			get => employee;
 			set { SetField(ref employee, value); }
 		}
 		#endregion
-		
-		#region	Свойства View
+
+		#region Свойства View
+
 		public string LabelEmployee => Employee?.FullName;
 		public string LabelNomenclature => Barcode?.Nomenclature.Name;
 		public string LabelTitle => Barcode?.Title;
@@ -69,6 +85,7 @@ namespace Workwear.ViewModels.ClothingService {
 		public string LabelSize => Barcode?.Size?.Name;
 
 		private string labelInfo;
+
 		[PropertyChangedAlso(nameof(VisibleInfo))]
 		public string LabelInfo {
 			get => labelInfo;
@@ -76,9 +93,12 @@ namespace Workwear.ViewModels.ClothingService {
 		}
 
 		#region Visible
+
 		public bool VisibleBarcode => Barcode != null;
 		public bool VisibleInfo => !String.IsNullOrEmpty(LabelInfo);
+
 		#endregion
+
 		#endregion
 	}
 }

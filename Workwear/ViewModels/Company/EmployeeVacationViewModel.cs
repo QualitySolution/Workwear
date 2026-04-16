@@ -4,13 +4,14 @@ using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 
 namespace Workwear.ViewModels.Company
 {
-    public class EmployeeVacationViewModel : EntityDialogViewModelBase<EmployeeVacation>
+    public class EmployeeVacationViewModel : EntityDialogViewModelBase<EmployeeVacation>, IDialogDocumentation
     {
         private readonly BaseParameters baseParameters;
         public EmployeeVacationViewModel(
@@ -32,6 +33,11 @@ namespace Workwear.ViewModels.Company
         {
             this.baseParameters = baseParameters;
         }
+        
+        #region IDialogDocumentation
+        public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#vacations");
+        public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+        #endregion
 
         public override bool Save() {
             if (UoW.IsNew) {

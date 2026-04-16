@@ -38,7 +38,9 @@ if [ ! -f "gtk-sharp-2.12.21.msi" ]; then
 fi
 
 # Сборка документации
-if command -v asciidoctor-pdf.ruby3.2 2>/dev/null; then
+if command -v asciidoctor-pdf 2>/dev/null; then
+	BuildDoc=asciidoctor-pdf
+elif command -v asciidoctor-pdf.ruby3.2 2>/dev/null; then
         BuildDoc=asciidoctor-pdf.ruby3.2 
 elif command -v asciidoctor-pdf.ruby3.1 2>/dev/null; then
         BuildDoc=asciidoctor-pdf.ruby3.1 
@@ -53,10 +55,10 @@ else
 	exit 1
 fi
 
-${BuildDoc} ../docs/modules/ROOT/pages/user-guide.adoc
-cp -v ../docs/modules/ROOT/pages/user-guide.pdf ./Files
+${BuildDoc} ../docs/modules/ROOT/user-guide.adoc
+cp -v ../docs/modules/ROOT/user-guide.pdf ./Files
 
-${BuildDoc} ../docs/modules/ROOT/pages/admin-guide.adoc
-cp -v ../docs/modules/ROOT/pages/admin-guide.pdf ./Files
+${BuildDoc} ../docs/modules/ROOT/admin-guide.adoc
+cp -v ../docs/modules/ROOT/admin-guide.pdf ./Files
 
 wine ~/.wine/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe /INPUTCHARSET UTF8 ${NsisOptions} ${ProjectName}.nsi

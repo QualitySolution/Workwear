@@ -215,6 +215,24 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionWearCardsReport;
 
+	private global::Gtk.Action ActionShipment;
+
+	private global::Gtk.Action ActionClothingServices;
+
+	private global::Gtk.Action ActionShipmentReport;
+
+	private global::Gtk.Action ActionVisits;
+
+	private global::Gtk.Action ActionIssuanceRequest;
+
+	private global::Gtk.RadioAction ActionOffAutoUpdate;
+
+	private global::Gtk.Action IssueSizeReport;
+
+	private global::Gtk.Action ActionDutyNormReports;
+
+	private global::Gtk.Action ActionDutyNormIssuedReport;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -242,6 +260,10 @@ public partial class MainWindow
 	private global::Gtk.Label labelUser;
 
 	private global::Gtk.Label labelStatus;
+
+	private global::Gamma.GtkWidgets.yEventBox eventboxSubscriptionStatus;
+
+	private global::Gamma.GtkWidgets.yLabel labelSubscriptionStatus;
 
 	protected virtual void Build()
 	{
@@ -367,7 +389,7 @@ public partial class MainWindow
 		this.ActionToolBarIconOnly.ShortLabel = global::Mono.Unix.Catalog.GetString("Только иконки");
 		w1.Add(this.ActionToolBarIconOnly, null);
 		this.ActionToolBarTextAndIcon = new global::Gtk.RadioAction("ActionToolBarTextAndIcon", global::Mono.Unix.Catalog.GetString("Иконки и текст"), null, null, 0);
-		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarIconOnly.Group;
+		this.ActionToolBarTextAndIcon.Group = this.ActionToolBarTextOnly.Group;
 		this.ActionToolBarTextAndIcon.ShortLabel = global::Mono.Unix.Catalog.GetString("Иконки и текст");
 		w1.Add(this.ActionToolBarTextAndIcon, null);
 		this.ActionIconsExtraSmall = new global::Gtk.RadioAction("ActionIconsExtraSmall", global::Mono.Unix.Catalog.GetString("Очень маленькие иконки"), null, null, 0);
@@ -383,7 +405,7 @@ public partial class MainWindow
 		this.ActionIconsMiddle.ShortLabel = global::Mono.Unix.Catalog.GetString("Средние иконки");
 		w1.Add(this.ActionIconsMiddle, null);
 		this.ActionIconsLarge = new global::Gtk.RadioAction("ActionIconsLarge", global::Mono.Unix.Catalog.GetString("Большие иконки"), null, null, 0);
-		this.ActionIconsLarge.Group = this.ActionIconsSmall.Group;
+		this.ActionIconsLarge.Group = this.ActionIconsMiddle.Group;
 		this.ActionIconsLarge.ShortLabel = global::Mono.Unix.Catalog.GetString("Большие иконки");
 		w1.Add(this.ActionIconsLarge, null);
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
@@ -505,7 +527,7 @@ public partial class MainWindow
 		this.ActionOwner = new global::Gtk.Action("ActionOwner", global::Mono.Unix.Catalog.GetString("Собственники имущества"), null, null);
 		this.ActionOwner.ShortLabel = global::Mono.Unix.Catalog.GetString("Собственники имущества");
 		w1.Add(this.ActionOwner, null);
-		this.ActionBarcodes = new global::Gtk.Action("ActionBarcodes", global::Mono.Unix.Catalog.GetString("Штрихкоды"), null, null);
+		this.ActionBarcodes = new global::Gtk.Action("ActionBarcodes", global::Mono.Unix.Catalog.GetString("Маркировка (Штрихкоды)"), null, null);
 		this.ActionBarcodes.ShortLabel = global::Mono.Unix.Catalog.GetString("Штрихкоды");
 		w1.Add(this.ActionBarcodes, null);
 		this.ActionCostCenter = new global::Gtk.Action("ActionCostCenter", global::Mono.Unix.Catalog.GetString("Места возникновения затрат"), null, null);
@@ -558,8 +580,8 @@ public partial class MainWindow
 		this.ActionClothingServiceReport = new global::Gtk.Action("ActionClothingServiceReport", global::Mono.Unix.Catalog.GetString("Обслуживание одежды"), null, null);
 		this.ActionClothingServiceReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Обслуживание одежды");
 		w1.Add(this.ActionClothingServiceReport, null);
-		this.ActionSpecCoinsBalance = new global::Gtk.Action("ActionSpecCoinsBalance", global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов Ⓢ"), null, null);
-		this.ActionSpecCoinsBalance.ShortLabel = global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов Ⓢ");
+		this.ActionSpecCoinsBalance = new global::Gtk.Action("ActionSpecCoinsBalance", global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов"), null, "SpecCoin");
+		this.ActionSpecCoinsBalance.ShortLabel = global::Mono.Unix.Catalog.GetString("Баланс Спецкойнов");
 		w1.Add(this.ActionSpecCoinsBalance, null);
 		this.ActionWarehouseForecasting = new global::Gtk.Action("ActionWarehouseForecasting", global::Mono.Unix.Catalog.GetString("Прогнозирование склада"), null, null);
 		this.ActionWarehouseForecasting.ShortLabel = global::Mono.Unix.Catalog.GetString("Прогнозирование склада");
@@ -576,6 +598,34 @@ public partial class MainWindow
 		this.ActionWearCardsReport = new global::Gtk.Action("ActionWearCardsReport", global::Mono.Unix.Catalog.GetString("Список сотрудников"), null, null);
 		this.ActionWearCardsReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Список сотрудников");
 		w1.Add(this.ActionWearCardsReport, null);
+		this.ActionShipment = new global::Gtk.Action("ActionShipment", global::Mono.Unix.Catalog.GetString("Планируемые поставки"), null, null);
+		this.ActionShipment.ShortLabel = global::Mono.Unix.Catalog.GetString("Планируемые поставки");
+		w1.Add(this.ActionShipment, null);
+		this.ActionClothingServices = new global::Gtk.Action("ActionClothingServices", global::Mono.Unix.Catalog.GetString("Услуги обслуживания"), null, null);
+		this.ActionClothingServices.ShortLabel = global::Mono.Unix.Catalog.GetString("Услуги обслуживания");
+		w1.Add(this.ActionClothingServices, null);
+		this.ActionShipmentReport = new global::Gtk.Action("ActionShipmentReport", global::Mono.Unix.Catalog.GetString("Планируемые поставки"), null, null);
+		this.ActionShipmentReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Предполагаемые поставки");
+		w1.Add(this.ActionShipmentReport, null);
+		this.ActionVisits = new global::Gtk.Action("ActionVisits", global::Mono.Unix.Catalog.GetString("Посещения склада"), null, null);
+		this.ActionVisits.ShortLabel = global::Mono.Unix.Catalog.GetString("Посещения склада");
+		w1.Add(this.ActionVisits, null);
+		this.ActionIssuanceRequest = new global::Gtk.Action("ActionIssuanceRequest", global::Mono.Unix.Catalog.GetString("Заявки на выдачу"), null, null);
+		this.ActionIssuanceRequest.ShortLabel = global::Mono.Unix.Catalog.GetString("Заявки на выдачу");
+		w1.Add(this.ActionIssuanceRequest, null);
+		this.ActionOffAutoUpdate = new global::Gtk.RadioAction("ActionOffAutoUpdate", global::Mono.Unix.Catalog.GetString("Без обновлений"), null, null, 0);
+		this.ActionOffAutoUpdate.Group = this.ActionChannelStable.Group;
+		this.ActionOffAutoUpdate.ShortLabel = global::Mono.Unix.Catalog.GetString("Без обновлений");
+		w1.Add(this.ActionOffAutoUpdate, null);
+		this.IssueSizeReport = new global::Gtk.Action("IssueSizeReport", global::Mono.Unix.Catalog.GetString("Выдачи по размерам"), null, null);
+		this.IssueSizeReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Выдачи по размерам");
+		w1.Add(this.IssueSizeReport, null);
+		this.ActionDutyNormReports = new global::Gtk.Action("ActionDutyNormReports", global::Mono.Unix.Catalog.GetString("Дежурные нормы"), null, null);
+		this.ActionDutyNormReports.ShortLabel = global::Mono.Unix.Catalog.GetString("Дежурные нормы");
+		w1.Add(this.ActionDutyNormReports, null);
+		this.ActionDutyNormIssuedReport = new global::Gtk.Action("ActionDutyNormIssuedReport", global::Mono.Unix.Catalog.GetString("Отчёт по выданному"), null, null);
+		this.ActionDutyNormIssuedReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Отчёт по выданному");
+		w1.Add(this.ActionDutyNormIssuedReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -611,61 +661,68 @@ public partial class MainWindow
 				"<menuitem name=\'ActionMaxizizeOnStart\' action=\'ActionMaxizizeOnStart\'/></menu><m" +
 				"enu name=\'Action21\' action=\'Action21\'><menuitem name=\'ActionStockDocs\' action=\'A" +
 				"ctionStockDocs\'/><menuitem name=\'ActionStockBalance\' action=\'ActionStockBalance\'" +
-				"/><menuitem name=\'ActionStockMovements\' action=\'ActionStockMovements\'/><menuitem" +
-				" name=\'ActionWarehouseForecasting\' action=\'ActionWarehouseForecasting\'/><separat" +
-				"or/><menuitem name=\'ActionClothingService\' action=\'ActionClothingService\'/><menu" +
-				"item name=\'ActionIssuanceSheets\' action=\'ActionIssuanceSheets\'/></menu><menu nam" +
-				"e=\'ActionServices\' action=\'ActionServices\'><menuitem name=\'ActionMenuNotificatio" +
-				"n\' action=\'ActionMenuNotification\'/><menuitem name=\'ActionMenuClaims\' action=\'Ac" +
-				"tionMenuClaims\'/><menuitem name=\'ActionMenuRatings\' action=\'ActionMenuRatings\'/>" +
-				"<menuitem name=\'ActionSpecCoinsBalance\' action=\'ActionSpecCoinsBalance\'/><separa" +
-				"tor/><menuitem name=\'ActionFullnessPostomats\' action=\'ActionFullnessPostomats\'/>" +
-				"<menuitem name=\'ActionPostomatDocs\' action=\'ActionPostomatDocs\'/><menuitem name=" +
-				"\'ActionPostomatDocsWithdraw\' action=\'ActionPostomatDocsWithdraw\'/></menu><menu n" +
-				"ame=\'Action47\' action=\'Action47\'><menuitem name=\'ActionOrganizations\' action=\'Ac" +
-				"tionOrganizations\'/><menuitem name=\'ActionObjects\' action=\'ActionObjects\'/><menu" +
-				"item name=\'ActionDepartment\' action=\'ActionDepartment\'/><menuitem name=\'ActionEm" +
-				"ployeeGroup\' action=\'ActionEmployeeGroup\'/><menuitem name=\'ActionEmployees\' acti" +
-				"on=\'ActionEmployees\'/><separator/><menuitem name=\'ActionRegulationDoc\' action=\'A" +
-				"ctionRegulationDoc\'/><menuitem name=\'ActionProtectionTools\' action=\'ActionProtec" +
-				"tionTools\'/><menuitem name=\'ActionNorms\' action=\'ActionNorms\'/><menuitem name=\'A" +
-				"ctionConditionNorm\' action=\'ActionConditionNorm\'/><menuitem name=\'ActionDutyNorm" +
-				"\' action=\'ActionDutyNorm\'/><menuitem name=\'Action45\' action=\'Action45\'/><separat" +
-				"or/><menuitem name=\'Action43\' action=\'Action43\'/><menuitem name=\'Action42\' actio" +
-				"n=\'Action42\'/><menuitem name=\'Action6\' action=\'Action6\'/><menuitem name=\'ActionW" +
-				"arehouse\' action=\'ActionWarehouse\'/><menuitem name=\'ActionOwner\' action=\'ActionO" +
-				"wner\'/><menuitem name=\'ActionBarcodes\' action=\'ActionBarcodes\'/><separator/><men" +
-				"uitem name=\'ActionSizeType\' action=\'ActionSizeType\'/><menuitem name=\'ActionSize\'" +
-				" action=\'ActionSize\'/><separator/><menuitem name=\'Action7\' action=\'Action7\'/><me" +
-				"nuitem name=\'ActionNotificationTemplates\' action=\'ActionNotificationTemplates\'/>" +
-				"<separator/><menuitem name=\'ActionProfession\' action=\'ActionProfession\'/><menuit" +
-				"em name=\'Action8\' action=\'Action8\'/><menuitem name=\'ActionVacationTypes\' action=" +
-				"\'ActionVacationTypes\'/><menuitem name=\'ActionCostCenter\' action=\'ActionCostCente" +
-				"r\'/><menuitem name=\'ActionLeaders\' action=\'ActionLeaders\'/></menu><menu name=\'Ac" +
-				"tionReports\' action=\'ActionReports\'><menuitem name=\'Action11\' action=\'Action11\'/" +
-				"><menuitem name=\'ActionStockOperations\' action=\'ActionStockOperations\'/><separat" +
-				"or/><menuitem name=\'Action10\' action=\'Action10\'/><menuitem name=\'Action12\' actio" +
-				"n=\'Action12\'/><separator/><menuitem name=\'ActionAmountIssuedWear\' action=\'Action" +
-				"AmountIssuedWear\'/><menuitem name=\'ActionWriteOffAct\' action=\'ActionWriteOffAct\'" +
-				"/><menuitem name=\'ActionClothingServiceReport\' action=\'ActionClothingServiceRepo" +
-				"rt\'/><separator/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequestSheet\'" +
-				"/><menuitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><me" +
-				"nu name=\'Action\' action=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' act" +
-				"ion=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' a" +
-				"ction=\'ActionNotIssuedSheetSummary\'/></menu><separator/><menuitem name=\'ActionWe" +
-				"arCardsReport\' action=\'ActionWearCardsReport\'/><menuitem name=\'ActionAmountEmplo" +
-				"yeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionProvisio" +
-				"n\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessReport\' ac" +
-				"tion=\'ActionBarcodeCompletenessReport\'/></menu><menu name=\'ActionHelp\' action=\'A" +
-				"ctionHelp\'><menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'Acti" +
-				"onAdminGuide\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHisto" +
-				"ry\' action=\'ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdat" +
-				"eChannel\'><menuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><" +
-				"menuitem name=\'ActionChannelStable\' action=\'ActionChannelStable\'/></menu><menuit" +
-				"em name=\'ActionUpdate\' action=\'ActionUpdate\'/><separator/><menuitem name=\'Action" +
-				"Site\' action=\'ActionSite\'/><separator/><menuitem name=\'ActionSN\' action=\'ActionS" +
-				"N\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menu" +
-				"bar></ui>");
+				"/><menuitem name=\'ActionStockMovements\' action=\'ActionStockMovements\'/><separato" +
+				"r/><menuitem name=\'ActionWarehouseForecasting\' action=\'ActionWarehouseForecastin" +
+				"g\'/><menuitem name=\'ActionIssuanceRequest\' action=\'ActionIssuanceRequest\'/><menu" +
+				"item name=\'ActionShipment\' action=\'ActionShipment\'/><separator/><menuitem name=\'" +
+				"ActionClothingService\' action=\'ActionClothingService\'/><menuitem name=\'ActionVis" +
+				"its\' action=\'ActionVisits\'/><menuitem name=\'ActionIssuanceSheets\' action=\'Action" +
+				"IssuanceSheets\'/></menu><menu name=\'ActionServices\' action=\'ActionServices\'><men" +
+				"uitem name=\'ActionMenuNotification\' action=\'ActionMenuNotification\'/><menuitem n" +
+				"ame=\'ActionMenuClaims\' action=\'ActionMenuClaims\'/><menuitem name=\'ActionMenuRati" +
+				"ngs\' action=\'ActionMenuRatings\'/><menuitem name=\'ActionSpecCoinsBalance\' action=" +
+				"\'ActionSpecCoinsBalance\'/><separator/><menuitem name=\'ActionFullnessPostomats\' a" +
+				"ction=\'ActionFullnessPostomats\'/><menuitem name=\'ActionPostomatDocs\' action=\'Act" +
+				"ionPostomatDocs\'/><menuitem name=\'ActionPostomatDocsWithdraw\' action=\'ActionPost" +
+				"omatDocsWithdraw\'/></menu><menu name=\'Action47\' action=\'Action47\'><menuitem name" +
+				"=\'ActionOrganizations\' action=\'ActionOrganizations\'/><menuitem name=\'ActionObjec" +
+				"ts\' action=\'ActionObjects\'/><menuitem name=\'ActionDepartment\' action=\'ActionDepa" +
+				"rtment\'/><menuitem name=\'ActionEmployeeGroup\' action=\'ActionEmployeeGroup\'/><men" +
+				"uitem name=\'ActionEmployees\' action=\'ActionEmployees\'/><separator/><menuitem nam" +
+				"e=\'ActionRegulationDoc\' action=\'ActionRegulationDoc\'/><menuitem name=\'ActionProt" +
+				"ectionTools\' action=\'ActionProtectionTools\'/><menuitem name=\'ActionNorms\' action" +
+				"=\'ActionNorms\'/><menuitem name=\'ActionConditionNorm\' action=\'ActionConditionNorm" +
+				"\'/><menuitem name=\'ActionDutyNorm\' action=\'ActionDutyNorm\'/><menuitem name=\'Acti" +
+				"on45\' action=\'Action45\'/><separator/><menuitem name=\'Action43\' action=\'Action43\'" +
+				"/><menuitem name=\'Action42\' action=\'Action42\'/><menuitem name=\'Action6\' action=\'" +
+				"Action6\'/><menuitem name=\'ActionWarehouse\' action=\'ActionWarehouse\'/><menuitem n" +
+				"ame=\'ActionOwner\' action=\'ActionOwner\'/><menuitem name=\'ActionClothingServices\' " +
+				"action=\'ActionClothingServices\'/><menuitem name=\'ActionBarcodes\' action=\'ActionB" +
+				"arcodes\'/><separator/><menuitem name=\'ActionSizeType\' action=\'ActionSizeType\'/><" +
+				"menuitem name=\'ActionSize\' action=\'ActionSize\'/><separator/><menuitem name=\'Acti" +
+				"on7\' action=\'Action7\'/><menuitem name=\'ActionNotificationTemplates\' action=\'Acti" +
+				"onNotificationTemplates\'/><separator/><menuitem name=\'ActionProfession\' action=\'" +
+				"ActionProfession\'/><menuitem name=\'Action8\' action=\'Action8\'/><menuitem name=\'Ac" +
+				"tionVacationTypes\' action=\'ActionVacationTypes\'/><menuitem name=\'ActionCostCente" +
+				"r\' action=\'ActionCostCenter\'/><menuitem name=\'ActionLeaders\' action=\'ActionLeade" +
+				"rs\'/></menu><menu name=\'ActionReports\' action=\'ActionReports\'><menuitem name=\'Ac" +
+				"tion11\' action=\'Action11\'/><menuitem name=\'ActionStockOperations\' action=\'Action" +
+				"StockOperations\'/><separator/><menuitem name=\'Action10\' action=\'Action10\'/><menu" +
+				"item name=\'Action12\' action=\'Action12\'/><menuitem name=\'IssueSizeReport\' action=" +
+				"\'IssueSizeReport\'/><separator/><menuitem name=\'ActionAmountIssuedWear\' action=\'A" +
+				"ctionAmountIssuedWear\'/><menuitem name=\'ActionWriteOffAct\' action=\'ActionWriteOf" +
+				"fAct\'/><menuitem name=\'ActionClothingServiceReport\' action=\'ActionClothingServic" +
+				"eReport\'/><separator/><menuitem name=\'ActionRequestSheet\' action=\'ActionRequestS" +
+				"heet\'/><menuitem name=\'ActionShipmentReport\' action=\'ActionShipmentReport\'/><men" +
+				"uitem name=\'ActionAverageAnnualNeed\' action=\'ActionAverageAnnualNeed\'/><menu nam" +
+				"e=\'Action\' action=\'Action\'><menuitem name=\'ActionNotIssuedSheetDetail\' action=\'A" +
+				"ctionNotIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedSheetSummary\' action=" +
+				"\'ActionNotIssuedSheetSummary\'/></menu><separator/><menuitem name=\'ActionWearCard" +
+				"sReport\' action=\'ActionWearCardsReport\'/><menuitem name=\'ActionAmountEmployeeGet" +
+				"Wear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionProvision\' act" +
+				"ion=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessReport\' action=\'" +
+				"ActionBarcodeCompletenessReport\'/><menu name=\'ActionDutyNormReports\' action=\'Act" +
+				"ionDutyNormReports\'><menuitem name=\'ActionDutyNormIssuedReport\' action=\'ActionDu" +
+				"tyNormIssuedReport\'/></menu></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><" +
+				"menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide" +
+				"\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'" +
+				"ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><m" +
+				"enuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem nam" +
+				"e=\'ActionChannelStable\' action=\'ActionChannelStable\'/><menuitem name=\'ActionOffA" +
+				"utoUpdate\' action=\'ActionOffAutoUpdate\'/></menu><menuitem name=\'ActionUpdate\' ac" +
+				"tion=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'" +
+				"/><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem" +
+				" name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -777,17 +834,32 @@ public partial class MainWindow
 		this.MainStatusBar.Add(this.labelStatus);
 		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.labelStatus]));
 		w13.Position = 2;
+		// Container child MainStatusBar.Gtk.Box+BoxChild
+		this.eventboxSubscriptionStatus = new global::Gamma.GtkWidgets.yEventBox();
+		this.eventboxSubscriptionStatus.Name = "eventboxSubscriptionStatus";
+		this.eventboxSubscriptionStatus.VisibleWindow = false;
+		// Container child eventboxSubscriptionStatus.Gtk.Container+ContainerChild
+		this.labelSubscriptionStatus = new global::Gamma.GtkWidgets.yLabel();
+		this.labelSubscriptionStatus.Name = "labelSubscriptionStatus";
+		this.labelSubscriptionStatus.LabelProp = global::Mono.Unix.Catalog.GetString("Подписка");
+		this.labelSubscriptionStatus.UseMarkup = true;
+		this.eventboxSubscriptionStatus.Add(this.labelSubscriptionStatus);
+		this.MainStatusBar.Add(this.eventboxSubscriptionStatus);
+		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.MainStatusBar[this.eventboxSubscriptionStatus]));
+		w15.Position = 3;
+		w15.Expand = false;
+		w15.Fill = false;
 		this.vbox1.Add(this.MainStatusBar);
-		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
-		w14.Position = 5;
-		w14.Expand = false;
-		w14.Fill = false;
+		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.MainStatusBar]));
+		w16.Position = 5;
+		w16.Expand = false;
+		w16.Fill = false;
 		this.Add(this.vbox1);
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 1018;
+		this.DefaultWidth = 1116;
 		this.DefaultHeight = 458;
 		this.progresswidget1.Hide();
 		this.Show();
@@ -884,5 +956,14 @@ public partial class MainWindow
 		this.ActionWriteOffAct.Activated += new global::System.EventHandler(this.OnActionWriteOffActActivated);
 		this.ActionStockOperations.Activated += new global::System.EventHandler(this.OnActionWarehouseTransferReportActivated);
 		this.ActionWearCardsReport.Activated += new global::System.EventHandler(this.OnActionWearCardsReportActivated);
+		this.ActionShipment.Activated += new global::System.EventHandler(this.OnActionShipmentActivated);
+		this.ActionClothingServices.Activated += new global::System.EventHandler(this.OnActionClothingServicesActivated);
+		this.ActionShipmentReport.Activated += new global::System.EventHandler(this.OnActionShipmentReportActivated);
+		this.ActionVisits.Activated += new global::System.EventHandler(this.OnActionVisitsActivated);
+		this.ActionIssuanceRequest.Activated += new global::System.EventHandler(this.OnActionIssuanceRequestActivated);
+		this.ActionOffAutoUpdate.Toggled += new global::System.EventHandler(this.OnActionOffAutoUpdateToggled);
+		this.IssueSizeReport.Activated += new global::System.EventHandler(this.OnIssueSizeReportActivated);
+		this.ActionDutyNormIssuedReport.Activated += new global::System.EventHandler(this.OnActionDutyNormIssuedReportActivated);
+		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }

@@ -10,7 +10,8 @@ namespace Workwear.Domain.Company
 	[Appellative (Gender = GrammaticalGender.Feminine,
 		NominativePlural = "должности",
 		Nominative = "должность",
-		Genitive ="должности"
+		Genitive ="должности",
+		GenitivePlural = "должностей"
 		)]
 	[HistoryTrace]
 	public class Post : PropertyChangedBase, IDomainObject

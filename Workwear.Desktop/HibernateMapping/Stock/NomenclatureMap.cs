@@ -1,4 +1,5 @@
 ﻿using FluentNHibernate.Mapping;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
@@ -19,6 +20,8 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.Sex).Column("sex");
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.Number).Column("number");
+			Map(x => x.AdditionalInfo).Column("additional_info");
+			Map(x => x.CatalogId).Column("catalog_id");
 			Map(x => x.Archival).Column("archival");
 			Map(x => x.SaleCost).Column("sale_cost");
 			Map(x => x.Rating).Column("rating");
@@ -32,6 +35,17 @@ namespace Workwear.HibernateMapping.Stock
 				.Table("protection_tools_nomenclature")
 				.ParentKeyColumn("nomenclature_id")
 				.ChildKeyColumn("protection_tools_id");
+			
+			HasManyToMany<Service>(x => x.UseServices)
+				.Table("clothing_service_services_nomenclature")
+				.ParentKeyColumn("nomenclature_id")
+				.ChildKeyColumn("service_id");
+			
+			HasMany (x => x.NomenclatureSizes)
+				.Inverse()
+				.KeyColumn ("nomenclature_id").Not.KeyNullable ()
+				.Cascade.AllDeleteOrphan ()
+				.LazyLoad ();
 		}
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using Autofac;
@@ -29,15 +30,16 @@ using QS.HistoryLog;
 using QS.Journal.GtkUI;
 using QS.Navigation;
 using QS.NewsFeed;
+using QS.Permissions;
 using QS.Project.DB;
 using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Search;
 using QS.Project.Search.GtkUI;
-using QS.Project.Services.GtkUI;
 using QS.Project.Services;
 using QS.Project.Services.FileDialog;
+using QS.Project.Services.GtkUI;
 using QS.Project.Versioning.Product;
 using QS.Project.Versioning;
 using QS.Project.ViewModels;
@@ -64,18 +66,21 @@ using Workwear.Tools;
 using workwear.Dialogs.Regulations;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
-using Workwear.Domain.Stock.Documents;
 using workwear.Journal;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Analytics;
+using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.Models.Company;
 using Workwear.Models.Import.Employees;
 using Workwear.Models.Import.Issuance;
 using Workwear.Models.Import.Norms;
 using Workwear.Models.Operations;
+using Workwear.Models.Print;
+using Workwear.Models.Regulations;
 using Workwear.Models.Sizes;
 using workwear.Models.Stock;
+using Workwear.Models.Supply;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
@@ -85,6 +90,7 @@ using Workwear.ViewModels.Communications;
 using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools.Permissions;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.OverNorms;
 using Workwear.Tools.OverNorms.Impl;
@@ -119,6 +125,15 @@ namespace workwear
 				System.Reflection.Assembly.GetAssembly (typeof(HistoryMain)),
 
 			});
+			
+			QSMain.ProjectPermission = new Dictionary<string, UserPermission> ();
+			QSMain.ProjectPermission.Add ("can_delete", new UserPermission ("can_delete", "Удаление объектов",
+				"Пользователь может удалять документы и элементы справочников"));
+			QSMain.ProjectPermission.Add ("can_accounting_settings", new UserPermission ("can_accounting_settings", "Изменение настроек учета",
+				"Пользователь может изменять настройки учета"));
+			QSMain.ProjectPermission.Add ("can_change_document_date", new UserPermission ("can_change_document_date", "Изменение даты документов",
+            				"Пользователь может изменить дату документов на произвольную"));
+			QSMain.User.LoadUserInfo();
 
 			#if DEBUG
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
@@ -176,6 +191,7 @@ namespace workwear
 			containerBuilder.RegisterType<MySqlException1055OnlyFullGroupBy>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlException1366IncorrectStringValue>().As<IErrorHandler>();
 			containerBuilder.RegisterType<MySqlExceptionAccessDenied>().As<IErrorHandler>();
+			containerBuilder.RegisterType<MySqlExceptionNoSpace>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateStaleObjectStateException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
@@ -226,6 +242,8 @@ namespace workwear
 					ServicesConfig.UserService = new UserService(user);
 				}
 			}
+			builder.RegisterType<CurrentUserSettings>().AsSelf().SingleInstance();
+			builder.RegisterType<PermissionsService>().As<ICurrentPermissionService>().SingleInstance();
 			#endregion
 			
 			#region Сервисы
@@ -324,8 +342,16 @@ namespace workwear
 			builder.RegisterType<OpenStockDocumentsModel>().AsSelf();
 			builder.Register(c => new PhoneFormatter(PhoneFormat.RussiaOnlyHyphenated)).AsSelf();
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<DutyNormIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<NormToDutyNormModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<IssuedSheetPrintModel>().AsSelf().InstancePerLifetimeScope();
+			#region Прогноз
+			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<NomenclatureForecastingModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<ProtectionToolsForecastingModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<ShipmentCalculateModel>().AsSelf().InstancePerLifetimeScope();
+			#endregion
 			#endregion
 
 			#region Repository
@@ -350,6 +376,7 @@ namespace workwear
 			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<ProductsManagerService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели
@@ -359,10 +386,6 @@ namespace workwear
 			#region Разделение версий
 			builder.RegisterType<FeaturesService>().As<IProductService>().AsSelf().SingleInstance();
 			builder.RegisterModule<FeaturesAutofacModule>();
-			#endregion
-
-			#region Настройка
-			builder.RegisterType<CurrentUserSettings>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Работа со считывателями

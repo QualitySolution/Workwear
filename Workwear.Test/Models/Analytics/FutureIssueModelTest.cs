@@ -10,6 +10,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Models.Analytics;
 using Workwear.Tools;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Test.Models.Analytics {
 	[TestFixture(TestOf = typeof(FutureIssueModel))]
@@ -22,8 +23,8 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
-				Nomenclatures = new ObservableList<Nomenclature>() {
-					new Nomenclature()
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
 				}
 			};
 
@@ -73,8 +74,8 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
-				Nomenclatures = new ObservableList<Nomenclature>() {
-					new Nomenclature()
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
 				}
 			};
 
@@ -135,9 +136,9 @@ namespace Workwear.Test.Models.Analytics {
 			};
 			employee.AddVacation(vacation);
 			
-			var protectionTools1 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
-			var protectionTools2 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
-			var protectionTools3 = new ProtectionTools { Nomenclatures = new ObservableList<Nomenclature>() { new Nomenclature() } };
+			var protectionTools1 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
+			var protectionTools2 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
+			var protectionTools3 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
 			
 			var norm = new Norm();
 			
@@ -231,6 +232,225 @@ namespace Workwear.Test.Models.Analytics {
 			Assert.That(result3.Count, Is.EqualTo(1));
 			Assert.That(result3[0].OperationDate, Is.EqualTo(new DateTime(2024, 11, 10)));
 			Assert.That(result3[0].Amount, Is.EqualTo(2));
+		}
+		
+		[Category("Real case")]
+		[Test(Description = "Убеждаемся что если начало прогнозируемого периода по условиям нормы не попадает в период выдачи. Мы правильно показываем долги.")]
+		public void CalculateIssues_NormConditionPeriod_Calculated()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+			var protectionTools = new ProtectionTools {
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
+				}
+			};
+
+			var norm = new Norm {
+				DateFrom = new DateTime(2024, 12, 1)
+			};
+			
+			var normCondition = new NormCondition {
+				Name = "Зима",
+				IssuanceStart = new DateTime(2000, 9, 1),
+				IssuanceEnd = new DateTime(2000, 5, 1),
+			};
+			
+			var normItem = new NormItem {
+				Norm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 2,
+				NormPeriod = NormPeriodType.Year,
+				PeriodCount = 4,
+				NormCondition = normCondition
+			};
+			
+			var employeeItems = new List<EmployeeCardItem> {
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					Created = new DateTime(2024, 12, 1),
+					ActiveNormItem = normItem,
+					ProtectionTools = protectionTools,
+					NextIssue = new DateTime(2024, 12, 1),
+					Graph = new IssueGraph()
+				}
+			};
+
+			// Начало прогнозирования в июне, зимнюю одежду должны выдавать с сентября.
+			var result = model.CalculateIssues(new DateTime(2025, 6, 18), new DateTime(2025, 12, 31), true, employeeItems);
+
+			// Мы убеждаемся что не потеряли долг, так как у нас стоит перенос долга на дату начала периода.
+			// Но это не попадает в период выдачи по норме, долг пропадал. Это не правильно.
+			Assert.That(result.Count, Is.EqualTo(1));
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2025, 6, 18)));
+			Assert.That(result[0].DelayIssueDate, Is.EqualTo(new DateTime(2024, 12, 1)));
+			Assert.That(result[0].Amount, Is.EqualTo(2));
+		}
+		
+		[Category("Real case")]
+		[Test(Description = "Проверяем что последний день периода выдачи попадает в прогноз")]
+		public void CalculateIssues_BordersOfPeriod()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+
+			var protectionTools1 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 1" }}}};
+			var protectionTools2 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 2" }}}};
+			var protectionTools3 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 3" }}}};
+			var protectionTools4 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 4" }}}};
+
+			var norm = new Norm();
+
+			var normItem1 = new NormItem { Norm = norm, ProtectionTools = protectionTools1, Amount = 1, NormPeriod = NormPeriodType.Year, PeriodCount = 1 };
+			var normItem2 = new NormItem { Norm = norm, ProtectionTools = protectionTools2, Amount = 2, NormPeriod = NormPeriodType.Year, PeriodCount = 1 };
+			var normItem3 = new NormItem { Norm = norm, ProtectionTools = protectionTools3, Amount = 3, NormPeriod = NormPeriodType.Year, PeriodCount = 1 };
+			var normItem4 = new NormItem { Norm = norm, ProtectionTools = protectionTools4, Amount = 4, NormPeriod = NormPeriodType.Year, PeriodCount = 1 };
+
+			var operations = new List<IGraphIssueOperation>();
+
+			var employeeItems = new List<EmployeeCardItem> {
+				// До начала периода
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					ActiveNormItem = normItem1,
+					ProtectionTools = protectionTools1,
+					NextIssue = new DateTime(2026, 1, 31),
+					Graph = new IssueGraph(operations)
+				},
+				// Ровно в первый день периода
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					ActiveNormItem = normItem2,
+					ProtectionTools = protectionTools2,
+					NextIssue = new DateTime(2026, 2, 1),
+					Graph = new IssueGraph(operations)
+				},
+				// Ровно в последний день периода
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					ActiveNormItem = normItem3,
+					ProtectionTools = protectionTools3,
+					NextIssue = new DateTime(2026, 2, 28),
+					Graph = new IssueGraph(operations)
+				},
+				// После конца периода
+				new EmployeeCardItem {
+					EmployeeCard = new EmployeeCard(),
+					ActiveNormItem = normItem4,
+					ProtectionTools = protectionTools4,
+					NextIssue = new DateTime(2026, 3, 1),
+					Graph = new IssueGraph(operations)
+				}
+			};
+
+			// act
+			var result = model.CalculateIssues(new DateTime(2026, 2, 1), new DateTime(2026, 2, 28), false, employeeItems);
+
+			// assert
+			Assert.That(result.Count, Is.EqualTo(2), "Должны попасть только выдачи на границах периода");
+			Assert.That(result.Exists(x => x.OperationDate == new DateTime(2026, 2, 1) && x.Amount == 2), Is.True, "Выдача в первый день периода (норма 2) должна попасть");
+			Assert.That(result.Exists(x => x.OperationDate == new DateTime(2026, 2, 28) && x.Amount == 3), Is.True, "Выдача в последний день периода (норма 3) должна попасть");
+			Assert.That(result.Exists(x => x.OperationDate == new DateTime(2026, 1, 31)), Is.False, "Выдача до начала периода не должна попасть");
+			Assert.That(result.Exists(x => x.OperationDate == new DateTime(2026, 3, 1)), Is.False, "Выдача после конца периода не должна попасть");
+		}
+		[Test(Description = "Проверяем стандартное прогнозирование по дежурной норме, выдачу каждые 3 месяца")]
+		public void CalculateDutyNormIssues_StandardForecast_Calculated()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+			var protectionTools = new ProtectionTools {
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() { Nomenclature = new Nomenclature() }
+				}
+			};
+
+			var dutyNorm = new DutyNorm {
+				Name = "Дежурная норма для теста",
+				DateFrom = new DateTime(2024, 1, 5)
+			};
+
+			var dutyNormItem = new DutyNormItem {
+				DutyNorm = dutyNorm,
+				ProtectionTools = protectionTools,
+				Amount = 5,
+				NormPeriod = DutyNormPeriodType.Month,
+				PeriodCount = 3,
+				NextIssue = new DateTime(2024, 1, 5),
+				Graph = new IssueGraph(new List<IGraphIssueOperation>())
+			};
+
+			var dutyNormItems = new List<DutyNormItem> { dutyNormItem };
+
+			// act
+			var result = model.CalculateDutyNormIssues(new DateTime(2024, 1, 1), new DateTime(2024, 12, 31), false, dutyNormItems);
+
+			// assert
+			Assert.That(result.Count, Is.EqualTo(4));
+
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2024, 1, 5)));
+			Assert.That(result[0].Amount, Is.EqualTo(5));
+
+			Assert.That(result[1].OperationDate, Is.EqualTo(new DateTime(2024, 4, 5)));
+			Assert.That(result[1].Amount, Is.EqualTo(5));
+
+			Assert.That(result[2].OperationDate, Is.EqualTo(new DateTime(2024, 7, 5)));
+			Assert.That(result[2].Amount, Is.EqualTo(5));
+
+			Assert.That(result[3].OperationDate, Is.EqualTo(new DateTime(2024, 10, 5)));
+			Assert.That(result[3].Amount, Is.EqualTo(5));
+		}
+
+		[Category("Real case")]
+		[Test(Description = "Убеждаемся что просроченный долг по дежурной норме переносится на начало периода прогнозирования при moveDebt=true")]
+		public void CalculateDutyNormIssues_ExpiredIssue_DebtMovedToStartDate()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+			var protectionTools = new ProtectionTools {
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() { Nomenclature = new Nomenclature() }
+				}
+			};
+
+			var dutyNorm = new DutyNorm {
+				Name = "Дежурная норма для теста",
+				DateFrom = new DateTime(2022, 1, 1)
+			};
+
+			var operations = new List<IGraphIssueOperation>() {
+				new DutyNormIssueOperation {
+					OperationTime = new DateTime(2022, 6, 1),
+					Issued = 3,
+					AutoWriteoffDate = new DateTime(2024, 6, 1),
+					ExpiryByNorm = new DateTime(2024, 6, 1)
+				}
+			};
+
+			var dutyNormItem = new DutyNormItem {
+				DutyNorm = dutyNorm,
+				ProtectionTools = protectionTools,
+				Amount = 3,
+				NormPeriod = DutyNormPeriodType.Year,
+				PeriodCount = 2,
+				NextIssue = new DateTime(2022, 6, 1),
+				Graph = new IssueGraph(operations)
+			};
+
+			var dutyNormItems = new List<DutyNormItem> { dutyNormItem };
+
+			// act
+			var result = model.CalculateDutyNormIssues(new DateTime(2024, 11, 1), new DateTime(2024, 12, 31), true, dutyNormItems);
+
+			// assert
+			Assert.That(result.Count, Is.EqualTo(1));
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2024, 11, 1)));
+			Assert.That(result[0].DelayIssueDate, Is.EqualTo(new DateTime(2022, 6, 1)));
+			Assert.That(result[0].Amount, Is.EqualTo(3));
+			Assert.That(result[0].DutyNormItem, Is.EqualTo(dutyNormItem));
 		}
 	}
 }

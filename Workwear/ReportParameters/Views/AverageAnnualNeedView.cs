@@ -28,8 +28,8 @@ namespace workwear.ReportParameters.Views
 				.InitializeFromSource();
 
 			entitySubdivision.ViewModel = ViewModel.SubdivisionEntry;
-			choiceemployeegroupview4.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
-			choiceemployeegroupview4.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
+			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			expander1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 

@@ -22,6 +22,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			References(x => x.EmployeeWriteoffOperation).Column("employee_issue_operation_id").Cascade.All();
 			References(x => x.Warehouse).Column("warehouse_id");
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Cascade.All();
+			References(x=>x.DutyNormWriteOffOperation).Column("duty_norm_issue_operation_id").Cascade.All();
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
 			References(x => x.CausesWriteOff).Column("cause_write_off_id");

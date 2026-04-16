@@ -196,6 +196,7 @@ namespace Workwear.Test.Integration.Operations
 
 				var expense = new Expense {
 					Date = new DateTime(2021, 9, 10),
+					IssueDate = new DateTime(2021, 9, 10),
 					Employee = employee,
 					Warehouse = warehouse,
 				};
@@ -321,6 +322,7 @@ namespace Workwear.Test.Integration.Operations
 
 				var expense = new Expense {
 					Date = new DateTime(2021, 9, 10),
+					IssueDate = new DateTime(2021, 9, 10),
 					Employee = employee,
 					Warehouse = warehouse,
 				};
@@ -339,7 +341,6 @@ namespace Workwear.Test.Integration.Operations
 				//Возвращаем 2 штуки
 				var returndoc = new Return() {
 					Date = new DateTime(2021, 9, 11),
-					EmployeeCard = employee,
 					Warehouse = warehouse,
 				};
 				
@@ -383,6 +384,7 @@ namespace Workwear.Test.Integration.Operations
 
 				var expense = new Expense {
 					Date = new DateTime(2021, 9, 10),
+					IssueDate = new DateTime(2021, 9, 10),
 					Employee = employee,
 					Warehouse = warehouse,
 				};

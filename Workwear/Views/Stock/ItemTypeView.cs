@@ -1,5 +1,4 @@
-﻿using System;
-using Gamma.Binding.Converters;
+﻿using Gamma.Binding.Converters;
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NLog;
@@ -30,7 +29,7 @@ namespace Workwear.Views.Stock
 				.AddBinding(Entity, e => e.Name, w => w.Text)
 				.InitializeFromSource ();
 
-			ycomboClothesType.ItemsEnum = typeof(СlothesType);
+			ycomboClothesType.ItemsEnum = typeof(ClothesType);
 			ycomboClothesType.Binding
 				.AddBinding(Entity, e => e.WearCategory, w => w.SelectedItemOrNull)
 				.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible)

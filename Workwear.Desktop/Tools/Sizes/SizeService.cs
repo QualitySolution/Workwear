@@ -7,7 +7,7 @@ using Workwear.Domain.Sizes;
 namespace Workwear.Tools.Sizes
 {
 	/// <summary>
-	/// Предоставляет доступ информации о размерах
+	/// Предоставляет доступ информации о размерах.
 	/// Кеширует размеры при первом обращении.
 	/// При необходимости нужно принудительно обновлять.  
 	/// </summary>
@@ -84,7 +84,17 @@ namespace Workwear.Tools.Sizes
 
 		public const int MaxStandardSizeId = 1000, MaxStandardSizeTypeId = 100;
 
+		/// <summary>
+		/// Возвращает кэшированные размеры, подходящие для использования в номенклатуре.
+		/// Предполагает что <see cref="RefreshSizes"/> уже был вызван.
+		/// </summary>
+		public IEnumerable<Size> GetNomenclatureSizesCached() =>
+			sizes?.Where(x => x.ShowInNomenclature) ?? Enumerable.Empty<Size>();
+
 		#region Статика
+		/// <summary>
+		/// Возвращает строковое представление размера с ростом, если рост не null.
+		/// </summary>
 		public static string SizeTitle(Size size, Size height) => height != null ? $"{size?.Name}/{height?.Name}" : size?.Name;
 		/// <summary>
 		/// Сопоставляет размер в сотруднике с размером номенклатуры, с учетом подходящих.

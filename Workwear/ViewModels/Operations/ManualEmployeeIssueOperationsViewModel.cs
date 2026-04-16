@@ -12,6 +12,7 @@ using QS.Report.ViewModels;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -28,7 +29,7 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Operations 
 {
-	public class ManualEmployeeIssueOperationsViewModel : UowDialogViewModelBase 
+	public class ManualEmployeeIssueOperationsViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		private readonly SizeService sizeService;
 		private readonly BarcodeService barcodeService;
@@ -105,6 +106,11 @@ namespace Workwear.ViewModels.Operations
 				? Operations.FirstOrDefault(x => x.Id == selectOperation.Id) 
 				: Operations.FirstOrDefault();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("employees.html#manual-issue");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip("Ручные операции");
+		#endregion
 
 		#region PublicProperty
 
@@ -344,10 +350,13 @@ namespace Workwear.ViewModels.Operations
 
 		public string BarcodesColor => NeedCreateBarcodes ? "red" : null;
 		public void ReleaseBarcodes() {
+			if(SelectOperation == null)
+				return;
+			
 			if(SelectOperation.Id == 0)
 				UoW.Save(SelectOperation);
 			
-			barcodeService.CreateOrRemove(UoW, new []{SelectOperation});
+			barcodeService.CreateBarcodeEAN13(UoW, new []{SelectOperation});
 			UoW.Commit();
 			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));

@@ -188,7 +188,8 @@ namespace Workwear.Test.Integration.Stock
 				var expense = new Expense {
 					Warehouse = warehouse,
 					Employee = employee,
-					Date = new DateTime(2018, 10, 22)
+					Date = new DateTime(2018, 10, 22),
+					IssueDate = new DateTime(2018, 10, 22)
 				};
 				var itemExpense = expense.AddItem(employee.WorkwearItems.First(), baseParameters);
 				itemExpense.Nomenclature = nomenclature;
@@ -209,7 +210,6 @@ namespace Workwear.Test.Integration.Stock
 
 				var returnOnStock = new Return() {
 					Warehouse = warehouse,
-					EmployeeCard = employee,
 					Date = new DateTime(2018, 11, 2)
 				};
 				returnOnStock.AddItem(expense.Items.First().EmployeeIssueOperation, 1);

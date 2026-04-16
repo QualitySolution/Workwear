@@ -25,7 +25,10 @@ namespace Workwear.Views.Stock {
 				.AddBinding(vm => vm.DocNumberText, w => w.Text)
 				.AddBinding(vm => vm.SensitiveDocNumber, w => w.Sensitive)
 				.InitializeFromSource();
-			checkAuto.Binding.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active).InitializeFromSource(); 
+			checkAuto.Binding
+				.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+				.InitializeFromSource(); 
 			
 			entityentryDirectorPerson.ViewModel = ViewModel.ResponsibleDirectorPersonEntryViewModel;
 			entityentryChairmanPerson.ViewModel = ViewModel.ResponsibleChairmanPersonEntryViewModel;
@@ -36,11 +39,21 @@ namespace Workwear.Views.Stock {
 				.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
 			ydateDoc.Binding
 				.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
+			ydateDoc.Binding
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+				.AddBinding(vm => vm.CanChangeDocDate, w => w.IsEditable)
+				.InitializeFromSource();
 			ytextComment.Binding
-				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
+				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+				.InitializeFromSource();
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp).InitializeFromSource();
 			ytreeMembers.Selection.Changed += Members_Selection_Changed;
+			ybuttonAddMember.Sensitive = ViewModel.CanEdit;
+			ybuttonDelMember.Sensitive = ViewModel.CanEdit;
+			ybuttonAdd.Sensitive = ViewModel.CanEdit;
+			ybuttonDel.Sensitive = ViewModel.CanEdit;
 			ybuttonAddMember.Clicked += OnButtonAddMembersClicked;
 			ybuttonDelMember.Clicked += OnButtonDelMembersClicked;
 			ytreeItems.Selection.Changed += Items_Selection_Changed;
@@ -69,11 +82,11 @@ namespace Workwear.Views.Stock {
 					.AddColumn ("% износа на\nдату выдачи").AddReadOnlyTextRenderer((e => ((int)(e.WearPercentBefore * 100))
 						.Clamp(0, 100) + "%"))
 					.AddColumn ("Установить\n% износа").AddNumericRenderer (e => e.WearPercentAfter, new MultiplierToPercentConverter())
-						.Editing (new Adjustment(0,0,999,1,10,0)).WidthChars(6).Digits(0)
+						.Editing (new Adjustment(0,0,999,1,10,0), ViewModel.CanEdit).WidthChars(6).Digits(0)
 						.AddTextRenderer (e => "%", expand: false)
-					.AddColumn("Списать").AddToggleRenderer(e => e.Writeoff).Editing()
-					.AddColumn ("Продлить").AddDateRenderer(e => e.ExpiryByNormAfter).Editable()
-					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).WrapWidth(800).Editable()
+					.AddColumn("Списать").AddToggleRenderer(e => e.Writeoff).Editing(ViewModel.CanEdit)
+					.AddColumn ("Продлить").AddDateRenderer(e => e.ExpiryByNormAfter).Editable(ViewModel.CanEdit)
+					.AddColumn("Отметка об износе").AddTextRenderer(e => e.Cause).WrapWidth(800).Editable(ViewModel.CanEdit)
 					.Finish ();
 			ytreeItems.Binding
 				.AddBinding(Entity, vm => vm.Items, w => w.ItemsDataSource)
@@ -83,14 +96,14 @@ namespace Workwear.Views.Stock {
 		private void OnButtonAddMembersClicked(object sender, EventArgs e) => ViewModel.AddMembers();
 		private void OnButtonDelMembersClicked(object sender, EventArgs e) => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<Leader>());
 		private void Members_Selection_Changed(object sender, EventArgs e){
-			ybuttonDelMember.Sensitive = ytreeMembers.Selection.CountSelectedRows() > 0;
+			ybuttonDelMember.Sensitive = ytreeMembers.Selection.CountSelectedRows() > 0 && ViewModel.CanEdit;
 		}
 		
 		private void OnButtonDelClicked(object sender, EventArgs e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<InspectionItem>());
 		private void OnButtonAddClicked(object sender, EventArgs e) => ViewModel.AddItems();
 		private void OnButtonPrintClicked(object sender, EventArgs e) => ViewModel.Print();
 		private void Items_Selection_Changed(object sender, EventArgs e){
-			ybuttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+			ybuttonDel.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0 && ViewModel.CanEdit;
 		}
 		
 		#region PopupMenu

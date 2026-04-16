@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.HistoryLog;
+using QS.Utilities.Dates;
 using QS.Utilities.Numeric;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
@@ -171,11 +173,31 @@ namespace Workwear.Domain.Operations {
          	set => SetField(ref comment, value);
         }
         #endregion
+
+        #region Коллекции
+
+        private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
+        [Display(Name = "Операции")]
+        public virtual IList<BarcodeOperation> BarcodeOperations {
+	        get => barcodeOperations;
+	        set => SetField(ref barcodeOperations, value);
+        }	
+
+        #endregion
     
         #region Генерируемые Свойства
         public virtual string Title => Issued > Returned
 	        ? $"Выдача {DutyNorm.Name} <= {Issued} х {Nomenclature?.Name ?? ProtectionTools.Name}"
 	        : $"Списание {DutyNorm.Name} => {Returned} х {Nomenclature?.Name ?? ProtectionTools.Name}";
+        public virtual decimal? LifetimeMonth {
+	        get {
+		        if(StartOfUse == null || ExpiryByNorm == null)
+			        return null;
+
+		        var range = new DateRange(StartOfUse.Value, ExpiryByNorm.Value);
+		        return range.Months;
+	        }
+        }
         #endregion
         
         #region Методы
@@ -205,6 +227,39 @@ namespace Workwear.Domain.Operations {
 			
 			RecalculateExpiryByNorm();
         }
+
+        public virtual void Update(IUnitOfWork uow, WriteoffItem item) 
+        {
+	        //Внимание здесь сравниваются даты без времени.
+	        if(item.Document.Date.Date != OperationTime.Date)
+		        OperationTime = item.Document.Date;
+				
+	        Nomenclature = item.Nomenclature;
+	        Issued = 0;
+	        Returned = item.Amount;
+	        WarehouseOperation = item.WarehouseOperation;
+	        DutyNormItem = null;
+	        ExpiryByNorm = null;
+	        AutoWriteoffDate = null;
+	        WearSize = item.WearSize;
+	        Height = item.Height;
+        }
+        public virtual void Update(IUnitOfWork uow, ReturnItem item) 
+        {
+	        //Внимание здесь сравниваются даты без времени.
+	        if(item.Document.Date.Date != OperationTime.Date)
+		        OperationTime = item.Document.Date;
+				
+	        Nomenclature = item.Nomenclature;
+	        Issued = 0;
+	        Returned = item.Amount;
+	        WarehouseOperation = item.WarehouseOperation;
+	        DutyNormItem = null;
+	        ExpiryByNorm = null;
+	        AutoWriteoffDate = null;
+	        WearSize = item.WearSize;
+	        Height = item.Height;
+        }
         
         public virtual void RecalculateExpiryByNorm(){
 	        if(StartOfUse == null)
@@ -219,6 +274,38 @@ namespace Workwear.Domain.Operations {
                 AutoWriteoffDate = UseAutoWriteoff ? ExpiryByNorm : null;
 	        }
         }
+        public virtual decimal CalculatePercentWear(DateTime atDate) => 
+	        CalculatePercentWear(atDate, StartOfUse, ExpiryByNorm, WearPercent);
+        public virtual decimal CalculateDepreciationCost(DateTime atDate) =>
+			CalculateDepreciationCost(atDate, StartOfUse, ExpiryByNorm, WarehouseOperation?.Cost ?? 0m);
+        #endregion
+
+        #region Статические методы
+
+        public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0) 
+        {
+	        if(startOfUse == null || expiryByNorm == null)
+		        return 0;
+	        if(beginWearPercent >= 1)
+		        return beginWearPercent;
+			
+	        var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
+	        if(double.IsNaN(addPercent) || double.IsInfinity(addPercent))
+		        return beginWearPercent;
+
+	        return Math.Round(beginWearPercent + (1 - beginWearPercent) * (decimal)addPercent, 2);
+        }
+        public static decimal CalculateDepreciationCost(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginCost) {
+	        if(startOfUse == null || expiryByNorm == null)
+		        return 0;
+
+	        var removePercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
+	        if(double.IsNaN(removePercent) || double.IsInfinity(removePercent))
+		        return beginCost;
+
+	        return (beginCost - beginCost * (decimal)removePercent).Clamp(0, decimal.MaxValue);
+        }
+
         #endregion
 	}
 }

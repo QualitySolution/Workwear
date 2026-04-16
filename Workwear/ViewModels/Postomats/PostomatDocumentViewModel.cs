@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,14 +18,20 @@ using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Postomats;
+using Workwear.Journal.Filter.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.ClothingService;
+using Workwear.ViewModels.ClothingService;
+using Workwear.Tools;
+using Workwear.Tools.Features;
 using CellLocation = Workwear.Domain.Postomats.CellLocation;
 
 namespace Workwear.ViewModels.Postomats {
-	public class PostomatDocumentViewModel : EntityDialogViewModelBase<PostomatDocument> {
+	public class PostomatDocumentViewModel : EntityDialogViewModelBase<PostomatDocument>, IDialogDocumentation {
 		private readonly PostomatManagerService postomatService;
+		private readonly FeaturesService featuresService;
 		private readonly IUserService userService;
 		private readonly IInteractiveService interactive;
 
@@ -34,11 +40,12 @@ namespace Workwear.ViewModels.Postomats {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
 			PostomatManagerService postomatService,
+			FeaturesService featuresService,
 			IInteractiveService interactive,
-			ILifetimeScope autofacScope,
 			IUserService userService,
 			IValidator validator = null, UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.postomatService = postomatService ?? throw new ArgumentNullException(nameof(postomatService));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
@@ -55,10 +62,17 @@ namespace Workwear.ViewModels.Postomats {
 						item.Location = new CellLocation(cell.CellTitle, cell.Location);
 				}
 			}
-			
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, 
+				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWorkFactory), unitOfWorkFactory} })));
 			Entity.Items.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(CanChangePostomat));
 		}
 
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("postomat.html#postamat-refill-document");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+		
 		#region Постамат
 		public IList<PostomatInfo> Postomats { get; }
 		
@@ -101,16 +115,36 @@ namespace Workwear.ViewModels.Postomats {
 		public bool CanEdit => Entity.Status == DocumentStatus.New;
 		public bool CanAddItem => Entity.Postomat != null;
 		public bool CanChangePostomat => Entity.Items.Count == 0;
+		public bool CanUseBarcode => featuresService.Available(WorkwearFeature.Barcodes);
+
 		#endregion
 
 		#region Команды View
+
+		public void AddFromScan() {
+			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel>(this, this);
+		}
+		
+		public void AddItems(IEnumerable<ServiceClaim> claims) {
+			var items = UoW.Query<ServiceClaim>()
+				.Where(i => i.Id.IsIn(claims.Select(c => c.Id).ToArray()))
+				.List();
+			foreach(var i in items) 
+				Entity.AddItem(i, AvailableCells().FirstOrDefault(), userService.GetCurrentUser());
+		}
+
 		public void ReturnFromService() {
 			var selectPage = NavigationManager.OpenViewModel<ClaimsJournalViewModel>(this, OpenPageOptions.AsSlave,
-				model => model.ExcludeInDocs = true);
+				model => model.ExcludeInDocs = true,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<ClaimsJournalFilterViewModel>>(
+						filter => {
+							filter.SensitiveShowClosed = false;
+							filter.ShowClosed = false;
+							filter.Postomat = Postomat;
+						});
+				});
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectPage.ViewModel.Filter.SensitiveShowClosed = false;
-			selectPage.ViewModel.Filter.ShowClosed = false;
-			selectPage.ViewModel.Filter.Postomat = Postomat;
 			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
 		}
 
@@ -134,7 +168,17 @@ namespace Workwear.ViewModels.Postomats {
 		}
 
 		public void RemoveItem(PostomatDocumentItem item) {
-			Entity.Items.Remove(item);
+			if(item.Id == 0) {
+				item.ServiceClaim.States.RemoveAll(s => s.Id == 0);
+				Entity.Items.Remove(item);
+			}
+			else if(interactive.Question("Строка уже была сохранена, при удалении нужно проставить новый статус заявке. Так же документ будет сохранён. Продолжить?")) {
+				//push не отпавится автоматически
+				NavigationManager.OpenViewModel<ClothingMoveViewModel, ServiceClaim>(this, item.ServiceClaim); 
+				Entity.Items.Remove(item);
+				UoW.Save(Entity);
+				UoW.Commit();
+			}
 		}
 		#endregion
 

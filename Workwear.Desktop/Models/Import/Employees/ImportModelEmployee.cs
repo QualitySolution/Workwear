@@ -31,6 +31,7 @@ namespace Workwear.Models.Import.Employees
 
 		#region Параметры
 		public string ImportName => "Загрузка сотрудников";
+		public string DocumentationLink => "import.html#employees-excel-import";
 
 		public string DataColumnsRecommendations => "Установите номер строки с заголовком данных, таким образом " +
 		                                            "чтобы название колонок было корректно. Если в таблице заголовки " +

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
 using System.Reflection;
 using QS.BaseParameters;
+using Workwear.Domain.Stock;
 
 namespace Workwear.Tools
 {
@@ -25,6 +26,9 @@ namespace Workwear.Tools
 			set => Dynamic[nameof(DefaultAutoWriteoff)] = value;
 		}
 		
+		/// <summary>
+		/// Разрешать выдачу раньше срока (дней)
+		/// </summary>
 		public virtual int ColDayAheadOfShedule {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
 			set => Dynamic[nameof(ColDayAheadOfShedule)] = value;
@@ -98,8 +102,40 @@ namespace Workwear.Tools
 			get => Dynamic.IsDocNumberInReturnSign(typeof(bool)) ?? true;
 			set => Dynamic[nameof(IsDocNumberInReturnSign)] = value;
 		}
+
+		/// <summary>
+		/// Дата, с которой будет отображение на оборотной стороне карточки сотрудника.
+		/// </summary>
+		public virtual DateTime? StartDateOfOperations {
+			get => Dynamic.StartDateOfOperations(typeof(DateTime?));
+			set => Dynamic[nameof(StartDateOfOperations)] = value;
+		}
+
+		/// <summary>
+		/// На оборотной стороне карточки сотрудника в наименовании СИЗ будет указана номенклатура нормы вместо номенклатуры.
+		/// </summary>
+		public virtual bool IsGenericName {
+			get => Dynamic.IsGenericName(typeof(bool)) ?? false;
+			set => Dynamic[nameof(IsGenericName)] = value;
+		}
+		
+		/// <summary>
+		/// Дата запрета редактирования документов.
+		/// </summary>
+		public virtual DateTime? EditLockDate {
+			get => Dynamic.EditLockDate(typeof(DateTime?));
+			set => Dynamic[nameof(EditLockDate)] = value;
+		}
+		/// <summary>
+		/// Тип используемой маркировки
+		/// </summary>
+		public virtual BarcodeTypes ClothingMarkingType {
+			get => Dynamic.ClothingMarkingType(typeof(BarcodeTypes)) ?? BarcodeTypes.EAN13;
+			set => Dynamic[nameof(ClothingMarkingType)] = value;
+		}
 		#endregion
 	}
+	
 	public enum AnswerOptions {
 		[Display(Name = "Спрашивать")]
 		Ask,
@@ -108,5 +144,4 @@ namespace Workwear.Tools
 		[Display(Name = "Всегда нет")]
 		No
 	}
-	
 }

@@ -14,14 +14,17 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Services;
 using QS.Utilities;
+using QS.ViewModels.Control;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Analytics;
 using Workwear.Models.Operations;
-using Workwear.ReportParameters.ViewModels;
 using Workwear.Repository.Company;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -29,12 +32,14 @@ using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Export {
 	
-	public class FutureIssueExportViewModel : UowDialogViewModelBase {
+	public class FutureIssueExportViewModel : UowDialogViewModelBase, IDialogDocumentation {
 		public FeaturesService FeaturesService { get; }
 
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private readonly EmployeeIssueModel issueModel;
 		private readonly FutureIssueModel futureIssueModel;
+		private readonly DutyNormIssueModel dutyNormIssueModel;
+		private readonly DutyNormRepository dutyNormRepository;
 		private readonly BaseParameters baseParameters;
 		private readonly SizeService sizeService;
 
@@ -44,6 +49,8 @@ namespace Workwear.ViewModels.Export {
 			ILifetimeScope autofacScope,
 			EmployeeIssueModel issueModel,
 			FutureIssueModel futureIssueModel,
+			DutyNormIssueModel dutyNormIssueModel,
+			DutyNormRepository dutyNormRepository,
 			BaseParameters baseParameters,
 			FeaturesService featuresService,
 			SizeService sizeService,
@@ -53,6 +60,8 @@ namespace Workwear.ViewModels.Export {
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
+			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
+			this.dutyNormRepository = dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			
@@ -69,11 +78,17 @@ namespace Workwear.ViewModels.Export {
 				.UseViewModelDialog<OrganizationViewModel>()
 				.Finish();
 
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
+			var protectionToolsList = UoW.GetAll<ProtectionTools>().ToList();
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
 			ExportOrganization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("export.html#forecast-of-issues");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
@@ -82,14 +97,14 @@ namespace Workwear.ViewModels.Export {
 		
 		#region Поля и свойства
 		public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
-		public ChoiceProtectionToolsViewModel ChoiceProtectionToolsViewModel;
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
 		public IProgressBarDisplayable ProgressLocal;
         public IProgressBarDisplayable ProgressGlobal;
 		public List<ColumnInfo> ColumnMap;
 		
 		private bool runSensitive;
 		public virtual bool RunSensitive {
-			get => runSensitive && (startDate <= endDate) && !ChoiceProtectionToolsViewModel.AllUnSelected;
+			get => runSensitive && (startDate <= endDate) && !ChoiceProtectionToolsViewModel.AllUnSelected && (includeEmployees || includeDutyNorms);
 			set => SetField(ref runSensitive, value);
 		}
 		public virtual bool RunVisible { get; set; }
@@ -120,6 +135,20 @@ namespace Workwear.ViewModels.Export {
 			get => moveDebt;
 			set => SetField(ref moveDebt, value);
 		}
+
+		private bool includeEmployees = true;
+		[PropertyChangedAlso(nameof(RunSensitive))]
+		public virtual bool IncludeEmployees {
+			get => includeEmployees;
+			set => SetField(ref includeEmployees, value);
+		}
+
+		private bool includeDutyNorms = true;
+		[PropertyChangedAlso(nameof(RunSensitive))]
+		public virtual bool IncludeDutyNorms {
+			get => includeDutyNorms;
+			set => SetField(ref includeDutyNorms, value);
+		}
 		
 		private FutureIssueExportCost exportCost = FutureIssueExportCost.None;
 		public FutureIssueExportCost ExportCost {
@@ -148,22 +177,25 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(item.Post?.Name ?? "");}},
 				new ColumnInfo() {Label =
 					"Табельный",FillCell = (cell, item) => {
-					cell.SetCellValue(item.Employee.PersonnelNumber ?? "");}},
+					cell.SetCellValue(item.Employee?.PersonnelNumber ?? "");}},
 				new ColumnInfo() {Label =
 					"Орг. единица", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Department?.Code ?? "");}},
 				new ColumnInfo() {Label =
 					"ФИО", FillCell = (cell, item) => {
-					cell.SetCellValue(item.Employee.FullName);}},
+					cell.SetCellValue(item.Employee?.FullName);}},
 				new ColumnInfo() {Label =
 					"Пол", FillCell = (cell, item) => {
-					cell.SetCellValue(item.Employee.Sex == Sex.M ? "М" : item.Employee.Sex == Sex.F ? "Ж" : "-");}},
+					cell.SetCellValue(item.EmployeeSex == null ? "" : item.EmployeeSex == Sex.M ? "М" : item.EmployeeSex == Sex.F ? "Ж" : "-");}},
 				new ColumnInfo() {Label =
 					"Норма.Код", FillCell = (cell, item) => {
-					cell.SetCellValue(item.Norm?.Id ?? 0);}},
+					cell.SetCellValue(item.NormId ?? 0);}},
 				new ColumnInfo() {Label =
 					"Норма",FillCell = (cell, item) => {
 					cell.SetCellValue(item.ProtectionTools.Name);}},
+				new ColumnInfo() {Label =
+					"Тип выдачи",FillCell = (cell, item) => {
+					cell.SetCellValue(item.IssueTypeTitle);}},
 				new ColumnInfo() {Label =
 					"Артикул", FillCell = (cell, item) => {
 					cell.SetCellValue(item.Nomenclature?.Number ?? "");}},
@@ -175,11 +207,14 @@ namespace Workwear.ViewModels.Export {
 					cell.SetCellValue(item.Size?.Name + (item.Height != null ? (" / " + item.Height.Name) : ""));}},
 				new ColumnInfo() {Label =
 					"Количество\nпо норме", FillCell = (cell, item) => {
-					cell.SetCellValue(item.NormItem.AmountText); },
+					cell.SetCellValue(item.NormAmountText); },
 					Type = CellType.Numeric},
 				new ColumnInfo() {Label =
 					"Срок\nиспользования", FillCell = (cell, item) => {
-					cell.SetCellValue(item.NormItem.LifeText);}},
+					cell.SetCellValue(item.NormLifeText);}},
+				new ColumnInfo() {Label =
+					"Ограничения", FillCell = (cell, item) => {
+					cell.SetCellValue(item.NormConditionName);}},
 				new ColumnInfo() {Label =
 					"Виртуальная", FillCell = (cell, item) => {
 					cell.SetCellValue(item.VirtualLastIssue ? "+" : "");},},
@@ -249,7 +284,6 @@ namespace Workwear.ViewModels.Export {
 			RunSensitive = false;
 			string filename = "";
 			
-			
 			object[] param = new object[4];
 			param[0] = "Отмена";
 			param[1] = Gtk.ResponseType.Cancel;
@@ -273,7 +307,9 @@ namespace Workwear.ViewModels.Export {
 				filename += ".xlsx";
 			
 			using(FileStream fileStream = new FileStream(filename, FileMode.Create)) {
-				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal, 7, "Загрузка общих данных", showProgressText: true, logger: logger); 
+				var globalProgress = new ProgressPerformanceHelper(ProgressGlobal,
+					3 + (includeDutyNorms ? 3u:0) + (includeDutyNorms ? 4u:0),
+					"Загрузка общих данных", showProgressText: true, logger: logger); 
 				sizeService.RefreshSizes(UoW);
 				
 				IWorkbook workbook = new XSSFWorkbook();
@@ -281,21 +317,43 @@ namespace Workwear.ViewModels.Export {
 
 				#region Получение данных
 
-				globalProgress.CheckPoint("Загрузка потребностей");
-				var wearCardsItems = issueModel
-					.LoadWearItemsForProtectionTools(ChoiceProtectionToolsViewModel.SelectedIds);
-				var protectionTools = wearCardsItems.Select(x => x.ProtectionTools).Distinct();
-				
-				globalProgress.CheckPoint("Загрузка сотрудников");
-				var employees = issueModel.LoadEmployeeFullInfo(wearCardsItems.Select(x => x.EmployeeCard.Id).ToArray());
+				var allIssues = new List<FutureIssue>();
+				var selectedProtectionToolsIds = ChoiceProtectionToolsViewModel.SelectedIds;
+
+				if(IncludeEmployees) {
+					globalProgress.CheckPoint("Загрузка потребностей сотрудников");
+					var wearCardsItems = issueModel
+						.LoadWearItemsForProtectionTools(selectedProtectionToolsIds);
 					
-				globalProgress.CheckPoint("Загрузка выдач");
-				issueModel.FillWearReceivedInfo(wearCardsItems.ToArray(), progress: ProgressLocal);
+					globalProgress.CheckPoint("Загрузка сотрудников");
+					issueModel.LoadEmployeeFullInfo(wearCardsItems.Select(x => x.EmployeeCard.Id).ToArray());
+						
+					globalProgress.CheckPoint("Загрузка выдач сотрудникам");
+					issueModel.FillWearReceivedInfo(wearCardsItems.ToArray(), progress: ProgressLocal);
+
+					globalProgress.CheckPoint("Прогнозирование выдач сотрудникам");
+					var employeeIssues = futureIssueModel.CalculateIssues(StartDate, EndDate, MoveDebt, wearCardsItems, ProgressLocal);
+					allIssues.AddRange(employeeIssues);
+				}
+
+				if(IncludeDutyNorms) {
+					globalProgress.CheckPoint("Загрузка строк дежурных норм");
+					var dutyNormItems = dutyNormRepository.AllItemsFor(
+						protectionToolsIds: selectedProtectionToolsIds,
+						uow: UoW).ToList();
+
+					globalProgress.CheckPoint("Загрузка выдач по дежурным нормам");
+					dutyNormIssueModel.FillDutyNormItems(dutyNormItems.ToArray(), progress: ProgressLocal);
+
+					globalProgress.CheckPoint("Прогнозирование выдач по дежурным нормам");
+					var dutyNormIssues = futureIssueModel.CalculateDutyNormIssues(StartDate, EndDate, MoveDebt, dutyNormItems, ProgressLocal);
+					allIssues.AddRange(dutyNormIssues);
+				}
+
 				#endregion
 
 				globalProgress.CheckPoint("Создание документа");
 				#region Форматы и стили ячеек
-				//Форматы ячеек. 
 				IDataFormat dataFormater = workbook.CreateDataFormat();
 				short dateFormat = dataFormater.GetFormat("dd.MM.yyyy");
 				short moneyFormat = dataFormater.GetFormat($"#.## {baseParameters.UsedCurrency}");
@@ -330,12 +388,9 @@ namespace Workwear.ViewModels.Export {
 					cell.CellStyle = cellStyleHead;
 				}
 				
-				globalProgress.CheckPoint("Прогнозирование выдач");
-				var featureIssues = futureIssueModel.CalculateIssues(StartDate, EndDate, MoveDebt, wearCardsItems, ProgressLocal);
-				
 				globalProgress.CheckPoint("Заполнение Excel файла");
 				int rowIndex = 1;
-				foreach(var issue in featureIssues) {
+				foreach(var issue in allIssues) {
 					IRow row = sheet.CreateRow(rowIndex++);
 					foreach(var (column, index) in ColumnsWithIndex) {
 						ICell cell = row.CreateCell(index);

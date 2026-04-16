@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" Version="2.0.123" />
+        <PackageReference Include="Dapper" Version="2.1.66" />
         <PackageReference Include="DiffPlex" Version="1.7.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
@@ -18,11 +18,42 @@
         <PackageReference Include="NUnit" Version="3.13.3" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+        <PackageReference Include="Testcontainers.MariaDb" Version="4.7.0" />
+        <PackageReference Include="Testcontainers.MySql" Version="4.7.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\QSProjects\QS.Testing\QS.Testing.csproj" />
       <ProjectReference Include="..\QSProjects\QS.Utilities\QS.Utilities.csproj" />
       <ProjectReference Include="..\Workwear.Sql\Workwear.Sql.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="UpdatesContainerTests.cs" />
+      <None Update="Dumps\empty_1.0.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.3.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.4.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.5.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.6.1.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.7.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.8.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Dumps\empty_2.9.1.sql">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

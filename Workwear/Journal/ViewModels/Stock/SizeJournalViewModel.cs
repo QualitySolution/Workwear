@@ -7,20 +7,26 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using workwear.Journal.Filter.ViewModels.Sizes;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Sizes;
 
 namespace workwear.Journal.ViewModels.Stock
 {
-    public class SizeJournalViewModel: EntityJournalViewModelBase<Size, SizeViewModel, SizeJournalNode>
+    public class SizeJournalViewModel: EntityJournalViewModelBase<Size, SizeViewModel, SizeJournalNode>, IDialogDocumentation
     {
         public SizeFilterViewModel Filter { get;}
+        #region IDialogDocumentation
+        public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#sizes");
+        public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Size));
+        #endregion
         public SizeJournalViewModel(
             IUnitOfWorkFactory unitOfWorkFactory, 
             IInteractiveService interactiveService, 
@@ -68,7 +74,7 @@ namespace workwear.Journal.ViewModels.Stock
         }
 
         private void OverrideDeleteAction() {
-            NodeActionsList.RemoveAll(x => x.Title == "Удалить");
+            NodeActionsList.RemoveAll(x => x.GetTitle(new object[]{}) == "Удалить");
             var deleteAction = new JournalAction("Удалить",
                 selected => selected.Length == 1 && selected.First().GetId() >= SizeService.MaxStandardSizeId,
                 selected => VisibleDeleteAction,

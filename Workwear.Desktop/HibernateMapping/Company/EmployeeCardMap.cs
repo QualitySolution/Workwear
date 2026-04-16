@@ -59,6 +59,12 @@ namespace Workwear.HibernateMapping.Company
 				.ChildKeyColumn("norm_id")
 				.LazyLoad();
 
+			HasManyToMany(x => x.RelatedDutyNorms).Table("duty_norms")
+				.ParentKeyColumn("responsible_employee_id")
+				.ChildKeyColumn("id")
+				.Inverse()
+				.LazyLoad();
+
 			HasMany(x => x.Vacations).Table("employees_vacations")
 				.KeyColumn("employee_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan().Inverse()
@@ -71,6 +77,11 @@ namespace Workwear.HibernateMapping.Company
 				.LazyLoad();
 			
 			HasMany(x => x.EmployeeGroupItems).Table("employee_group_items")
+				.KeyColumn("employee_id").Not.KeyNullable()
+				.Cascade.AllDeleteOrphan()
+				.Inverse()
+				.LazyLoad();
+			HasMany(x => x.SelectedNomenclatures).Table("employees_selected_nomenclatures")
 				.KeyColumn("employee_id").Not.KeyNullable()
 				.Cascade.AllDeleteOrphan()
 				.Inverse()

@@ -14,7 +14,8 @@ namespace Workwear.Domain.Postomats
 	[Appellative(Gender = GrammaticalGender.Masculine, 
 		NominativePlural = "документы постамата на забор",
 		Nominative = "документ постамата на забор",
-		Genitive = "документ постамата на забор")]
+		Genitive = "документ постамата на забор",
+		GenitivePlural = "документов постамата на забор")]
 	[HistoryTrace]
 	public class PostomatDocumentWithdraw : PropertyChangedBase, IDomainObject, IValidatableObject
 	{
@@ -60,7 +61,7 @@ namespace Workwear.Domain.Postomats
 
 		#endregion
 		
-		public virtual void AddItem(ServiceClaim claim, PostomatInfo postomat, UserBase user) 
+		public virtual void AddItem(ServiceClaim claim, PostomatInfo postomat) 
 		{
 			var newItem = new PostomatDocumentWithdrawItem 
 			{

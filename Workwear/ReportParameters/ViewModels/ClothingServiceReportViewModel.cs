@@ -1,63 +1,260 @@
 ﻿using System;
-using System.Collections.Generic;
-using QS.DomainModel.UoW;
-using QS.Report.ViewModels;
 using QS.DomainModel.Entity;
+using QS.Report.ViewModels;
+using QS.ViewModels.Extension;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
+using QS.Report;
+using Workwear.Domain.ClothingService;
+using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ClothingServiceReportViewModel: ReportParametersViewModelBase {
+	public class ClothingServiceReportViewModel: ReportParametersViewModelBase, IDialogDocumentation {
 
-		public ClothingServiceReportViewModel(RdlViewerViewModel rdlViewerViewModel) : base(rdlViewerViewModel)
+		private readonly FeaturesService featuresService;
+		public ClothingServiceReportViewModel(
+			RdlViewerViewModel rdlViewerViewModel,
+			FeaturesService featuresService
+			) : base(rdlViewerViewModel) 
 		{
-			Title = "Обслуживание одежды";
-			Identifier = "ClothingServiceReport";
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+
+			var hiddenReportTypes = new List<object>();
+			if(!featuresService.Available(WorkwearFeature.Postomats)) {
+				HiddenStates = new object[] { ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
+				hiddenReportTypes.Add(ClothingServiceReportType.PostamatUse);
+            }
+			if(!featuresService.Available(WorkwearFeature.ReportServiceServiced))
+				hiddenReportTypes.Add(ClothingServiceReportType.Serviced);
+			if(hiddenReportTypes.Count > 0)
+				HiddenReportType = hiddenReportTypes.ToArray();
+		}
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#report-service-claims");
+		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
+		#endregion
+		
+		public virtual object[] HiddenReportType { get; }
+		
+		private ClothingServiceReportType reportType = ClothingServiceReportType.ClaimForStatus;
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(VisiblePeriodOfBegitn))]
+		[PropertyChangedAlso(nameof(VisibleShowClosed))]
+		[PropertyChangedAlso(nameof(VisibleGroupSubdivision))]
+		[PropertyChangedAlso(nameof(VisibleShowEmployees))]
+		[PropertyChangedAlso(nameof(VisibleShowPhone))]
+		[PropertyChangedAlso(nameof(VisibleShowStatus))]
+		[PropertyChangedAlso(nameof(VisibleShowComment))]
+		[PropertyChangedAlso(nameof(VisibleShowZero))]
+		[PropertyChangedAlso(nameof(VisibleSubdivisionAsMVZ))]
+		[PropertyChangedAlso(nameof(VisibleAlternativeName))]
+		[PropertyChangedAlso(nameof(VisibleSumCost))]
+		[PropertyChangedAlso(nameof(Title))]
+		[PropertyChangedAlso(nameof(ShowClosedLabel))]
+		public virtual ClothingServiceReportType ReportType {
+			get => reportType;
+			set {
+				SetField(ref reportType, value);
+			}
 		}
 		protected override Dictionary<string, object> Parameters => SetParameters();
+		public override string Identifier { 
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+		}
+		public override string Title {
+			get => 
+				(ReportType == ClothingServiceReportType.ClaimForStatus
+				       ? (Status == null ? "Заявки на обслуживание" : $"Заявки в статусе {Status.GetEnumTitle()}") : "") +
+			       (ReportType == ClothingServiceReportType.ClaimMetric
+				       ? "Отчёт по нахождению в обслуживании" : "") +
+			       (ReportType == ClothingServiceReportType.ClaimCount
+				       ? $"Количество обращений" : "") +
+			       (ReportType == ClothingServiceReportType.PostamatUse
+				       ? $"Использование постаматов" : "") +
+			       (ReportType == ClothingServiceReportType.Serviced
+				       ? $"Оказанные услуги" : "") +
+			       (VisiblePeriodOfBegitn ? $" за ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
+			       $" от {DateTime.Today.ToShortDateString()}";
+		}
 		
 		private Dictionary<string, object> SetParameters() {
-			var parameters = new Dictionary<string, object>();
-			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
-				parameters.Add("show_closed", showClosed);
-				parameters.Add("start_date", StartDate ?? DateTime.MinValue);
-				parameters.Add("end_date", EndDate ?? DateTime.MaxValue);
+			switch(ReportType) {
+				case ClothingServiceReportType.ClaimForStatus :
+					return new Dictionary<string, object> {
+						{ "report_name", Title },
+						{ "show_comment", ShowComments },
+						{ "show_phone", ShowEmployees && ShowPhone },
+						{ "show_emoloyee", ShowEmployees },
+						{ "show_closed", ShowClosed },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
+						{ "status", Status },
+						{ "all_status", Status == null},
+					};
+				case ClothingServiceReportType.ClaimMetric:
+					return new Dictionary<string, object> {
+						{ "report_name", Title },
+						{ "show_closed", ShowClosed },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
+						{ "show_emoloyee", ShowEmployees },
+					};
+				case ClothingServiceReportType.ClaimCount:
+					return new Dictionary<string, object> {
+						{ "report_name", Title },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
+						{ "show_phone", ShowPhone },
+						{ "show_zero", ShowZero },
+						{ "subdivision_group", GroupSubdivision },
+					};
+				case ClothingServiceReportType.PostamatUse:
+					return new Dictionary<string, object> {
+						{ "report_name", Title },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
+					};
+			case ClothingServiceReportType.Serviced:
+				return new Dictionary<string, object> {
+					{ "report_name", Title },
+					{ "start_date", StartDate },
+					{ "end_date", EndDate },
+					{ "use_subdivision", SubdivisionAsMVZ },
+					{ "show_alternative_name", ShowAlternativeName },
+					{ "sum_cost", SumCost },
+				};
+				default: throw new InvalidOperationException(nameof(SetParameters));
 			}
-			return parameters;
 		}
+		
+		public virtual object[] HiddenStates { get; }
+		
+		private ClaimState? status;
+		[PropertyChangedAlso(nameof(Title))]
+		[PropertyChangedAlso(nameof(ShowClosedLabel))]
+		public virtual ClaimState? Status {
+			get => status;
+			set => SetField(ref status, value);
+		}
+
+		private bool groupSubdivision = false;		
+		[PropertyChangedAlso(nameof(VisibleShowPhone))]
+		[PropertyChangedAlso(nameof(VisibleShowZero))]
+		public virtual bool GroupSubdivision {
+			get => groupSubdivision;
+			set => SetField(ref groupSubdivision, value);
+		}
+		
+		private bool showComments = false;
+		public virtual bool ShowComments {
+			get => showComments;
+			set => SetField(ref showComments, value);
+		}
+		
+		private bool showPhone = false;
+		public virtual bool ShowPhone {
+			get => showPhone;
+			set => SetField(ref showPhone, value);
+		}
+
+		public virtual string ShowClosedLabel => "Период" +
+			(reportType == ClothingServiceReportType.ClaimForStatus && status != null ? " перехода в статус:" : "") +
+			(reportType == ClothingServiceReportType.PostamatUse ? ":" : "") +
+			(reportType == ClothingServiceReportType.Serviced ? ":" : "") +
+			(reportType == ClothingServiceReportType.ClaimForStatus && status == null 
+			 || reportType == ClothingServiceReportType.ClaimCount
+			 || reportType == ClothingServiceReportType.ClaimMetric ? " поступления заявок:" : "");
 		
 		private bool showClosed = false;
-		[PropertyChangedAlso(nameof(VisibleUseAlternative))]
+		[PropertyChangedAlso(nameof(VisiblePeriodOfBegitn))]
 		public virtual bool ShowClosed {
 			get => showClosed;
-			set {
-				if(SetField(ref showClosed, value))
-					OnPropertyChanged(nameof(SensetiveLoad));
-			}
+			set => SetField(ref showClosed, value);
 		}
-		public bool VisibleUseAlternative => ShowClosed;
-		private DateTime? startDate=  DateTime.Now.AddMonths(-1);
 		
-
-		private DateTime? endDate =  DateTime.Now;
-
-		[PropertyChangedAlso(nameof(SensetiveLoad))]
-		public virtual DateTime? StartDate {
-			get => startDate;
-			set {
-				if(SetField(ref startDate, value))
-					OnPropertyChanged(nameof(SensetiveLoad));
-			}
+		private bool showEmployees = true;
+		[PropertyChangedAlso(nameof(ShowPhone))]
+		public virtual bool ShowEmployees {
+			get => showEmployees;
+			set => SetField(ref showEmployees, value);
 		}
+		
+		private bool showZero = false;
+		public virtual bool ShowZero {
+			get => showZero;
+			set => SetField(ref showZero, value);
+		}
+		
+		private bool subdivisionAsMVZ = false;
+		public virtual bool SubdivisionAsMVZ {
+			get => subdivisionAsMVZ;
+			set => SetField(ref subdivisionAsMVZ, value);
+		}
+		
+		private DateTime startDate = DateTime.Now.AddMonths(-1);
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
-		public virtual DateTime? EndDate {
+		[PropertyChangedAlso(nameof(Title))]
+		public virtual DateTime StartDate {
+			get => startDate;
+			set => SetField(ref startDate, value);
+		}
+		
+		private DateTime endDate =  DateTime.Now;
+		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(Title))]
+		public virtual DateTime EndDate {
 			get => endDate;
-			set {
-				if(SetField(ref endDate, value))
-					OnPropertyChanged(nameof(SensetiveLoad));
-			}
+			set => SetField(ref endDate, value);
 		}
 
 		public bool SensetiveLoad => !ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate);
-		
+		public bool VisiblePeriodOfBegitn =>
+			reportType == ClothingServiceReportType.ClaimCount ||
+			(VisibleShowClosed && ShowClosed) ||
+			reportType == ClothingServiceReportType.PostamatUse ||
+			reportType == ClothingServiceReportType.ClaimForStatus ||
+			reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleShowClosed => reportType == ClothingServiceReportType.ClaimMetric || reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisibleGroupSubdivision => reportType == ClothingServiceReportType.ClaimCount;
+        public bool VisibleShowEmployees => reportType == ClothingServiceReportType.ClaimMetric || reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisibleShowPhone => reportType == ClothingServiceReportType.ClaimCount && !GroupSubdivision || reportType == ClothingServiceReportType.ClaimForStatus && ShowEmployees;
+		public bool VisibleShowComment => reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisibleShowStatus => reportType == ClothingServiceReportType.ClaimForStatus;
+		public bool VisibleShowZero => reportType == ClothingServiceReportType.ClaimCount && !GroupSubdivision;
+		public bool VisibleSubdivisionAsMVZ => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleAlternativeName => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleSumCost => reportType == ClothingServiceReportType.Serviced;
+
+		private bool showAlternativeName;
+		public virtual bool ShowAlternativeName {
+			get => showAlternativeName;
+			set => SetField(ref showAlternativeName, value);
+		}
+
+		private bool sumCost;
+		public virtual bool SumCost {
+			get => sumCost;
+			set => SetField(ref sumCost, value);
+		}
+	}
+	public enum ClothingServiceReportType {
+		[ReportIdentifier("ClothingService.ClothingServiceStatusReport")]
+		[Display(Name = "Заявки по статусу")]
+		ClaimForStatus,
+        [ReportIdentifier("ClothingService.ClothingServiceMetricReport")]
+        [Display(Name = "Нахождение в обслуживании")]
+        ClaimMetric,
+		[ReportIdentifier("ClothingService.ClothingServiceCountClaimReport")]
+		[Display(Name = "Количество обращений")]
+		ClaimCount,
+        [ReportIdentifier("ClothingService.ClothingServicePostamatReport")]
+        [Display(Name = "Использование постаматов")]
+        PostamatUse,
+		[ReportIdentifier("ClothingService.ClothingServiceServicedReport")]
+		[Display(Name = "Оказанные услуги")]
+		Serviced
 	}
 	
 }

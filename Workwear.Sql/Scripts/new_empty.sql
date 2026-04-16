@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` VARCHAR(60) NULL DEFAULT NULL,
   `description` TEXT NULL DEFAULT NULL,
   `admin` TINYINT(1) NOT NULL DEFAULT FALSE,
+  `can_delete` TINYINT(1) NOT NULL DEFAULT TRUE,
+  `can_accounting_settings` TINYINT(1) NOT NULL DEFAULT TRUE,
+  `can_change_document_date` TINYINT(1) NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -32,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `base_parameters` (
   `name` VARCHAR(80) NOT NULL,
   `str_value` VARCHAR(500) NULL DEFAULT NULL,
   PRIMARY KEY (`name`))
-ENGINE = InnoDB;
+ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `clothing_service_claim` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -54,13 +57,14 @@ CREATE TABLE `clothing_service_states` (
 	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 	`claim_id` int(10) unsigned NOT NULL,
 	`operation_time` datetime NOT NULL,
-	`state` enum('WaitService','InReceiptTerminal','InTransit','InRepair','InWashing','AwaitIssue','InDispenseTerminal','Returned') NOT NULL,
+	`state` ENUM('WaitService','InReceiptTerminal','InTransit','DeliveryToLaundry','InRepair','InWashing','InDryCleaning','AwaitIssue','DeliveryToDispenseTerminal','InDispenseTerminal','Returned') NOT NULL,
 	`user_id` int(10) unsigned DEFAULT NULL,
 	`terminal_id` INT UNSIGNED NULL DEFAULT NULL COMMENT 'Номер постомата',
 	`comment` text DEFAULT NULL,
 	PRIMARY KEY (`id`),
 	KEY `fk_clame_id` (`claim_id`),
 	KEY `user_id` (`user_id`),
+	INDEX(`operation_time`),
 	CONSTRAINT `fk_clame_id` FOREIGN KEY (`claim_id`) REFERENCES `clothing_service_claim` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -72,8 +76,8 @@ CREATE TABLE IF NOT EXISTS `warehouse` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `subdivisions`
@@ -85,6 +89,8 @@ CREATE TABLE IF NOT EXISTS `subdivisions` (
   `name` VARCHAR(240) NOT NULL,
   `warehouse_id` INT UNSIGNED NULL DEFAULT NULL,
   `parent_subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
+  `employees_color` VARCHAR(7) NULL,
+  `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_subdivisions_1_idx` (`warehouse_id` ASC),
   INDEX `fk_subdivisions_2_idx` (`parent_subdivision_id` ASC),
@@ -101,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `subdivisions` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8mb4;
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 
@@ -176,6 +182,7 @@ CREATE TABLE `postomat_document_items` (
    `loc_cell` int(11) unsigned NOT NULL,
    `cell_number` varchar(10) null default null, 
    `dispense_time` DATETIME NULL DEFAULT NULL COMMENT 'Время выдачи постоматом',
+   `notification_sent` boolean not null default false,
    PRIMARY KEY (`id`),
    KEY `last_update` (`last_update`),
    KEY `fk_postomat_document_id` (`document_id`),
@@ -293,8 +300,8 @@ CREATE TABLE IF NOT EXISTS `posts` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 1;
-
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `employees`
@@ -385,8 +392,8 @@ CREATE TABLE IF NOT EXISTS `leaders` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 1;
-
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `measurement_units`
@@ -451,7 +458,8 @@ CREATE TABLE IF NOT EXISTS `item_types` (
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 1;
+AUTO_INCREMENT = 1
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -465,7 +473,9 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `sex` ENUM('Women','Men', 'Universal') NOT NULL DEFAULT 'Universal',
   `comment` TEXT NULL DEFAULT NULL,
   `number` VARCHAR(20) NULL DEFAULT NULL,
+  `additional_info` TEXT NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
+  `catalog_id` CHAR(24) NULL,
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
@@ -569,6 +579,7 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
 	  number        varchar(15)  null,
 	  date          date         not null,
 	  warehouse_id  int unsigned not null,
+	  shipment_id   int unsigned null,
 	  user_id       int unsigned null,
 	  comment       text         null,
 	  creation_date datetime     null,
@@ -581,7 +592,9 @@ CREATE TABLE IF NOT EXISTS `stock_income` (
 			  on update cascade on delete set null,
 	  constraint fk_stock_income_warehouse
 		  foreign key (warehouse_id) references warehouse (id)
-			  on update cascade
+			  on update cascade,
+	  constraint fk_stock_income_shipment
+		  foreign key (shipment_id) references shipment (id)
 )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -637,17 +650,12 @@ create table stock_return
 	doc_number    varchar(16)  null,
 	date          date         not null,
 	warehouse_id  int unsigned not null,
-	employee_id   int unsigned not null,
 	user_id       int unsigned null,
 	comment       text         null,
 	creation_date datetime     null,
 	INDEX `index_stock_income_date` (`date` ASC),
 	INDEX `stock_return_doc_number_index` (`doc_number` ASC),
-	INDEX `stock_return_employee_id_index` (`employee_id` ASC),
 	INDEX `stock_income_warehouse_id_index` (`warehouse_id` ASC),
-	constraint stock_return_employees_id_fk
-		foreign key (employee_id) references employees (id)
-			on update cascade on delete cascade,
 	constraint stock_return_users_id_fk
 		foreign key (user_id) references users (id)
 			on update cascade on delete set null,
@@ -669,8 +677,11 @@ create table stock_return_items
 	stock_return_id             int unsigned not null,
 	nomenclature_id             int unsigned not null,
 	quantity                    int unsigned not null,
-	employee_issue_operation_id int unsigned not null,
+	employee_id					int unsigned null,
+	employee_issue_operation_id int unsigned null,
 	warehouse_operation_id      int unsigned not null,
+	duty_norm_id				int unsigned null,
+	duty_norm_issue_operation_id int unsigned null,
 	size_id                     int unsigned null,
 	height_id                   int unsigned null,
 	comment_return              varchar(120) null,
@@ -679,6 +690,10 @@ create table stock_return_items
 	INDEX `index_stock_return_items_height` (`height_id` ASC),
 	INDEX `index_stock_return_items_nomenclature` (`nomenclature_id` ASC),
 	INDEX `index_stock_return_items_warehouse_operation` (`warehouse_operation_id` ASC),
+	INDEX `stock_return_items_employee_id_index` (`employee_id` ASC),
+	INDEX `stock_return_items_duty_norm_id_index` (`duty_norm_id` ASC),
+	INDEX `stock_return_items_duty_norm_issue_operation_id_index` (`duty_norm_issue_operation_id` ASC),
+	INDEX `stock_return_items_employee_issue_operation_id_index` (`employee_issue_operation_id` ASC),
 	constraint fk_stock_return_items_doc
 		foreign key (stock_return_id) references stock_return (id)
 			on update cascade on delete cascade,
@@ -694,7 +709,19 @@ create table stock_return_items
 		foreign key (warehouse_operation_id) references operation_warehouse (id),
 	constraint fk_stock_return_items_size
 		foreign key (size_id) references sizes (id)
+			on update cascade,
+	constraint stock_return_items_employee_id_fk
+		foreign key (employee_id) references employees(id)
+			on update cascade 
+			on delete restrict,
+	constraint stock_return_items_duty_norm_id_fk
+		foreign key (duty_norm_id) references duty_norms (id)
 			on update cascade
+			on delete restrict,
+	constraint stock_return_items_duty_norm_issue_operation_id_fk
+		foreign key (duty_norm_issue_operation_id) references operation_issued_by_duty_norm (id)
+			on update cascade
+			on delete restrict
 )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -791,8 +818,8 @@ CREATE TABLE IF NOT EXISTS `regulations` (
   `doc_date` DATE NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 1000;
-
+AUTO_INCREMENT = 1000
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `regulations_annex`
@@ -810,7 +837,8 @@ CREATE TABLE IF NOT EXISTS `regulations_annex` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 10000;
+AUTO_INCREMENT = 10000
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -841,7 +869,8 @@ CREATE TABLE IF NOT EXISTS `norms` (
     REFERENCES `regulations_annex` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Table `protection_tools_category_for_analytics`
@@ -850,7 +879,8 @@ create table if not exists `protection_tools_category_for_analytics` (
 	`id`   int(11) unsigned not null auto_increment primary key,
 	`name` varchar(100)     not null,
 	`comment` text null default null)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `protection_tools`
@@ -861,6 +891,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `dermal_ppe` tinyint(1) default 0 not null,
   `dispenser` tinyint(1) default 0 not null,
+  `size_change` int null comment 'null - не ограничиваем, 0 - не даём всегда, остальное - число дней до выдачи, когда нужно ограничивать редактирования типа размера этого объекта',
   `assessed_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
   supply_type enum ('Unisex', 'TwoSex') default 'Unisex' not null,
   supply_uni_id int(10) unsigned null,
@@ -868,6 +899,7 @@ CREATE TABLE IF NOT EXISTS `protection_tools` (
   supply_female_id int(10) unsigned null,
   `comments` TEXT NULL DEFAULT NULL,
   `category_for_analytic_id` INT UNSIGNED NULL DEFAULT NULL,
+  `archival` bool not null default false,
   PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_1_idx` (`item_types_id` ASC),
   CONSTRAINT `fk_protection_tools_1`
@@ -919,6 +951,7 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
   `condition_id` INT UNSIGNED NULL DEFAULT NULL,
   `norm_paragraph` VARCHAR(200) NULL DEFAULT NULL COMMENT 'Пункт норм, основание выдачи',
   `comment` TEXT NULL DEFAULT NULL,
+  `is_disabled` BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`id`),
   INDEX `norms_item_last_update_idx` (`last_update` DESC),
   INDEX `fk_norms_item_1_idx` (`norm_id` ASC),
@@ -939,8 +972,8 @@ CREATE TABLE IF NOT EXISTS `norms_item` (
     REFERENCES `norm_conditions` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `operation_issued_by_employee`
@@ -1061,7 +1094,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off` (
     )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
-DEFAULT CHARACTER SET = utf8;
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_write_off_members`
@@ -1080,7 +1113,8 @@ create table stock_write_off_members(
 	constraint stock_write_off_members_fk2
 		foreign key (member_id) references leaders (id)
 			on update cascade
-);
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_expense`
@@ -1088,9 +1122,10 @@ create table stock_write_off_members(
 CREATE TABLE IF NOT EXISTS `stock_expense` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `doc_number` VARCHAR(16) NULL DEFAULT NULL,
-  `warehouse_id` INT(10) UNSIGNED NOT NULL,
+  `warehouse_id` INT(10) UNSIGNED NOT NULL DEFAULT 1,
   `employee_id` INT UNSIGNED NULL DEFAULT NULL,
   `date` DATE NOT NULL,
+  `issue_date` date NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
@@ -1191,6 +1226,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   `employee_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL DEFAULT NULL,
+  `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,	
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
   `cause_write_off_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1203,6 +1239,7 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
   INDEX `fk_stock_write_off_detail_3_idx` (`warehouse_id` ASC),
   INDEX `fk_stock_write_off_detail_5_idx` (`size_id` ASC),
   INDEX `fk_stock_write_off_detail_6_idx` (`height_id` ASC),
+  INDEX `fk_stock_write_off_detail_duty_norm_issue_operation_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_stock_write_off_detail_1`
     FOREIGN KEY (`employee_issue_operation_id`)
     REFERENCES `operation_issued_by_employee` (`id`)
@@ -1242,7 +1279,12 @@ CREATE TABLE IF NOT EXISTS `stock_write_off_detail` (
 	foreign key (cause_write_off_id) 
 	references causes_write_off (id)
 	on update cascade
-	on delete set null)
+	on delete set null,
+CONSTRAINT fk_stock_write_off_detail_duty_norm_issue_operation
+    FOREIGN KEY (`duty_norm_issue_operation_id`)
+    REFERENCES `operation_issued_by_duty_norm` (id)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -1263,8 +1305,8 @@ CREATE TABLE IF NOT EXISTS `read_news` (
     REFERENCES `users` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `norms_posts`
@@ -1286,8 +1328,8 @@ CREATE TABLE IF NOT EXISTS `norms_posts` (
     REFERENCES `posts` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `employees_norms`
@@ -1309,7 +1351,8 @@ CREATE TABLE IF NOT EXISTS `employees_norms` (
     REFERENCES `norms` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1334,7 +1377,7 @@ CREATE TABLE IF NOT EXISTS `employees_cost_allocation` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1368,8 +1411,8 @@ CREATE TABLE IF NOT EXISTS `employee_cards_item` (
     REFERENCES `norms_item` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `organizations`
@@ -1377,9 +1420,11 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(300) NULL,
+  `okpo` CHAR(10) NULL comment 'Общероссийский классификатор предприятий и организаций',
   `address` VARCHAR(300) NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1392,6 +1437,7 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
   `toolbar_icons_size` ENUM('ExtraSmall', 'Small', 'Middle', 'Large') NOT NULL DEFAULT 'Middle',
   `toolbar_show` TINYINT(1) NOT NULL DEFAULT 1,
   `maximize_on_start` TINYINT(1) NOT NULL DEFAULT 1,
+  `buyer_email` varchar(320) null,
   `default_added_amount` ENUM('All', 'One', 'Zero') NOT NULL DEFAULT 'All',
   `default_warehouse_id` INT UNSIGNED NULL,
   `default_organization_id` INT UNSIGNED NULL,
@@ -1429,7 +1475,8 @@ CREATE TABLE IF NOT EXISTS `user_settings` (
     REFERENCES `leaders` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1441,8 +1488,8 @@ CREATE TABLE IF NOT EXISTS `vacation_type` (
   `exclude_from_wearing` TINYINT(1) NOT NULL DEFAULT 0,
   `comment` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `employees_vacations`
@@ -1467,7 +1514,8 @@ CREATE TABLE IF NOT EXISTS `employees_vacations` (
     REFERENCES `vacation_type` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `causes_write_off`
@@ -1476,7 +1524,8 @@ create table causes_write_off
 (
 	id int UNSIGNED auto_increment primary key,
 	name varchar(120) not null
-);
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
 
 -- -----------------------------------------------------
@@ -1489,6 +1538,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   `date` DATE NOT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
   `transfer_agent_id` INT(10) UNSIGNED NULL,
+  `issuance_request_id` INT UNSIGNED NULL DEFAULT NULL,
   `comment` TEXT NULL DEFAULT NULL,
   `creation_date` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -1496,6 +1546,7 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
   INDEX `index_stock_collective_expense_date` (`date` ASC),
   INDEX `fk_transfer_agent_id_idx` (`transfer_agent_id` ASC),
+  INDEX `issuance_request_id_idx` (`issuance_request_id` ASC),
   CONSTRAINT `fk_stock_collective_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -1510,7 +1561,12 @@ CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
     FOREIGN KEY (`transfer_agent_id`)
     REFERENCES `employees` (`id`)
     ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_collective_expense_issuance_request_id` 
+  	FOREIGN KEY (`issuance_request_id`)
+	REFERENCES issuance_requests (`id`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4;
@@ -1574,7 +1630,8 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet` (
     REFERENCES `employees` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1657,6 +1714,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   `stock_expense_detail_id` INT UNSIGNED NULL DEFAULT NULL,
   `stock_collective_expense_item_id` INT UNSIGNED NULL DEFAULT NULL,
   `issued_operation_id` INT UNSIGNED NULL,
+  `duty_norm_issue_operation_id` INT(10) UNSIGNED NULL DEFAULT NULL,
   `amount` INT UNSIGNED NOT NULL,
   `start_of_use` DATE NULL DEFAULT NULL,
   `lifetime` DECIMAL(5,2) UNSIGNED NULL DEFAULT NULL,
@@ -1672,6 +1730,7 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
   INDEX `fk_issuance_sheet_items_7_idx` (`stock_collective_expense_item_id` ASC),
   INDEX `fk_issuance_sheet_items_9_idx` (`height_id` ASC),
   INDEX `fk_issuance_sheet_items_8_idx` (`size_id` ASC),
+  INDEX `fk_issuance_sheet_items_duty_norm_issue_operation_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_issuance_sheet_items_1`
     FOREIGN KEY (`issuance_sheet_id`)
     REFERENCES `issuance_sheet` (`id`)
@@ -1692,6 +1751,11 @@ CREATE TABLE IF NOT EXISTS `issuance_sheet_items` (
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
+  CONSTRAINT `fk_issuance_sheet_items_duty_norm_issue_operation_id`
+	FOREIGN KEY (`duty_norm_issue_operation_id`)
+	REFERENCES `operation_issued_by_duty_norm` (`id`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE,
   CONSTRAINT `fk_issuance_sheet_items_5`
     FOREIGN KEY (`stock_expense_detail_id`)
     REFERENCES `stock_expense_detail` (`id`)
@@ -1760,8 +1824,8 @@ CREATE TABLE IF NOT EXISTS `stock_transfer` (
 	REFERENCES `organizations` (`id`)
 	ON DELETE SET NULL
 	ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_transfer_detail`
@@ -1791,16 +1855,20 @@ CREATE TABLE IF NOT EXISTS `stock_transfer_detail` (
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `protection_tools_nomenclature`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `protection_tools_nomenclature` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `protection_tools_id` INT UNSIGNED NOT NULL,
   `nomenclature_id` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`protection_tools_id`, `nomenclature_id`),
+  `can_choose` BOOLEAN DEFAULT FALSE NOT NULL,
+  PRIMARY KEY (`id`),
   INDEX `fk_protection_tools_nomenclature_2_idx` (`nomenclature_id` ASC),
+  UNIQUE INDEX `unique_protection_tools_nomenclature` (protection_tools_id, nomenclature_id),
   CONSTRAINT `fk_protection_tools_nomenclature_1`
     FOREIGN KEY (`protection_tools_id`)
     REFERENCES `protection_tools` (`id`)
@@ -1958,7 +2026,8 @@ CREATE TABLE IF NOT EXISTS `employees_sizes` (
     REFERENCES `sizes` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -1968,7 +2037,8 @@ CREATE TABLE IF NOT EXISTS `barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `creation_date` DATE NOT NULL DEFAULT (CURRENT_DATE()),
   `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `title` VARCHAR(13) NULL DEFAULT NULL,
+  `title` VARCHAR(24) DEFAULT NULL,
+  `type` enum ('EAN13', 'EPC96') default 'EAN13' not null,
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1976,7 +2046,7 @@ CREATE TABLE IF NOT EXISTS `barcodes` (
   `comment` text null,
   PRIMARY KEY (`id`),
   INDEX `last_update` (`last_update` ASC),
-  UNIQUE INDEX `value_UNIQUE` (`title` ASC),
+  UNIQUE INDEX `value_UNIQUE` (type, title),
   INDEX `fk_barcodes_1_idx` (`nomenclature_id` ASC),
   INDEX `fk_barcodes_2_idx` (`size_id` ASC),
   INDEX `fk_barcodes_3_idx` (`height_id` ASC),
@@ -2005,6 +2075,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `barcode_id` INT UNSIGNED NOT NULL,
   `employee_issue_operation_id` INT UNSIGNED NULL,
+  `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
   `warehouse_id` INT UNSIGNED NULL,
   `over_norm_operation_id` int unsigned null,
@@ -2013,6 +2084,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
   INDEX `fk_operation_barcodes_3_idx` (`warehouse_operation_id` ASC),
   UNIQUE INDEX `index_uniq` (`barcode_id` ASC, `employee_issue_operation_id` ASC, `warehouse_operation_id` ASC),
+  INDEX `fk_operation_barcodes_duty_norm_issue_operation_id_idx` (`duty_norm_issue_operation_id` ASC),
   CONSTRAINT `fk_operation_barcodes_1`
     FOREIGN KEY (`barcode_id`)
     REFERENCES `barcodes` (`id`)
@@ -2027,6 +2099,12 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
     FOREIGN KEY (`warehouse_operation_id`)
     REFERENCES `operation_warehouse` (`id`)
     ON DELETE RESTRICT
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_operation_barcodes_duty_norm_issue_operation_id`
+	FOREIGN KEY (`duty_norm_issue_operation_id`)
+	REFERENCES `operation_issued_by_duty_norm` (`id`)
+	ON UPDATE CASCADE
+	ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT `FK_operation_barcodes_warehouse`
 	FOREIGN KEY (`warehouse_id`) 
@@ -2219,8 +2297,8 @@ CREATE TABLE IF NOT EXISTS `stock_inspection` (
     REFERENCES `organizations` (`id`)
     ON DELETE NO ACTION
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_inspection_items`
@@ -2250,8 +2328,8 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_items` (
     REFERENCES `operation_issued_by_employee` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_inspection_members`
@@ -2273,7 +2351,8 @@ CREATE TABLE IF NOT EXISTS `stock_inspection_members` (
     REFERENCES `leaders` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table `employee_groups`
 
@@ -2283,7 +2362,8 @@ create table employee_groups
 	name varchar(128) null,
 	comment text null,
 	PRIMARY KEY (`id`)
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create index employee_groups_name_index
 	on employee_groups (name);
@@ -2299,13 +2379,14 @@ create table employee_group_items
 	PRIMARY KEY (`id`),
 	constraint employee_groups_items_unique
 		unique (employee_id, employee_group_id),
-	constraint foreign_key_employee_groups_items_employees
+	constraint `employee_groups_items_employees_fk`
 		foreign key (employee_id) references employees (id)
 			on update cascade on delete cascade,
-	constraint foreign_key_employee_groups_items_employee_groups
+	constraint `employee_groups_items_employee_groups_fk`
 		foreign key (employee_group_id) references employee_groups (id)
 			on update cascade on delete cascade
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create index employee_groups_items_employee_groups_id_index
 	on employee_group_items (employee_group_id);
@@ -2321,13 +2402,14 @@ create table duty_norms
 (
 	id                   int unsigned auto_increment
 		primary key,
-	name                 varchar(200) charset utf8mb4 null,
+	name                 varchar(200)                 null,
 	responsible_leder_id int unsigned 				  null,
 	responsible_employee_id int unsigned 			  null,
 	subdivision_id 		 int unsigned 				  null,
 	datefrom             datetime                     null,
 	dateto               datetime                     null,
-	comment              text charset utf8mb4         null,
+	archival			 tinyint(1)					  not null default 0,
+	comment              text 				          null,
 	constraint duty_norms_employees_id_fk
 		foreign key (responsible_employee_id) references employees (id)
 			on delete set null on update cascade,
@@ -2337,7 +2419,8 @@ create table duty_norms
 	constraint duty_norms_subdivisions_id_fk
 		foreign key (subdivision_id) references subdivisions (id)
 			on delete set null on update cascade
-);
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- строка дежурной нормы
@@ -2360,7 +2443,8 @@ create table duty_norm_items
 	constraint fk_duty_norms_item_protection_tools
 		foreign key (protection_tools_id) references protection_tools (id)
 			on update cascade
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Операции выдачи по дежурной норме
@@ -2412,7 +2496,8 @@ create table operation_issued_by_duty_norm
 	constraint fk_operation_issued_by_employee_duty_norm_item
 		foreign key (duty_norm_item_id) references duty_norm_items (id)
 			on update cascade on delete set null
-);
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create index operation_issued_by_duty_norm_last_update_idx
 	on operation_issued_by_duty_norm (last_update);
@@ -2483,7 +2568,8 @@ create table stock_expense_duty_norm_items
 	constraint fk_stock_expense_duty_norm_items_stock_expense_duty_norm
 		foreign key (stock_expense_duty_norm_id) references stock_expense_duty_norm (id)
 			on update cascade on delete cascade
-);
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create index fk_stock_expense_duty_norm_items_operation_idx
 	on stock_expense_duty_norm_items (operation_issued_by_duty_norm_id);
@@ -2491,6 +2577,368 @@ create index fk_stock_expense_duty_norm_items_warehouse_operation_idx
 	on stock_expense_duty_norm_items (warehouse_operation_id);
 create index fk_stock_expense_duty_norm_items_stock_expense_duty_norm_idx
 	on stock_expense_duty_norm_items (stock_expense_duty_norm_id);
+
+-- -----------------------------------------------------
+-- Table `shipment`
+-- -----------------------------------------------------
+create table shipment
+(
+	id int unsigned auto_increment primary key,
+	start_period date null,
+	end_period date null,
+	status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
+	full_ordered boolean default false not null,
+	full_received boolean default false not null,
+	has_receive boolean default false not null,
+	submitted datetime null,
+	user_id int unsigned null,
+	warehouse_forecasting_date datetime null default null,
+	comment text null,
+	creation_date datetime null
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+create index index_shipment_start_period
+	on shipment (start_period);
+create index index_shipment_end_period
+	on shipment (end_period);
+
+-- -----------------------------------------------------
+-- Table `shipment_items`
+-- -----------------------------------------------------
+create table shipment_items
+(
+	id int unsigned auto_increment primary key,
+	shipment_id int unsigned not null,
+	nomenclature_id int unsigned not null,
+	quantity int unsigned not null,
+	ordered int unsigned not null,
+	received int unsigned not null,
+	cost decimal(10, 2) unsigned default 0.00 not null,
+	size_id int unsigned null,
+	height_id int unsigned null,
+	diff_cause varchar(120) null,
+	start_period date null default null,
+	end_period date null default null,
+	comment varchar(120) null,
+	constraint fk_shipment_items_doc
+		foreign key (shipment_id) references shipment (id)
+			on update cascade on delete cascade,
+	constraint fk_shipment_items_nomenclature
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade,
+	constraint fk_shipment_items_size_id
+		foreign key (size_id) references sizes (id)
+			on update cascade,
+	constraint fk_shipment_items_height_id
+		foreign key (height_id) references sizes (id)
+			on update cascade
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+create index index_shipment_items_doc
+	on shipment_items (shipment_id);
+
+create index index_shipment_items_height
+	on shipment_items (height_id);
+
+create index index_shipment_items_nomenclature
+	on shipment_items (nomenclature_id);
+
+create index index_shipment_items_size
+	on shipment_items (size_id);
+
+-- -----------------------------------------------------
+-- информация о окнах
+-- -----------------------------------------------------
+CREATE TABLE visit_windows
+(
+    id   INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    name CHAR(32) NOT NULL
+)
+	CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+    COMMENT 'информация о окнах';
+
+-- -----------------------------------------------------
+-- основная таблица посещений
+-- -----------------------------------------------------
+CREATE TABLE visits
+(
+    id              INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    create_date     DATETIME                                                                                         NOT NULL,
+    visit_date      DATETIME                                                                                         NOT NULL,
+    employee_id     INT UNSIGNED                                                                                     NOT NULL,
+    service_type    ENUM ('GiveWear', 'NewEmployee', 'Unidentified', 'Dismiss', 'GiveReport', 'WriteOff', 'ClothingService', 'Appeal') NOT NULL DEFAULT 'GiveWear',
+    employee_create BOOLEAN                                                                                          NOT NULL DEFAULT TRUE,
+    create_from_lk  BOOLEAN                                                                                          NOT NULL DEFAULT TRUE,
+    done            BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
+    status          ENUM ('New', 'Queued', 'Coming', 'Serviced', 'Done', 'Canceled', 'Missing')                      NOT NULL DEFAULT 'New',
+    ticket_number   CHAR(4)                                                                                          NULL COMMENT 'Талончик в очереди',
+    window_id       INT UNSIGNED                                                                                     NULL COMMENT 'ID окна обслуживания',
+    time_entry      DATETIME                                                                                         NULL COMMENT 'Время постановки в очередь на ПВ',
+    time_start      DATETIME                                                                                         NULL COMMENT 'Начало обслуживания (перво посещение окна)',
+    time_finish     DATETIME                                                                                         NULL COMMENT 'Завершение визита',
+    cancelled       BOOLEAN                                                                                          NOT NULL DEFAULT FALSE,
+    comment         TEXT                                                                                             NULL,
+    CONSTRAINT fk_visits_window_id
+        FOREIGN KEY (window_id) REFERENCES visit_windows (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT visits_employees_id_fk
+        FOREIGN KEY (employee_id) REFERENCES employees (id)
+            ON UPDATE CASCADE ON DELETE CASCADE
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
+
+CREATE INDEX visits_create_date_index ON visits (create_date);
+CREATE INDEX visits_visit_date_index ON visits (visit_date);
+CREATE INDEX visits_employees_id_fk_idx ON visits (employee_id);
+CREATE INDEX fk_visits_window_id_idx ON visits (window_id);
+
+
+-- -----------------------------------------------------
+-- записи какой юзер в каком окне, состояние окна
+-- -----------------------------------------------------
+CREATE TABLE visits_users_log
+(
+    id        INT UNSIGNED AUTO_INCREMENT
+        PRIMARY KEY,
+    user_id   INT UNSIGNED                                                                        NOT NULL,
+    window_id INT UNSIGNED                                                                        NULL,
+    visit_id  INT UNSIGNED                                                                        NULL,
+    ticket     CHAR(4)                                                                             NULL,
+    `time`    DATETIME                                                                            NULL,
+    `type`    ENUM ('WindowStart', 'WindowFinish', 'WindowTimeout', 'StartService', 'FinishService', 'ReRouteService', 'WindowWaiting') NOT NULL COMMENT 'Типы действия',
+    comment   CHAR(64)                                                                            NULL,
+    CONSTRAINT visits_user_users_id_fk
+        FOREIGN KEY (user_id) REFERENCES users (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT visits_user_visit_windows_id_fk
+        FOREIGN KEY (window_id) REFERENCES visit_windows (id)
+            ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT visits_users_log_visits_id_fk
+        FOREIGN KEY (visit_id) REFERENCES visits (id)
+)
+	CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+    COMMENT 'записи какой юзер в каком окне, состояние окна';
+
+CREATE INDEX visits_user_users_id_fk_idx ON visits_users_log (user_id);
+CREATE INDEX visits_user_visit_windows_id_fk_idx ON visits_users_log (window_id);
+CREATE INDEX visits_users_log_visits_id_fk_idx ON visits_users_log (visit_id);
+
+
+create table visits_documents
+(
+	id         int unsigned auto_increment
+		primary key,
+	visit_id   int unsigned not null,
+	expence_id int unsigned null,
+	writeof_id int unsigned null,
+	return_id  int unsigned null,
+	constraint visits_documents_stock_expense_id_fk
+		foreign key (expence_id) references stock_expense (id)
+			on update cascade on delete cascade,
+	constraint visits_documents_stock_return_id_fk
+		foreign key (return_id) references stock_return (id)
+			on update cascade on delete cascade,
+	constraint visits_documents_stock_write_off_organization_id_fk
+		foreign key (writeof_id) references stock_write_off (id)
+			on update cascade on delete cascade,
+	constraint visits_documents_visits_id_fk
+		foreign key (visit_id) references visits (id)
+			on update cascade on delete cascade
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- Будет удалена в 2.11 - решили не использовать
+create table work_days
+(
+	id          int unsigned auto_increment,
+	date 		date 	not null,
+	is_work_day boolean default true not null,
+	comment 	text	null,
+		constraint work_days_pk
+		primary key (id)
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- -----------------------------------------------------
+-- График работы склада
+-- -----------------------------------------------------
+create table days_schedule (
+	id   	     	int unsigned auto_increment,
+	date 		 	date null 			comment 'Если указана дата, то расписание действует только на эту дату',
+	day_of_week 	int unsigned null 	comment 'Если указано, то расписание действует на этот день недели (1-Пн, 2-Вт, ..., 7-Вс)',
+	start 			time null 			comment 'Время начала рабочего дня, если null, то день нерабочий',
+	end 		    time null 			comment 'Время окончания рабочего дня, если null, то день нерабочий',
+	visit_interval  int unsigned null 	comment 'Интервал между записями на приём в минутах, если null, то день нерабочий',
+	comment 	 	text null,
+	constraint days_schedule
+	   primary key (id)
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- -----------------------------------------------------
+-- Оказываемые услуги
+-- -----------------------------------------------------
+create table clothing_service_services
+(
+	id   	int unsigned auto_increment,
+	name 	varchar(60)       not null,
+	alternative_name VARCHAR(64) NULL,
+	cost 	decimal default 0 not null,
+	code    varchar(13)       null,
+	`with_state` ENUM('WaitService','InReceiptTerminal','InTransit','DeliveryToLaundry','InRepair','InWashing','InDryCleaning','AwaitIssue','DeliveryToDispenseTerminal','InDispenseTerminal','Returned') NULL COMMENT 'Применять при проставлении статуса заявки на обслуживание',
+	comment text       		  null,
+	constraint clothing_service_services_pk
+		primary key (id)
+)
+	auto_increment = 101
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+create table clothing_service_services_nomenclature
+(
+	id   			int unsigned auto_increment,
+	nomenclature_id int unsigned not null,
+	service_id     	int unsigned not null,
+	constraint clothing_service_services_pk
+		primary key (id),
+	constraint fk_services_nomenclature_nomenclature_id
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade on delete cascade,
+	constraint fk_services_nomenclature_service_id
+		foreign key (service_id) references clothing_service_services (id)
+			on update cascade on delete cascade
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+create table clothing_service_services_claim
+(
+	id         int unsigned auto_increment,
+	service_id int unsigned not null,
+	claim_id   int unsigned not null,
+	`cost` 		DECIMAL DEFAULT 0 NULL,
+	service_date datetime null comment 'Время последней активации услуги для заявки',
+	constraint clothing_service_services_claim_pk
+		primary key (id),
+	constraint clothing_service_services_claim_service_id_claim_id_uindex
+		unique (service_id, claim_id),
+	constraint clothing_service_services_claim_clothing_service_claim_id_fk
+		foreign key (claim_id) references clothing_service_claim (id)
+			on update cascade on delete cascade,
+	constraint clothing_service_services_claim_clothing_service_services_id_fk
+		foreign key (service_id) references clothing_service_services (id)
+			on update cascade on delete cascade
+)
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ---------------------------------------------
+-- Выбор пользователем предпочтительных номенклатур
+-- --------------------------------------------
+create table employees_selected_nomenclatures
+(
+	id                  int unsigned auto_increment,
+	employee_id         int unsigned not null,
+	protection_tools_id int unsigned not null,
+	nomenclature_id     int unsigned not null,
+	constraint employees_selected_nomenclatures_pk
+		primary key (id),
+	constraint employees_selected_nomenclatures_employees_id_fk
+		foreign key (employee_id) references employees (id)
+			on update cascade on delete cascade,
+	constraint employees_selected_nomenclatures_nomenclature_id_fk
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade on delete cascade,
+	constraint employees_selected_nomenclatures_protection_tools_id_fk
+		foreign key (protection_tools_id) references protection_tools (id)
+			on update cascade on delete cascade
+)
+	comment 'Номенклатуры выбранные пользователем, как предпочтительные к выдаче'
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ---------------------------------------------
+-- Размеры номенклатур
+-- --------------------------------------------
+create table nomenclature_sizes
+(
+	id              int unsigned auto_increment,
+	nomenclature_id int unsigned not null,
+	size_id         int unsigned null,
+	height_id       int unsigned null,
+	comment         text         null,
+	constraint nomenclature_sizes_pk
+		primary key (id),
+	constraint nomenclature_sizes_nomenclature_id_fk
+		foreign key (nomenclature_id) references nomenclature (id)
+			on update cascade on delete cascade,
+	constraint nomenclature_sizes_sizes_id_fk
+		foreign key (size_id) references sizes (id)
+			on update cascade on delete set null,
+	constraint nomenclature_sizes_sizes_id_fk_2
+		foreign key (height_id) references sizes (id)
+			on update cascade on delete set null
+)
+	comment 'Сочетания размера и роста доступные для номенклатуры'
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- -----------------------------------------------------
+-- Заявка на выдачу
+-- -----------------------------------------------------
+
+-- Заявка на выдачу
+CREATE TABLE issuance_requests(
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`receipt_date` DATE NOT NULL,
+	`status` ENUM('New', 'Issued', 'PartiallyIssued') DEFAULT 'New' NOT NULL,
+	`comment` TEXT NULL,
+	`user_id` INT UNSIGNED NULL,
+	`creation_date` DATETIME NULL DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	CONSTRAINT `fk_issuance_request_user_id` FOREIGN KEY (`user_id`) REFERENCES users (`id`)
+	    ON DELETE NO ACTION
+		ON UPDATE CASCADE,
+	INDEX `issuance_request_user_id_idx` (`user_id` ASC)
+)
+	CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- Сотрудники в заявках на выдачу
+CREATE TABLE employees_issuance_request(
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`employee_id` INT UNSIGNED NOT NULL,
+	`issuance_request_id` INT UNSIGNED NOT NULL,
+	PRIMARY KEY (`id`),
+	CONSTRAINT `fk_employee_id` FOREIGN KEY (`employee_id`) REFERENCES employees (`id`)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	CONSTRAINT `fk_issuance_request_id` FOREIGN KEY  (`issuance_request_id`) REFERENCES issuance_requests (`id`)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE,
+	INDEX `employee_id_idx` (`employee_id` ASC),
+	INDEX `issuance_request_id_idx` (`issuance_request_id` ASC)
+)
+	CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+-- -----------------------------------------------------
+-- Добавление внешних ключей для документа выдачи по дежурной норме в ведомость
+-- -----------------------------------------------------
+ALTER TABLE issuance_sheet
+	ADD stock_expense_duty_norm_id int unsigned null after stock_expense_id;
+ALTER TABLE issuance_sheet
+	ADD CONSTRAINT fk_stock_expense_duty_norm_id
+		FOREIGN KEY (stock_expense_duty_norm_id) REFERENCES stock_expense_duty_norm (id)
+			ON UPDATE CASCADE ON DELETE NO ACTION;
+
+ALTER TABLE issuance_sheet_items
+	ADD stock_expense_duty_norm_item_id integer unsigned null after stock_expense_detail_id;
+ALTER TABLE issuance_sheet_items
+	ADD CONSTRAINT fk_stock_expense_duty_norm_item_id
+		FOREIGN KEY (stock_expense_duty_norm_item_id) REFERENCES stock_expense_duty_norm_items (id)
+			ON UPDATE CASCADE ON DELETE CASCADE ;
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
 -- -----------------------------------------------------
 -- function count_issue
 -- -----------------------------------------------------
@@ -2508,6 +2956,7 @@ CREATE FUNCTION `count_issue`(
     NO SQL
     DETERMINISTIC
     COMMENT 'Функция рассчитывает количество необходимое к выдачи.'
+SQL SECURITY INVOKER	
 BEGIN
 DECLARE issue_count INT;
 
@@ -2540,17 +2989,100 @@ END$$
 
 DELIMITER ;
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+-- -----------------------------------------------------
+-- function quantity_issue
+-- -----------------------------------------------------
+
+DELIMITER $$
+CREATE FUNCTION `quantity_issue`(
+	`amount` INT UNSIGNED,
+	`norm_period` INT UNSIGNED,
+	`next_issue` DATE,
+	`begin_date` DATE,
+	`end_date` DATE,
+	`begin_Issue_Period` DATE,
+	`end_Issue_Period` DATE)
+	RETURNS int(10) unsigned
+    NO SQL
+    DETERMINISTIC
+    COMMENT 'Функция рассчитывает количество, необходимое к выдаче.'
+SQL SECURITY INVOKER
+BEGIN
+    DECLARE issue_count INT;
+    DECLARE next_issue_new DATE;
+    DECLARE begin_Issue_Period_New DATE;
+    DECLARE end_Issue_Period_New DATE;
+    DECLARE start_Of_Year DATE;
+    DECLARE end_Of_Year DATE;
+
+    IF norm_period <= 0 THEN RETURN 0; END IF;
+    IF next_issue IS NULL THEN RETURN 0; END IF;
+
+    SET issue_count = 0;
+    SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
+    SET begin_Issue_Period_New = CONCAT('2000', '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
+    SET end_Issue_Period_New = CONCAT('2000', '-', MONTH(end_Issue_Period), '-', DAY(end_Issue_Period));
+    SET start_Of_Year = CONCAT('2000', '-', 1, '-',  1);
+    SET end_Of_Year = CONCAT('2000', '-', 12 , '-', 31);
+
+    WHILE next_issue <= end_date DO
+            IF begin_Issue_Period IS NOT NULL THEN
+                IF (next_issue_new  BETWEEN begin_Issue_Period_New AND end_Issue_Period_New)
+                    OR ((next_issue_new BETWEEN begin_Issue_Period_New AND end_Of_Year OR next_issue_new BETWEEN start_Of_Year AND end_Issue_Period_New)
+                        AND (MONTH(begin_Issue_Period) > MONTH(end_Issue_Period))) THEN
+                    IF next_issue >= begin_date THEN
+                        SET issue_count = issue_count + amount;
+					END IF;
+                    SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
+				END IF;
+                IF (next_issue_new BETWEEN (DATE_ADD(end_Issue_Period_New, INTERVAL 1 DAY)) AND (DATE_ADD(begin_Issue_Period_New, INTERVAL -1 DAY)))
+                    OR ((next_issue_new < begin_Issue_Period_New OR next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period))) THEN
+                    SET next_issue = CONCAT(YEAR(next_issue), '-', MONTH(begin_Issue_Period), '-', DAY(begin_Issue_Period));
+                    IF (next_issue_new > end_Issue_Period_New) AND (MONTH(begin_Issue_Period) <= MONTH(end_Issue_Period)) THEN
+                        SET next_issue = DATE_ADD(next_issue, INTERVAL 1 YEAR);
+					END IF;
+				END IF;
+			ELSE
+                IF next_issue >= begin_date THEN
+                    SET issue_count = issue_count + amount;
+				END IF;
+                SET next_issue = DATE_ADD(next_issue, INTERVAL norm_period MONTH);
+			END IF;
+            SET next_issue_new = CONCAT('2000', '-', MONTH(next_issue), '-', DAY(next_issue));
+	END WHILE;
+	RETURN issue_count;
+END$$
+
+-- -----------------------------------------------------
+-- function count_working_days
+-- -----------------------------------------------------
+DELIMITER $$
+CREATE FUNCTION `count_working_days` (`start_date` DATE, `end_date` DATE)
+	RETURNS INT
+	DETERMINISTIC
+	COMMENT 'Функция подсчитывает количество дней нахождения спецодежды на каждом этапе, исключая выходные дни'
+SQL SECURITY INVOKER
+BEGIN
+RETURN (WITH RECURSIVE date_range AS
+						   (SELECT start_date as sd
+							UNION ALL
+							SELECT DATE_ADD(sd, INTERVAL 1 Day)
+							FROM date_range
+							WHERE DATE_ADD(sd, INTERVAL 1 Day) < end_date
+						   )
+		SELECT COUNT(*)
+		FROM date_range
+		WHERE WEEKDAY(sd) NOT IN (5, 6) AND start_date < end_date
+);
+END$$
+DELIMITER ;
 
 -- -----------------------------------------------------
 -- Data for table `base_parameters`
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.9.1');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('DefaultAutoWriteoff', 'True');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.11');
 
 COMMIT;
 
@@ -3063,4 +3595,5 @@ INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (140, 103);
 INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (140, 104);
 
 COMMIT;
+
 

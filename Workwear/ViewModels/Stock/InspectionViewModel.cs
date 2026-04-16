@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -7,6 +7,7 @@ using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Report;
@@ -15,16 +16,18 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock.Documents;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.ViewModels.Company;
 
 namespace Workwear.ViewModels.Stock {
-	public class InspectionViewModel : EntityDialogViewModelBase<Inspection> {
+	public class InspectionViewModel : PermittingEntityDialogViewModelBase<Inspection>, IDialogDocumentation {
 		public InspectionViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -34,12 +37,15 @@ namespace Workwear.ViewModels.Stock {
 			ILifetimeScope autofacScope,
 			BaseParameters baseParameters,
 			OrganizationRepository organizationRepository,
+			ICurrentPermissionService permissionService,
 			EmployeeCard employee = null,
 			IValidator validator = null)
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
+			: base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator) {
 			this.interactive = interactive;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-
+			SetDocumentDateProperty(e => e.Date);
+			if(UoW.IsNew)
+				Entity.CreatedbyUser = userService.GetCurrentUser();
 			Employee = UoW.GetInSession(employee);
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {
 				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
@@ -48,14 +54,17 @@ namespace Workwear.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
+			ResponsibleDirectorPersonEntryViewModel.IsEditable = CanEdit;
 			ResponsibleChairmanPersonEntryViewModel = entryBuilder.ForProperty(x => x.Chairman)
 				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
 				.UseViewModelDialog<LeadersViewModel>()
 				.Finish();
+			ResponsibleChairmanPersonEntryViewModel.IsEditable = CanEdit;
 			ResponsibleOrganizationEntryViewModel = entryBuilder.ForProperty(x => x.Organization)
 				.UseViewModelJournalAndAutocompleter<OrganizationJournalViewModel>()
 				.UseViewModelDialog<OrganizationViewModel>()
 				.Finish();
+			ResponsibleOrganizationEntryViewModel.IsEditable = CanEdit;
 			
 			if(UoW.IsNew) {
 				Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -64,6 +73,11 @@ namespace Workwear.ViewModels.Stock {
 			} else 
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#inspection");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		private IInteractiveService interactive;
 		private BaseParameters baseParameters;
@@ -75,7 +89,8 @@ namespace Workwear.ViewModels.Stock {
 		public EmployeeCard Employee { get;}
 
 		#region Для View
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -127,10 +142,14 @@ namespace Workwear.ViewModels.Stock {
 				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
 					this,
 					Employee,
-					OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.Filter.DateSensitive = true;
-			selectJournal.ViewModel.Filter.Date = Entity.Date;
-			selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
+					OpenPageOptions.AsSlave,
+					addingRegistrations: builder => { builder.RegisterInstance<Action<EmployeeBalanceFilterViewModel>>(
+						filter => {
+							filter.DateSensitive = true;
+							filter.Date = Entity.Date;
+							filter.EmployeeSensitive = Employee == null;
+						});
+					});
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadItems;
 		}
@@ -147,7 +166,7 @@ namespace Workwear.ViewModels.Stock {
 			logger.Info ("Запись документа...");
 
 			foreach(var item in Entity.Items) {
-				if(item.Writeoff == false)
+				if(item.Writeoff == false) //если списываем, то StartOfUse остается null
 					item.NewOperationIssue.StartOfUse = Entity.Date;
 
 				if(item.ExpiryByNormAfter != null && baseParameters.DefaultAutoWriteoff) {

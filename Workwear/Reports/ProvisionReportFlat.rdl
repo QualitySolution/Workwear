@@ -15,13 +15,14 @@
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT *,
-       ROUND(tabel.balance / tabel.need * 100, 0) AS 'provision_percent'
+       IF(tabel.protection_tools_dispenser = 1, 100, ROUND(tabel.balance / tabel.need * 100, 0)) AS 'provision_percent'
 FROM (SELECT
           COUNT(*) AS 'count_employee',
           IF(@group_by_subdivision, employees.subdivision_id, NULL) AS 'subdivision_id',
           IF(@group_by_subdivision, subdivisions.name, NULL) AS 'subdivision_name',
           protection_tools.id AS 'protection_tools_id',
           protection_tools.name AS 'protection_tools_name',
+          protection_tools.dispenser AS 'protection_tools_dispenser',
           if(@show_sex,
              IF(employees.sex = 'M','М', IF(employees.sex = 'F','Ж','')),
              null)
@@ -118,7 +119,7 @@ FROM (SELECT
                              employeeHeightAlias.size_type_id = heightTypeAlias.id)
                LEFT JOIN sizes AS heightAlias ON heightAlias.id = employeeHeightAlias.size_id
                JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
-      WHERE employees.dismiss_date IS NULL
+      WHERE (employees.dismiss_date &gt; CURRENT_DATE OR employees.dismiss_date IS NULL)
         AND ((-1 IN (@employee_groups_ids))
           OR(@without_groups AND NOT EXISTS
               (SELECT * FROM employee_group_items as gi
@@ -128,6 +129,7 @@ FROM (SELECT
                         AND gi.employee_group_id IN (@employee_groups_ids))) )
         AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
+        AND (@issue_type = '' OR item_types.issue_type = @issue_type)
         AND (NOT @exclude_in_vacation
           OR (NOT EXISTS(SELECT *
                          FROM employees_vacations AS vac
@@ -187,6 +189,9 @@ FROM (SELECT
           <QueryParameter Name="group_by_norm_amount">
             <Value>=Parameters!group_by_norm_amount</Value>
           </QueryParameter>
+          <QueryParameter Name="issue_type">
+            <Value>=Parameters!issue_type</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
@@ -205,6 +210,10 @@ FROM (SELECT
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="protection_tools_dispenser">
+          <DataField>protection_tools_dispenser</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
         </Field>
         <Field Name="employee_sex">
           <DataField>employee_sex</DataField>
@@ -686,7 +695,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox38">
-                      <Value>=Fields!balance.Value</Value>
+                      <Value>=Iif(Fields!balance.Value = 0 and Fields!protection_tools_dispenser.Value = 1, "", Fields!balance.Value)</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -795,7 +804,7 @@ FROM (SELECT
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="show_sex">
       <DataType>Boolean</DataType>
       <DefaultValue>
@@ -939,6 +948,13 @@ FROM (SELECT
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="issue_type">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
 </Report>

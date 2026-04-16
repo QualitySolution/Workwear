@@ -14,6 +14,7 @@ using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Utilities;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
@@ -23,18 +24,22 @@ using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Stock
 {
-	public class StockMovmentsJournalViewModel : JournalViewModelBase
+	public class StockMovementsJournalViewModel : JournalViewModelBase, IDialogDocumentation
 	{
 		private readonly OpenStockDocumentsModel openDocuments;
 		public readonly FeaturesService FeaturesService;
 
 		public StockMovementsFilterViewModel Filter { get; private set; }
-
-		public StockMovmentsJournalViewModel(
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html##stock-movements");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
+		public StockMovementsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
 			INavigationManager navigation, 
@@ -54,7 +59,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 
 			UpdateOnChanges(typeof(WarehouseOperation));
-			TabName = "Складские движения";
+			Title = "Складские движения";
 		}
 
 		protected IQueryOver<WarehouseOperation> ItemsQuery(IUnitOfWork uow)

@@ -29,6 +29,9 @@
 		<Protobuf Include="Protos\SpecCoinsManager.proto" />
 		<None Remove="Protos\EmailManager.proto" />
 		<Protobuf Include="Protos\EmailManager.proto" />
+		<None Remove="Protos\ProductsManager.proto" />
+		<Protobuf Include="Protos\ProductsManager.proto">
+		</Protobuf>
     </ItemGroup>
 
     <ItemGroup>

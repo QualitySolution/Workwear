@@ -5,36 +5,43 @@ using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
+using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Services;
 using QS.Utilities.Text;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Models.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Domain.Operations;
 
 namespace workwear.Journal.ViewModels.Stock
 {
-	public class StockDocumentsJournalViewModel : JournalViewModelBase
+	public class StockDocumentsJournalViewModel : JournalViewModelBase, IDialogDocumentation
 	{
 		public readonly FeaturesService FeaturesService;
 		private readonly OpenStockDocumentsModel openStockDocumentsModel;
 
 		public StockDocumentsFilterViewModel Filter { get; private set; }
-
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html");
+		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
+		#endregion
 		public StockDocumentsJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 
@@ -83,13 +90,15 @@ namespace workwear.Journal.ViewModels.Stock
 		#endregion
 
 		#region Формирование запроса
-		private StockDocumentsJournalNode resultAlias = null;
-		private EmployeeCard employeeAlias = null;
-		private UserBase authorAlias = null;
-		private Warehouse warehouseReceiptAlias = null;
-		private Warehouse warehouseExpenseAlias = null;
-		private IssuanceSheet issuanceSheetAlias = null;  
 		private DutyNorm dutyNormAlias = null;
+		private DutyNormIssueOperation dutyNormIssueOperationAlias = null;
+		private EmployeeCard employeeAlias = null;
+		private EmployeeIssueOperation employeeIssueOperationAlias = null;
+		private IssuanceSheet issuanceSheetAlias = null;  
+		private StockDocumentsJournalNode resultAlias = null;
+		private UserBase authorAlias = null;
+		private Warehouse warehouseExpenseAlias = null;
+		private Warehouse warehouseReceiptAlias = null;
 
 		protected IQueryOver<Income> QueryIncome(IUnitOfWork uow)
 		{
@@ -140,6 +149,20 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Return returnAlias = null;
+			ReturnItem returnItemAlias = null;
+
+			var concatProjectionEmployee = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT CONCAT_WS(' ', ?1, ?2, ?3) SEPARATOR '\n')"),
+				NHibernateUtil.String,
+				Projections.Property(() => employeeAlias.LastName),
+				Projections.Property(() => employeeAlias.FirstName),
+				Projections.Property(() => employeeAlias.Patronymic));
+			
+			var concatProjectionDutyNorm = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR '\n')"),
+				NHibernateUtil.String,
+				Projections.Property(() => dutyNormAlias.Name));
+
 
 			var returnQuery = uow.Session.QueryOver<Return>(() => returnAlias);
 			if(Filter.StartDate.HasValue)
@@ -160,18 +183,19 @@ namespace workwear.Journal.ViewModels.Stock
 			));
 
 			returnQuery
-				.JoinQueryOver(() => returnAlias.EmployeeCard, () => employeeAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => returnAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => returnAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnAlias.Warehouse, () => warehouseReceiptAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnAlias.Items, () => returnItemAlias,JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnItemAlias.EmployeeCard, () => employeeAlias,JoinType.LeftOuterJoin)
+				.JoinAlias(() => returnItemAlias.DutyNorm, () => dutyNormAlias, JoinType.LeftOuterJoin)
 			.SelectList(list => list
-			   			.Select(() => returnAlias.Id).WithAlias(() => resultAlias.Id)
+						.SelectGroup(() => returnAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => returnAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => returnAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 						.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
-						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
-						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
-						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+						.Select(concatProjectionEmployee).WithAlias(() => resultAlias.EmployeeFio)
+						.Select(concatProjectionDutyNorm).WithAlias(() => resultAlias.DutyNormName)
 						.Select(() => returnAlias.Comment).WithAlias(() => resultAlias.Comment)
 			            .Select(() => StockDocumentType.Return).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => returnAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
@@ -189,6 +213,13 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Expense expenseAlias = null;
+
+			var concatProjectionEmployee = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.String, "CONCAT_WS(' ', ?1, ?2, ?3)"),
+				NHibernateUtil.String,
+				Projections.Property(() => employeeAlias.LastName),
+				Projections.Property(() => employeeAlias.FirstName),
+				Projections.Property(() => employeeAlias.Patronymic));
 
 			var expenseQuery = uow.Session.QueryOver<Expense>(() => expenseAlias);
 			if(Filter.StartDate.HasValue)
@@ -223,9 +254,8 @@ namespace workwear.Journal.ViewModels.Stock
 						.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
 						.Select(() => issuanceSheetAlias.DocNumber).WithAlias(() => resultAlias.IssueSheetNumber)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
-						.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.EmployeeSurname)
-						.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.EmployeeName)
-						.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.EmployeePatronymic)
+						.Select(concatProjectionEmployee).WithAlias(() => resultAlias.EmployeeFio)
+						.Select(() => expenseAlias.IssueDate).WithAlias(() => resultAlias.IssueDate)
 						.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
 						.Select(() => expenseAlias.Comment).WithAlias(() => resultAlias.Comment)
 						.Select(() => expenseAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
@@ -255,19 +285,25 @@ namespace workwear.Journal.ViewModels.Stock
 				() => expenseDutyNormAlias.Id,
 				() => authorAlias.Name,
 				() => expenseDutyNormAlias.DocNumber,
-				() => dutyNormAlias.Name
+				() => dutyNormAlias.Name,
+				() => issuanceSheetAlias.Id,
+				() => issuanceSheetAlias.DocNumber
 			));
 			
 			expenseDutyNormQuery
-				.JoinAlias(() => expenseDutyNormAlias.DutyNorm, () => dutyNormAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)	
-				.JoinAlias(() => expenseDutyNormAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => expenseDutyNormAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseDutyNormAlias.DutyNorm, () => dutyNormAlias, JoinType.LeftOuterJoin)	
+				.JoinAlias(() => expenseDutyNormAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseDutyNormAlias.Warehouse, () => warehouseExpenseAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => expenseDutyNormAlias.IssuanceSheet, () => issuanceSheetAlias, JoinType.LeftOuterJoin)
 				.SelectList(list => list
 					.Select(() => expenseDutyNormAlias.Id).WithAlias(() => resultAlias.Id)
 					.Select(() => expenseDutyNormAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 					.Select(() => expenseDutyNormAlias.Date).WithAlias(() => resultAlias.Date)
+					.Select(() => dutyNormAlias.Name).WithAlias(() => resultAlias.DutyNormName)
 					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
 					.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+					.Select(() => issuanceSheetAlias.Id).WithAlias(() => resultAlias.IssueSheetId)
+					.Select(() => issuanceSheetAlias.DocNumber).WithAlias(() => resultAlias.IssueSheetNumber)
 					.Select(() => expenseDutyNormAlias.Comment).WithAlias(() => resultAlias.Comment)
 					.Select(() => StockDocumentType.ExpenseDutyNormDoc).WithAlias(() => resultAlias.DocTypeEnum)
 					.Select(() => expenseDutyNormAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
@@ -304,8 +340,8 @@ namespace workwear.Journal.ViewModels.Stock
 			));
 
 			collectiveExpenseQuery
-				.JoinAlias(() => collectiveExpenseAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => collectiveExpenseAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => collectiveExpenseAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => collectiveExpenseAlias.Warehouse, () => warehouseExpenseAlias, JoinType.LeftOuterJoin)
 				.Left.JoinAlias(() => collectiveExpenseAlias.IssuanceSheet, () => issuanceSheetAlias)
 			.SelectList(list => list
 						.Select(() => collectiveExpenseAlias.Id).WithAlias(() => resultAlias.Id)
@@ -348,9 +384,9 @@ namespace workwear.Journal.ViewModels.Stock
 			));
 
 			transferQuery
-				.JoinAlias(() => transferAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => transferAlias.WarehouseFrom, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => transferAlias.WarehouseTo, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => transferAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => transferAlias.WarehouseFrom, () => warehouseExpenseAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => transferAlias.WarehouseTo, () => warehouseReceiptAlias, JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => transferAlias.Id).WithAlias(() => resultAlias.Id)
 					    .Select(() => transferAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
@@ -392,17 +428,32 @@ namespace workwear.Journal.ViewModels.Stock
 				() => authorAlias.Name
 			));
 
-			var concatProjection = Projections.SqlFunction(
-					new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR ?2)"),
+			var concatProjectionWarehouse = Projections.SqlFunction(
+					new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR '\n')"),
 					NHibernateUtil.String,
-					Projections.Property(() => warehouseExpenseAlias.Name),
-					Projections.Constant(", "));
+					Projections.Property(() => warehouseExpenseAlias.Name));
+			
+			var concatProjectionEmployee = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT CONCAT_WS(' ', ?1, ?2, ?3) SEPARATOR '\n')"),
+				NHibernateUtil.String,
+				Projections.Property(() => employeeAlias.LastName),
+				Projections.Property(() => employeeAlias.FirstName),
+				Projections.Property(() => employeeAlias.Patronymic));
+			
+			var concatProjectionDutyNorm = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR '\n')"),
+				NHibernateUtil.String,
+				Projections.Property(() => dutyNormAlias.Name));
 
 			if(!isCounting) {
 				writeoffQuery
-					.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-					.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-					.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin);
+					.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => writeoffItemAlias.EmployeeWriteoffOperation, () => employeeIssueOperationAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => employeeIssueOperationAlias.Employee, () => employeeAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => writeoffItemAlias.DutyNormWriteOffOperation, () => dutyNormIssueOperationAlias, JoinType.LeftOuterJoin)
+					.JoinAlias(() => dutyNormIssueOperationAlias.DutyNorm, () => dutyNormAlias, JoinType.LeftOuterJoin);
 			}
 
 			writeoffQuery
@@ -411,7 +462,9 @@ namespace workwear.Journal.ViewModels.Stock
 					    .Select(() => writeoffAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
 						.Select(() => writeoffAlias.Date).WithAlias(() => resultAlias.Date)
 						.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
-						.Select(concatProjection).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(concatProjectionWarehouse).WithAlias(() => resultAlias.ExpenseWarehouse)
+						.Select(concatProjectionEmployee).WithAlias(() => resultAlias.EmployeeFio)
+						.Select(concatProjectionDutyNorm).WithAlias(() => resultAlias.DutyNormName)
 						.Select(() => StockDocumentType.WriteoffDoc).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => writeoffAlias.Comment).WithAlias(() => resultAlias.Comment)
 			            .Select(() => writeoffAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
@@ -443,9 +496,9 @@ namespace workwear.Journal.ViewModels.Stock
 				() => authorAlias.Name));
 			
 			completionQuery
-				.JoinAlias(() => completionAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => completionAlias.ResultWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(() => completionAlias.SourceWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => completionAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => completionAlias.ResultWarehouse, () => warehouseReceiptAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => completionAlias.SourceWarehouse, () => warehouseExpenseAlias, JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => completionAlias.Id).WithAlias(() => resultAlias.Id)
 					    .Select(() => completionAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
@@ -621,7 +674,7 @@ namespace workwear.Journal.ViewModels.Stock
 				}
 			}
 
-			var editAction = new JournalAction("Изменить",
+			var editAction = new JournalAction("Открыть",
 					(selected) => selected.Any(),
 					(selected) => true,
 					(selected) => selected.Cast<StockDocumentsJournalNode>().ToList()
@@ -633,14 +686,16 @@ namespace workwear.Journal.ViewModels.Stock
 				RowActivatedAction = editAction;
 
 			var deleteAction = new JournalAction("Удалить",
-					(selected) => selected.Any(),
-					(selected) => true,
-					(selected) => DeleteEntities(selected.Cast<StockDocumentsJournalNode>().ToArray()),
-					"Delete"
-					);
+				(selected) => selected.Any()&& selected.All(node => CurrentPermissionService
+						.ValidateEntityPermission(StockDocument.GetDocClass(((StockDocumentsJournalNode)node).DocTypeEnum),
+							((StockDocumentsJournalNode)node).Date).CanDelete),
+				(selected) => true,
+				(selected) => DeleteEntities(selected.Cast<StockDocumentsJournalNode>().ToArray()),
+				"Delete"
+			);
 			NodeActionsList.Add(deleteAction);
 		}
-
+		
 		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes)
 		{
 			foreach(var node in nodes) {
@@ -670,10 +725,14 @@ namespace workwear.Journal.ViewModels.Stock
 		public string Description {
 			get {
 				string text = String.Empty;
-				if(!String.IsNullOrWhiteSpace(Employee))
-					text += $"Сотрудник: {Employee} ";
+				if(!String.IsNullOrWhiteSpace(EmployeeFio))
+					text += $"Сотрудник: {EmployeeFio} ";
+				if(!String.IsNullOrWhiteSpace(DutyNormName))
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"Дежурное: {DutyNormName} ";
 				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
-					text += $" TН №: {IncomeDocNubber} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $" TН №: {IncomeDocNubber} ";
+				if(DocTypeEnum == StockDocumentType.WriteoffDoc && !String.IsNullOrWhiteSpace(ExpenseWarehouse))
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $" Со склада: {ExpenseWarehouse} ";
 				return text;
 			}
 		}
@@ -683,16 +742,12 @@ namespace workwear.Journal.ViewModels.Stock
 
 		public string Warehouse => ReceiptWarehouse == null && ExpenseWarehouse == null ? String.Empty :
 			ReceiptWarehouse == null ? $" {ExpenseWarehouse} =>" : $"{ExpenseWarehouse} => {ReceiptWarehouse}";
-
 		public string Author { get; set; }
-
-		public string EmployeeSurname { get; set; }
-		public string EmployeeName { get; set; }
-		public string EmployeePatronymic { get; set; }
-
-		public string Employee => PersonHelper.PersonFullName(EmployeeSurname, EmployeeName, EmployeePatronymic);
-
+		public string EmployeeFio { get; set; }
+		public DateTime? IssueDate { get; set; }
+		public string Color => DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc && IssueDate == null ? "purple" : "black";
 		public string IncomeDocNubber { get; set; }
+		public string DutyNormName { get; set; }
 		public string Comment { get; set; }
 
 		public int? IssueSheetId { get; set; }

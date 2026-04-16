@@ -3,16 +3,22 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Communications;
+using Workwear.Tools;
 using Workwear.ViewModels.Communications;
 
 namespace workwear.Journal.ViewModels.Communications
 {
-	public class MessageTemplateJournalViewModel: EntityJournalViewModelBase<MessageTemplate, MessageTemplateViewModel, NotificationTemplateJournalNode>
+	public class MessageTemplateJournalViewModel: EntityJournalViewModelBase<MessageTemplate, MessageTemplateViewModel, NotificationTemplateJournalNode>, IDialogDocumentation
 	{
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("mobile-app.html#notification-template");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(MessageTemplate));
+		#endregion
 		public MessageTemplateJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			Title = "Шаблоны уведомлений";

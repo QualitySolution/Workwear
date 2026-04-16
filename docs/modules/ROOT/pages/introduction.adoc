@@ -83,6 +83,12 @@
 |✅
 |✅
 
+|<<settings.adoc#accounting-settings,Дата запрета редактирования>>
+|❌
+|✅
+|✅
+|✅
+
 |<<employees.adoc#vacations,Учет отпусков>>
 |❌
 |✅

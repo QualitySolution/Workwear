@@ -389,9 +389,6 @@ alter table clothing_service_claim
 alter table departments
 	drop foreign key fk_departaments_1;
 
-alter table employee_group_items
-	drop foreign key foreign_key_employee_groups_items_employees;
-
 alter table issuance_sheet
 	drop foreign key fk_issuance_sheet_2;
 
@@ -434,77 +431,77 @@ alter table departments
 			on update cascade on delete set null;
 
 alter table clothing_service_claim
-	add constraint fk_clothing_service_claim_employee_id
+	add constraint `fk_clothing_service_claim_employee_id`
 		foreign key (employee_id) references employees (id);
 
 alter table employee_group_items
-	add constraint foreign_key_employee_groups_items_employees
+	add constraint `foreign_key_employee_groups_items_employees`
 		foreign key (employee_id) references employees (id)
 			on update cascade on delete cascade;
 
 alter table issuance_sheet
-	add constraint fk_issuance_sheet_2
+	add constraint `fk_issuance_sheet_2`
 		foreign key (subdivision_id) references subdivisions (id)
 			on delete no action
 			on update cascade;
 
 alter table issuance_sheet
-	add constraint fk_issuance_sheet_8
+	add constraint `fk_issuance_sheet_8`
 		foreign key (transfer_agent_id) references employees (id)
 			on delete no action
 			on update cascade;
 
 alter table issuance_sheet_items
-	add constraint fk_issuance_sheet_items_2
+	add constraint `fk_issuance_sheet_items_2`
 		foreign key (employee_id) references employees (id)
 			on delete no action
 			on update cascade;
 
 alter table leaders
-	add constraint fk_leaders_1
+	add constraint `fk_leaders_1`
 		foreign key (employee_id) references employees (id)
 			on delete no action
 			on update cascade;
 
 alter table operation_issued_by_employee
-	add constraint fk_operation_issued_by_employee_1
+	add constraint `fk_operation_issued_by_employee_1`
 		foreign key (employee_id) references employees (id)
 			on delete restrict
 			on update cascade;
 
 alter table postomat_document_items
-	add constraint fk_postomat_document_items_employee_id
+	add constraint `fk_postomat_document_items_employee_id`
 		foreign key (employee_id) references employees (id);
 
 alter table postomat_document_withdraw_items
-	add constraint fk_postomat_document_withdraw_items_employee_id
+	add constraint `fk_postomat_document_withdraw_items_employee_id`
 		foreign key (employee_id) references employees (id);
 
 alter table posts
-	add constraint fk_posts_subdivision
+	add constraint `fk_posts_subdivision`
 		foreign key (subdivision_id) references subdivisions (id)
 			on update cascade on delete set null;
 
 alter table stock_collective_expense
-	add constraint fk_stock_collective_expense_3
+	add constraint `fk_stock_collective_expense_3`
 		foreign key (transfer_agent_id) references employees (id)
 			on delete restrict
 			on update cascade;
 
 alter table stock_collective_expense_detail
-	add constraint fk_stock_collective_expense_detail_6
+	add constraint `fk_stock_collective_expense_detail_6`
 		foreign key (employee_id) references employees (id)
 			on delete no action
 			on update cascade;
 
 alter table stock_expense
-	add constraint fk_stock_expense_employee
+	add constraint `fk_stock_expense_employee`
 		foreign key (employee_id) references employees (id)
 			on delete restrict
 			on update cascade;
 
 alter table stock_income
-	add constraint fk_stock_income_employee
+	add constraint `fk_stock_income_employee`
 		foreign key (employee_id) references employees (id)
 			on delete restrict
 			on update cascade;
@@ -704,14 +701,14 @@ WHERE stock_income.operation = 'Enter';
 -- Переименования
 create index stock_income_warehouse_id_index
 	on stock_income (warehouse_id);
-drop index fk_stock_income_1_idx on stock_income;
+# В ScriptsConfiguration реализовано удаление
+#drop index fk_stock_income_1_idx on stock_income;
+#alter table stock_income drop foreign key fk_stock_income_1;
 
 alter table stock_income
 	add constraint fk_stock_income_warehouse
 		foreign key (warehouse_id) references warehouse (id)
 			on update cascade;
-alter table stock_income
-	drop foreign key fk_stock_income_1;
 
 create index stock_income_doc_number_index
 	on stock_income (doc_number);

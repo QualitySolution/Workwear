@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
@@ -8,13 +8,14 @@ using NLog;
 using QS.Dialog.GtkUI;
 using QS.DomainModel.Entity;
 using QS.Views.Dialog;
+using QS.Widgets;
 using QS.Widgets.GtkUI;
 using QSOrmProject;
-using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.ViewModels.Company;
 using Workwear.Views.Company.EmployeeChildren;
 using Workwear.Domain.Sizes;
+using EnumItemClickedEventArgs = QSOrmProject.EnumItemClickedEventArgs;
 
 namespace Workwear.Views.Company {
 	public partial class EmployeeView : EntityDialogViewBase<EmployeeViewModel, EmployeeCard>
@@ -42,6 +43,7 @@ namespace Workwear.Views.Company {
 			ViewModel.Performance.CheckPoint("Дочерние модели");
 			employeenormsview1.ViewModel = ViewModel.NormsViewModel;
 			employeewearitemsview1.ViewModel = ViewModel.WearItemsViewModel;
+			employeedutynormsview1.ViewModel = ViewModel.DutyNormsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
 			employeemovementsview1.ViewModel = ViewModel.MovementsViewModel;
 			employeeovernormview.ViewModel = ViewModel.EmployeeOverNormViewModel;
@@ -50,16 +52,17 @@ namespace Workwear.Views.Company {
 			emploeeingroupsview1.ViewModel = ViewModel.InGroupsViewModel;
 			panelEmploeePhoto.Panel = new EmployeePhotoView(ViewModel.EmployeePhotoViewModel);
 			panelEmploeePhoto.Binding.AddBinding(ViewModel, v => v.VisiblePhoto, w => w.IsHided, new BoolReverseConverter()).InitializeFromSource();
-			notebook1.GetNthPage(4).Visible = ViewModel.VisibleCostCenters;
-			notebook1.GetNthPage(5).Visible = ViewModel.VisibleEmployeeGroups;
-			notebook1.GetNthPage(6).Visible = ViewModel.VisibleListedItem;
-			notebook1.GetNthPage(7).Visible = ViewModel.VisibleHistory;
-			notebook1.GetNthPage(8).Visible = ViewModel.VisibleOverNorm;
-			notebook1.GetNthPage(9).Visible = ViewModel.VisibleVacations;
+			// Здесь происходит неявная установка вкладки 0, это специально сделано до скрытия вкладок. Потому что если программист сохранит монодевелоп на вкладке 4 или дальше по списку то возникает слующий эффект, вкладака 4 скрывается, поэтому вызывается событие переключения на вкдадку 5, та в свою очередь тоже скрывается, и т.д. Что приводит к ложному вызову событий OnShow и загрузке данных, на вкладках которые будут скрыты.
+			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
+			notebook1.GetNthPage(4).Visible = ViewModel.VisibleDutyNorm;
+			notebook1.GetNthPage(5).Visible = ViewModel.VisibleCostCenters;
+			notebook1.GetNthPage(6).Visible = ViewModel.VisibleEmployeeGroups;
+			notebook1.GetNthPage(7).Visible = ViewModel.VisibleListedItem;
+			notebook1.GetNthPage(8).Visible = ViewModel.VisibleHistory
+			notebook1.GetNthPage(9).Visible = ViewModel.VisibleOverNorm;
+			notebook1.GetNthPage(10).Visible = ViewModel.VisibleVacations;
 			
 			ViewModel.Performance.CheckPoint("Виджеты");
-			notebook1.Binding.AddSource(ViewModel).AddBinding(v => v.CurrentTab, w => w.CurrentPage);
-
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();
 
 			yenumcomboSex.ItemsEnum = typeof(Sex);
@@ -102,7 +105,7 @@ namespace Workwear.Views.Company {
 			entryPhone.Binding.AddBinding(Entity, e => e.PhoneNumber, w => w.Text).InitializeFromSource();
 			ViewModel.Performance.CheckPoint("Телефоны");
 
-			yentryEMail.ValidationMode = ValidationType.email;
+			yentryEMail.ValidationMode = ValidationType.Email;
 			yentryEMail.Binding.AddBinding(Entity, e => e.Email, w => w.Text).InitializeFromSource();
 			
 			labelLkPassword.Binding.AddBinding(ViewModel, v => v.VisibleLkRegistration, w => w.Visible).InitializeFromSource();
@@ -120,7 +123,7 @@ namespace Workwear.Views.Company {
 				.AddBinding(vm => vm.SensitiveDeductSpecCoins, w => w.Sensitive)
 				.AddBinding(vm => vm.VisibleSpecCoinsViews, w => w.Visible)
 				.InitializeFromSource();
-			labelSpecCoinsSymbol.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
+			ySpecCoinIcon.Binding.AddBinding(ViewModel, vm => vm.VisibleSpecCoinsViews, w => w.Visible).InitializeFromSource();
 			labelSpecCoinsBalance.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.VisibleSpecCoinsViews, w => w.Visible)
 			    .AddBinding(vm => vm.SpecCoinsBalance, w => w.Text, new IntToStringConverter())
@@ -138,6 +141,9 @@ namespace Workwear.Views.Company {
 			};
 
 			enumPrint.ItemsEnum = typeof(EmployeeViewModel.PersonalCardPrint);
+			label8.UseMarkup = true;
+			label8.Markup = "<span foreground='red' weight='bold'>Дежурное</span>";
+
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 		}
 		
@@ -193,9 +199,9 @@ namespace Workwear.Views.Company {
 		void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if(e.PropertyName == nameof(ViewModel.VisibleListedItem))
-				notebook1.GetNthPage(5).Visible = ViewModel.VisibleListedItem;
+				notebook1.GetNthPage(7).Visible = ViewModel.VisibleListedItem;
 			if(e.PropertyName == nameof(ViewModel.VisibleHistory))
-				notebook1.GetNthPage(6).Visible = ViewModel.VisibleHistory;
+				notebook1.GetNthPage(8).Visible = ViewModel.VisibleHistory;
 		}
 		#endregion
 		#region Sizes

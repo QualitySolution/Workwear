@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Autofac;
-using Gamma.Utilities;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Report;
 using QS.Report.ViewModels;
@@ -17,6 +15,7 @@ using QS.Validation;
 using QS.ViewModels;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
@@ -24,6 +23,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Models.Print;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -31,7 +31,7 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Statements
 {
-	public class IssuanceSheetViewModel : EntityDialogViewModelBase<IssuanceSheet>
+	public class IssuanceSheetViewModel : PermittingEntityDialogViewModelBase<IssuanceSheet>, IDialogDocumentation
 	{
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Subdivision> SubdivisionEntryViewModel;
@@ -41,7 +41,7 @@ namespace Workwear.ViewModels.Statements
 		private readonly BaseParameters baseParameters;
 		public ILifetimeScope AutofacScope;
 		private readonly CommonMessages commonMessages;
-		private readonly FeaturesService featuresService;
+		private readonly IssuedSheetPrintModel printModel;
 
 		public IssuanceSheetViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -49,15 +49,22 @@ namespace Workwear.ViewModels.Statements
 			INavigationManager navigationManager, 
 			IValidator validator, 
 			ILifetimeScope autofacScope,
+			IInteractiveService interactive,
+			ICurrentPermissionService permissionService,
 			SizeService sizeService,
 			FeaturesService featuresService,
-			CommonMessages commonMessages, BaseParameters baseParameters) : base(uowBuilder, unitOfWorkFactory, navigationManager, validator)
+			CommonMessages commonMessages,
+			BaseParameters baseParameters,
+			IssuedSheetPrintModel printModel
+			) : base(uowBuilder, unitOfWorkFactory, navigationManager, permissionService, interactive, validator)
 		{
 			this.AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			SizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.commonMessages = commonMessages;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
-			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
+			SetDocumentDateProperty(e => e.Date);
+			
 			var entryBuilder = new CommonEEVMBuilderFactory<IssuanceSheet>(this, Entity, UoW, navigationManager) {
 				AutofacScope = AutofacScope
 			};
@@ -67,6 +74,12 @@ namespace Workwear.ViewModels.Statements
 			TransferAgentEntryViewModel = entryBuilder.ForProperty(x => x.TransferAgent).MakeByType().Finish();
 			ResponsiblePersonEntryViewModel = entryBuilder.ForProperty(x => x.ResponsiblePerson).MakeByType().Finish();
 			HeadOfDivisionPersonEntryViewModel = entryBuilder.ForProperty(x => x.HeadOfDivisionPerson).MakeByType().Finish();
+			
+			OrganizationEntryViewModel.IsEditable = CanEdit;
+			SubdivisionEntryViewModel.IsEditable = CanEdit;
+			TransferAgentEntryViewModel.IsEditable = CanEdit;
+			ResponsiblePersonEntryViewModel.IsEditable = CanEdit;
+			HeadOfDivisionPersonEntryViewModel.IsEditable = CanEdit;
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
@@ -80,13 +93,18 @@ namespace Workwear.ViewModels.Statements
 			
 			Entity.Items.ContentChanged += (sender, args) => OnPropertyChanged(nameof(Sum));
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#issuance-sheet");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 
 		#region Поля View
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
 			$" Сотрудников: <u>{Entity.Items.Where(x => x.Employee != null).Select(x => x.Employee.Id).Distinct().Count()}</u>" +
 			$" Единиц продукции: <u>{Entity.Items.Sum(x => x.Amount)}</u>";
 		
-		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -161,6 +179,7 @@ namespace Workwear.ViewModels.Statements
 			var selectDialog = selectPage.ViewModel;
 			selectDialog.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			selectDialog.Tag = items;
+			selectDialog.Filter.Date = Entity.Date;
 			selectDialog.OnSelectResult += SelectDialog_OnSelectResult;
 		}
 
@@ -200,14 +219,14 @@ namespace Workwear.ViewModels.Statements
 
 		#region Sensetive
 
-		public bool CanEditItems => Entity.Expense == null && Entity.CollectiveExpense == null;
+		public bool CanEditItems => CanEdit && Entity.Expense == null && Entity.CollectiveExpense == null && Entity.ExpenseDutyNorm == null;
 		public bool CanEditTransferAgent => Entity.CollectiveExpense == null;
 
 		#endregion
 
 		#region Visible
 
-		public bool VisibleExpense => Entity.Expense != null || Entity.CollectiveExpense != null;
+		public bool VisibleExpense => Entity.Expense != null || Entity.CollectiveExpense != null || Entity.ExpenseDutyNorm != null;
 		public bool VisibleFillBy => CanEditItems;
 		public bool VisibleCloseFillBy => FillByViewModel != null;
 
@@ -215,7 +234,7 @@ namespace Workwear.ViewModels.Statements
 
 		#region Кнопки
 
-		public void Print(IssuedSheetPrint doc)
+		public void Print(IssuedSheetPrint type)
 		{
 			if(UoW.HasChanges) {
 				if(commonMessages.SaveBeforePrint(Entity.GetType(), "ведомости"))
@@ -224,21 +243,7 @@ namespace Workwear.ViewModels.Statements
 					return;
 			}
 
-			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.DocNumber ?? Entity.Id.ToString()}" 
-					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()} (МБ-7)",
-				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.Id },
-					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
-				}
-			};
-
-			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
-			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
-				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
-
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, printModel.GetReportInfo(type, Entity));
 		}
 
 		public override bool Save() {
@@ -259,6 +264,9 @@ namespace Workwear.ViewModels.Statements
 			else if(Entity.CollectiveExpense != null)
 				NavigationManager.OpenViewModel<CollectiveExpenseViewModel, IEntityUoWBuilder>(
 					this, EntityUoWBuilder.ForOpen(Entity.CollectiveExpense.Id));
+			else if(Entity.ExpenseDutyNorm != null)
+				NavigationManager.OpenViewModel<ExpenseDutyNormViewModel, IEntityUoWBuilder>(
+					this, EntityUoWBuilder.ForOpen(Entity.ExpenseDutyNorm.Id));
 			else
 				throw new NotSupportedException();
 

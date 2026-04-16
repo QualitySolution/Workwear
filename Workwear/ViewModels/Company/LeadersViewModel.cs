@@ -6,11 +6,13 @@ using QS.Project.Domain;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Tools;
 
 namespace Workwear.ViewModels.Company
 {
-	public class LeadersViewModel : EntityDialogViewModelBase<Leader>
+	public class LeadersViewModel : EntityDialogViewModelBase<Leader>, IDialogDocumentation
 	{
 		private readonly ILifetimeScope autofacScope;
 
@@ -21,6 +23,11 @@ namespace Workwear.ViewModels.Company
 
 			EntryEmployee = builder.ForProperty(x => x.Employee).MakeByType().Finish();
 		}
+		
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#leaders");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 
 		#region Controls
 		public EntityEntryViewModel<EmployeeCard> EntryEmployee;

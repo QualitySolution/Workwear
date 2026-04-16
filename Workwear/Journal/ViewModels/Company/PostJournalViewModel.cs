@@ -8,19 +8,25 @@ using NHibernate.Transform;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Journal;
 using QS.Project.Services;
-using QS.Services;
+using QS.ViewModels.Extension;
 using workwear.Journal.Filter.ViewModels.Company;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company {
-	public class PostJournalViewModel : EntityJournalViewModelBase<Post, PostViewModel, PostJournalNode> 
+	public class PostJournalViewModel : EntityJournalViewModelBase<Post, PostViewModel, PostJournalNode>, IDialogDocumentation
 	{
 		private PostFilterViewModel Filter;
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("organization.html#posts");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Post));
+		#endregion
 		public PostJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			IInteractiveService interactiveService, 

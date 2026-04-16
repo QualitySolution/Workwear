@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Stock;
@@ -6,8 +6,8 @@ using Workwear.Domain.Stock;
 namespace Workwear.Domain.Operations {
 
 	[Appellative(Gender = GrammaticalGender.Feminine,
-		NominativePlural = "операции со штрихкодами",
-		Nominative = "операция со штрихкодом"
+		NominativePlural = "операции с маркировкой",
+		Nominative = "операция с маркировкой"
 	)]
 	public class BarcodeOperation : PropertyChangedBase, IDomainObject
 	{
@@ -15,7 +15,7 @@ namespace Workwear.Domain.Operations {
 		public virtual int Id { get; set; }
 
 		private Barcode barcode;
-		[Display(Name = "Штрихкод")]
+		[Display(Name = "Метка(штрихкод)")]
 		public virtual Barcode Barcode {
 			get => barcode;
 			set => SetField(ref barcode, value);
@@ -28,7 +28,14 @@ namespace Workwear.Domain.Operations {
 			get => employeeIssueOperation;
 			set => SetField(ref employeeIssueOperation, value);
 		}
-		
+
+		private DutyNormIssueOperation dutyNormIssueOperation;
+
+		[Display(Name = "Операция выдачи по дежурной норме")]
+		public virtual DutyNormIssueOperation DutyNormIssueOperation {
+			get => dutyNormIssueOperation;
+			set => SetField(ref dutyNormIssueOperation, value);
+		}
 		private WarehouseOperation warehouseOperation;
 		[Display(Name = "Операция на складе")]
 		public virtual WarehouseOperation WarehouseOperation {
@@ -45,8 +52,7 @@ namespace Workwear.Domain.Operations {
 		}
 		#endregion
 		#region Расчетные
-		public virtual string Title => $"Операция со штрихкодом {Barcode.Title}";
-
+		public virtual string Title => $"Операция с меткой {Barcode.Title}";
 		public virtual DateTime OperationDate => EmployeeIssueOperation?.OperationTime ??
 		                                          OverNormOperation?.OperationTime ??
 		                                          WarehouseOperation?.OperationTime ??
