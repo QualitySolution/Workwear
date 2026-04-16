@@ -11,6 +11,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Project.DB;
+using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Journal.Search;
@@ -22,6 +23,8 @@ using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Widgets;
 using ArgumentNullException = System.ArgumentNullException;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -72,7 +75,6 @@ namespace workwear.Journal.ViewModels.Stock
 		private IList<StockBalanceJournalNode> GetNodes(CancellationToken cancellation) {
 			using(var connection = connectionFactory.OpenConnection()) {
 				
-				
 				var conductions = new List<string>();
 				if(Filter.SelectOwner != null)
 					switch(Filter.SelectOwner) {
@@ -89,6 +91,9 @@ namespace workwear.Journal.ViewModels.Stock
 
 				if (Filter.ProtectionTools != null && Filter.ProtectionTools.Nomenclatures.Any())
 					conductions.Add($"nomenclature.id IN ({string.Join(",", Filter.ProtectionTools.Nomenclatures.Select(x => x.Id))})");
+				
+				if(Filter.ShowWithBarcodes)
+					conductions.Add("nomenclature.use_barcode = 1");
 				
 				var search = new SqlSearchCriterion(Search)
 					.WithLikeMode(LikeMatchMode.UnsignedNumberEqual)
@@ -107,7 +112,7 @@ SELECT
     stock.*,
     (SELECT SUM(operation_sub.amount)/DATEDIFF(NOW(), MIN(operation_sub.operation_time))
      FROM operation_warehouse operation_sub
-     WHERE operation_sub.nomenclature_id = stock.Id
+     WHERE operation_sub.nomenclature_id = stock.NomeclatureId
          AND operation_sub.size_id <=> stock.SizeId
          AND operation_sub.height_id <=> stock.HeightId
          AND operation_sub.owner_id <=> stock.OwnerId
@@ -116,7 +121,7 @@ SELECT
        AND operation_sub.operation_time >= ADDDATE(@report_date, INTERVAL -1 YEAR ))
        AND NOT (operation_sub.warehouse_expense_id IS NULL)
        ) AS DailyConsumption
-    FROM (SELECT nomenclature.id        AS Id,
+    FROM (SELECT nomenclature.id        AS NomeclatureId,
                  nomenclature.name      AS NomenclatureName,
                  nomenclature.number    AS NomenclatureNumber,
                  nomenclature.sex       AS Sex,
@@ -132,10 +137,12 @@ SELECT
                      - SUM(IF((operation.warehouse_expense_id IS NOT NULL AND
                                (@all_warehouse OR operation.warehouse_expense_id = @warehouse_id)),
                               operation.amount, 0))
-                     )                  AS Amount,
-                 owners.id              AS OwnerId,
-                 owners.name            AS OwnerName,
-                 nomenclature.sale_cost AS SaleCost
+	                 )                      AS Amount,
+	             owners.id                  AS OwnerId,
+	             owners.name                AS OwnerName,
+	             nomenclature.use_barcode   AS UseBarcode,	             
+             	 operation.warehouse_receipt_id AS WarehouseId,
+	             nomenclature.sale_cost     AS SaleCost
           FROM nomenclature
                    JOIN operation_warehouse AS operation
                              on (operation.operation_time < @report_date
@@ -172,7 +179,6 @@ SELECT
 				return result;
 			}
 		}
-
 		protected override void CreateNodeActions()
 		{
 			base.CreateNodeActions();
@@ -183,6 +189,17 @@ SELECT
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
+			
+			JournalAction releaseBarcodesAction = new JournalAction("Промаркировать",
+				(selected) => selected.Any(x =>
+					x is StockBalanceJournalNode node &&
+					node.UseBarcode &&
+					node.Amount > 0),
+				(selected) => FeaturesService.Available(WorkwearFeature.Barcodes) && Filter.VisibleBarcodes,
+				(selected) => NavigationManager.OpenViewModel<BarcodingViewModel, IEntityUoWBuilder, StockBalanceJournalNode, Warehouse>
+                	(null, EntityUoWBuilder.ForCreate(), selected.First() as StockBalanceJournalNode, Filter.Warehouse)
+			);
+			NodeActionsList.Add(releaseBarcodesAction);
 		}
 
 		void OpenMovements(StockBalanceJournalNode[] nodes)
@@ -195,6 +212,9 @@ SELECT
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));
 			}
 		}
+		private void OpenReleaseBarcodesWindow(StockBalanceJournalNode node) =>
+			NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode, Warehouse>
+				(this, node, Filter.Warehouse);
 		
 		public override string FooterInfo {
 			get => $"Суммарная стоимость: " +
@@ -207,10 +227,7 @@ SELECT
 
 	public class StockBalanceJournalNode
 	{
-		/// <summary>
-		/// NomenclatureId
-		/// </summary>
-		public int Id { get; set; }
+		public int NomeclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
 		public ClothesSex Sex { get; set; }
@@ -224,6 +241,7 @@ SELECT
 		public int Amount { get; set; }
 		public int? OwnerId { get; set; }
 		public string OwnerName { get; set; }
+		public bool UseBarcode { get; set; }
 		public decimal SaleCost { get; set; }
 		public double? DailyConsumption { get; set; }
 
@@ -247,11 +265,14 @@ SELECT
 		public string BalanceText => Amount > 0 ? 
 			$"{Amount} {UnitsName}" : $"<span foreground=\"red\">{Amount}</span> {UnitsName}";
 		public string WearPercentText => WearPercent.ToString("P0");
+
 		public StockPosition GetStockPosition(IUnitOfWork uow) => new StockPosition(
-			uow.GetById<Nomenclature>(Id), 
+			uow.GetById<Nomenclature>(NomeclatureId), 
 			WearPercent, 
 			SizeId.HasValue ? uow.GetById<Size>(SizeId.Value) : null, 
 			HeightId.HasValue ? uow.GetById<Size>(HeightId.Value) : null,
 			OwnerId.HasValue ? uow.GetById<Owner>(OwnerId.Value) : null);
+		
+		public int WarehouseId { get; set; }
 	}
 }

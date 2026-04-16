@@ -36,6 +36,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref owners, value);
 		}
 		
+		private List<Nomenclature>nomenclaturesWithBarcodes = new List<Nomenclature>();
+		public List<Nomenclature> NomenclaturesWithBarcodes {
+			get => nomenclaturesWithBarcodes;
+			set => SetField(ref nomenclaturesWithBarcodes, value);
+		}
+		
 		private object selectOwner = SpecialComboState.All;
 		public object SelectOwner {
 			get => selectOwner;
@@ -76,16 +82,36 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => sensitiveDate;
 			set => SetField(ref sensitiveDate, value);
 		}
-		#endregion
+
+		private bool showWithBarcodes;
+		public virtual bool ShowWithBarcodes {
+			get => showWithBarcodes;
+			set => SetField(ref showWithBarcodes, value);
+		}
+
+		private bool canChangeShowWithBarcodes = true;
+		public virtual bool CanChangeShowWithBarcodes {
+			get => canChangeShowWithBarcodes;
+			set => SetField(ref canChangeShowWithBarcodes, value);
+		}
+	
+		private ItemsType itemsType;
+        public virtual ItemsType ItemsType {
+	        get => itemsType;
+	        set => SetField(ref itemsType, value);
+        }
+        #endregion
 
 		public readonly FeaturesService FeaturesService;
 
-		#region Visible
-
-		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
-		public bool VisibleOwners => FeaturesService.Available(WorkwearFeature.Owners) && owners.Any();
+		#region Visible and Sensetive
+		public virtual bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
+////1289		
+		public virtual bool SensetiveWarehouse { get; set; } = true;
+		public virtual bool VisibleOwners => FeaturesService.Available(WorkwearFeature.Owners) && owners.Any();
+		public virtual bool VisibleBarcodes => FeaturesService.Available(WorkwearFeature.Barcodes) && NomenclaturesWithBarcodes.Any();
 		private bool canChooseAmount = false;
-		public bool CanChooseAmount {
+		public virtual bool CanChooseAmount {
 			get => canChooseAmount;
 			set => SetField(ref canChooseAmount, value);
 		}
@@ -120,6 +146,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			
 			if(FeaturesService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
+			if(FeaturesService.Available(WorkwearFeature.Owners))
+				nomenclaturesWithBarcodes = UoW.GetAll<Nomenclature>().Where(n => n.UseBarcode).ToList();
 			
 			CanNotify = false;
 			setFilterParameters?.Invoke(this);

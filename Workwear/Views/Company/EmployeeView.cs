@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using Gamma.Binding.Converters;
@@ -46,6 +46,7 @@ namespace Workwear.Views.Company {
 			employeedutynormsview1.ViewModel = ViewModel.DutyNormsViewModel;
 			employeecardlisteditemsview.ViewModel = ViewModel.ListedItemsViewModel;
 			employeemovementsview1.ViewModel = ViewModel.MovementsViewModel;
+			employeeovernormview.ViewModel = ViewModel.EmployeeOverNormViewModel;
 			employeevacationsview1.ViewModel = ViewModel.VacationsViewModel;
 			employeecostcentrview1.ViewModel = ViewModel.CostCenterViewModel;
 			emploeeingroupsview1.ViewModel = ViewModel.InGroupsViewModel;
@@ -57,8 +58,9 @@ namespace Workwear.Views.Company {
 			notebook1.GetNthPage(5).Visible = ViewModel.VisibleCostCenters;
 			notebook1.GetNthPage(6).Visible = ViewModel.VisibleEmployeeGroups;
 			notebook1.GetNthPage(7).Visible = ViewModel.VisibleListedItem;
-			notebook1.GetNthPage(8).Visible = ViewModel.VisibleHistory;
-			notebook1.GetNthPage(9).Visible = ViewModel.VisibleVacations;
+			notebook1.GetNthPage(8).Visible = ViewModel.VisibleHistory
+			notebook1.GetNthPage(9).Visible = ViewModel.VisibleOverNorm;
+			notebook1.GetNthPage(10).Visible = ViewModel.VisibleVacations;
 			
 			ViewModel.Performance.CheckPoint("Виджеты");
 			buttonColorsLegend.Binding.AddBinding(ViewModel, v => v.VisibleColorsLegend, w => w.Visible).InitializeFromSource();

@@ -60,8 +60,8 @@ namespace Workwear.ReportParameters.Views
 			this.ydateReport.Name = "ydateReport";
 			this.ydateReport.WithTime = false;
 			this.ydateReport.Date = new global::System.DateTime(0);
-			this.ydateReport.IsEditable = true;
-			this.ydateReport.AutoSeparation = true;
+			this.ydateReport.IsEditable = false;
+			this.ydateReport.AutoSeparation = false;
 			this.table1.Add(this.ydateReport);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1[this.ydateReport]));
 			w2.TopAttach = ((uint)(1));
@@ -122,7 +122,7 @@ namespace Workwear.ReportParameters.Views
 			this.yspeccomboboxWarehouse.Name = "yspeccomboboxWarehouse";
 			this.yspeccomboboxWarehouse.AddIfNotExist = false;
 			this.yspeccomboboxWarehouse.DefaultFirst = false;
-			this.yspeccomboboxWarehouse.ShowSpecialStateAll = true;
+			this.yspeccomboboxWarehouse.ShowSpecialStateAll = false;
 			this.yspeccomboboxWarehouse.ShowSpecialStateNot = false;
 			this.table1.Add(this.yspeccomboboxWarehouse);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.yspeccomboboxWarehouse]));

@@ -168,6 +168,10 @@ namespace Workwear.Views.Company
 
 		private global::Gtk.Label label28;
 
+		private global::Workwear.Views.Company.EmployeeChildren.EmployeeOverNormView employeeovernormview;
+
+		private global::Gtk.Label labelovernorm1;
+
 		private global::Gtk.VBox vbox8;
 
 		private global::Workwear.Views.Company.EmployeeChildren.EmployeeMovementsView employeemovementsview1;
@@ -176,7 +180,7 @@ namespace Workwear.Views.Company
 
 		private global::Workwear.Views.Company.EmployeeChildren.EmployeeVacationsView employeevacationsview1;
 
-		private global::Gtk.Label label30;
+		private global::Gtk.Label labelovernorm;
 
 		protected virtual void Build()
 		{
@@ -324,7 +328,7 @@ namespace Workwear.Views.Company
 			this.notebook1 = new global::Gamma.GtkWidgets.yNotebook();
 			this.notebook1.CanFocus = true;
 			this.notebook1.Name = "notebook1";
-			this.notebook1.CurrentPage = 0;
+			this.notebook1.CurrentPage = 7;
 			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
@@ -1075,6 +1079,19 @@ namespace Workwear.Views.Company
 			this.notebook1.SetTabLabel(this.vbox5, this.label28);
 			this.label28.ShowAll();
 			// Container child notebook1.Gtk.Notebook+NotebookChild
+			this.employeeovernormview = new global::Workwear.Views.Company.EmployeeChildren.EmployeeOverNormView();
+			this.employeeovernormview.Events = ((global::Gdk.EventMask)(256));
+			this.employeeovernormview.Name = "employeeovernormview";
+			this.notebook1.Add(this.employeeovernormview);
+			global::Gtk.Notebook.NotebookChild w81 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeeovernormview]));
+			w81.Position = 7;
+			// Notebook tab
+			this.labelovernorm1 = new global::Gtk.Label();
+			this.labelovernorm1.Name = "labelovernorm1";
+			this.labelovernorm1.LabelProp = global::Mono.Unix.Catalog.GetString("Вне норм");
+			this.notebook1.SetTabLabel(this.employeeovernormview, this.labelovernorm1);
+			this.labelovernorm1.ShowAll();
+			// Container child notebook1.Gtk.Notebook+NotebookChild
 			this.vbox8 = new global::Gtk.VBox();
 			this.vbox8.Name = "vbox8";
 			this.vbox8.Spacing = 6;
@@ -1102,11 +1119,11 @@ namespace Workwear.Views.Company
 			global::Gtk.Notebook.NotebookChild w86 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1[this.employeevacationsview1]));
 			w86.Position = 9;
 			// Notebook tab
-			this.label30 = new global::Gtk.Label();
-			this.label30.Name = "label30";
-			this.label30.LabelProp = global::Mono.Unix.Catalog.GetString("Отпуска");
-			this.notebook1.SetTabLabel(this.employeevacationsview1, this.label30);
-			this.label30.ShowAll();
+			this.labelovernorm = new global::Gtk.Label();
+			this.labelovernorm.Name = "labelovernorm";
+			this.labelovernorm.LabelProp = global::Mono.Unix.Catalog.GetString("Отпуска");
+			this.notebook1.SetTabLabel(this.employeevacationsview1, this.labelovernorm);
+			this.labelovernorm.ShowAll();
 			this.dialog1_VBox.Add(this.notebook1);
 			global::Gtk.Box.BoxChild w87 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.notebook1]));
 			w87.Position = 1;

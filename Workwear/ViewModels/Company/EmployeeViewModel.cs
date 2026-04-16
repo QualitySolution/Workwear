@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -181,6 +181,7 @@ namespace Workwear.ViewModels.Company
 			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
+			EmployeeOverNormViewModel = AutofacScope.Resolve<EmployeeOverNormViewModel>(parameter);
 			InGroupsViewModel = AutofacScope.Resolve<EmployeeInGroupsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
 			//Панели
@@ -216,6 +217,7 @@ namespace Workwear.ViewModels.Company
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
+		public bool VisibleOverNorm => featuresService.Available(WorkwearFeature.OverNorm);
 		public bool VisibleEmployeeGroups => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool VisibleDutyNorm => featuresService.Available(WorkwearFeature.DutyNorms) && Entity.RelatedDutyNorms.Count > 0;
 		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
@@ -494,13 +496,18 @@ namespace Workwear.ViewModels.Company
 																	// 0 - Информация
 																	// 1 - Размеры
 		public EmployeeNormsViewModel NormsViewModel;				//2
+		public EmployeeMovementsViewModel MovementsViewModel;       //8
+////1289 После сделать дочерней. Исправить нумерацию
+//		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //8*
+		public EmployeeVacationsViewModel VacationsViewModel;       //9
 		public EmployeeWearItemsViewModel WearItemsViewModel;		//3
 		public EmployeeDutyNormsViewModel DutyNormsViewModel;		//4
 		public EmployeeCostCentersViewModel CostCenterViewModel;	//5
 		public EmployeeInGroupsViewModel InGroupsViewModel;			//6
 		public EmployeeListedItemsViewModel ListedItemsViewModel;	//7
 		public EmployeeMovementsViewModel MovementsViewModel;       //8
-		public EmployeeVacationsViewModel VacationsViewModel;       //9
+		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //9
+		public EmployeeVacationsViewModel VacationsViewModel;       //10
 
 
 		private int lastTab;
@@ -542,7 +549,10 @@ namespace Workwear.ViewModels.Company
 					if(Entity.Id != 0)
 						MovementsViewModel.OnShow();
 					break;
-				case 9:
+				case 9: EmployeeOverNormViewModel.OnShow();
+					break;
+					break;
+				case 10:
 					if( Entity.Id == 0) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {

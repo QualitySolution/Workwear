@@ -20,7 +20,7 @@ namespace Workwear.Domain.Operations
 	{
 		public virtual int Id { get; set; }
 
-		private DateTime operationTime;
+		private DateTime operationTime = DateTime.Now;
 		[Display(Name = "Время операции")]
 		public virtual DateTime OperationTime {
 			get => operationTime;
@@ -95,6 +95,19 @@ namespace Workwear.Domain.Operations
 				: ExpenseWarehouse != null 
 					? $"Списание {Amount} х {Nomenclature?.Name} из {ExpenseWarehouse.Name}"
 					: $"Перемещение {Amount} х {Nomenclature?.Name} из пустого в порожнее(оба склада не указаны)";
+
+		public virtual StockPosition StockPosition {
+			get => new StockPosition(Nomenclature, WearPercent, WearSize, Height, Owner);
+			set {
+				Nomenclature = value?.Nomenclature;
+				WearPercent = value?.WearPercent ?? 0;
+				WearSize = value?.WearSize;
+				Height = value?.Height;
+				Owner = value?.Owner;
+
+			}
+		}
+		
 		#endregion
 		#region Методы обновления операций
 		public virtual void Update(IUnitOfWork uow, ExpenseItem item) {

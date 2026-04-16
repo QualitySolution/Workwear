@@ -18,6 +18,7 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.CreateDate).Column("creation_date");
 			Map(x => x.Type).Column("type");
 			Map(x => x.Title).Column("title");
+			Map(x => x.Label).Column("label").Nullable();
 			Map(x => x.Comment).Column("comment");
 			
 			References(x => x.Nomenclature).Column ("nomenclature_id");
@@ -25,7 +26,7 @@ namespace Workwear.HibernateMapping.Stock
 			References(x => x.Height).Column ("height_id");
 			
 			HasMany<BarcodeOperation>(x => x.BarcodeOperations)
-				.KeyColumn("barcode_id").Inverse().LazyLoad();
+				.KeyColumn("barcode_id").Inverse();
 		}
 	}
 }
