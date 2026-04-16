@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Sizes.StockPositionSizeReplaceView.cs" />
     <Compile Include="Journal\Filter.ViewModels\ClothingService\ClaimsJournalFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\DepartmentFilterViewModel.cs" />
     <Compile Include="Journal\Filter.ViewModels\Company\EmployeeBalanceFilterViewModel.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="ViewModels\Postomats\PostomatDocumentWithdrawViewModel.cs" />
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
+    <Compile Include="ViewModels\Sizes\StockPositionSizeReplaceViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureServicesViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureSizesViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\BarcodeAddWidgetViewModel.cs" />
@@ -234,6 +236,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.OrganizationView.cs" />
     <Compile Include="ViewModels\Statements\IssuanceSheetViewModel.cs" />
     <Compile Include="Views\Company\VacationTypeView.cs" />
+    <Compile Include="Views\Sizes\StockPositionSizeReplaceView.cs" />
     <Compile Include="Views\Statements\IssuanceSheetView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Statements.IssuanceSheetView.cs" />
     <Compile Include="Views\Statements\IssuanceSheetFillByView.cs" />
@@ -803,7 +806,6 @@
     <Folder Include="Journal\Filter.ViewModels\Communications\" />
     <Folder Include="Journal\Filter.Views\Communications\" />
     <Folder Include="Views\Communications\" />
-    <Folder Include="Views\Sizes\" />
     <Folder Include="Journal\Filter.Views\Sizes\" />
     <Folder Include="Models\WearLk\" />
     <Folder Include="Views\Regulations\NormChildren\" />

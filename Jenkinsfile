@@ -22,7 +22,7 @@ node {
       sh 'rm -rf Workwear.Test/TestResults'
       sh 'rm -rf Workwear.Test.Sql/TestResults' //Удаляем старые результаты тестов здесь, чтобы не оставались когда sql тесты не запускаются.
       try {  
-         sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" Workwear.Test/Workwear.Test.csproj'
+         sh 'dotnet test --logger trx --collect:"XPlat Code Coverage" --settings coverlet.runsettings Workwear.Test/Workwear.Test.csproj'
       } catch (e) {}
       finally{
          discoverReferenceBuild()

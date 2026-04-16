@@ -22,6 +22,7 @@ using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Sizes;
 using ArgumentNullException = System.ArgumentNullException;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -59,6 +60,7 @@ namespace workwear.Journal.ViewModels.Stock
 			DataLoader = dataLoader;
 
 			CreateNodeActions();
+			CreatePopupActions();
 
 			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature));
 			TabName = "Остатки по складу " + 
@@ -183,6 +185,22 @@ SELECT
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
+
+			
+		}
+
+		protected override void CreatePopupActions() {
+			var replaceSizeAction = new JournalAction("Заменить размер",
+				(selected) => selected.Length == 1,
+				(selected) => true,
+				(selected) => OpenReplaceSize(selected.Cast<StockBalanceJournalNode>().First())
+			);
+			PopupActionsList.Add(replaceSizeAction);
+		}
+
+		void OpenReplaceSize(StockBalanceJournalNode node)
+		{
+			NavigationManager.OpenViewModel<StockPositionSizeReplaceViewModel, StockBalanceJournalNode>(this, node);
 		}
 
 		void OpenMovements(StockBalanceJournalNode[] nodes)
