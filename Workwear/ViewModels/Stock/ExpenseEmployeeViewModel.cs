@@ -238,6 +238,12 @@ namespace Workwear.ViewModels.Stock {
 		}
 
 		private void UpdateAmounts() {
+			// Graph заполняется только при вызове FillUnderreceived, который срабатывает при смене сотрудника
+			// или при создании нового документа. При открытии существующего документа Graph не заполняется,
+			// чтобы не тратить время при простом просмотре. Поэтому заполняем его здесь лениво — только
+			// в момент первого реального использования (когда пользователь меняет дату и подтверждает обновление).
+			if(Entity.Employee != null && Entity.Items.Any(x => x.EmployeeCardItem?.Graph == null))
+				issueModel.FillWearReceivedInfo(new[] { Entity.Employee });
 			foreach(var item in Entity.Items) {
 				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(baseParameters, Entity.Date) ?? 0;
 			}
