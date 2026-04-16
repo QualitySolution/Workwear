@@ -22,6 +22,7 @@ using Workwear.Domain.Stock;
 using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.Sizes;
 using ArgumentNullException = System.ArgumentNullException;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -183,6 +184,18 @@ SELECT
 					(selected) => OpenMovements(selected.Cast<StockBalanceJournalNode>().ToArray())
 					);
 			NodeActionsList.Add(updateStatusAction);
+
+			var replaceSizeAction = new JournalAction("Заменить размер",
+					(selected) => selected.Count() == 1,
+					(selected) => true,
+					(selected) => OpenReplaceSize(selected.Cast<StockBalanceJournalNode>().First())
+					);
+			NodeActionsList.Add(replaceSizeAction);
+		}
+
+		void OpenReplaceSize(StockBalanceJournalNode node)
+		{
+			NavigationManager.OpenViewModel<StockPositionSizeReplaceViewModel, StockBalanceJournalNode>(this, node);
 		}
 
 		void OpenMovements(StockBalanceJournalNode[] nodes)
