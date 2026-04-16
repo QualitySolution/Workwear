@@ -58,7 +58,7 @@ namespace Workwear.Views.Company {
 			notebook1.GetNthPage(5).Visible = ViewModel.VisibleCostCenters;
 			notebook1.GetNthPage(6).Visible = ViewModel.VisibleEmployeeGroups;
 			notebook1.GetNthPage(7).Visible = ViewModel.VisibleListedItem;
-			notebook1.GetNthPage(8).Visible = ViewModel.VisibleHistory
+			notebook1.GetNthPage(8).Visible = ViewModel.VisibleHistory;
 			notebook1.GetNthPage(9).Visible = ViewModel.VisibleOverNorm;
 			notebook1.GetNthPage(10).Visible = ViewModel.VisibleVacations;
 			

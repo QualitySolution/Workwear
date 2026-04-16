@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentNHibernate.Data;
-using Mono.Unix.Native;
+using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Transform;
@@ -15,13 +14,12 @@ using QS.Project.Services;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Utilities.Text;
-using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.Stock;
-using Workwear.Tools.Barcodes;
 using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 using Workwear.ViewModels.Stock;
 using Size = Workwear.Domain.Sizes.Size;
 
@@ -29,6 +27,12 @@ namespace Workwear.Journal.ViewModels.Stock
 {
 	public class BarcodeJournalViewModel : EntityJournalViewModelBase<Barcode, BarcodeViewModel, BarcodeJournalNode>
 	{
+		private readonly BarcodeService barcodeService;
+		public BarcodeJournalFilterViewModel Filter { get; private set; }
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock.html#barcodes");
+		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Barcode));
+		#endregion
 		public BarcodeJournalViewModel(
 			BarcodeService barcodeService,
 			ILifetimeScope autofacScope, 
@@ -74,9 +78,8 @@ namespace Workwear.Journal.ViewModels.Stock
 					() => employeeAlias.FirstName,
 					() => employeeAlias.Patronymic,
 					() => barcodeAlias.Comment
-				).WithLikeMode(MatchMode.Exact).By(
-					() => employeeAlias.PersonnelNumber
-				).Finish())
+				).WithLikeMode(MatchMode.Exact).By(() => employeeAlias.PersonnelNumber
+				).Finish());
 
 				if(Filter.Nomenclature != null)
 					query.Where(x => x.Nomenclature.Id == Filter.Nomenclature.Id);

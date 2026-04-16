@@ -78,7 +78,7 @@ namespace Workwear.Tools.Barcodes
 			service.Code = $"2000{service.Id:D8}{CheckSum($"2000{service.Id:D8}")}";
 			uow.Save(service);
 		}
-
+		#endregion
         #region Barcodes Info
 		public static bool CheckBarcode(string barcode, BarcodeTypes type) {
 			switch(type) {

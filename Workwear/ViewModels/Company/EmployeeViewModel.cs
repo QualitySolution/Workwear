@@ -496,16 +496,13 @@ namespace Workwear.ViewModels.Company
 																	// 0 - Информация
 																	// 1 - Размеры
 		public EmployeeNormsViewModel NormsViewModel;				//2
-		public EmployeeMovementsViewModel MovementsViewModel;       //8
-////1289 После сделать дочерней. Исправить нумерацию
-//		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //8*
-		public EmployeeVacationsViewModel VacationsViewModel;       //9
 		public EmployeeWearItemsViewModel WearItemsViewModel;		//3
 		public EmployeeDutyNormsViewModel DutyNormsViewModel;		//4
 		public EmployeeCostCentersViewModel CostCenterViewModel;	//5
 		public EmployeeInGroupsViewModel InGroupsViewModel;			//6
 		public EmployeeListedItemsViewModel ListedItemsViewModel;	//7
 		public EmployeeMovementsViewModel MovementsViewModel;       //8
+////1289 После сделать дочерней. Исправить нумерацию
 		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //9
 		public EmployeeVacationsViewModel VacationsViewModel;       //10
 
