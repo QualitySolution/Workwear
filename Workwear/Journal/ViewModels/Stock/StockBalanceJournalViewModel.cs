@@ -60,6 +60,7 @@ namespace workwear.Journal.ViewModels.Stock
 			DataLoader = dataLoader;
 
 			CreateNodeActions();
+			CreatePopupActions();
 
 			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature));
 			TabName = "Остатки по складу " + 
@@ -185,12 +186,16 @@ SELECT
 					);
 			NodeActionsList.Add(updateStatusAction);
 
+			
+		}
+
+		protected override void CreatePopupActions() {
 			var replaceSizeAction = new JournalAction("Заменить размер",
-					(selected) => selected.Count() == 1,
-					(selected) => true,
-					(selected) => OpenReplaceSize(selected.Cast<StockBalanceJournalNode>().First())
-					);
-			NodeActionsList.Add(replaceSizeAction);
+				(selected) => selected.Length == 1,
+				(selected) => true,
+				(selected) => OpenReplaceSize(selected.Cast<StockBalanceJournalNode>().First())
+			);
+			PopupActionsList.Add(replaceSizeAction);
 		}
 
 		void OpenReplaceSize(StockBalanceJournalNode node)
