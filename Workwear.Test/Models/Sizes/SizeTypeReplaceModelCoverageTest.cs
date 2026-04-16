@@ -37,6 +37,13 @@ namespace Workwear.Test.Models.Sizes {
 	///     <c>TryReplaceSizes()</c> проверьте, что <c>WearSize</c>/<c>Height</c>
 	///     изменились на <c>newSize</c>.
 	///   </item>
+	///   <item>
+	///     <b>Обязательно</b> выполните аналогичный шаг для модуля
+	///     <see cref="Workwear.Models.Sizes.StockPositionSizeReplaceModel"/>
+	///     (файл <c>Workwear.Desktop/Models/Sizes/StockPositionSizeReplaceModel.cs</c>)
+	///     и обновите список <c>HandledTypes</c> в тесте
+	///     <c>StockPositionSizeReplaceModelCoverageTest</c>.
+	///   </item>
 	/// </list>
 	/// </summary>
 	[TestFixture]
