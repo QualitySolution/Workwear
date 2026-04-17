@@ -17,7 +17,7 @@ namespace Workwear.Domain.Stock.Documents {
 		
 		#region Свойства
 		public virtual string Title{
-			get{ return String.Format ("Акт оценки износа №{0} от {1:d}", DocNumberText, Date);}
+			get{ return String.Format ("Документ маркировки №{0} от {1:d}", DocNumberText, Date);}
 		}
 
 		private Warehouse warehouse;

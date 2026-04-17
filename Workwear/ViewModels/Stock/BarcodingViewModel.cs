@@ -22,6 +22,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -127,11 +128,21 @@ namespace Workwear.ViewModels.Stock {
 		}
 		
 		public void AddItems() {
-			var selectJournal = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(this, OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.Filter.Warehouse = Entity.Warehouse; 
-			selectJournal.ViewModel.Filter.SensetiveWarehouse = false;
-			selectJournal.ViewModel.Filter.CanChooseAmount = true;
-			selectJournal.ViewModel.Filter.AddAmount = AddedAmount.All;
+			var selectJournal = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>
+				(this,
+					OpenPageOptions.AsSlave,
+					addingRegistrations: builder => {
+						builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
+							filter => {
+								filter.ShowNegativeBalance = false;
+								filter.ShowWithBarcodes = true; 
+								filter.CanChangeShowWithBarcodes = false; 
+								filter.CanChooseAmount = true;
+								filter.AddAmount = AddedAmount.All;
+								filter.Warehouse = Entity.Warehouse;
+								filter.SensetiveWarehouse = false;
+							});
+					});
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
 			selectJournal.ViewModel.OnSelectResult += (s, e) =>
 				OpenReleaseBarcodesWindow(

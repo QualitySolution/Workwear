@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Services;
@@ -28,7 +30,7 @@ using Workwear.Tools.OverNorms.Models;
 
 namespace Workwear.ViewModels.Stock 
 {
-	public sealed class OverNormViewModel : EntityDialogViewModelBase<OverNorm> 
+	public sealed class OverNormViewModel : PermittingEntityDialogViewModelBase<OverNorm>
 	{
 		private readonly IOverNormFactory overNormFactory;
 		private readonly BarcodeService barcodeService;
@@ -45,8 +47,8 @@ namespace Workwear.ViewModels.Stock
 			BarcodeService barcodeService,
 			StockRepository stockRepository,
 			FeaturesService featuresService,
-			IValidator validator = null,
-			UnitOfWorkProvider unitOfWorkProvider = null
+			ICurrentPermissionService validator = null,
+			IInteractiveMessage unitOfWorkProvider = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
 		{
 			if (autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
@@ -82,9 +84,9 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region View Properties
-		public bool CanAddItems => Entity.Warehouse != null && OverNormModel.Editable;
-		public bool CanRemoveActiveItem => SelectedItem != null;
-		public bool CanChoiseForActiveItem => true;
+		public bool CanAddItems => CanEdit && Entity.Warehouse != null && OverNormModel.Editable;
+		public bool CanRemoveActiveItem => CanEdit && SelectedItem != null;
+		public bool CanChoiseForActiveItem => CanEdit && SelectedItem != null;
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		
 		public OverNormType DocType {
