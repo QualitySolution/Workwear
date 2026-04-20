@@ -38881,10 +38881,34 @@
         <child>
           <widget class="Gamma.GtkWidgets.yTable" id="ytable1">
             <property name="MemberName" />
-            <property name="NRows">4</property>
+            <property name="NRows">5</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
+            <child>
+              <widget class="Gamma.Widgets.yEnumComboBox" id="comboReportType">
+                <property name="MemberName" />
+                <property name="IsTextCombo">False</property>
+                <property name="Items" translatable="yes" />
+                <property name="ShowSpecialStateAll">False</property>
+                <property name="ShowSpecialStateNot">False</property>
+                <property name="UseShortTitle">False</property>
+                <property name="DefaultFirst">True</property>
+              </widget>
+              <packing>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
             <child>
               <widget class="Gtk.Label" id="label1">
                 <property name="MemberName" />
@@ -38892,6 +38916,8 @@
                 <property name="LabelProp" translatable="yes">Период:</property>
               </widget>
               <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -38911,6 +38937,8 @@
                 <property name="EndDate">0</property>
               </widget>
               <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">2</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -38931,8 +38959,8 @@
                 <property name="InvisibleChar">•</property>
               </widget>
               <packing>
-                <property name="TopAttach">2</property>
-                <property name="BottomAttach">3</property>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -38954,8 +38982,8 @@
                 <property name="InvisibleChar">•</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -38976,8 +39004,8 @@
                 <property name="LabelProp" translatable="yes">Наименование содержит:</property>
               </widget>
               <packing>
-                <property name="TopAttach">2</property>
-                <property name="BottomAttach">3</property>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -38996,8 +39024,26 @@
                 <property name="LabelProp" translatable="yes">Наименование не содержит:</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="ylabel4">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Вид отчета:</property>
+              </widget>
+              <packing>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -39016,8 +39062,8 @@
                 <property name="LabelProp" translatable="yes">Собственники:</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -39041,8 +39087,8 @@
                 <property name="NameForSpecialStateNot">Без собственника</property>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">2</property>
+                <property name="TopAttach">2</property>
+                <property name="BottomAttach">3</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -39272,7 +39318,7 @@
                 <widget class="Gamma.GtkWidgets.yLabel" id="ylabelNomenclatureName">
                   <property name="MemberName" />
                   <property name="Xalign">0</property>
-                  <property name="LabelProp" translatable="yes">&#8212;</property>
+                  <property name="LabelProp" translatable="yes">—</property>
                 </widget>
                 <packing>
                   <property name="LeftAttach">1</property>
@@ -39315,7 +39361,7 @@
               <child>
                 <widget class="Gamma.GtkWidgets.yLabel" id="ylabelCurrentSize">
                   <property name="MemberName" />
-                  <property name="LabelProp" translatable="yes">&#8212;</property>
+                  <property name="LabelProp" translatable="yes">—</property>
                 </widget>
                 <packing>
                   <property name="Position">1</property>
@@ -39327,7 +39373,7 @@
               <child>
                 <widget class="Gtk.Label" id="labelSizeArrow">
                   <property name="MemberName" />
-                  <property name="LabelProp" translatable="yes">&#8594;</property>
+                  <property name="LabelProp" translatable="yes">→</property>
                 </widget>
                 <packing>
                   <property name="Position">2</property>
@@ -39377,7 +39423,7 @@
               <child>
                 <widget class="Gamma.GtkWidgets.yLabel" id="ylabelCurrentHeight">
                   <property name="MemberName" />
-                  <property name="LabelProp" translatable="yes">&#8212;</property>
+                  <property name="LabelProp" translatable="yes">—</property>
                 </widget>
                 <packing>
                   <property name="Position">1</property>
@@ -39389,7 +39435,7 @@
               <child>
                 <widget class="Gtk.Label" id="labelHeightArrow">
                   <property name="MemberName" />
-                  <property name="LabelProp" translatable="yes">&#8594;</property>
+                  <property name="LabelProp" translatable="yes">→</property>
                 </widget>
                 <packing>
                   <property name="Position">2</property>

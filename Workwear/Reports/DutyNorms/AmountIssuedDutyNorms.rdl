@@ -21,8 +21,8 @@
 + Format(Convert.ToDateTime({?dateStart}), "dd.MM.yyyy")  + " г. по "
 + Format(Convert.ToDateTime({?dateEnd}), "dd.MM.yyyy")  + " г."</Value>
         <ZIndex>1</ZIndex>
-        <Left>0.0pt</Left>
-        <Top>0.0pt</Top>
+        <Left>0.00pt</Left>
+        <Top>0.00pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -52,13 +52,13 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>123.5pt</Width>
+            <Width>88.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>69.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>210.9pt</Width>
+            <Width>232.9pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>74.4pt</Width>
@@ -86,7 +86,7 @@
             </Visibility>
           </TableColumn>
           <TableColumn>
-            <Width>84.4pt</Width>
+            <Width>94.9pt</Width>
           </TableColumn>
         </TableColumns>
         <TableGroups>
@@ -378,7 +378,7 @@
                     <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox10">
-                          <Value>Ответственный</Value>
+                          <Value>Дата выдачи</Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>Solid</Default>
@@ -711,7 +711,7 @@
                             <FontStyle>Italic</FontStyle>
                           </Style>
                           <Value>="      Выдача №" + {doc_number} +
-Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_sheet} + ")")</Value>
+Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_sheet} + ")") + " Ответственный: " + {employee}</Value>
                           <CanGrow >true</CanGrow>
                         </Textbox>
                       </ReportItems>
@@ -798,7 +798,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox11">
-                      <Value>={employee}</Value>
+                      <Value>={operation_date}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -1336,16 +1336,7 @@ ORDER BY subdivision_code, duty_norm_name, nomenclature, size, growth</CommandTe
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=atlas.srv.qsolution.ru;user=SpMob;database=specposhiv_kos;port=3306;password=QlZEal1FlwZuKFc5</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="dateStart">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1481,4 +1472,13 @@ ORDER BY subdivision_code, duty_norm_name, nomenclature, size, growth</CommandTe
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
+  <DataSources >
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
 </Report>
