@@ -743,7 +743,7 @@ ORDER BY subdivision_code, duty_norm_name, nomenclature, size, growth</CommandTe
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox13">
-                      <Value>Срок</Value>
+                      <Value>Срок(мес.)</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
