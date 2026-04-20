@@ -38,14 +38,14 @@ namespace Workwear.ReportParameters.ViewModels {
 			ChoiceSubdivisionViewModel.PropertyChanged += (s,e) => OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		
-		private DateTime? startDate;
+		private DateTime? startDate = DateTime.Now.AddMonths(-1);
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 
-		private DateTime? endDate;
+		private DateTime? endDate = DateTime.Now;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? EndDate {
 			get => endDate;

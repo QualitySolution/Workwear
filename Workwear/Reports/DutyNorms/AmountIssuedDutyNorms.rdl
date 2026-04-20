@@ -85,7 +85,7 @@
               <Hidden>=!{?showCost}</Hidden>
             </Visibility>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>84.4pt</Width>
           </TableColumn>
         </TableColumns>
@@ -229,9 +229,9 @@
                           </Style>
                         </Textbox>
                       </ReportItems>
-                      <ColSpan >2</ColSpan>
+                      <ColSpan>2</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox18">
                           <Value></Value>
@@ -351,7 +351,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox15">
                           <Value></Value>
@@ -557,7 +557,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox17">
                           <Value>Комментарий</Value>
@@ -604,28 +604,29 @@
                           <Style>
                             <BorderStyle>
                               <Default>Solid</Default>
-                              <Right >None</Right>
+                              <Right>None</Right>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
                           </Style>
                           <Value>="   "+{duty_norm_name}</Value>
+                          <CanGrow >true</CanGrow>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>6</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox25">
                           <Value></Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>None</Default>
-                              <Left >None</Left>
-                              <Right >None</Right>
-                              <Top >Solid</Top>
-                              <Bottom >Solid</Bottom>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>Solid</Top>
+                              <Bottom>Solid</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -634,17 +635,17 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox24">
                           <Value></Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>None</Default>
-                              <Left >None</Left>
-                              <Right >None</Right>
-                              <Top >Solid</Top>
-                              <Bottom >Solid</Bottom>
+                              <Left>None</Left>
+                              <Right>None</Right>
+                              <Top>Solid</Top>
+                              <Bottom>Solid</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -653,17 +654,17 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox20">
                           <Value></Value>
                           <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                             <BorderStyle>
                               <Default>None</Default>
-                              <Left >None</Left>
-                              <Right >Solid</Right>
-                              <Top >Solid</Top>
-                              <Bottom >Solid</Bottom>
+                              <Left>None</Left>
+                              <Right>Solid</Right>
+                              <Top>Solid</Top>
+                              <Bottom>Solid</Bottom>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -710,12 +711,13 @@
                             <FontStyle>Italic</FontStyle>
                           </Style>
                           <Value>="      Выдача №" + {doc_number} +
-Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_sheet} + ")") </Value>
+Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_sheet} + ")")</Value>
+                          <CanGrow >true</CanGrow>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>6</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox56">
                           <Value></Value>
@@ -737,7 +739,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox55">
                           <Value></Value>
@@ -759,7 +761,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox54">
                           <Value></Value>
@@ -807,6 +809,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                         <TextAlign>Left</TextAlign>
                         <FontSize>9pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -824,6 +827,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                         <TextAlign>Left</TextAlign>
                         <FontSize>9pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -859,6 +863,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                         <TextAlign>Center</TextAlign>
                         <FontSize>9pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -876,6 +881,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                         <TextAlign>Left</TextAlign>
                         <FontSize>9pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -883,7 +889,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                   <ReportItems>
                     <Textbox Name="Textbox13" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                       <Value>={amount}</Value>
-                      <CanGrow>false</CanGrow>
+                      <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -911,6 +917,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                         <BorderWidth />
                         <FontSize>9pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -928,10 +935,11 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                         <BorderWidth />
                         <FontSize>9pt</FontSize>
                       </Style>
+                      <CanGrow >true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox4">
                       <Value>={operation_comment} + Iif((Fields!operation_comment.IsMissing and Fields!document_comment.IsMissing), " /  ","")+{document_comment}</Value>
@@ -1096,7 +1104,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
                   </ReportItems>
                   <ColSpan>2</ColSpan>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox19">
                       <Value></Value>
@@ -1150,7 +1158,7 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     subdivisions.id as subdivision_id,
@@ -1179,11 +1187,11 @@ Iif(Fields!issuance_sheet.IsMissing, "", "(Ведомость №" + {issuance_s
     operation_issued_by_duty_norm.comment AS operation_comment
 FROM operation_issued_by_duty_norm
      LEFT JOIN duty_norms on operation_issued_by_duty_norm.duty_norm_id = duty_norms.id
-     LEFT JOIN duty_norm_items on duty_norms.id = duty_norm_items.duty_norm_id
+     LEFT JOIN duty_norm_items ON duty_norm_items.id = operation_issued_by_duty_norm.duty_norm_item_id
      LEFT JOIN stock_expense_duty_norm_items on operation_issued_by_duty_norm.id = stock_expense_duty_norm_items.operation_issued_by_duty_norm_id
      LEFT JOIN stock_expense_duty_norm on stock_expense_duty_norm_items.stock_expense_duty_norm_id = stock_expense_duty_norm.id
-     LEFT JOIN issuance_sheet_items ON issuance_sheet_items.issued_operation_id = operation_issued_by_duty_norm.id
-     LEFT JOIN issuance_sheet ON issuance_sheet_items.duty_norm_issue_operation_id = issuance_sheet.id
+     LEFT JOIN issuance_sheet_items ON issuance_sheet_items.duty_norm_issue_operation_id = operation_issued_by_duty_norm.id
+     LEFT JOIN issuance_sheet ON issuance_sheet_items.issuance_sheet_id = issuance_sheet.id
 
      LEFT JOIN subdivisions on duty_norms.subdivision_id = subdivisions.id
      LEFT JOIN nomenclature on nomenclature.id = operation_issued_by_duty_norm.nomenclature_id
@@ -1240,7 +1248,7 @@ ORDER BY subdivision_code, duty_norm_name, nomenclature, size, growth</CommandTe
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -1337,7 +1345,7 @@ ORDER BY subdivision_code, duty_norm_name, nomenclature, size, growth</CommandTe
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="dateStart">
       <DataType>String</DataType>
       <DefaultValue>
