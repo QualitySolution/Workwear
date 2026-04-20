@@ -1233,14 +1233,14 @@ ORDER BY subdivision_code, duty_norm_name, nomenclature, size, growth</CommandTe
     <ReportParameter Name="matchString">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
-      <AllowBlank>false</AllowBlank>
+      <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="noMatchString">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
-      <AllowBlank>false</AllowBlank>
+      <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
@@ -1270,7 +1270,7 @@ ORDER BY subdivision_code, duty_norm_name, nomenclature, size, growth</CommandTe
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>
