@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -13,6 +14,7 @@ using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
+using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
@@ -23,6 +25,7 @@ using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.Tools.OverNorms;
@@ -30,15 +33,24 @@ using Workwear.Tools.OverNorms.Models;
 
 namespace Workwear.ViewModels.Stock 
 {
-	public sealed class OverNormViewModel : PermittingEntityDialogViewModelBase<OverNorm>
+	public sealed class OverNormViewModel : PermittingEntityDialogViewModelBase<OverNorm>, IDialogDocumentation
 	{
 		private readonly IOverNormFactory overNormFactory;
 		private readonly BarcodeService barcodeService;
+		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		
 		public EntityEntryViewModel<Warehouse> EntryWarehouseViewModel { get; }
 
+		#region IDialogDocumentation
+//// Сделать документацию	
+public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#overnorm");
+public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
+
+
 		private OverNormModelBase overNormModel; 
 		public OverNormModelBase OverNormModel { get => overNormModel; set => SetField(ref overNormModel, value); } 
+
 		
 		public OverNormViewModel(IEntityUoWBuilder uowBuilder,
 			ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory,
@@ -47,14 +59,20 @@ namespace Workwear.ViewModels.Stock
 			BarcodeService barcodeService,
 			StockRepository stockRepository,
 			FeaturesService featuresService,
-			ICurrentPermissionService validator = null,
-			IInteractiveMessage unitOfWorkProvider = null
-			) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) 
+			ICurrentPermissionService permissionService,
+			IInteractiveService interactive,
+			IValidator validator = null,
+			UnitOfWorkProvider unitOfWorkProvider = null
+			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) 
 		{
+			logger.Info("Создание вьюмодели документа переквалификации норм");
+			
 			if (autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
 			this.overNormFactory = overNormFactory ?? throw new ArgumentNullException(nameof(overNormFactory));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			if(featuresService == null) throw new ArgumentNullException(nameof(featuresService));
+			
+			SetDocumentDateProperty(e => e.Date);
 			
 			foreach (OverNormItem item in Entity.Items) {
 				OverNormOperation operation = item.OverNormOperation;
@@ -68,12 +86,20 @@ namespace Workwear.ViewModels.Stock
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
+			EntryWarehouseViewModel.IsEditable = CanEdit;
 			EntryWarehouseViewModel.Changed += (sender, args) => 
 				OnPropertyChanged(nameof(CanAddItems));
 			
 			OverNormModel = overNormFactory.CreateModel(UoW, Entity.Type);
-			if (Entity.Id < 1)
+			
+			if (Entity.Id < 1) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
+				logger.Info("Создание нового документа ");
+			}
+			else {
+				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+				logger.Info($"Открытие документа вдачи вне нормы ID:{Entity.Id}");
+			}
 			
 			if(Entity.Warehouse == null)
 				Entity.Warehouse =
@@ -88,6 +114,7 @@ namespace Workwear.ViewModels.Stock
 		public bool CanRemoveActiveItem => CanEdit && SelectedItem != null;
 		public bool CanChoiseForActiveItem => CanEdit && SelectedItem != null;
 		public bool SensitiveDocNumber => !AutoDocNumber;
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		
 		public OverNormType DocType {
 			get => Entity.Type;
@@ -123,7 +150,7 @@ namespace Workwear.ViewModels.Stock
 			set => SetField(ref selectedItem, value);
 		}
 		#endregion
-
+		
 		private void CalculateTotal(object sender, EventArgs eventArgs)
 		{
 			Total = $"Позиций в документе: {Entity.Items.Count}  " +
@@ -259,15 +286,30 @@ namespace Workwear.ViewModels.Stock
 			OverNormModel.UseBarcodes = true;
 			item.Param.Barcodes.Remove(barcode);
 			AddOrUpdateItem(item);
+		} 
+		
+		private void AddOrUpdateItem(OverNormItem item)
+		{
+			if (item.Id < 1) {
+				Entity.Items.Remove(item);
+				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
+			} else 
+				OverNormModel.UpdateOperation(item, item.Param);
 		}
 		#endregion
 
 		#region Save
 		public override bool Save() 
 		{
-			if (!Validate()) 
+			logger.Info("Запись документа  вдачи вне нормы...");
+			
+			if (!Validate()) {
+				logger.Warn("Валидация не пройдена, сохранение отменено.");
 				return false;
+			}
+			logger.Info("Валидация пройдена.");
 
+			logger.Info("Обновление складских операций...");
 			foreach(OverNormItem item in Entity.Items) {
 				item.OverNormOperation.WarehouseOperation.OperationTime = Entity.Date;
 				UoW.Save(item.OverNormOperation.WarehouseOperation);
@@ -279,20 +321,20 @@ namespace Workwear.ViewModels.Stock
                     UoW.Save(bo);
 			}
 			
-			return base.Save();
+			bool result = base.Save();
+			if(result)
+				logger.Info("Документ  вдачи вне нормы.");
+			else
+				logger.Warn("Ошибка при сохранении документа.");
+			return result;
 		}
 		#endregion
 		
-		private void AddOrUpdateItem(OverNormItem item)
-		{
-			if (item.Id < 1) {
-				Entity.Items.Remove(item);
-				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
-			} else 
-				OverNormModel.UpdateOperation(item, item.Param);
-		}
 	}
-////1289
+
+	
+	
+//// Потенциально мусор	
 	public class OverNormTempItem : PropertyChangedBase 
 	{
 		private OverNormItem item;
