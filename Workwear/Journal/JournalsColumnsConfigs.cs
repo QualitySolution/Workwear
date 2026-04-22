@@ -441,6 +441,9 @@ namespace workwear.Journal
 					.AddColumn("Сумма")
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
 						.AddTextRenderer(e => e.SumSaleCostText)
+					.AddColumn("Промаркировано")
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
+						.AddTextRenderer(e => e.BarcodeCount.ToString())
 					.Finish()
 			);
 

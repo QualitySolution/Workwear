@@ -120,7 +120,21 @@ SELECT
        AND (operation_sub.operation_time < @report_date
        AND operation_sub.operation_time >= ADDDATE(@report_date, INTERVAL -1 YEAR ))
        AND NOT (operation_sub.warehouse_expense_id IS NULL)
-       ) AS DailyConsumption
+       ) AS DailyConsumption";
+////Возможно, стоит завязать на фильтр				
+	if(FeaturesService.Available(WorkwearFeature.Selling))			
+				sql += @"
+		,
+	    (SELECT COUNT(ob.id)
+	     FROM operation_barcodes ob
+	     LEFT JOIN operation_warehouse opwh ON ob.warehouse_operation_id = opwh.id
+	     LEFT JOIN barcodes b ON ob.barcode_id = b.id
+	     WHERE b.nomenclature_id = stock.NomeclatureId
+	         AND b.size_id <=> stock.SizeId
+	         AND b.height_id <=> stock.HeightId
+	    ) AS BarcodeCount";
+				
+	sql += @"
     FROM (SELECT nomenclature.id        AS NomeclatureId,
                  nomenclature.name      AS NomenclatureName,
                  nomenclature.number    AS NomenclatureNumber,
@@ -244,6 +258,7 @@ SELECT
 		public bool UseBarcode { get; set; }
 		public decimal SaleCost { get; set; }
 		public double? DailyConsumption { get; set; }
+		public int BarcodeCount { get; set; }
 
 		public string MonthConsumption => $"{DailyConsumption * 30:N1}";
 
