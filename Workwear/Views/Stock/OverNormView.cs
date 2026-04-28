@@ -102,11 +102,11 @@ namespace Workwear.Views.Stock
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Height?.Name)
 				.AddColumn("Количество").MinWidth(60)
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Amount.ToString())
-				.AddColumn("Штрихкоды")
-					.Tag(BarcodesColumn)
-					.Visible(ViewModel.OverNormModel.CanUseWithBarcodes)
-					.Resizable()
-					.AddReadOnlyTextRenderer(x =>  string.Join("\n", x.OverNormOperation.Barcodes?.Select(b => b.Title) ?? Array.Empty<string>()))
+			.AddColumn("Штрихкоды")
+				.Tag(BarcodesColumn)
+				.Visible(ViewModel.OverNormModel.CanUseWithBarcodes)
+				.Resizable()
+				.AddReadOnlyTextRenderer(x =>  string.Join("\n", x.Barcodes.Select(b => b.Title)))
 				.Finish();
 			
 			ytreeItems.ItemsDataSource = Entity.Items;
@@ -124,9 +124,10 @@ namespace Workwear.Views.Stock
 			//UpdateDelBarcodesMenu
 			buttonDelBarcodes.Sensitive = buttonDel.Sensitive && 
 			                              ViewModel.OverNormModel.CanUseWithBarcodes &&
-			                              item.OverNormOperation.BarcodeOperations != null &&
+			                              item != null &&
+			                              item.OverNormOperation?.BarcodeOperations != null &&
 			                              item.OverNormOperation.BarcodeOperations.Any();
-			if (buttonDelBarcodes.Sensitive) {
+			if (buttonDelBarcodes.Sensitive && item != null) {
 				Menu barcodesMenu = new Menu();
 				yMenuItem menuItem;
 				foreach (var bo in item.OverNormOperation.BarcodeOperations) {

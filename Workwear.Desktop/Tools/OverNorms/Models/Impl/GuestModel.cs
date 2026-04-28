@@ -25,7 +25,7 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 		//public override bool Editable { get; }
 
 		public override bool CanUseWithBarcodes => true;
-		public override bool CanUseWithoutBarcodes => true;
+		public override bool CanUseWithoutBarcodes => false;
 		public override bool RequiresEmployeeIssueOperation => false;
 
 		public override OverNorm CreateDocument(IList<OverNormParam> @params, Warehouse expenseWarehouse, UserBase createdByUser = null, string docNumber = null, string comment = null) 
@@ -143,7 +143,8 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			OverNormOperation newOverNormOp = new OverNormOperation() {
 				WarehouseOperation = newWarehouseOp,
 				Type = OverNormType.Guest,
-				Employee = employee
+				Employee = employee,
+				Nomenclature = newWarehouseOp.Nomenclature,
 			};
 			
 			FillOverNormOperation(newOverNormOp, barcodes);

@@ -6,6 +6,7 @@ using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Permissions;
 using QS.Project.Domain;
@@ -178,7 +179,7 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 				UoW.GetById<EmployeeIssueOperation>(e.GetSelectedObjects<EmployeeBalanceJournalNode>().Select(x => x.Id));
 
 			foreach (EmployeeIssueOperation empOp in operations) {
-				if (Entity.Items.Any(x => x.OverNormOperation.SubstitutedIssueOperation.Id == empOp.Id)) 
+				if (Entity.Items.Any(x => x.OverNormOperation.SubstitutedIssueOperation?.Id == empOp.Id)) 
 					continue;
 				Entity.AddItem(new OverNormOperation() { Employee = empOp.Employee, SubstitutedIssueOperation = empOp });
 			}
@@ -202,6 +203,10 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		}
 		#endregion
 		
+		/// <summary>
+		/// Выбор из складских остатков для выдачи вне нормы на конкретного сотрудника
+		/// </summary>
+		/// <param name="item"></param>
 		public void SelectNomenclature(OverNormItem item)
 		{
 			IPage<StockBalanceJournalViewModel> selectJournal = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>
@@ -236,17 +241,30 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 
 			if(stockPosition.Nomenclature.UseBarcode) {
 				IPage<BarcodeJournalViewModel> barcodeJournal =
-					NavigationManager.OpenViewModel<BarcodeJournalViewModel>(this, OpenPageOptions.AsSlave);
-				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+					NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
+						this,
+						OpenPageOptions.AsSlave
+////Хз. Долдно работать, но не работает						
+/*,
+addingRegistrations: builder => {
+	builder.RegisterInstance<Action<BarcodeJournalFilterViewModel>>(
+		filter => {
+			filter.CanUseFilter = false;
+			filter.Warehouse = Entity.Warehouse;
+			filter.StockPosition = stockPosition;
+		}); }
+*/
+						);
 				barcodeJournal.ViewModel.Filter.CanUseFilter = false;
 				barcodeJournal.ViewModel.Filter.Warehouse = Entity.Warehouse;
-				barcodeJournal.ViewModel.Filter.StockPosition= node.GetStockPosition(UoW);
+				barcodeJournal.ViewModel.Filter.StockPosition = stockPosition;
+				
+				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 				barcodeJournal.ViewModel.OnSelectResult += (o, args) => {
-					IList<BarcodeJournalNode> nodes = args.GetSelectedObjects<BarcodeJournalNode>();
-					IList<Barcode> barcodes = UoW.GetById<Barcode>(nodes.Select(x => x.Id));
+					IList<BarcodeJournalNode> barcodeNodes = args.GetSelectedObjects<BarcodeJournalNode>();
+					IList<Barcode> barcodes = UoW.GetById<Barcode>(barcodeNodes.Select(x => x.Id));
 
 					Entity.DeleteItem(item);
-					
 					var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height });
 					foreach(var i in addedItems.ToList()) {
 						var param = new OverNormParam(
@@ -291,7 +309,7 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		private void AddOrUpdateItem(OverNormItem item)
 		{
 			if (item.Id < 1) {
-				Entity.Items.Remove(item);
+				Entity.DeleteItem(item);
 				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
 			} else 
 				OverNormModel.UpdateOperation(item, item.Param);
@@ -330,28 +348,5 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		}
 		#endregion
 		
-	}
-
-	
-	
-//// Потенциально мусор	
-	public class OverNormTempItem : PropertyChangedBase 
-	{
-		private OverNormItem item;
-		public OverNormItem Item {
-			get => item;
-			set => SetField(ref item, value);
-		}
-
-		private OverNormParam param;
-		public OverNormParam Param {
-			get => param;
-			set => SetField(ref param, value);
-		}
-
-		public OverNormTempItem(OverNormItem item, OverNormParam param) {
-			Item = item;
-			Param = param;
-		}
 	}
 }

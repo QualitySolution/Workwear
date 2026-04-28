@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
@@ -45,6 +47,8 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual EmployeeCard Employee => OverNormOperation.Employee;
 
+		public virtual IEnumerable<Barcode> Barcodes => OverNormOperation.BarcodeOperations?.Select(b => b.Barcode);
+			
 		public virtual string Title => $"Строка выдачи вне нормы ({OverNormOperation.Type.GetAttribute<DisplayAttribute>().Name}) {OverNormOperation.WarehouseOperation.Nomenclature.Name} в количестве {OverNormOperation.WarehouseOperation.Amount}";
 		#endregion
 		

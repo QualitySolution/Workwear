@@ -119,7 +119,7 @@ namespace Workwear.Domain.Operations {
 		}
 		
 		private IList<Barcode> barcodes = new List<Barcode>();
-		[Display(Name = "Операции со штрихкодами")]
+		[Display(Name = "Штрихкоды")]
 		public virtual IList<Barcode> Barcodes 
 		{
 			get => barcodes;
