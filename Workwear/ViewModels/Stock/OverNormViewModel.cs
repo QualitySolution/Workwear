@@ -243,22 +243,16 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 				IPage<BarcodeJournalViewModel> barcodeJournal =
 					NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
 						this,
-						OpenPageOptions.AsSlave
-////Хз. Долдно работать, но не работает						
-/*,
-addingRegistrations: builder => {
-	builder.RegisterInstance<Action<BarcodeJournalFilterViewModel>>(
-		filter => {
-			filter.CanUseFilter = false;
-			filter.Warehouse = Entity.Warehouse;
-			filter.StockPosition = stockPosition;
-		}); }
-*/
-						);
-				barcodeJournal.ViewModel.Filter.CanUseFilter = false;
-				barcodeJournal.ViewModel.Filter.Warehouse = Entity.Warehouse;
-				barcodeJournal.ViewModel.Filter.StockPosition = stockPosition;
-				
+						OpenPageOptions.AsSlave,
+						addingRegistrations: builder => {
+							builder.RegisterInstance<Action<BarcodeJournalFilterViewModel>>(filter => {
+								filter.CanUseFilter = false;
+								filter.Warehouse = Entity.Warehouse;
+								filter.StockPosition = stockPosition;
+							});
+						}
+
+					);
 				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 				barcodeJournal.ViewModel.OnSelectResult += (o, args) => {
 					IList<BarcodeJournalNode> barcodeNodes = args.GetSelectedObjects<BarcodeJournalNode>();

@@ -17,14 +17,14 @@ namespace Workwear.Journal.Filter.Views.Stock {
 			
 			yspeccomboboxSize.SetRenderTextFunc<Size>(x => x.Title);
 			yspeccomboboxSize.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.Size, w => w.SelectedItem)
 				.AddBinding(v => v.Sizes, w => w.ItemsList)
+				.AddBinding(v => v.Size, w => w.SelectedItem)
 				.AddBinding(v => v.HasSize, w => w.Sensitive)
 				.InitializeFromSource();
 			yspeccomboboxHeight.SetRenderTextFunc<Size>(x => x.Title);
 			yspeccomboboxHeight.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.Height, w => w.SelectedItem)
 				.AddBinding(v => v.Heights, w => w.ItemsList)
+				.AddBinding(v => v.Height, w => w.SelectedItem)
 				.AddBinding(v => v.HasHeight, w => w.Sensitive)
 				.InitializeFromSource();
 		}

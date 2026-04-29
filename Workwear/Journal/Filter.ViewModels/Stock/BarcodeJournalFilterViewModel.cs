@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -20,7 +21,8 @@ namespace Workwear.Journal.Filter.ViewModels.Stock {
 			SizeService sizeService,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
-			IUnitOfWorkFactory unitOfWorkFactory = null) 
+			IUnitOfWorkFactory unitOfWorkFactory = null,
+			Action<BarcodeJournalFilterViewModel> setFilterParameters = null) 
 			: base(journalViewModel, unitOfWorkFactory)
 		{
 			this.sizeService = sizeService;
@@ -31,6 +33,9 @@ namespace Workwear.Journal.Filter.ViewModels.Stock {
 				.UseViewModelJournalAndAutocompleter<NomenclatureJournalViewModel, NomenclatureFilterViewModel>(f => f.OnlyMarking = true)
                 .UseViewModelDialog<NomenclatureViewModel>()
 				.Finish();
+			CanNotify = false;
+			setFilterParameters?.Invoke(this);
+			CanNotify = true;
 		}
 		
 		private readonly SizeService sizeService;
