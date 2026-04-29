@@ -82,11 +82,14 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			if (item == null) throw new ArgumentNullException(nameof(item));
 			if (RequiresEmployeeIssueOperation && param.EmployeeIssueOperation == null) throw new InvalidOperationException("Необходимо заполнить операцию выдачи сотруднику");
 			if (UseBarcodes && param.Amount != param.Barcodes.Count) throw new InvalidOperationException("При использовании штрихкодов заполните их");
-
+			
 			item.OverNormOperation.LastUpdate = DateTime.Now;
 			item.OverNormOperation.Employee = param.Employee;
 			item.OverNormOperation.SubstitutedIssueOperation = RequiresEmployeeIssueOperation ? param.EmployeeIssueOperation : item.OverNormOperation.SubstitutedIssueOperation;
+			item.OverNormOperation.Nomenclature = param.Nomenclature;
 			
+			if(param.Amount > 0 && item.OverNormOperation.WarehouseOperation == null) 
+				item.OverNormOperation.WarehouseOperation = new WarehouseOperation() { ExpenseWarehouse = item.Document.Warehouse };
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
 			item.OverNormOperation.WarehouseOperation.Nomenclature = param.Nomenclature;
 			item.OverNormOperation.WarehouseOperation.WearSize = param.Size;

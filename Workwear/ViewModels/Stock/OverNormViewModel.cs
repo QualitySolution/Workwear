@@ -263,30 +263,26 @@ addingRegistrations: builder => {
 				barcodeJournal.ViewModel.OnSelectResult += (o, args) => {
 					IList<BarcodeJournalNode> barcodeNodes = args.GetSelectedObjects<BarcodeJournalNode>();
 					IList<Barcode> barcodes = UoW.GetById<Barcode>(barcodeNodes.Select(x => x.Id));
-
-					Entity.DeleteItem(item);
-					var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height });
-					foreach(var i in addedItems.ToList()) {
-						var param = new OverNormParam(
-							employee,
-							i.Key.Nomenclature,
-							i.Count(),
-							i.Key.Size,
-							i.Key.Height,
+// зачем?
+//Entity.DeleteItem(item);
+					var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height }).ToList();
+					OverNormParam addedParam;
+					if(addedItems.Count == 1) {
+						var addedItem = addedItems.First();
+						addedParam = new OverNormParam(
+							item.Employee,
+							addedItem.Key.Nomenclature,
+							addedItem.Count(),
+							addedItem.Key.Size,
+							addedItem.Key.Height,
 							null,
-							i.ToList());
-						if(!Entity.Items.Any(x => x.Param.Equals(param))) {
-							OverNormItem newItem = new OverNormItem(Entity, new OverNormOperation());
-							newItem.Param = param;
-							AddOrUpdateItem(newItem);
-						} else {
-							item.Param =
-								new OverNormParam(item.OverNormOperation.Employee, stockPosition.Nomenclature, barcodes.Count,
-									stockPosition.WearSize, stockPosition.Height,
-									item.OverNormOperation.SubstitutedIssueOperation, barcodes);
-							AddOrUpdateItem(item);
-						}
+							addedItem.ToList());
+						item.Param = addedParam;
 					}
+					else
+						throw new NotImplementedException("Выбраны несколько разных складских позиций. Нужно добавлять строки, пока это реализовано.");
+					
+					AddOrUpdateItem(item);
 				};
 			}
 		}
@@ -306,12 +302,13 @@ addingRegistrations: builder => {
 			AddOrUpdateItem(item);
 		} 
 		
-		private void AddOrUpdateItem(OverNormItem item)
-		{
+		private void AddOrUpdateItem(OverNormItem item) {
+////Пока не уверен, что это не нужно.
+/*			
 			if (item.Id < 1) {
 				Entity.DeleteItem(item);
 				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
-			} else 
+			} else */
 				OverNormModel.UpdateOperation(item, item.Param);
 		}
 		#endregion
