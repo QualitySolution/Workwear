@@ -22,6 +22,7 @@ namespace Workwear.HibernateMapping.Company
 
 			References(x => x.Warehouse).Column("warehouse_id");
 			References(x => x.ParentSubdivision).Column("parent_subdivision_id");
+			References(x => x.HeadOfDivision).Column("head_of_division_id");
 			
 			HasMany (x => x.ChildSubdivisions)
 				.Inverse()

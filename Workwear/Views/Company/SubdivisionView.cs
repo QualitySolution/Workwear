@@ -34,6 +34,7 @@ namespace Workwear.Views.Company {
 			
 			entitywarehouse.ViewModel = ViewModel.EntryWarehouse;
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
+			entityHead.ViewModel = ViewModel.EntryHeadOfDivision;
 
 			lbWarehouse.Visible = entitywarehouse.Visible = ViewModel.VisibleWarehouse;
 		}

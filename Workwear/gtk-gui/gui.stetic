@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -1232,11 +1232,32 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">7</property>
+            <property name="NRows">8</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
             <property name="BorderWidth">6</property>
+            <child>
+              <widget class="QS.Views.Control.EntityEntry" id="entityHead">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
             <child>
               <widget class="QS.Views.Control.EntityEntry" id="entitySubdivision">
                 <property name="MemberName" />
@@ -1424,6 +1445,26 @@
               </packing>
             </child>
             <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelHead">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Руководитель подразделения:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">5</property>
+                <property name="BottomAttach">6</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gtk.Label" id="lbSubdivision">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
@@ -1450,8 +1491,8 @@
                 <property name="LabelProp" translatable="yes">Подсветка сотрудников:</property>
               </widget>
               <packing>
-                <property name="TopAttach">5</property>
-                <property name="BottomAttach">6</property>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -1497,8 +1538,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">6</property>
-                <property name="BottomAttach">7</property>
+                <property name="TopAttach">7</property>
+                <property name="BottomAttach">8</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -1551,8 +1592,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">5</property>
-                <property name="BottomAttach">6</property>
+                <property name="TopAttach">6</property>
+                <property name="BottomAttach">7</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">True</property>
@@ -1574,8 +1615,8 @@
                 <property name="LabelProp" translatable="yes">Комментарий:</property>
               </widget>
               <packing>
-                <property name="TopAttach">6</property>
-                <property name="BottomAttach">7</property>
+                <property name="TopAttach">7</property>
+                <property name="BottomAttach">8</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -13329,7 +13370,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Company.DepartmentView" design-size="506 340">
+  <widget class="Gtk.Bin" id="Workwear.Views.Company.DepartmentView" design-size="509 340">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -13383,10 +13424,31 @@
         <child>
           <widget class="Gtk.Table" id="table1">
             <property name="MemberName" />
-            <property name="NRows">4</property>
+            <property name="NRows">5</property>
             <property name="NColumns">2</property>
             <property name="RowSpacing">6</property>
             <property name="ColumnSpacing">6</property>
+            <child>
+              <widget class="QS.Views.Control.EntityEntry" id="entityHead">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
             <child>
               <widget class="QS.Views.Control.EntityEntry" id="entitySubdivision">
                 <property name="MemberName" />
@@ -13465,8 +13527,8 @@
                 </child>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
                 <property name="LeftAttach">1</property>
                 <property name="RightAttach">2</property>
                 <property name="AutoSize">False</property>
@@ -13475,6 +13537,26 @@
                 <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">True</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.GtkWidgets.yLabel" id="labelHead">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Руководитель отдела:</property>
+              </widget>
+              <packing>
+                <property name="TopAttach">3</property>
+                <property name="BottomAttach">4</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
                 <property name="YFill">True</property>
                 <property name="YShrink">False</property>
               </packing>
@@ -13507,8 +13589,8 @@
                 <property name="LabelProp" translatable="yes">Комментарии:</property>
               </widget>
               <packing>
-                <property name="TopAttach">3</property>
-                <property name="BottomAttach">4</property>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
