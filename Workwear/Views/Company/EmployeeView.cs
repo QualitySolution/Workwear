@@ -87,7 +87,6 @@ namespace Workwear.Views.Company {
 
 			entitySubdivision.ViewModel = ViewModel.EntrySubdivisionViewModel;
 			entityDepartment.ViewModel = ViewModel.EntryDepartmentViewModel;
-			entityLeader.ViewModel = ViewModel.EntryLeaderViewModel;
 			entityPost.ViewModel = ViewModel.EntryPostViewModel;
 
 			entitySubdivision.ViewModel.Changed += ChangedSubdivision;
@@ -134,7 +133,7 @@ namespace Workwear.Views.Company {
 			table1.FocusChain = new Widget[] {hbox7, entryLastName, entryFirstName, entryPatronymic,
 				yentryPersonnelNumber, entryPhone, hboxLkPassword, hboxCardUid,
 				dateHire, dateChangePosition, dateDismiss,
-				entitySubdivision, entityDepartment, entityPost, entityLeader,   
+				entitySubdivision, entityDepartment, entityPost,   
 				GtkScrolledWindowComments,
 			};
 

@@ -122,13 +122,6 @@ namespace Workwear.Domain.Company
 			set => SetField(ref post, value);
 		}
 
-		private Leader leader;
-		[Display (Name = "Руководитель")]
-		public virtual Leader Leader {
-			get => leader;
-			set => SetField(ref leader, value);
-		}
-
 		private DateTime? hireDate;
 		[Display (Name = "Дата поступления")]
 		public virtual DateTime? HireDate {
