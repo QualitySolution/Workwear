@@ -121,18 +121,29 @@ SELECT
        AND operation_sub.operation_time >= ADDDATE(@report_date, INTERVAL -1 YEAR ))
        AND NOT (operation_sub.warehouse_expense_id IS NULL)
        ) AS DailyConsumption";
-////Возможно, стоит завязать на фильтр				
-	if(FeaturesService.Available(WorkwearFeature.Selling))			
-				sql += @"
-		,
-	    (SELECT COUNT(ob.id)
-	     FROM operation_barcodes ob
-	     LEFT JOIN operation_warehouse opwh ON ob.warehouse_operation_id = opwh.id
-	     LEFT JOIN barcodes b ON ob.barcode_id = b.id
-	     WHERE b.nomenclature_id = stock.NomeclatureId
-	         AND b.size_id <=> stock.SizeId
-	         AND b.height_id <=> stock.HeightId
-	    ) AS BarcodeCount";
+////Возможно, стоит завязать на фильтр
+	if(FeaturesService.Available(WorkwearFeature.Selling))		
+		//TODO не учитывает возврат на склад штрихкода
+				sql += @",
+		(SELECT COUNT(*)
+		 FROM barcodes b
+		 JOIN operation_barcodes ob ON ob.barcode_id = b.id
+		 JOIN operation_warehouse opwh ON ob.warehouse_operation_id = opwh.id
+		 WHERE b.nomenclature_id = stock.NomeclatureId
+		   AND opwh.size_id <=> stock.SizeId
+		   AND opwh.height_id <=> stock.HeightId
+		   AND opwh.owner_id <=> stock.OwnerId
+		   AND opwh.wear_percent = stock.WearPercent
+		   AND opwh.warehouse_receipt_id = @warehouse_id
+		   AND ob.employee_issue_operation_id IS NULL
+		   AND ob.over_norm_operation_id IS NULL
+		   AND ob.duty_norm_issue_operation_id IS NULL
+		   AND ob.id = (
+		       SELECT MAX(ob2.id)
+		       FROM operation_barcodes ob2
+		       WHERE ob2.barcode_id = b.id
+		   )
+		) AS BarcodeCount";
 				
 	sql += @"
     FROM (SELECT nomenclature.id        AS NomeclatureId,
