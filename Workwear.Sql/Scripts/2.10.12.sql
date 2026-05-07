@@ -1,0 +1,16 @@
+﻿-- Добавление руководителя подразделения в таблицу подразделений
+ALTER TABLE subdivisions
+	ADD COLUMN head_of_division_id INT UNSIGNED NULL DEFAULT NULL AFTER comment,
+	ADD INDEX fk_subdivisions_head_of_division_idx (head_of_division_id ASC),
+	ADD CONSTRAINT fk_subdivisions_head_of_division
+		FOREIGN KEY (head_of_division_id) REFERENCES employees (id)
+			ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- Добавление руководителя отдела в таблицу отделов
+ALTER TABLE departments
+	ADD COLUMN head_of_department_id INT UNSIGNED NULL DEFAULT NULL AFTER comments,
+	ADD INDEX fk_departments_head_of_department_idx (head_of_department_id ASC),
+	ADD CONSTRAINT fk_departments_head_of_department
+		FOREIGN KEY (head_of_department_id) REFERENCES employees (id)
+			ON DELETE SET NULL ON UPDATE CASCADE;
+

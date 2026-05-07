@@ -303,6 +303,7 @@ namespace workwear
 			#region Размеры
 			builder.RegisterType<SizeService>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<SizeTypeReplaceModel>().AsSelf();
+			builder.RegisterType<StockPositionSizeReplaceModel>().AsSelf();
 			#endregion
 
 			#region Старые общие диалоги

@@ -26,6 +26,10 @@ namespace Workwear.ViewModels.Company
 									.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 									.UseViewModelDialog<SubdivisionViewModel>()
 									.Finish();
+			EntryHeadOfDivision = builder.ForProperty(x => x.HeadOfDepartment)
+				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+				.UseViewModelDialog<EmployeeViewModel>()
+				.Finish();
 		}
 		
 		#region IDialogDocumentation
@@ -36,6 +40,7 @@ namespace Workwear.ViewModels.Company
 		#region Controls
 
 		public EntityEntryViewModel<Subdivision> EntrySubdivision;
+		public EntityEntryViewModel<EmployeeCard> EntryHeadOfDivision;
 
 		#endregion
 	}

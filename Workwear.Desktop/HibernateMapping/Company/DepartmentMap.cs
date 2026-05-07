@@ -19,6 +19,7 @@ namespace Workwear.HibernateMapping.Company
 			Map(x => x.Comments).Column("comments");
 
 			References(x => x.Subdivision).Column("subdivision_id");
+			References(x => x.HeadOfDepartment).Column("head_of_department_id");
 		}
 	}
 }

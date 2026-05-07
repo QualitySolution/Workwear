@@ -91,10 +91,12 @@ CREATE TABLE IF NOT EXISTS `subdivisions` (
   `parent_subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
   `employees_color` VARCHAR(7) NULL,
   `comment` TEXT NULL DEFAULT NULL,
+  `head_of_division_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_subdivisions_1_idx` (`warehouse_id` ASC),
   INDEX `fk_subdivisions_2_idx` (`parent_subdivision_id` ASC),
   INDEX `index_subdivisions_code` (`code` ASC),
+  INDEX `fk_subdivisions_head_of_division_idx` (`head_of_division_id` ASC),
   CONSTRAINT `fk_subdivisions_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -133,8 +135,10 @@ CREATE TABLE IF NOT EXISTS `departments` (
   `code` VARCHAR(20) NULL DEFAULT NULL,
   `subdivision_id` INT UNSIGNED NULL DEFAULT NULL,
   `comments` TEXT NULL,
+  `head_of_department_id` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_departaments_1_idx` (`subdivision_id` ASC),
+  INDEX `fk_departments_head_of_department_idx` (`head_of_department_id` ASC),
   CONSTRAINT `fk_departaments_1`
     FOREIGN KEY (`subdivision_id`)
     REFERENCES `subdivisions` (`id`)
@@ -372,6 +376,17 @@ CREATE TABLE IF NOT EXISTS `employees` (
     ON UPDATE CASCADE)
 DEFAULT CHARACTER SET = utf8mb4 COLLATE=utf8mb4_general_ci
 ENGINE = InnoDB;
+
+-- Добавление FK для руководителей подразделения и отдела (после создания таблицы employees)
+ALTER TABLE subdivisions
+  ADD CONSTRAINT fk_subdivisions_head_of_division
+    FOREIGN KEY (head_of_division_id) REFERENCES employees (id)
+      ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE departments
+  ADD CONSTRAINT fk_departments_head_of_department
+    FOREIGN KEY (head_of_department_id) REFERENCES employees (id)
+      ON DELETE SET NULL ON UPDATE CASCADE;
 
 
 -- -----------------------------------------------------

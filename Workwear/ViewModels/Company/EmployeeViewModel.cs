@@ -138,11 +138,6 @@ namespace Workwear.ViewModels.Company
 			
 			var builderVm = new CommonEEVMBuilderFactory<EmployeeViewModel>(this, this, UoW, NavigationManager, AutofacScope);
 
-			EntryLeaderViewModel = builderVm.ForProperty(x => x.Leader)
-				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
-				.UseViewModelDialog<LeadersViewModel>()
-				.Finish();
-
 			subdivision = Entity.Subdivision;
 			EntrySubdivisionViewModel = builderVm.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
@@ -200,8 +195,6 @@ namespace Workwear.ViewModels.Company
 		public readonly ProgressPerformanceHelper Performance;
 
 		#region Контролы
-
-		public readonly EntityEntryViewModel<Leader> EntryLeaderViewModel;
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
 		public readonly EntityEntryViewModel<Post> EntryPostViewModel;
@@ -254,11 +247,6 @@ namespace Workwear.ViewModels.Company
 		public string CardNumber {
 			get => AutoCardNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.CardNumber;
 			set => Entity.CardNumber = (AutoCardNumber || value == "авто") ? null : value;
-		}
-
-		public Leader Leader {
-			get => Entity.Leader;
-			set => Entity.Leader = value;
 		}
 			
 		private Subdivision subdivision;
