@@ -1,4 +1,4 @@
-﻿FROM registry.altlinux.org/alt/workstation:p11
+﻿FROM registry.altlinux.org/alt/base:p11
 
 ENV LANG=ru_RU.UTF-8
 ENV LC_ALL=ru_RU.UTF-8
