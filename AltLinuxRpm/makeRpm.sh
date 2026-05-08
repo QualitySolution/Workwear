@@ -15,13 +15,13 @@ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 cp "${WORKSPACE}/AltLinuxRpm/workwear.spec" ~/rpmbuild/SPECS/
 
 # Создаём архив из собранных Linux-бинарников
-SRC_DIR="/tmp/workwear-${VERSION}"
+SRC_DIR="/tmp/qs-workwear-${VERSION}"
 rm -rf "${SRC_DIR}"
 mkdir -p "${SRC_DIR}"
 cp -r "${WORKSPACE}/Workwear/bin/Release/"* "${SRC_DIR}/"
 
-tar czf ~/rpmbuild/SOURCES/workwear-${VERSION}.tar.gz \
-    -C /tmp "workwear-${VERSION}"
+tar czf ~/rpmbuild/SOURCES/qs-workwear-${VERSION}.tar.gz \
+    -C /tmp "qs-workwear-${VERSION}"
 
 # Копируем .desktop файл в SOURCES чтобы spec мог его достать
 cp "${WORKSPACE}/AltLinuxRpm/workwear.desktop" ~/rpmbuild/SOURCES/

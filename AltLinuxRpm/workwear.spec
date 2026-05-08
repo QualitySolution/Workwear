@@ -1,4 +1,4 @@
-﻿%define appname workwear
+﻿%define appname qs-workwear
 %define instdir %{_libdir}/%{appname}
 
 Name:       %{appname}
@@ -9,7 +9,7 @@ License:    Proprietary
 Group:      Office
 URL:        https://workwear.qsolution.ru/
 Source0:    %{appname}-%{version}.tar.gz
-Source1:    %{appname}.desktop
+Source1:    workwear.desktop
 
 Requires:   mono
 Requires:   libgdiplus

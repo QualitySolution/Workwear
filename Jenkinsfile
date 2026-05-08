@@ -63,7 +63,7 @@ node {
    }
    if (params.PublishAltLinuxRpm) {
       stage('Build and Publish AltLinux RPM') {
-         sh 'rm -f AltLinuxRpm/workwear-*.rpm'
+         sh 'rm -f AltLinuxRpm/qs-workwear-*.rpm'
          def version = sh(script: "grep -oP '(?<=AssemblyVersion\\(\")[^\"]+' Workwear/Properties/AssemblyInfo.cs", returnStdout: true).trim()
          // Собираем Linux-бинарники
          sh 'msbuild /p:Configuration=Release /p:Platform=x86 Workwear.sln'
@@ -71,9 +71,9 @@ node {
          sh 'docker build -t workwear-altlinux-builder AltLinuxRpm/'
          // Запускаем сборку RPM внутри контейнера (workspace монтируется в /workspace)
          sh "docker run --rm -v \${WORKSPACE}:/workspace workwear-altlinux-builder bash /workspace/AltLinuxRpm/makeRpm.sh ${version}"
-         archiveArtifacts artifacts: 'AltLinuxRpm/workwear-*.rpm', onlyIfSuccessful: true
+         archiveArtifacts artifacts: 'AltLinuxRpm/qs-workwear-*.rpm', onlyIfSuccessful: true
          // Загружаем RPM в репозиторий на сервере
-         sh 'scp AltLinuxRpm/workwear-*.rpm root@odysseus.srv.qsolution.ru:/var/www/repo/alt/workwear/x86_64/RPMS.workwear/'
+         sh 'scp AltLinuxRpm/qs-workwear-*.rpm root@odysseus.srv.qsolution.ru:/var/www/repo/alt/workwear/x86_64/RPMS.workwear/'
          // Обновляем индекс репозитория
          sh 'ssh root@odysseus.srv.qsolution.ru "genbasedir /var/www/repo/alt/workwear x86_64"'
       }

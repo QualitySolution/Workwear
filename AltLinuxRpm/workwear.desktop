@@ -1,8 +1,8 @@
-﻿[Desktop Entry]
+[Desktop Entry]
 Name=QS: Спецодежда
 Comment=Программа учёта спецодежды, выдаваемой сотрудникам предприятия
 Exec=/usr/bin/workwear
-Icon=workwear
+Icon=qs-workwear
 Type=Application
 Categories=Office;
 
