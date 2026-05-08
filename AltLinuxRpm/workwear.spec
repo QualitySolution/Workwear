@@ -30,7 +30,7 @@ cp -r * %{buildroot}%{instdir}/
 
 # Лаунчер скрипт
 mkdir -p %{buildroot}%{_bindir}
-printf '#!/bin/bash\ncd %{instdir}\nexec mono %{instdir}/%{appname}.exe "$@"\n' \
+printf '#!/bin/bash\ncd %{instdir}\nexec mono %{instdir}/workwear.exe "$@"\n' \
     > %{buildroot}%{_bindir}/%{appname}
 chmod 755 %{buildroot}%{_bindir}/%{appname}
 
