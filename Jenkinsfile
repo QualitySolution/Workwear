@@ -1,8 +1,7 @@
 properties([parameters([
 	booleanParam(defaultValue: false, description: 'Запускать тесты скриптов SQL', name: 'SQLTests'),
 	booleanParam(defaultValue: false, description: 'Выкладывать сборку на сервер files.qsolution.ru', name: 'Publish'),
-	booleanParam(defaultValue: false, description: 'Собирать RPM пакет для AltLinux', name: 'BuildAltLinuxRpm'),
-	booleanParam(defaultValue: false, description: 'Выкладывать RPM пакет AltLinux на сервер files.qsolution.ru', name: 'PublishAltLinuxRpm')
+	booleanParam(defaultValue: false, description: 'Собирать и выкладывать RPM пакет для AltLinux в репозиторий', name: 'PublishAltLinuxRpm')
 ])])
 node {
    stage('Git') {
@@ -62,8 +61,8 @@ node {
          }
       }
    }
-   if (params.BuildAltLinuxRpm || params.PublishAltLinuxRpm) {
-      stage('Build AltLinux RPM') {
+   if (params.PublishAltLinuxRpm) {
+      stage('Build and Publish AltLinux RPM') {
          sh 'rm -f AltLinuxRpm/workwear-*.rpm'
          def version = sh(script: "grep -oP '(?<=AssemblyVersion\\(\")[^\"]+' Workwear/Properties/AssemblyInfo.cs", returnStdout: true).trim()
          // Собираем Linux-бинарники
@@ -73,11 +72,10 @@ node {
          // Запускаем сборку RPM внутри контейнера (workspace монтируется в /workspace)
          sh "docker run --rm -v \${WORKSPACE}:/workspace workwear-altlinux-builder bash /workspace/AltLinuxRpm/makeRpm.sh ${version}"
          archiveArtifacts artifacts: 'AltLinuxRpm/workwear-*.rpm', onlyIfSuccessful: true
-      }
-   }
-   if (params.PublishAltLinuxRpm) {
-      stage('Publish AltLinux RPM') {
-         sh 'scp AltLinuxRpm/workwear-*.rpm root@odysseus.srv.qsolution.ru:/var/www/files/Workwear/'
+         // Загружаем RPM в репозиторий на сервере
+         sh 'scp AltLinuxRpm/workwear-*.rpm root@odysseus.srv.qsolution.ru:/var/www/repo/alt/workwear/x86_64/RPMS.workwear/'
+         // Обновляем индекс репозитория
+         sh 'ssh root@odysseus.srv.qsolution.ru "genbasedir /var/www/repo/alt/workwear x86_64"'
       }
    }
    if (params.Publish) {
