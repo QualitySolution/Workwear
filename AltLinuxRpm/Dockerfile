@@ -5,7 +5,9 @@ ENV LC_ALL=ru_RU.UTF-8
 
 RUN apt-get update -y && \
     apt-get install -y rpm-build && \
-    apt-get clean
+    apt-get clean && \
+    useradd -m -u 1000 builder
 
-WORKDIR /workspace
+USER builder
+WORKDIR /home/builder
 

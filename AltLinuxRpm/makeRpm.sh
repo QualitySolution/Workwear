@@ -5,6 +5,7 @@ VERSION=${1:?"Укажите версию как первый аргумент: 
 RELEASE=${2:-1}
 WORKSPACE=/workspace
 BUILD_DATE=$(date +"%a %b %d %Y")
+HOME=/home/builder
 
 echo "=== Сборка RPM для AltLinux: версия ${VERSION}-alt${RELEASE} ==="
 

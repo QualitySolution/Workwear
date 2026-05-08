@@ -67,8 +67,10 @@ node {
          def version = sh(script: "grep -oP '(?<=AssemblyVersion\\(\")[^\"]+' Workwear/Properties/AssemblyInfo.cs", returnStdout: true).trim()
          // Собираем Linux-бинарники
          sh 'msbuild /p:Configuration=Release /p:Platform=x86 Workwear.sln'
-         // Собираем Docker-образ с AltLinux + rpmbuild
+         // Собираем Docker-образ с AltLinux + rpmbuild (сборка под непривилегированным пользователем)
          sh 'docker build -t workwear-altlinux-builder AltLinuxRpm/'
+         // Даём права на запись в папку AltLinuxRpm пользователю builder (uid 1000) внутри контейнера
+         sh 'chmod o+w AltLinuxRpm'
          // Запускаем сборку RPM внутри контейнера (workspace монтируется в /workspace)
          sh "docker run --rm -v \${WORKSPACE}:/workspace workwear-altlinux-builder bash /workspace/AltLinuxRpm/makeRpm.sh ${version}"
          archiveArtifacts artifacts: 'AltLinuxRpm/qs-workwear-*.rpm', onlyIfSuccessful: true
