@@ -19,7 +19,8 @@
 
 .Руководство администратора
 * xref:requirements.adoc[Системные требования]
-* xref:install.adoc[Установка]
+* xref:install.adoc[Установка на Windows]
+* xref:install_linux.adoc[Установка на Linux]
 * xref:cloud.adoc[Облачные сервисы]
 * xref:users.adoc[Работа с пользователями]
 * xref:update.adoc[Обновление]
