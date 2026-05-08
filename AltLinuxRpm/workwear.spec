@@ -1,4 +1,4 @@
-﻿%define appname qs-workwear
+%define appname qs-workwear
 %define instdir %{_libdir}/%{appname}
 
 Name:       %{appname}

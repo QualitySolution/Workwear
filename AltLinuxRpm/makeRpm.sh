@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 set -e
 
 VERSION=${1:?"Укажите версию как первый аргумент: makeRpm.sh <version> [release]"}

@@ -67,6 +67,8 @@ node {
          def version = sh(script: "grep -oP '(?<=AssemblyVersion\\(\")[^\"]+' Workwear/Properties/AssemblyInfo.cs", returnStdout: true).trim()
          // Собираем Linux-бинарники
          sh 'msbuild /p:Configuration=Release /p:Platform=x86 Workwear.sln'
+         // Снимаем BOM если файлы были сохранены с ним из Windows/IDE
+         sh "sed -i '1s/^\\xEF\\xBB\\xBF//' AltLinuxRpm/makeRpm.sh AltLinuxRpm/workwear.spec"
          // Собираем Docker-образ с AltLinux + rpmbuild (сборка под непривилегированным пользователем)
          sh 'docker build -t workwear-altlinux-builder AltLinuxRpm/'
          // Даём права на запись в папку AltLinuxRpm пользователю builder (uid 1000) внутри контейнера
