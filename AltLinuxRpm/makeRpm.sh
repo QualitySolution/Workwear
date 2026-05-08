@@ -9,11 +9,11 @@ HOME=/home/builder
 
 echo "=== Сборка RPM для AltLinux: версия ${VERSION}-alt${RELEASE} ==="
 
-# Создаём дерево каталогов rpmbuild
-mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+# Создаём дерево каталогов rpmbuild (на AltLinux по умолчанию ~/RPM/)
+mkdir -p ~/RPM/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 # Копируем spec файл
-cp "${WORKSPACE}/AltLinuxRpm/workwear.spec" ~/rpmbuild/SPECS/
+cp "${WORKSPACE}/AltLinuxRpm/workwear.spec" ~/RPM/SPECS/
 
 # Создаём архив из собранных Linux-бинарников
 SRC_DIR="/tmp/qs-workwear-${VERSION}"
@@ -21,21 +21,21 @@ rm -rf "${SRC_DIR}"
 mkdir -p "${SRC_DIR}"
 cp -r "${WORKSPACE}/Workwear/bin/Release/"* "${SRC_DIR}/"
 
-tar czf ~/rpmbuild/SOURCES/qs-workwear-${VERSION}.tar.gz \
+tar czf ~/RPM/SOURCES/qs-workwear-${VERSION}.tar.gz \
     -C /tmp "qs-workwear-${VERSION}"
 
 # Копируем .desktop файл в SOURCES чтобы spec мог его достать
-cp "${WORKSPACE}/AltLinuxRpm/workwear.desktop" ~/rpmbuild/SOURCES/
+cp "${WORKSPACE}/AltLinuxRpm/workwear.desktop" ~/RPM/SOURCES/
 
 echo "=== Запуск rpmbuild ==="
-rpmbuild -bb ~/rpmbuild/SPECS/workwear.spec \
+rpmbuild -bb ~/RPM/SPECS/workwear.spec \
     --define "ver ${VERSION}" \
     --define "rel ${RELEASE}" \
     --define "builddate ${BUILD_DATE}"
 
 # Копируем готовый RPM обратно в workspace
 echo "=== Копируем RPM в workspace ==="
-find ~/rpmbuild/RPMS -name "*.rpm" -exec cp {} "${WORKSPACE}/AltLinuxRpm/" \;
+find ~/RPM/RPMS -name "*.rpm" -exec cp {} "${WORKSPACE}/AltLinuxRpm/" \;
 
 echo "=== Готово ==="
 ls -lh "${WORKSPACE}/AltLinuxRpm/"*.rpm
