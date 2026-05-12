@@ -24,6 +24,8 @@ namespace Workwear.Views.Regulations
 
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 
+			yhbox1.TooltipText = "Период выдачи является включительным: в день окончания выдача ещё производится, а на следующий день — уже нет.";
+
 			yStartMonth.SetRenderTextFunc<DateTime>(m => m.ToString("MMM", new CultureInfo("ru-RU")));
 			yStartMonth.Binding.AddSource(viewModel)
 				.AddBinding(vm => vm.Months, v => v.ItemsList)
