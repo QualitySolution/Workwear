@@ -1023,8 +1023,8 @@ WHERE
   AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
   AND (@condition = false OR norm_conditions.issuance_start is null OR
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
-          SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
-          SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
+          DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6),
+          DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
   AND( @issue_type = '' OR nomenclatureTypes.issue_type = @issue_type )
   AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
   AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; employee_cards_item.next_issue)
