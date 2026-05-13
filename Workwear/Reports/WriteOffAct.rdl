@@ -30,7 +30,7 @@ FROM
             IFNULL(stock_return.date, opis.auto_writeoff_date)) as 'Дата', #только для сортировки
          DATE_FORMAT(IF(stock_write_off.date IS NOT NULL, IF(stock_write_off.date &gt; opis.auto_writeoff_date, opis.auto_writeoff_date, stock_write_off.date),
                         IFNULL(stock_return.date, opis.auto_writeoff_date)),'%d.%m.%Y') as 'Дата_строка',
-         IF(opwo.id is null, opis.issued, opis.returned ) as 'Списано', #Автосписание или ручное списание
+         IF(@service_detail AND bc.id IS NOT NULL, 1, IF(opwo.id is null, opis.issued, opis.returned)) as 'Списано', #Автосписание или ручное списание
          CONCAT(IF(opis.returned != 0, opis.wear_percent, 1) * 100, '%') as 'Износ', #У автосписанного износ 100
          IF(opwo.id is null, DATE_FORMAT(opis.operation_time, '%d.%m.%Y'), DATE_FORMAT(opwo.operation_time, '%d.%m.%Y')) as 'Выдача', #Автосписание или ручное списание
          IF(opwo.id is null, opis.issued, opwo.issued) as 'Выдано',
@@ -40,7 +40,7 @@ FROM
          IFNULL(stock_write_off.comment, stock_return.comment) as 'Коментарий документа',
          IFNULL(stock_write_off_detail.cause, stock_return_items.comment_return)as 'Комментарий операции',
          nomenclature.sale_cost as 'Стоимость номенклатуры',
-         IF(opwo.id is null, opis.issued, opis.returned ) * nomenclature.sale_cost as 'Сумма списанного',
+         IF(@service_detail AND bc.id IS NOT NULL, 1, IF(opwo.id is null, opis.issued, opis.returned)) * nomenclature.sale_cost as 'Сумма списанного',
          IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_return.id IS NOT NULL, 'I', '-'))) as 'Тип',
          bc.title as 'Штрихкод',
          IF(bc.id IS NOT NULL, IFNULL(svc.wash_count, 0), NULL) as 'Кол_стирок',
