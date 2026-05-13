@@ -43,9 +43,9 @@ FROM
          IF(opwo.id is null, opis.issued, opis.returned ) * nomenclature.sale_cost as 'Сумма списанного',
          IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_return.id IS NOT NULL, 'I', '-'))) as 'Тип',
          bc.title as 'Штрихкод',
-         IFNULL(svc.wash_count, 0) as 'Кол_стирок',
-         IFNULL(svc.dry_clean_count, 0) as 'Кол_химчисток',
-         IFNULL(svc.repair_count, 0) as 'Кол_ремонтов'
+         IF(bc.id IS NOT NULL, IFNULL(svc.wash_count, 0), NULL) as 'Кол_стирок',
+         IF(bc.id IS NOT NULL, IFNULL(svc.dry_clean_count, 0), NULL) as 'Кол_химчисток',
+         IF(bc.id IS NOT NULL, IFNULL(svc.repair_count, 0), NULL) as 'Кол_ремонтов'
      FROM operation_issued_by_employee opis #операция списания (или автосписанная операция выдачи) 
               LEFT JOIN stock_write_off_detail on opis.id = stock_write_off_detail.employee_issue_operation_id
               LEFT JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
