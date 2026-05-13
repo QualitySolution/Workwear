@@ -16,7 +16,8 @@
         <CommandText>SELECT *
 FROM
     (SELECT
-         IFNULL(stock_collective_expense.doc_number, stock_collective_expense.id) as 'Номер документа выдачи',
+         COALESCE(IF(stock_collective_expense.id IS NOT NULL, CONCAT('Коллективная выдача № ', IFNULL(stock_collective_expense.doc_number, stock_collective_expense.id)), NULL),
+                  IF(stock_expense.id IS NOT NULL, CONCAT('Персональная выдача № ', IFNULL(stock_expense.doc_number, stock_expense.id)), NULL)) as 'Номер документа выдачи',
          IF(stock_write_off.id IS NOT NULL, CONCAT('Списание № ',IFNULL(stock_write_off.doc_number, stock_write_off.id)),
             IF(stock_return.id IS NOT NULL, CONCAT('Возврат № ',IFNULL(stock_return.doc_number, stock_return.id)), '-')) as 'Номер документа',
          protection_tools.name as 'Номенклатура нормы',
@@ -60,8 +61,10 @@ FROM
               LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
               LEFT JOIN sizes  sizeAlias on sizeAlias.id = opis.size_id
               LEFT JOIN sizes heightAlias on heightAlias.id = opis.height_id
-              LEFT JOIN stock_collective_expense_detail sced on opis.id = sced.employee_issue_operation_id
+              LEFT JOIN stock_collective_expense_detail sced on IFNULL(opis.issued_operation_id, opis.id) = sced.employee_issue_operation_id
               LEFT JOIN stock_collective_expense on sced.stock_collective_expense_id = stock_collective_expense.id
+              LEFT JOIN stock_expense_detail sed on IFNULL(opis.issued_operation_id, opis.id) = sed.employee_issue_operation_id
+              LEFT JOIN stock_expense on sed.stock_expense_id = stock_expense.id
               LEFT JOIN operation_barcodes ob ON @service_detail AND ob.employee_issue_operation_id = IFNULL(opis.issued_operation_id, opis.id)
               LEFT JOIN barcodes bc ON bc.id = ob.barcode_id
               LEFT JOIN (
