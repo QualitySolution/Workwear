@@ -3,7 +3,7 @@
   <Description>Отчет по актам списания</Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>41.7in</PageHeight>
-  <PageWidth>27.5in</PageWidth>
+  <PageWidth>31.5in</PageWidth>
   <Width>9in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -11,7 +11,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT *
 FROM
@@ -41,7 +41,11 @@ FROM
          IFNULL(stock_write_off_detail.cause, stock_return_items.comment_return)as 'Комментарий операции',
          nomenclature.sale_cost as 'Стоимость номенклатуры',
          IF(opwo.id is null, opis.issued, opis.returned ) * nomenclature.sale_cost as 'Сумма списанного',
-         IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_return.id IS NOT NULL, 'I', '-'))) as 'Тип'
+         IF(stock_write_off.id IS NOT NULL, 'W', IF(opis.auto_writeoff_date IS NOT NULL, 'A', IF(stock_return.id IS NOT NULL, 'I', '-'))) as 'Тип',
+         bc.title as 'Штрихкод',
+         IFNULL(svc.wash_count, 0) as 'Кол_стирок',
+         IFNULL(svc.dry_clean_count, 0) as 'Кол_химчисток',
+         IFNULL(svc.repair_count, 0) as 'Кол_ремонтов'
      FROM operation_issued_by_employee opis #операция списания (или автосписанная операция выдачи) 
               LEFT JOIN stock_write_off_detail on opis.id = stock_write_off_detail.employee_issue_operation_id
               LEFT JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
@@ -58,6 +62,18 @@ FROM
               LEFT JOIN sizes heightAlias on heightAlias.id = opis.height_id
               LEFT JOIN stock_collective_expense_detail sced on opis.id = sced.employee_issue_operation_id
               LEFT JOIN stock_collective_expense on sced.stock_collective_expense_id = stock_collective_expense.id
+              LEFT JOIN operation_barcodes ob ON @service_detail AND ob.employee_issue_operation_id = IFNULL(opis.issued_operation_id, opis.id)
+              LEFT JOIN barcodes bc ON bc.id = ob.barcode_id
+              LEFT JOIN (
+                  SELECT claim.barcode_id,
+                         SUM(IF(srv.with_state = 'InWashing', 1, 0))     as wash_count,
+                         SUM(IF(srv.with_state = 'InDryCleaning', 1, 0)) as dry_clean_count,
+                         SUM(IF(srv.with_state = 'InRepair', 1, 0))      as repair_count
+                  FROM clothing_service_claim claim
+                           LEFT JOIN clothing_service_services_claim ps ON ps.claim_id = claim.id
+                           LEFT JOIN clothing_service_services srv ON srv.id = ps.service_id
+                  GROUP BY claim.barcode_id
+              ) svc ON svc.barcode_id = bc.id
      WHERE ((stock_write_off.date BETWEEN @start_date AND @end_date) OR (stock_return.date BETWEEN @start_date AND @end_date)
          OR (opis.auto_writeoff_date BETWEEN @start_date AND @end_date))) q1
 WHERE IF(@doc_write_off, `Тип` = 'W' ,'') OR (IF(@auto_write_off, `Тип` = 'A', '')) OR (IF(@income, `Тип`='I', ''))
@@ -78,9 +94,12 @@ ORDER BY `Тип`, `Дата`;</CommandText>
           <QueryParameter Name="income">
             <Value>={?income}</Value>
           </QueryParameter>
+          <QueryParameter Name="service_detail">
+            <Value>={?service_detail}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="Номер_документа_выдачи">
           <DataField>Номер документа выдачи</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -172,6 +191,22 @@ ORDER BY `Тип`, `Дата`;</CommandText>
         <Field Name="Тип">
           <DataField>Тип</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Штрихкод">
+          <DataField>Штрихкод</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Кол_стирок">
+          <DataField>Кол_стирок</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Кол_химчисток">
+          <DataField>Кол_химчисток</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Кол_ремонтов">
+          <DataField>Кол_ремонтов</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -266,6 +301,30 @@ ORDER BY `Тип`, `Дата`;</CommandText>
             <Width>105.5pt</Width>
           </TableColumn>
           <TableColumn>
+            <Width>90.0pt</Width>
+            <Visibility>
+              <Hidden>=!{?service_detail}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>60.0pt</Width>
+            <Visibility>
+              <Hidden>=!{?service_detail}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>65.0pt</Width>
+            <Visibility>
+              <Hidden>=!{?service_detail}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>60.0pt</Width>
+            <Visibility>
+              <Hidden>=!{?service_detail}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
             <Width>166.0pt</Width>
           </TableColumn>
           <TableColumn>
@@ -290,7 +349,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -308,7 +367,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -326,7 +385,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -344,7 +403,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -362,7 +421,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -380,7 +439,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -398,7 +457,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -416,7 +475,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -434,7 +493,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -452,7 +511,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -470,7 +529,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -488,7 +547,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -506,7 +565,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -524,7 +583,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -542,7 +601,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -560,7 +619,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -578,7 +637,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -596,66 +655,138 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox19">
-                      <Value>Сумма списанного</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox20">
-                      <Value>Комментарий документа</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox21">
-                      <Value>Комментарий операции</Value>
-                      <Style>
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign >Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Textbox19">
+                       <Value>Сумма списанного</Value>
+                       <Style>
+                         <TextAlign>Center</TextAlign>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                           <Bottom>None</Bottom>
+                         </BorderStyle>
+                         <FontWeight>Bold</FontWeight>
+                         <BorderColor />
+                         <BorderWidth />
+                         <VerticalAlign>Middle</VerticalAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="TextboxHdrBarcode">
+                       <Value>Штрихкод</Value>
+                       <Style>
+                         <TextAlign>Center</TextAlign>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                           <Bottom>None</Bottom>
+                         </BorderStyle>
+                         <FontWeight>Bold</FontWeight>
+                         <BorderColor />
+                         <BorderWidth />
+                         <VerticalAlign>Middle</VerticalAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="TextboxHdrWash">
+                       <Value>Кол-во стирок</Value>
+                       <Style>
+                         <TextAlign>Center</TextAlign>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                           <Bottom>None</Bottom>
+                         </BorderStyle>
+                         <FontWeight>Bold</FontWeight>
+                         <BorderColor />
+                         <BorderWidth />
+                         <VerticalAlign>Middle</VerticalAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="TextboxHdrDry">
+                       <Value>Кол-во химчисток</Value>
+                       <Style>
+                         <TextAlign>Center</TextAlign>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                           <Bottom>None</Bottom>
+                         </BorderStyle>
+                         <FontWeight>Bold</FontWeight>
+                         <BorderColor />
+                         <BorderWidth />
+                         <VerticalAlign>Middle</VerticalAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="TextboxHdrRepair">
+                       <Value>Кол-во ремонтов</Value>
+                       <Style>
+                         <TextAlign>Center</TextAlign>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                           <Bottom>None</Bottom>
+                         </BorderStyle>
+                         <FontWeight>Bold</FontWeight>
+                         <BorderColor />
+                         <BorderWidth />
+                         <VerticalAlign>Middle</VerticalAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Textbox20">
+                       <Value>Комментарий документа</Value>
+                       <Style>
+                         <TextAlign>Center</TextAlign>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                           <Bottom>None</Bottom>
+                         </BorderStyle>
+                         <FontWeight>Bold</FontWeight>
+                         <BorderColor />
+                         <BorderWidth />
+                         <VerticalAlign>Middle</VerticalAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Textbox21">
+                       <Value>Комментарий операции</Value>
+                       <Style>
+                         <TextAlign>Center</TextAlign>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                           <Bottom>None</Bottom>
+                         </BorderStyle>
+                         <FontWeight>Bold</FontWeight>
+                         <BorderColor />
+                         <BorderWidth />
+                         <VerticalAlign>Middle</VerticalAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+               </TableCells>
             </TableRow>
           </TableRows>
           <RepeatOnNewPage>true</RepeatOnNewPage>
@@ -851,8 +982,8 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                           <Default>Solid</Default>
                         </BorderStyle>
                         <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -868,8 +999,8 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                         </BorderStyle>
                         <PaddingRight>2pt</PaddingRight>
                         <TextAlign>Right</TextAlign>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -932,57 +1063,116 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Комментарий_операции">
-                      <Value>=Fields!Сумма_списанного.Value</Value>
-                      <CanGrow>true</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Стоимость_номенклатуры">
-                      <Value>=Fields!Коментарий_документа.Value</Value>
-                      <CanGrow>false</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Right</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Сумма_списанного">
-                      <Value>=Fields!Комментарий_операции.Value</Value>
-                      <CanGrow>false</CanGrow>
-                      <Style>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <PaddingRight>2pt</PaddingRight>
-                        <TextAlign>Right</TextAlign>
-                        <BorderColor />
-                        <BorderWidth />
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Комментарий_операции">
+                       <Value>=Fields!Сумма_списанного.Value</Value>
+                       <CanGrow>true</CanGrow>
+                       <Style>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                         </BorderStyle>
+                         <PaddingLeft>2pt</PaddingLeft>
+                         <BorderColor />
+                         <BorderWidth />
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Штрихкод">
+                       <Value>=Fields!Штрихкод.Value</Value>
+                       <CanGrow>true</CanGrow>
+                       <Style>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                         </BorderStyle>
+                         <PaddingLeft>2pt</PaddingLeft>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Кол_стирок">
+                       <Value>=Fields!Кол_стирок.Value</Value>
+                       <CanGrow>false</CanGrow>
+                       <Style>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                         </BorderStyle>
+                         <PaddingRight>2pt</PaddingRight>
+                         <TextAlign>Right</TextAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Кол_химчисток">
+                       <Value>=Fields!Кол_химчисток.Value</Value>
+                       <CanGrow>false</CanGrow>
+                       <Style>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                         </BorderStyle>
+                         <PaddingRight>2pt</PaddingRight>
+                         <TextAlign>Right</TextAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Кол_ремонтов">
+                       <Value>=Fields!Кол_ремонтов.Value</Value>
+                       <CanGrow>false</CanGrow>
+                       <Style>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                         </BorderStyle>
+                         <PaddingRight>2pt</PaddingRight>
+                         <TextAlign>Right</TextAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Стоимость_номенклатуры">
+                       <Value>=Fields!Коментарий_документа.Value</Value>
+                       <CanGrow>false</CanGrow>
+                       <Style>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                         </BorderStyle>
+                         <PaddingRight>2pt</PaddingRight>
+                         <TextAlign>Right</TextAlign>
+                         <BorderColor />
+                         <BorderWidth />
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Сумма_списанного">
+                       <Value>=Fields!Комментарий_операции.Value</Value>
+                       <CanGrow>false</CanGrow>
+                       <Style>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                         </BorderStyle>
+                         <PaddingRight>2pt</PaddingRight>
+                         <TextAlign>Right</TextAlign>
+                         <BorderColor />
+                         <BorderWidth />
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+               </TableCells>
             </TableRow>
           </TableRows>
         </Details>
@@ -1075,6 +1265,18 @@ ORDER BY `Тип`, `Дата`;</CommandText>
       <DefaultValue>
         <Values>
           <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="service_detail">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
