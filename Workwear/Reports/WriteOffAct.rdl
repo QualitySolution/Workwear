@@ -38,7 +38,7 @@ FROM
          IF(opwo.id is null, IF(opis.manual_operation, '+', ''), IF(opwo.manual_operation, '+', '')) as 'Ручная',
          DATE_FORMAT(IFNULL(stock_write_off.creation_date, stock_return.creation_date),'%d.%m.%Y') as 'Создан документ',
          users.name as 'Автор',
-         IFNULL(stock_write_off.comment, stock_return.comment) as 'Коментарий документа',
+         IFNULL(stock_write_off.comment, stock_return.comment) as 'Комментарий документа',
          IFNULL(stock_write_off_detail.cause, stock_return_items.comment_return)as 'Комментарий операции',
          nomenclature.sale_cost as 'Стоимость номенклатуры',
          IF(@service_detail AND bc.id IS NOT NULL, 1, IF(opwo.id is null, opis.issued, opis.returned)) * nomenclature.sale_cost as 'Сумма списанного',
@@ -175,8 +175,8 @@ ORDER BY `Тип`, `Дата`;</CommandText>
           <DataField>Автор</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Коментарий_документа">
-          <DataField>Коментарий документа</DataField>
+        <Field Name="Комментарий_документа">
+          <DataField>Комментарий документа</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Комментарий_операции">
@@ -1052,7 +1052,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Коментарий_документа">
+                    <Textbox Name="Комментарий_документа">
                       <Value>=Fields!Стоимость_номенклатуры.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
@@ -1144,7 +1144,7 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                  <TableCell>
                    <ReportItems>
                      <Textbox Name="Стоимость_номенклатуры">
-                       <Value>=Fields!Коментарий_документа.Value</Value>
+                       <Value>=Fields!Комментарий_документа.Value</Value>
                        <CanGrow>false</CanGrow>
                        <Style>
                          <BorderStyle>
