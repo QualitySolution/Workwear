@@ -306,9 +306,9 @@ namespace Workwear.Domain.Company
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount) {
 					//Если количество в последнем интервале достаточно, значит нет автосписания,
 					//следующая выдача чисто информативно проставляется по сроку носки
-					var expiredByNorm = lastInterval.ActiveItems.Where(x => ((EmployeeIssueOperation)x.IssueOperation).ExpiryByNorm != null);
+					var expiredByNorm = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm != null);
 					if(expiredByNorm.Any())
-						wantIssue = expiredByNorm.Max(x => ((EmployeeIssueOperation)x.IssueOperation).ExpiryByNorm.Value);
+						wantIssue = expiredByNorm.Max(x => x.IssueOperation.ExpiryByNorm.Value);
 					else
 						wantIssue = null;
 				}
