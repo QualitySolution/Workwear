@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
 using ClosedXML.Excel;
 using Gamma.Utilities;
 using NHibernate;
+using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -34,6 +36,7 @@ using Workwear.ViewModels.Supply;
 namespace Workwear.ViewModels.Analytics {
 	public class WarehouseForecastingViewModel : UowDialogViewModelBase, IDialogDocumentation, IForecastColumnsModel
 	{
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 		private readonly ILifetimeScope autofacScope;
 		private readonly NomenclatureRepository nomenclatureRepository;
 		private readonly ShipmentRepository shipmentRepository;
@@ -272,6 +275,9 @@ namespace Workwear.ViewModels.Analytics {
 			SensitiveSettings = false;
 			SensitiveFill = false; //Специально отключаем навсегда, так как при повторном заполнении дублируются данные. Если нужно будет включить придется разбираться.
 			stockBalance.Warehouse = Warehouse;
+			
+			LogMemory("Fill: начало");
+			
 			ProgressTotal.Start(9, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
@@ -300,6 +306,8 @@ namespace Workwear.ViewModels.Analytics {
 
 			ProgressTotal.Add(text: "Прогнозирование выдач");
 			MakeForecast();
+			
+			LogMemory("Fill: конец");
 		}
 		
 		private void MakeForecast() {
@@ -308,6 +316,8 @@ namespace Workwear.ViewModels.Analytics {
 			SensitiveSettings = false;
 			if(!ProgressTotal.IsStarted)
 				ProgressTotal.Start(6, text: "Прогнозирование выдач сотрудникам");
+			
+			LogMemory("MakeForecast: начало");
 			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
 			HashSet<ProtectionTools> hashPt = new HashSet<ProtectionTools>();
@@ -361,6 +371,7 @@ namespace Workwear.ViewModels.Analytics {
 			InternalItems = result.OrderBy(x => x.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
 			
 			ProgressTotal.Close();
+			LogMemory("MakeForecast: конец");
 			SensitiveSettings = true;
 		}
 
@@ -463,6 +474,18 @@ namespace Workwear.ViewModels.Analytics {
 		#endregion
 
 		#region Private
+
+		private void LogMemory(string label) {
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			GC.Collect();
+			var gcManaged = GC.GetTotalMemory(false);
+			var workingSet = Process.GetCurrentProcess().WorkingSet64;
+			Logger.Info("[Память] {0}: управляемая куча = {1:N0} КБ, рабочий набор = {2:N0} КБ",
+				label,
+				gcManaged / 1024,
+				workingSet / 1024);
+		}
 
 		private void RefreshColumns() {
 			var list = new List<ForecastColumn>();
