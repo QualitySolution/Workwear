@@ -505,6 +505,19 @@ namespace Workwear.Domain.Company
 			}
 		}
 
+		/// <summary>
+		/// Метод заполняет информацию о получениях для строк потребности в виде графа Graph.
+		/// Принимает уже сгруппированный по Id номенклатуры нормы словарь операций.
+		/// Используется при массовой загрузке через <see cref="GraphIssueOperationDto"/> для экономии памяти.
+		/// </summary>
+		public virtual void FillWearReceivedInfo(IDictionary<int, List<IGraphIssueOperation>> operationsByProtectionToolsId) {
+			foreach (var item in WorkwearItems) {
+				item.Graph = operationsByProtectionToolsId.TryGetValue(item.ProtectionTools.Id, out var ops)
+					? new IssueGraph(ops)
+					: new IssueGraph(new List<IGraphIssueOperation>());
+			}
+		}
+
 		#endregion
 		#region Функции работы с отпусками
 		public virtual void AddVacation(EmployeeVacation vacation) {
