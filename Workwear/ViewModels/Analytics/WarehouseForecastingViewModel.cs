@@ -141,7 +141,10 @@ namespace Workwear.ViewModels.Analytics {
 			get => endDate;
 			set {
 				if(SetField(ref endDate, value)) {
-					if(EndDate > lastForecastUntil || employees != null)
+					// Пересчёт нужен только если дата увеличилась за пределы уже рассчитанного периода.
+					// При уменьшении EndDate достаточно RefreshColumns — графы не перезапускаются,
+					// а существующие futureIssues просто не попадут в "лишние" колонки.
+					if(employees != null && EndDate > lastForecastUntil)
 						MakeForecast();
 					RefreshColumns();
 				}
@@ -261,8 +264,8 @@ namespace Workwear.ViewModels.Analytics {
 			}
 		}
 		private bool NomenclatureAllSelected => NomenclatureType == ForecastingNomenclatureType.Nomenclature 
-			? choiceNomenclatureViewModel.AllSelected
-			: choiceProtectionToolsViewModel.AllSelected;
+			? (choiceNomenclatureViewModel?.AllSelected ?? true)
+			: (choiceProtectionToolsViewModel?.AllSelected ?? true);
 		
 		IList<EmployeeCard> employees;
 		IList<DutyNormItem> dutyNormItems;
@@ -316,7 +319,10 @@ namespace Workwear.ViewModels.Analytics {
 			SensitiveSettings = false;
 			if(!ProgressTotal.IsStarted)
 				ProgressTotal.Start(6, text: "Прогнозирование выдач сотрудникам");
-			
+
+			// Обеспечивает ленивую инициализацию нужной ChoiceListViewModel до обращения к forecastingModel.
+			var _ = ChoiceGoodsViewModel;
+
 			LogMemory("MakeForecast: начало");
 			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
@@ -331,8 +337,7 @@ namespace Workwear.ViewModels.Analytics {
 				hashPt = new HashSet<ProtectionTools>(protectionTools);
 				wearCardsItems = wearCardsItems.Where(item => hashPt.Contains(item.ProtectionTools)).ToList();
 			}
-
-			futureIssues.Clear();
+			
 			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, true, wearCardsItems, ProgressLocal);
 			futureIssues.AddRange(issues);
 
