@@ -23,7 +23,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		}
 
 		public List<WarehouseForecastingItem> MakeForecastingItems(IProgressBarDisplayable progress, List<FutureIssue> futureIssues) {
-			progress.Start(4, text: "Группировка потребностей");
+			progress.Start(3, text: "Группировка потребностей");
 			var allNomenclatureSizes = sizeService.GetNomenclatureSizesCached().ToList();
 			var groupsByProtectionTools = futureIssues.GroupBy(x => (x.ProtectionTools, x.Size, x.Height)).ToList();
 			var result = new List<WarehouseForecastingItem>();

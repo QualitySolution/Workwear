@@ -277,7 +277,7 @@ namespace Workwear.ViewModels.Analytics {
 			
 			LogMemory("Fill: начало");
 			
-			ProgressTotal.Start(9, text:"Получение данных");
+			ProgressTotal.Start(11, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
 			ProgressLocal.Add(text: "Получение работающих сотрудников");
@@ -301,6 +301,7 @@ namespace Workwear.ViewModels.Analytics {
 
 			ProgressTotal.Add(text: "Загрузка дежурных норм");
 			dutyNormItems = dutyNormRepository.AllItemsFor(uow: UoW);
+			ProgressTotal.Add(text: "Заполнение дежурных норм");
 			dutyNormIssueModel.FillDutyNormItems(dutyNormItems.ToArray(), progress: ProgressLocal);
 
 			ProgressTotal.Add(text: "Прогнозирование выдач");
@@ -355,7 +356,7 @@ namespace Workwear.ViewModels.Analytics {
 				return;
 			SensitiveSettings = false;
 			if(!ProgressTotal.IsStarted)
-				ProgressTotal.Start(6, text: "Прогнозирование выдач сотрудникам");
+				ProgressTotal.Start(7, text: "Прогнозирование выдач сотрудникам");
 
 			// Инициализирует нужный ChoiceListViewModel до обращения к forecastingModel.
 			var _ = ChoiceGoodsViewModel;
@@ -380,8 +381,9 @@ namespace Workwear.ViewModels.Analytics {
 				: choiceNomenclatureViewModel.SelectedEntities.ToArray();
 			stockBalance.AddNomenclatures(nomenclatures);
 
-			ProgressTotal.Add(text: "Формируем прогноз");
+			ProgressTotal.Add(text: "Предзагрузка данных");
 			PreloadForecastingData();
+			ProgressTotal.Add(text: "Формируем прогноз");
 			var result = forecastingModel.MakeForecastingItems(ProgressLocal, futureIssues);
 			
 			ProgressTotal.Add(text: "Заполнение заказанного");
