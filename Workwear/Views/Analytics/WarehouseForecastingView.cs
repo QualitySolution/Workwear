@@ -127,8 +127,8 @@ namespace Workwear.Views.Analytics {
 			if(issues == null || issues.Count == 0)
 				return "";
 			return headerText + string.Join("", issues
-				.OrderBy(x => x.Employee.ShortName)
-				.Select(x => $"\n{x.Employee.ShortName} — {x.Amount} шт. ({(x.DelayIssueDate ?? x.OperationDate):dd.MM.yyyy})"));
+				.OrderBy(x => x.Employee?.ShortName)
+				.Select(x => $"\n{x.Employee?.ShortName ?? "Дежурное"} — {x.Amount} шт. ({(x.DelayIssueDate ?? x.OperationDate):dd.MM.yyyy})"));
 		}
 
 		protected void OnButtonFillClicked(object sender, EventArgs e) =>
