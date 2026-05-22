@@ -72,9 +72,9 @@ namespace Workwear.Views.Analytics {
 
 		void RecreateColumns() {
 			var conf = treeItems.CreateFluentColumnsConfig<WarehouseForecastingItem>()
-				.AddColumn(ViewModel.NomenclatureType.GetEnumTitle()).HeaderAlignment(0.5f)
+				.AddColumn(ViewModel.NomenclatureType.GetEnumTitle()).HeaderAlignment(0.5f).Resizable()
 					.ToolTipText(n => n.NomenclaturesText)
-					.AddReadOnlyTextRenderer(x => x.Name).WrapWidth(500)
+					.AddReadOnlyTextRenderer(x => x.Name).WrapWidth(600)
 						.AddSetter((c,n) => c.Foreground = n.NameColor)
 				.AddColumn("Пол").HeaderAlignment(0.5f).AddReadOnlyTextRenderer(x => x.Sex.GetEnumShortTitle()).XAlign(0.5f)
 				.AddColumn("Размер/Рост").HeaderAlignment(0.5f)
