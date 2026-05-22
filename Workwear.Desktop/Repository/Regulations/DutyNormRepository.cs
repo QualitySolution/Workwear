@@ -89,7 +89,8 @@ namespace Workwear.Repository.Regulations {
 			DutyNorm dutyNormAlias = null;
 			EmployeeCard responsibleEmployeeAlias = null;
 			
-			var query = (uow ?? RepoUoW).Session.QueryOver<DutyNormItem>();
+			var query = (uow ?? RepoUoW).Session.QueryOver<DutyNormItem>()
+				.Fetch(SelectMode.Fetch, x => x.DutyNorm);
 			if(dutyNormsIds != null && dutyNormsIds.Any())
 				query.Where(o => o.DutyNorm.Id.IsIn(dutyNormsIds));
 			if(protectionToolsIds != null && protectionToolsIds.Any())

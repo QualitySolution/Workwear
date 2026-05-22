@@ -7,6 +7,7 @@ using Autofac;
 using ClosedXML.Excel;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.SqlCommand;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -308,6 +309,47 @@ namespace Workwear.ViewModels.Analytics {
 			LogMemory("Fill: конец");
 		}
 		
+		/// <summary>
+		/// Предзагрузка данных для устранения N+1: supply-номенклатуры ProtectionTools,
+		/// их ProtectionToolsNomenclatures и NomenclatureSizes.
+		/// </summary>
+		private void PreloadForecastingData() {
+			var ptIds = futureIssues.Select(x => x.ProtectionTools.Id).Distinct().ToArray();
+			if(!ptIds.Any()) return;
+
+			// Загружаем supply-номенклатуры (References, без дублей строк) и ProtectionToolsNomenclatures (HasMany) — двумя Future-запросами
+			var ptsFuture = UoW.Session.QueryOver<ProtectionTools>()
+				.WhereRestrictionOn(p => p.Id).IsIn(ptIds)
+				.Fetch(SelectMode.Fetch, p => p.SupplyNomenclatureUnisex)
+				.Fetch(SelectMode.Fetch, p => p.SupplyNomenclatureMale)
+				.Fetch(SelectMode.Fetch, p => p.SupplyNomenclatureFemale)
+				.Future();
+
+			ProtectionToolsNomenclature ptnAlias = null;
+			UoW.Session.QueryOver<ProtectionTools>()
+				.WhereRestrictionOn(p => p.Id).IsIn(ptIds)
+				.JoinAlias(p => p.ProtectionToolsNomenclatures, () => ptnAlias, JoinType.LeftOuterJoin)
+				.Fetch(SelectMode.Fetch, p => p.ProtectionToolsNomenclatures)
+				.Fetch(SelectMode.Fetch, () => ptnAlias.Nomenclature)
+				.Future();
+
+			var pts = ptsFuture.ToList();
+
+			// Загружаем NomenclatureSizes для всех supply-номенклатур, чтобы ResolveSizeForNomenclature не делал N+1
+			var nomIds = pts
+				.SelectMany(p => new[] { p.SupplyNomenclatureUnisex?.Id, p.SupplyNomenclatureMale?.Id, p.SupplyNomenclatureFemale?.Id })
+				.Where(id => id.HasValue).Select(id => id.Value)
+				.Distinct().ToArray();
+
+			if(nomIds.Any()) {
+				UoW.Session.QueryOver<Nomenclature>()
+					.WhereRestrictionOn(n => n.Id).IsIn(nomIds)
+					.Fetch(SelectMode.ChildFetch, n => n)
+					.Fetch(SelectMode.Fetch, n => n.NomenclatureSizes)
+					.List();
+			}
+		}
+
 		private void MakeForecast() {
 			if(employees == null)
 				return;
@@ -339,6 +381,7 @@ namespace Workwear.ViewModels.Analytics {
 			stockBalance.AddNomenclatures(nomenclatures);
 
 			ProgressTotal.Add(text: "Формируем прогноз");
+			PreloadForecastingData();
 			var result = forecastingModel.MakeForecastingItems(ProgressLocal, futureIssues);
 			
 			ProgressTotal.Add(text: "Заполнение заказанного");
