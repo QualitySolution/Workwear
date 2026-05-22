@@ -277,7 +277,7 @@ namespace Workwear.ViewModels.Analytics {
 			
 			LogMemory("Fill: начало");
 			
-			ProgressTotal.Start(11, text:"Получение данных");
+			ProgressTotal.Start(10, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
 			ProgressLocal.Add(text: "Получение работающих сотрудников");
@@ -356,7 +356,7 @@ namespace Workwear.ViewModels.Analytics {
 				return;
 			SensitiveSettings = false;
 			if(!ProgressTotal.IsStarted)
-				ProgressTotal.Start(7, text: "Прогнозирование выдач сотрудникам");
+				ProgressTotal.Start(6, text: "Прогнозирование выдач сотрудникам");
 
 			// Инициализирует нужный ChoiceListViewModel до обращения к forecastingModel.
 			var _ = ChoiceGoodsViewModel;

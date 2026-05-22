@@ -114,7 +114,7 @@ namespace Workwear.Models.Analytics {
 			IList<EmployeeCardItem> employeeItems,
 			IProgressBarDisplayable progress = null)
 		{
-			progress?.Start(employeeItems.Count() + 2);
+			progress?.Start(employeeItems.Count());
 			int gc = 0;
 			var issues = new List<FutureIssueEmployee>();
 			endDate = endDate.AddDays(1); //Чтобы включить в расчёт последний день периода
