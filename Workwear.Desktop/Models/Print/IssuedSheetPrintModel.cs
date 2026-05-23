@@ -46,6 +46,9 @@ namespace Workwear.Models.Print {
 						{ "id",  sheet.Id },
 						{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}};
 					break;
+				case IssuedSheetPrint.MetroIssuanceSheet :
+					reportInfo.Title = $"Накладная на выдачу №{sheet.DocNumber ?? sheet.Id.ToString()}";
+					break;
 				default:
 					throw new NotSupportedException("type " + nameof(IssuedSheetPrint));
 			}
@@ -62,6 +65,9 @@ namespace Workwear.Models.Print {
 	
 	public enum IssuedSheetPrint
 	{
+		[Display(Name = "Накладная на выдачу")]
+		[ReportIdentifier("Statements.MetroIssuanceSheetVertical")]
+		MetroIssuanceSheet,
 		[Display(Name = "Альбомная МБ-7")]
 		[ReportIdentifier("Statements.IssuanceSheet")]
 		IssuanceSheet,

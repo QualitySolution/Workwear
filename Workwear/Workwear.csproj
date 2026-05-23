@@ -1005,8 +1005,12 @@
     <None Include="Reports\Statements\IssuanceSheet_0504210_2.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="Reports\Statements\MetroIssuanceSheetVertical.rdl" />
-    <Content Include="Reports\Statements\MetroReturnSheet.rdl" />
+    <None Include="Reports\Statements\MetroIssuanceSheetVertical.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Statements\MetroReturnSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

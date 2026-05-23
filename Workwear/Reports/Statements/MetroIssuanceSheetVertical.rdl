@@ -321,7 +321,8 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox12">
-                      <Value>={last_name} + " " + Left({first_name}, 1) + ". " + Left({patronymic_name},1) + "." + " (" + {personnel_number}+ ")"
+                      <Value>={last_name} + " " + Left({first_name}, 1) + ". " + Left({patronymic_name},1) + "." + 
+Iif(!Fields!personnel_number.IsMissing ," (" + {personnel_number}+ ")", "")
 </Value>
                       <Style>
                         <BorderStyle>
@@ -698,7 +699,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox1">
-                      <Value>="Наклодная на выдачу  № " +  {doc_number}  + " от " + Format({doc_date}), "d")</Value>
+                      <Value>="Накладная на выдачу  № " +  {doc_number}  + " от " + Format({doc_date}, "d")</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -958,7 +959,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
-                      <Value>="Договор от " + Format(Fields!contract_date.Value), "d") +"        №" + Fields!contract_number.Value</Value>
+                      <Value>="Договор от " + Format(Fields!contract_date.Value, "d") +"        №" + Fields!contract_number.Value</Value>
                       <Style>
                         <TextAlign>Left</TextAlign>
                         <BorderStyle>
@@ -1436,10 +1437,10 @@ ORDER BY employees.last_name, employees.first_name, employees.patronymic_name</C
     IFNULL(issuance_sheet.doc_number, issuance_sheet.id) as doc_number,
     issuance_sheet.date AS doc_date,
     organizations.name as organization_from,
-    subdivisions.name as organization_to,
-    '' as contract_date,
-    '' as contract_number,
-    '' as adress,
+    CONCAT_WS(', ', 'ГУП Петербургский метрополитен', subdivisions.name) as organization_to,
+    '1.03.2026' as contract_date,
+    '3097177' as contract_number,
+    'г. Санкт-Петербург' as adress,
     CONCAT_WS('',
               CONCAT(responsible_person.surname, ' '),
               IF(responsible_person.name = '',
