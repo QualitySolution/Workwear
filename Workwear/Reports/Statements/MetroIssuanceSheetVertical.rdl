@@ -675,13 +675,15 @@ Iif(!Fields!personnel_number.IsMissing ," (" + {personnel_number}+ ")", "")
         <Left>261.9pt</Left>
         <Top>211.5pt</Top>
       </Table>
-      <Table Name="Table3" >
-        <DataSetName>DocInfo</DataSetName>
+      <Table Name="Table3">
+        <DataSetName>Sheet</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor  />
+          <BorderWidth  />
         </Style>
         <TableColumns>
           <TableColumn>
@@ -1013,7 +1015,7 @@ Iif(!Fields!personnel_number.IsMissing ," (" + {personnel_number}+ ")", "")
         <Left>0.0pt</Left>
         <Top>8.1pt</Top>
       </Table>
-      <Table Name="Table4" >
+      <Table Name="Table4">
         <DataSetName>Sheet</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
@@ -1431,7 +1433,7 @@ ORDER BY employees.last_name, employees.first_name, employees.patronymic_name</C
       </Fields>
     </DataSet>
     <DataSet Name="Sheet">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(issuance_sheet.doc_number, issuance_sheet.id) as doc_number,
@@ -1467,7 +1469,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="doc_number">
           <DataField>doc_number</DataField>
           <TypeName>System.String</TypeName>
@@ -1515,7 +1517,7 @@ WHERE
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -1536,7 +1538,7 @@ WHERE
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>

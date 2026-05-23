@@ -68,7 +68,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >12pt</FontSize>
+                        <FontSize>12pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -85,8 +85,8 @@
                         <FontWeight>Normal</FontWeight>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize >12pt</FontSize>
-                        <VerticalAlign >Middle</VerticalAlign>
+                        <FontSize>12pt</FontSize>
+                        <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -106,7 +106,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >12pt</FontSize>
+                        <FontSize>12pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -125,7 +125,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >12pt</FontSize>
+                        <FontSize>12pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -144,7 +144,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >12pt</FontSize>
+                        <FontSize>12pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -163,7 +163,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <VerticalAlign>Middle</VerticalAlign>
-                        <FontSize >12pt</FontSize>
+                        <FontSize>12pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -211,7 +211,7 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
-                    <Textbox Name="Textbox10" >
+                    <Textbox Name="Textbox10">
                       <Value>={units}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
@@ -537,8 +537,8 @@
         <Left>299.4pt</Left>
         <Top>197.7pt</Top>
       </Table>
-      <Table Name="Table5" >
-        <DataSetName>DocInfo</DataSetName>
+      <Table Name="Table5">
+        <DataSetName>Sheet</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
           <BorderStyle>
@@ -561,7 +561,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox47">
-                      <Value>="Накладная на возврат № " +  {doc_number}  + " от " + Format({doc_date}), "d")</Value>
+                      <Value>="Накладная на возврат № " +  {doc_number}  + " от " + Format({doc_date}, "d")</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -776,7 +776,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox71">
-                      <Value>="Договор от " + Format(Fields!contract_date.Value), "d") +"        №" + Fields!contract_number.Value</Value>
+                      <Value>="Договор от " + Format(Fields!contract_date.Value, "d") +"        №" + Fields!contract_number.Value</Value>
                       <Style>
                         <TextAlign>Left</TextAlign>
                         <BorderStyle>
@@ -828,9 +828,9 @@
           <RepeatOnNewPage>true</RepeatOnNewPage>
         </Header>
         <Left>0.0pt</Left>
-        <Top>17.4pt</Top>
+        <Top>18.2pt</Top>
       </Table>
-      <Table Name="Table2" >
+      <Table Name="Table2">
         <DataSetName>Sheet</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
@@ -1193,22 +1193,26 @@ WHERE stock_return_items.stock_return_id = @id</CommandText>
         </Field>
       </Fields>
     </DataSet>
-    <DataSet Name="DocInfo">
+    <DataSet Name="Sheet">
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(stock_return.doc_number, stock_return.id) as doc_number,
     stock_return.date AS doc_date,
-    '' as organization_from,
-    '' as organization_to,
+    CONCAT_WS(', ', 'ГУП Петербургский метрополитен', GROUP_CONCAT(distinct subdivisions.name)) as organization_from,
+    'ООО Метрохим' as organization_to,
     '' as transfer_from,
     '' as transfer_to,
-    '' as contract_date,
-    '' as contract_number,
+    '20.03.2026' as contract_date,
+    '0001239' as contract_number,
     '' as responsible_person_post,
+    '' as responsible_person_name,
     '' as transfer_agent_fio,
     '' AS transfer_agent_post
 FROM stock_return
+    LEFT JOIN stock_return_items ON stock_return.id = stock_return_items.stock_return_id
+    LEFT JOIN employees ON stock_return_items.employee_id = employees.id
+    LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id
 WHERE stock_return.id = @id
 GROUP BY stock_return.id</CommandText>
         <QueryParameters>
@@ -1234,10 +1238,6 @@ GROUP BY stock_return.id</CommandText>
           <DataField>organization_to</DataField>
           <TypeName>System.String</TypeName>
         </Field>
-        <Field Name="adress">
-          <DataField>adress</DataField>
-          <TypeName>System.String</TypeName>
-        </Field>
         <Field Name="transfer_from">
           <DataField>transfer_from</DataField>
           <TypeName>System.String</TypeName>
@@ -1258,6 +1258,10 @@ GROUP BY stock_return.id</CommandText>
           <DataField>responsible_person_post</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="responsible_person_name">
+          <DataField>responsible_person_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
         <Field Name="transfer_agent_fio">
           <DataField>transfer_agent_fio</DataField>
           <TypeName>System.String</TypeName>
@@ -1269,7 +1273,7 @@ GROUP BY stock_return.id</CommandText>
       </Fields>
     </DataSet>
   </DataSets>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
@@ -1278,7 +1282,7 @@ GROUP BY stock_return.id</CommandText>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="id">
       <DataType>Integer</DataType>
       <DefaultValue>

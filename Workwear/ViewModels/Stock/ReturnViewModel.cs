@@ -343,18 +343,34 @@ namespace Workwear.ViewModels.Stock {
 				return;
 			
 			var reportInfo = new ReportInfo {
-				Title = doc == ReturnDocReportEnum.ReturnSheet ? $"Возврат №{Entity.DocNumber ?? Entity.Id.ToString()}"
-					: $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}",
 				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
 				Parameters = new Dictionary<string, object> {
 					{ "id",  Entity.Id },
 					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
 				}
 			};
+			switch(doc) {
+				case ReturnDocReportEnum.ReturnSheet :
+					reportInfo.Title = $"Возврат №{Entity.DocNumber ?? Entity.Id.ToString()}";
+					break;
+				case ReturnDocReportEnum.ReturnStatementHorizontal :
+				case ReturnDocReportEnum.ReturnStatementVertical :
+					reportInfo.Title = $"Ведомость №{Entity.DocNumber ?? Entity.Id.ToString()}";
+					break;
+				case ReturnDocReportEnum.MetroReturnStatementVertical :
+					reportInfo.Title = $"Накладная на возврат №{Entity.DocNumber ?? Entity.Id.ToString()}";
+					break;
+				default:
+					throw new NotSupportedException("type " + nameof(ReturnDocReportEnum));
+			
+			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 		public enum ReturnDocReportEnum
 		{
+			[Display(Name = "Накладная на возврат")]
+			[ReportIdentifier("Statements.MetroReturnSheet")]
+			MetroReturnStatementVertical,
 			[Display(Name = "Лист возврата")]
 			[ReportIdentifier("Documents.ReturnSheet")]
 			ReturnSheet,
