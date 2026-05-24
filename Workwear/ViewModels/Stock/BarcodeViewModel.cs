@@ -26,7 +26,7 @@ namespace Workwear.ViewModels.Stock
 		public void PrintBarcodes() {
 			var reportInfo = new ReportInfo {
 				Title = "Штрихкод",
-				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Identifier = "Barcodes.MetroLabelBarcodeIssue",
 				Parameters = new Dictionary<string, object> {
 					{"barcodes", Entity.Id}
 				}

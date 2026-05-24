@@ -373,7 +373,7 @@ namespace Workwear.ViewModels.Operations
 
 			var reportInfo = new ReportInfo {
 				Title = "Штрихкоды",
-				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Identifier = "Barcodes.MetroLabelBarcodeIssue",
 				Parameters = new Dictionary<string, object> {
 					{"barcodes", SelectOperation.BarcodeOperations.Select(x => x.Barcode.Id).ToList()}
 				}

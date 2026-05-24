@@ -272,7 +272,7 @@ namespace Workwear.ViewModels.Stock
 
 			var reportInfo = new ReportInfo {
 				Title = "Штрихкоды",
-				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Identifier = "Barcodes.MetroLabelBarcodeIssue",
 				Parameters = new Dictionary<string, object> {
 					{
 						"barcodes", Entity.Items

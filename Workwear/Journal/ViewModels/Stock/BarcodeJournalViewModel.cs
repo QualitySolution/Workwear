@@ -105,7 +105,7 @@ namespace workwear.Journal.ViewModels.Stock
 			
 			var reportInfo = new ReportInfo {
 				Title = "Штрихкод",
-				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Identifier = "Barcodes.MetroLabelBarcodeIssue",
 				Parameters = new Dictionary<string, object> {
 					{"barcodes", nodes.Cast<BarcodeJournalNode>().Select(x => x.Id).ToList()}
 				}
