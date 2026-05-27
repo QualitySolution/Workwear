@@ -8,7 +8,7 @@ Unicode true
 !define MENU_DIR_NAME "Метрохим Спецодежда"
 !define APP_DIR_NAME "Метрохим Спецодежда"
 !define UNINSTAL_KEY "workwear-metro"
-!define SETUP_POSTFIX "metro"
+!define SETUP_POSTFIX "-metro"
 
 !ifdef BETA
 	!define /redef PRODUCT_NAME "QS: Спецодежда и имущество БЕТА"
