@@ -1141,5 +1141,6 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionRentActActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RentActViewModel));
 	}
 }
