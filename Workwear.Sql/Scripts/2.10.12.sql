@@ -14,3 +14,7 @@ ALTER TABLE departments
 		FOREIGN KEY (head_of_department_id) REFERENCES employees (id)
 			ON DELETE SET NULL ON UPDATE CASCADE;
 
+-- Добавление дневной стоимости аренды в таблицу номенклатуры
+ALTER TABLE nomenclature
+	ADD COLUMN rent_cost_day DECIMAL(7,2) UNSIGNED NULL DEFAULT NULL AFTER sale_cost;
+

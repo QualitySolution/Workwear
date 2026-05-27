@@ -196,6 +196,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Shipment:
 				case WorkwearFeature.Visits:
 				case WorkwearFeature.IssuanceRequest:
+				case WorkwearFeature.Rent:
 				case WorkwearFeature.ReportServiceServiced:
 					return ProductEdition == 4;
 				//Предприятие + СпецАутсорсинг
@@ -357,6 +358,8 @@ namespace Workwear.Tools.Features
 		Visits,
 		[Display(Name = "Заявки на выдачу")]
 		IssuanceRequest,
+		[Display(Name = "Аренда")]
+		Rent,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Спецкойны")]

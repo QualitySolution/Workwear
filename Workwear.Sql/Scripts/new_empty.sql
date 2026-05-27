@@ -494,6 +494,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
+  `rent_cost_day` DECIMAL(7,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
   `washable` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Можно отдать в стирку',
   PRIMARY KEY (`id`),
