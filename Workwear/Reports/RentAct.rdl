@@ -1,0 +1,925 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description>Акт об оказанных услугах</Description>
+  <Author></Author>
+  <PageHeight>11in</PageHeight>
+  <PageWidth>8.5in</PageWidth>
+  <Width>7.8in</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>.25in</LeftMargin>
+  <RightMargin>.25in</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=10.0.2.2;user=admin;database=workwear;port=3306;password=123;</ConnectString>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="Services">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>-- Акт об оказанных услугах
+SELECT
+    ROW_NUMBER() OVER (ORDER BY service_id) as row_num,
+    service_id as id,
+    service_name,
+    composition,
+    quantity,
+    unit,
+    period,
+    price,
+    (quantity * price) as sum_without_vat,
+    vat_percent,
+    ((quantity * price) * vat_percent / 100) as vat_sum
+FROM act_service_details
+WHERE act_id = @act_id
+ORDER BY service_id</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="act_id">
+            <Value>=Parameters!act_id</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="row_num">
+          <DataField>row_num</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="id">
+          <DataField>id</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="service_name">
+          <DataField>service_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="composition">
+          <DataField>composition</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="quantity">
+          <DataField>quantity</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="unit">
+          <DataField>unit</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="period">
+          <DataField>period</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="price">
+          <DataField>price</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="sum_without_vat">
+          <DataField>sum_without_vat</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="vat_percent">
+          <DataField>vat_percent</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="vat_sum">
+          <DataField>vat_sum</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <PageHeader>
+    <Height>120pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems>
+      <Textbox Name="ReportTitle">
+        <Height>20pt</Height>
+        <Width>450pt</Width>
+        <Value>Форма акта об оказанных услугах</Value>
+        <ZIndex>1</ZIndex>
+        <Left>130pt</Left>
+        <Top>3pt</Top>
+        <Style>
+          <FontWeight>Bold</FontWeight>
+          <FontSize>12pt</FontSize>
+          <TextAlign>Center</TextAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="ActNumber">
+        <Height>14pt</Height>
+        <Width>200pt</Width>
+        <Value>Акт № {?act_number}</Value>
+        <ZIndex>2</ZIndex>
+        <Left>10pt</Left>
+        <Top>30pt</Top>
+        <Style>
+          <FontSize>10pt</FontSize>
+        </Style>
+      </Textbox>
+      <Textbox Name="ActDate">
+        <Height>14pt</Height>
+        <Width>200pt</Width>
+        <Value>от {?act_date:D}</Value>
+        <ZIndex>3</ZIndex>
+        <Left>10pt</Left>
+        <Top>46pt</Top>
+        <Style>
+          <FontSize>10pt</FontSize>
+        </Style>
+      </Textbox>
+      <Textbox Name="ContractNumber">
+        <Height>14pt</Height>
+        <Width>300pt</Width>
+        <Value>по договору № {?contract_number} от {?contract_date:D}</Value>
+        <ZIndex>4</ZIndex>
+        <Left>10pt</Left>
+        <Top>62pt</Top>
+        <Style>
+          <FontSize>10pt</FontSize>
+        </Style>
+      </Textbox>
+      <Textbox Name="PerformerLabel">
+        <Height>12pt</Height>
+        <Width>200pt</Width>
+        <Value>ИСПОЛНИТЕЛЬ:</Value>
+        <ZIndex>5</ZIndex>
+        <Left>10pt</Left>
+        <Top>80pt</Top>
+        <Style>
+          <FontSize>9pt</FontSize>
+          <FontWeight>Bold</FontWeight>
+        </Style>
+      </Textbox>
+      <Textbox Name="Performer">
+        <Height>14pt</Height>
+        <Width>250pt</Width>
+        <Value>{?performer}</Value>
+        <ZIndex>6</ZIndex>
+        <Left>10pt</Left>
+        <Top>94pt</Top>
+        <Style>
+          <FontSize>9pt</FontSize>
+        </Style>
+      </Textbox>
+      <Textbox Name="CustomerLabel">
+        <Height>12pt</Height>
+        <Width>200pt</Width>
+        <Value>ЗАКАЗЧИК:</Value>
+        <ZIndex>7</ZIndex>
+        <Left>350pt</Left>
+        <Top>80pt</Top>
+        <Style>
+          <FontSize>9pt</FontSize>
+          <FontWeight>Bold</FontWeight>
+        </Style>
+      </Textbox>
+      <Textbox Name="Customer">
+        <Height>14pt</Height>
+        <Width>250pt</Width>
+        <Value>{?customer}</Value>
+        <ZIndex>8</ZIndex>
+        <Left>350pt</Left>
+        <Top>94pt</Top>
+        <Style>
+          <FontSize>9pt</FontSize>
+        </Style>
+      </Textbox>
+    </ReportItems>
+  </PageHeader>
+  <Body>
+    <Height>400pt</Height>
+    <ReportItems>
+      <Table Name="ServicesTable" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+        <DataSetName>Services</DataSetName>
+        <NoRows>Нет данных для отображения.</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor>#000000</BorderColor>
+          <BorderWidth>1pt</BorderWidth>
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>30pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>130pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>100pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>50pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>40pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>40pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>60pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>60pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>60pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>50pt</Width>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>14pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderNum">
+                      <Value>№</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderServiceName">
+                      <Value>Наименование вида снежелки</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderComposition">
+                      <Value>Состав коллектива (человек)</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderQuantity">
+                      <Value>Кол-во</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderUnit">
+                      <Value>Ед. изм.</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderPeriod">
+                      <Value>Срок полов, год</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderPrice">
+                      <Value>Цена б/без ПДС, руб.</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderSum">
+                      <Value>Сумма б/без ПДС, руб.</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderVAT">
+                      <Value>ПДС, %</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="HeaderVATSum">
+                      <Value>В том числе ПДС, руб.</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <TableGroups>
+          <TableGroup>
+            <Footer>
+              <TableRows>
+                <TableRow>
+                  <Height>14pt</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalLabel">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalText">
+                          <Value>ИТОГО:</Value>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>10pt</FontSize>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>2</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalQuantity">
+                          <Value>=Sum({quantity})</Value>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <FontWeight>Bold</FontWeight>
+                            <PaddingRight>2pt</PaddingRight>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalUnit">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalPeriod">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalPrice">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalSum">
+                          <Value>=Sum({sum_without_vat})</Value>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <FontWeight>Bold</FontWeight>
+                            <PaddingRight>2pt</PaddingRight>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                            <Format>N2</Format>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalVAT">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TotalVATSum">
+                          <Value>=Sum({vat_sum})</Value>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <FontWeight>Bold</FontWeight>
+                            <PaddingRight>2pt</PaddingRight>
+                            <BorderColor>#000000</BorderColor>
+                            <BorderWidth>1pt</BorderWidth>
+                            <Format>N2</Format>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Footer>
+            <Grouping Name="ServiceGroup">
+              <GroupExpressions>
+                <GroupExpression>={id}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+          </TableGroup>
+        </TableGroups>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>14pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="RowNum">
+                      <Value>={row_num}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="ServiceName">
+                      <Value>={service_name}</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <VerticalAlign>Top</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Composition">
+                      <Value>={composition}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Quantity">
+                      <Value>={quantity}</Value>
+                      <Style>
+                        <TextAlign>Right</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Unit">
+                      <Value>={unit}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Period">
+                      <Value>={period}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Price">
+                      <Value>={price}</Value>
+                      <Style>
+                        <TextAlign>Right</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                        <Format>N2</Format>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Sum">
+                      <Value>={sum_without_vat}</Value>
+                      <Style>
+                        <TextAlign>Right</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                        <Format>N2</Format>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="VAT">
+                      <Value>={vat_percent}</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                        <Format>N0</Format>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="VATSum">
+                      <Value>={vat_sum}</Value>
+                      <Style>
+                        <TextAlign>Right</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingRight>2pt</PaddingRight>
+                        <BorderColor>#000000</BorderColor>
+                        <BorderWidth>1pt</BorderWidth>
+                        <FontSize>9pt</FontSize>
+                        <Format>N2</Format>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>10pt</Left>
+        <Top>10pt</Top>
+      </Table>
+    </ReportItems>
+    <Columns>1</Columns>
+  </Body>
+  <PageFooter>
+    <Height>60pt</Height>
+    <ReportItems>
+      <Textbox Name="PageNumber">
+        <Top>5pt</Top>
+        <Left>10pt</Left>
+        <Height>12pt</Height>
+        <Width>200pt</Width>
+        <Value>Страница =Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <Style>
+          <FontSize>9pt</FontSize>
+          <FontWeight>Normal</FontWeight>
+        </Style>
+      </Textbox>
+      <Textbox Name="SignPerformer">
+        <Top>20pt</Top>
+        <Left>10pt</Left>
+        <Height>12pt</Height>
+        <Width>300pt</Width>
+        <Value>Исполнитель: _________________ ({?performer_name})</Value>
+        <Style>
+          <FontSize>9pt</FontSize>
+        </Style>
+      </Textbox>
+      <Textbox Name="SignCustomer">
+        <Top>35pt</Top>
+        <Left>10pt</Left>
+        <Height>12pt</Height>
+        <Width>300pt</Width>
+        <Value>Заказчик: _________________ ({?customer_name})</Value>
+        <Style>
+          <FontSize>9pt</FontSize>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageFooter>
+  <ReportParameters>
+    <ReportParameter Name="act_id">
+      <DataType>Integer</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>ID акта</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="act_number">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>001</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>Номер акта</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="act_date">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=NOW()</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>Дата акта</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="contract_number">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value></Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>Номер договора</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="contract_date">
+      <DataType>DateTime</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>Дата договора</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="performer">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value></Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>Исполнитель</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="performer_name">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value></Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>ФИО исполнителя для подписи</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="customer">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value></Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>Заказчик</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="customer_name">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value></Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt>ФИО заказчика для подписи</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+</Report>
