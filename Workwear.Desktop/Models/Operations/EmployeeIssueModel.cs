@@ -360,10 +360,12 @@ namespace Workwear.Models.Operations {
 				.Fetch(SelectMode.Fetch, p => p.Type.Units)
 				.Future();
 
+			ProtectionToolsNomenclature protNomAlias = null;
 			UoW.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
-				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
+				.JoinAlias(p => p.ProtectionToolsNomenclatures, () => protNomAlias, JoinType.LeftOuterJoin)
+				.Fetch(SelectMode.Fetch, p => p.ProtectionToolsNomenclatures)
+				.Fetch(SelectMode.Fetch, () => protNomAlias.Nomenclature)
 				.Future();
 
 			query.ToList();

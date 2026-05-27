@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using QS.Dialog;
+using QS.Utilities.Text;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
@@ -45,7 +46,7 @@ namespace Workwear.Models.Analytics {
 					gc = 0;
 				}
 
-				progress?.Add(text: "Планирование выдач для " + item.DutyNorm.Name + " - " + item.ProtectionTools.Name);
+				progress?.Add(text: "Планирование выдач для " + item.DutyNorm.Name?.EllipsizeMiddle(50) + " - " + item.ProtectionTools.Name.EllipsizeMiddle(70));
 
 				DateTime? delayIssue = item.NextIssue < startDate ? item.NextIssue : null;
 				var virtualOperations = new List<DutyNormIssueOperation>();
@@ -113,7 +114,7 @@ namespace Workwear.Models.Analytics {
 			IList<EmployeeCardItem> employeeItems,
 			IProgressBarDisplayable progress = null)
 		{
-			progress?.Start(employeeItems.Count() + 2);
+			progress?.Start(employeeItems.Count());
 			int gc = 0;
 			var issues = new List<FutureIssueEmployee>();
 			endDate = endDate.AddDays(1); //Чтобы включить в расчёт последний день периода

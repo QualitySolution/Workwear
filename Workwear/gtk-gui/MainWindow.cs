@@ -233,6 +233,10 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionDutyNormIssuedReport;
 
+	private global::Gtk.Action ActionRentMovements;
+
+	private global::Gtk.Action ActionRentAct;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -626,6 +630,12 @@ public partial class MainWindow
 		this.ActionDutyNormIssuedReport = new global::Gtk.Action("ActionDutyNormIssuedReport", global::Mono.Unix.Catalog.GetString("Отчёт по выданному"), null, null);
 		this.ActionDutyNormIssuedReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Отчёт по выданному");
 		w1.Add(this.ActionDutyNormIssuedReport, null);
+		this.ActionRentMovements = new global::Gtk.Action("ActionRentMovements", global::Mono.Unix.Catalog.GetString("Движения Спецодежды"), null, null);
+		this.ActionRentMovements.ShortLabel = global::Mono.Unix.Catalog.GetString("Движения Спецодежды");
+		w1.Add(this.ActionRentMovements, null);
+		this.ActionRentAct = new global::Gtk.Action("ActionRentAct", global::Mono.Unix.Catalog.GetString("Акт об оказаных услугах"), null, null);
+		this.ActionRentAct.ShortLabel = global::Mono.Unix.Catalog.GetString("Акт об оказаных услугах");
+		w1.Add(this.ActionRentAct, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -713,16 +723,18 @@ public partial class MainWindow
 				"ion=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessReport\' action=\'" +
 				"ActionBarcodeCompletenessReport\'/><menu name=\'ActionDutyNormReports\' action=\'Act" +
 				"ionDutyNormReports\'><menuitem name=\'ActionDutyNormIssuedReport\' action=\'ActionDu" +
-				"tyNormIssuedReport\'/></menu></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><" +
-				"menuitem name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide" +
-				"\' action=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'" +
-				"ActionHistory\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><m" +
-				"enuitem name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem nam" +
-				"e=\'ActionChannelStable\' action=\'ActionChannelStable\'/><menuitem name=\'ActionOffA" +
-				"utoUpdate\' action=\'ActionOffAutoUpdate\'/></menu><menuitem name=\'ActionUpdate\' ac" +
-				"tion=\'ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'" +
-				"/><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem" +
-				" name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
+				"tyNormIssuedReport\'/></menu><separator/><menuitem name=\'ActionRentMovements\' act" +
+				"ion=\'ActionRentMovements\'/><menuitem name=\'ActionRentAct\' action=\'ActionRentAct\'" +
+				"/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'helpAction\'" +
+				" action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide" +
+				"\'/><separator/><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu name" +
+				"=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionChanne" +
+				"lCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' ac" +
+				"tion=\'ActionChannelStable\'/><menuitem name=\'ActionOffAutoUpdate\' action=\'ActionO" +
+				"ffAutoUpdate\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><sepa" +
+				"rator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><separator/><menuitem na" +
+				"me=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action" +
+				"=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -965,6 +977,8 @@ public partial class MainWindow
 		this.ActionOffAutoUpdate.Toggled += new global::System.EventHandler(this.OnActionOffAutoUpdateToggled);
 		this.IssueSizeReport.Activated += new global::System.EventHandler(this.OnIssueSizeReportActivated);
 		this.ActionDutyNormIssuedReport.Activated += new global::System.EventHandler(this.OnActionDutyNormIssuedReportActivated);
+		this.ActionRentMovements.Activated += new global::System.EventHandler(this.OnActionRentMovementsActivated);
+		this.ActionRentAct.Activated += new global::System.EventHandler(this.OnActionRentActActivated);
 		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }
