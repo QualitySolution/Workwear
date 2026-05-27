@@ -2945,7 +2945,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.11');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.12');
 
 COMMIT;
 
