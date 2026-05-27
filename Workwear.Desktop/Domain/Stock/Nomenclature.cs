@@ -89,6 +89,13 @@ namespace Workwear.Domain.Stock {
 		public virtual decimal? SaleCost {
 			get => saleCost;
 			set => SetField(ref saleCost, value);
+		}		
+		
+		private decimal? rentCost;
+		[Display(Name = "Цена Аренды")]
+		public virtual decimal? RentCost {
+			get => rentCost;
+			set => SetField(ref rentCost, value);
 		}
 		
 		private float? rating;
