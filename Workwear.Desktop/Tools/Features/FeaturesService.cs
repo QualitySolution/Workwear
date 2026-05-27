@@ -198,7 +198,6 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.Shipment:
 				case WorkwearFeature.Visits:
 				case WorkwearFeature.IssuanceRequest:
-				case WorkwearFeature.Rent:
 				case WorkwearFeature.ReportServiceServiced:
 					return ProductEdition == 4;
 				//Предприятие + СпецАутсорсинг
