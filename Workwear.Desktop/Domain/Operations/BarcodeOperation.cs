@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Stock;
@@ -42,14 +42,31 @@ namespace Workwear.Domain.Operations {
 			get => warehouseOperation;
 			set => SetField(ref warehouseOperation, value);
 		}
+
+		private OverNormOperation overNormOperation;
+		[Display(Name = "Операция выдачи вне нормы")]
+		public virtual OverNormOperation OverNormOperation 
+		{
+			get => overNormOperation;
+			set => SetField(ref overNormOperation, value);
+		}
 		#endregion
 		#region Расчетные
 		public virtual string Title => $"Операция с меткой {Barcode.Title}";
-		public virtual DateTime? OperationDate => EmployeeIssueOperation?.OperationTime ?? WarehouseOperation?.OperationTime;
+		public virtual DateTime OperationDate => EmployeeIssueOperation?.OperationTime ??
+		                                          OverNormOperation?.OperationTime ??
+		                                          WarehouseOperation?.OperationTime ??
+		                                          throw new Exception("Нет даты связанной операции");
 		public virtual string OperationTitle {
 			get {
 				if(EmployeeIssueOperation?.Issued > 0)
 					return $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}";
+				if(OverNormOperation != null)
+					return $"{OverNormOperation.Type} выдача сотруднику: {OverNormOperation.Employee.ShortName}";
+				if(WarehouseOperation != null)
+////1289
+//TODO Отделить маркировку от возврата
+					return $"Маркировка на складе.";
 				return "???";
 			}
 		}
