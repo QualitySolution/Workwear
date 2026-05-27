@@ -188,6 +188,8 @@ namespace Workwear.Tools.Features
 			}
 
 			switch(feature) {
+				case WorkwearFeature.Rent:
+					return true; //Пока доступно только в редакции метрохима
 				case WorkwearFeature.PrintPromo:
 					return ProductEdition == 0 || ProductEdition == 1;
 				//Только СпецАутсорсинг
