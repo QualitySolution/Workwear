@@ -9,6 +9,7 @@ using QS.Project.Versioning;
 [assembly: AssemblyBetaBuild]
 #endif
 [assembly: AssemblyDescription("Программа позволяет вести учет спецодежды выдаваемого сотрудникам предприятия.")]
+[assembly: AssemblyModification("metro")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quality Solution")]
 [assembly: AssemblyProductCode(2)]

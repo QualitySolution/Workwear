@@ -5,10 +5,10 @@ Unicode true
 !define EXE_NAME "workwear"
 !define PRODUCT_NAME "QS: Спецодежда"
 !define SHORTCUT_NAME "QS Спецодежда"
-!define MENU_DIR_NAME "Спецодежда и имущество"
-!define APP_DIR_NAME "Спецодежда и имущество"
-!define UNINSTAL_KEY "workwear"
-!define SETUP_POSTFIX ""
+!define MENU_DIR_NAME "Метрохим Спецодежда"
+!define APP_DIR_NAME "Метрохим Спецодежда"
+!define UNINSTAL_KEY "workwear-metro"
+!define SETUP_POSTFIX "metro"
 
 !ifdef BETA
 	!define /redef PRODUCT_NAME "QS: Спецодежда и имущество БЕТА"
