@@ -24,6 +24,7 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.CatalogId).Column("catalog_id");
 			Map(x => x.Archival).Column("archival");
 			Map(x => x.SaleCost).Column("sale_cost");
+			Map(x => x.RentCost).Column("rent_cost_day");
 			Map(x => x.Rating).Column("rating");
 			Map(x => x.RatingCount).Column("rating_count");
 			Map(x => x.UseBarcode).Column("use_barcode");
@@ -49,4 +50,3 @@ namespace Workwear.HibernateMapping.Stock
 		}
 	}
 }
-

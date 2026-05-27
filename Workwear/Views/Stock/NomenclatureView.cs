@@ -47,9 +47,15 @@ namespace Workwear.Views.Stock {
 			ycheckArchival.Binding
 				.AddBinding(Entity, e => e.Archival, w => w.Active).InitializeFromSource();
 			labelSaleCost.Visible = ViewModel.VisibleSaleCost;
-			yspinbuttonSaleCost.Visible = ViewModel.VisibleSaleCost;
+			yspinbuttonSaleCost.Visible = ylabel_Currency1.Visible = ViewModel.VisibleSaleCost;
+			ylabel_Currency1.Binding.AddBinding(ViewModel, vm => vm.UsedCurrency, w => w.LabelProp).InitializeFromSource();
 			yspinbuttonSaleCost.Binding
 				.AddBinding(Entity, e => e.SaleCost, w=> w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
+			labelSaleRent.Visible = ylabel_Currency2.Visible = ViewModel.VisibleRentCost;
+			ylabel_Currency2.Binding.AddBinding(ViewModel, vm => vm.UsedCurrency, w => w.LabelProp).InitializeFromSource();
+			yspinbuttonRentCost.Visible = ViewModel.VisibleRentCost;
+			yspinbuttonRentCost.Binding
+				.AddBinding(Entity, e => e.RentCost, w => w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
 			ybuttonratingDetails.Binding
 				.AddSource(ViewModel)
 					.AddBinding(vm => vm.VisibleRating, w => w.Visible)
