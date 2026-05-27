@@ -18,10 +18,10 @@
     <Height>123.9pt</Height>
     <ReportItems>
       <List Name="List1">
-        <Height>93.48pt</Height>
-        <Width>187.03pt</Width>
+        <Height>93.54pt</Height>
+        <Width>187.78pt</Width>
         <Left>0.00pt</Left>
-        <Top>3.00pt</Top>
+        <Top>0.00pt</Top>
         <ReportItems>
           <Textbox Name="Textbox1">
             <Height>15.02pt</Height>
@@ -29,7 +29,7 @@
             <Value>={employee}</Value>
             <ZIndex>0</ZIndex>
             <Left>2.4pt</Left>
-            <Top>1.6pt</Top>
+            <Top>0.8pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -64,18 +64,18 @@
               <BackgroundColor>White</BackgroundColor>
               <PaddingBottom>4pt</PaddingBottom>
             </Style>
-            <Left>4.80pt</Left>
-            <Top>74.40pt</Top>
-            <Height>15.63pt</Height>
-            <Width>176.25pt</Width>
+            <Left>47.78pt</Left>
+            <Top>72.40pt</Top>
+            <Height>17.13pt</Height>
+            <Width>137.97pt</Width>
             <ZIndex>10</ZIndex>
             <CanGrow>true</CanGrow>
           </Textbox>
-          <Rectangle Name="Rectangle1" >
-            <Height>40.66pt</Height>
-            <Width>178.42pt</Width>
+          <Rectangle Name="Rectangle1">
+            <Height>55.69pt</Height>
+            <Width>181.41pt</Width>
             <Left>2.70pt</Left>
-            <Top>16.25pt</Top>
+            <Top>13.90pt</Top>
             <Style>
               <BorderStyle>
                 <Default>Solid</Default>
@@ -95,40 +95,40 @@
             </Style>
             <ReportItems>
               <Textbox Name="Textbox4" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                <Height>27.02pt</Height>
-                <Width>64.10pt</Width>
+                <Height>22.52pt</Height>
+                <Width>79.12pt</Width>
                 <Value>={personnel_number}</Value>
                 <ZIndex>0</ZIndex>
-                <Left>0.0pt</Left>
-                <Top>16.6pt</Top>
+                <Left>0.00pt</Left>
+                <Top>16.60pt</Top>
                 <Style>
                   <BorderStyle />
                   <BorderColor />
                   <BorderWidth />
                   <TextAlign>Center</TextAlign>
                   <FontSize>18pt</FontSize>
-                  <FontWeight >Bold</FontWeight>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </Textbox>
               <Textbox Name="Textbox6" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                 <Height>13.50pt</Height>
-                <Width>90.37pt</Width>
+                <Width>79.12pt</Width>
                 <Value>={subdivision_code}</Value>
                 <ZIndex>0</ZIndex>
-                <Left>0.0pt</Left>
-                <Top>1.6pt</Top>
+                <Left>0.00pt</Left>
+                <Top>1.60pt</Top>
                 <Style>
                   <BorderStyle />
                   <BorderColor />
                   <BorderWidth />
-                  <TextAlign>Left</TextAlign>
+                  <TextAlign>Center</TextAlign>
                   <FontSize>12pt</FontSize>
                 </Style>
               </Textbox>
               <Rectangle Name="Rectangle2">
-                <Height>40.70pt</Height>
-                <Width>26.41pt</Width>
-                <Left>151.34pt</Left>
+                <Height>54.95pt</Height>
+                <Width>19.66pt</Width>
+                <Left>161.09pt</Left>
                 <Top>0.10pt</Top>
                 <Style>
                   <BorderStyle>
@@ -140,39 +140,69 @@
                   </BorderWidth>
                 </Style>
               </Rectangle>
-              <Textbox Name="Textbox2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                <Height>12.75pt</Height>
-                <Width>86.59pt</Width>
-                <Value>="ID " + {barcode}</Value>
+              <CustomReportItem Name="CustomReportItem1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                <Type>BarCode EAN-13</Type>
+                <Height>52.08pt</Height>
+                <Width>62.59pt</Width>
+                <CustomProperties>
+                  <CustomProperty >
+                    <Name>NumberSystem</Name>
+                    <Value>={number_system}</Value>
+                  </CustomProperty>
+                  <CustomProperty >
+                    <Name>ManufacturerCode</Name>
+                    <Value>={manufacture_code}</Value>
+                  </CustomProperty>
+                  <CustomProperty >
+                    <Name>ProductCode</Name>
+                    <Value>={product_code}</Value>
+                  </CustomProperty>
+                </CustomProperties>
+                <Left>98.8pt</Left>
+                <Top>1.6pt</Top>
+                <Style>
+                  <BorderStyle />
+                  <BorderColor />
+                  <BorderWidth />
+                </Style>
                 <ZIndex>0</ZIndex>
-                <Left>63.8pt</Left>
-                <Top>25.5pt</Top>
-                <Style>
-                  <BorderStyle />
-                  <BorderColor />
+              </CustomReportItem>
+              <Textbox Name="Textbox2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                <Value>="ID "</Value>
+                <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                  <BorderStyle>
+                    <Default>None</Default>
+                    <Left>None</Left>
+                    <Bottom>None</Bottom>
+                    <Right>None</Right>
+                    <Top>None</Top>
+                  </BorderStyle>
+                  <PaddingRight>0pt</PaddingRight>
+                  <TextAlign>Left</TextAlign>
+                  <BorderColor>
+                    <Default>Bisque</Default>
+                    <Left>Bisque</Left>
+                    <Right>Bisque</Right>
+                    <Top>Bisque</Top>
+                    <Bottom>Bisque</Bottom>
+                  </BorderColor>
                   <BorderWidth />
-                  <TextAlign>Right</TextAlign>
-                  <FontSize>8pt</FontSize>
+                  <FontSize>=Iif(Len({nomenclature}) &gt; 100, "6pt", "7pt")</FontSize>
+                  <BackgroundColor>White</BackgroundColor>
+                  <PaddingBottom>4pt</PaddingBottom>
+                  <VerticalAlign>Bottom</VerticalAlign>
                 </Style>
-              </Textbox>
-              <Textbox Name="Textbox3">
-                <Height>12.75pt</Height>
-                <Width>53.45pt</Width>
-                <Value>комплект</Value>
-                <ZIndex>1</ZIndex>
-                <Left>95.7pt</Left>
-                <Top>12.5pt</Top>
-                <Style>
-                  <BorderStyle />
-                  <BorderColor />
-                  <BorderWidth />
-                  <TextAlign>Right</TextAlign>
-                </Style>
+                <Left>81.5pt</Left>
+                <Top>35.8pt</Top>
+                <Height>15.62pt</Height>
+                <Width>18.12pt</Width>
+                <ZIndex>10</ZIndex>
+                <CanGrow>true</CanGrow>
               </Textbox>
             </ReportItems>
           </Rectangle>
-          <Textbox Name="Textbox7" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Value>= {sex}</Value>
+          <Textbox Name="Textbox3" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+            <Value>= {sex} + "  " + {wear_size} + " " + {wear_height} </Value>
             <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
               <BorderStyle>
                 <Default>None</Default>
@@ -182,7 +212,7 @@
                 <Top>None</Top>
               </BorderStyle>
               <PaddingRight>0pt</PaddingRight>
-              <TextAlign>Left</TextAlign>
+              <TextAlign>Right</TextAlign>
               <BorderColor>
                 <Default>Bisque</Default>
                 <Left>Bisque</Left>
@@ -194,44 +224,11 @@
               <FontSize>=Iif(Len({nomenclature}) &gt; 100, "6pt", "7pt")</FontSize>
               <BackgroundColor>White</BackgroundColor>
               <PaddingBottom>4pt</PaddingBottom>
-              <VerticalAlign >Middle</VerticalAlign>
             </Style>
-            <Left>2.20pt</Left>
-            <Top>58.00pt</Top>
-            <Height>15.62pt</Height>
-            <Width>18.12pt</Width>
-            <ZIndex>10</ZIndex>
-            <CanGrow>true</CanGrow>
-          </Textbox>
-          <Textbox Name="Textbox8" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-            <Value>= {wear_size} + " " + {wear_height}</Value>
-            <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-              <BorderStyle>
-                <Default>None</Default>
-                <Left>None</Left>
-                <Bottom>None</Bottom>
-                <Right>None</Right>
-                <Top>None</Top>
-              </BorderStyle>
-              <PaddingRight>0pt</PaddingRight>
-              <TextAlign>Center</TextAlign>
-              <BorderColor>
-                <Default>Bisque</Default>
-                <Left>Bisque</Left>
-                <Right>Bisque</Right>
-                <Top>Bisque</Top>
-                <Bottom>Bisque</Bottom>
-              </BorderColor>
-              <BorderWidth />
-              <FontSize>=Iif(Len({nomenclature}) &gt; 100, "6pt", "7pt")</FontSize>
-              <BackgroundColor>White</BackgroundColor>
-              <PaddingBottom>4pt</PaddingBottom>
-              <VerticalAlign >Middle</VerticalAlign>
-            </Style>
-            <Left>23.30pt</Left>
-            <Top>57.60pt</Top>
-            <Height>14.12pt</Height>
-            <Width>157.42pt</Width>
+            <Left>0.8pt</Left>
+            <Top>71.6pt</Top>
+            <Height>16.38pt</Height>
+            <Width>45.38pt</Width>
             <ZIndex>10</ZIndex>
             <CanGrow>true</CanGrow>
           </Textbox>
@@ -264,6 +261,9 @@
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     barcodes.title AS barcode,
+    LEFT(barcodes.title, 2) AS number_system,
+    SUBSTRING(barcodes.title, 3, 5) AS manufacture_code,
+    SUBSTRING(barcodes.title, 8, 5) AS product_code,
     subdivisions.code AS subdivision_code,
     CONCAT_WS('', CONCAT(employees.last_name, ' '),
               IF(employees.first_name = '', NULL, CONCAT(LEFT(employees.first_name, 1), '.')),
@@ -294,6 +294,18 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
       <Fields >
         <Field Name="barcode">
           <DataField>barcode</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="number_system">
+          <DataField>number_system</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="manufacture_code">
+          <DataField>manufacture_code</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="product_code">
+          <DataField>product_code</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="subdivision_code">
@@ -327,7 +339,7 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters >
+  <ReportParameters>
     <ReportParameter Name="barcodes">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -341,7 +353,7 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources >
+  <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
