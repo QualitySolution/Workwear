@@ -1545,6 +1545,17 @@ create table causes_write_off
 insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
 
 -- -----------------------------------------------------
+-- Table `causes_issue`
+-- -----------------------------------------------------
+create table causes_issue
+(
+	id int UNSIGNED auto_increment primary key,
+	name varchar(120) not null
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+insert into causes_issue (name) values ('Вновь принятый'), ('По окончании срока носки'), ('Замена размера'), ('Досрочное списание'), ('Перевод');
+
+-- -----------------------------------------------------
 -- Table `stock_collective_expense`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
