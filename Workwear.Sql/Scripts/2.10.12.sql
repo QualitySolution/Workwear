@@ -26,3 +26,9 @@ create table causes_issue
 )
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 insert into causes_issue (name) values ('Вновь принятый'), ('По окончании срока носки'), ('Замена размера'), ('Досрочное списание'), ('Перевод');
+
+-- Добавление свойств и класса защиты в номенклатуру
+ALTER TABLE nomenclature
+	ADD COLUMN protection_properties VARCHAR(120) NULL DEFAULT NULL AFTER additional_info,
+	ADD COLUMN protection_class VARCHAR(16) NULL DEFAULT NULL AFTER protection_properties;
+

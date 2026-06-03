@@ -489,6 +489,8 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `comment` TEXT NULL DEFAULT NULL,
   `number` VARCHAR(20) NULL DEFAULT NULL,
   `additional_info` TEXT NULL DEFAULT NULL,
+  `protection_properties` VARCHAR(120) NULL DEFAULT NULL,
+  `protection_class` VARCHAR(16) NULL DEFAULT NULL,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `catalog_id` CHAR(24) NULL,
   `rating` FLOAT NULL DEFAULT NULL,
