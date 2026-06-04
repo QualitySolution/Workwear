@@ -13,13 +13,12 @@ namespace Workwear.Domain.Operations {
 	{
 		#region Свойства
 		public virtual int Id { get; set; }
-
-		//Номер номенклатуры на руках
-		private int number;
-		[Display(Name = "Номер")]
-		public virtual int Number {
-			get => number;
-			set => SetField(ref number, value);
+		
+		private int kitNumber;
+		[Display(Name = "Номер комплекта")]
+		public virtual int KitNumber {
+			get => kitNumber;
+			set => SetField(ref kitNumber, value);
 		}
 
 		private Barcode barcode;

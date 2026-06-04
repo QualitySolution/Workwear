@@ -34,5 +34,5 @@ ALTER TABLE nomenclature
 
 -- Добавление номера комплекта
 ALTER TABLE operation_barcodes
-	ADD COLUMN number INT UNSIGNED NULL AFTER warehouse_operation_id;
+	ADD COLUMN kit_number INT UNSIGNED NULL AFTER warehouse_operation_id;
 

@@ -2105,7 +2105,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `employee_issue_operation_id` INT UNSIGNED NULL,
   `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
-  `number` INT UNSIGNED NULL DEFAULT NULL,
+  `kit_number` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
