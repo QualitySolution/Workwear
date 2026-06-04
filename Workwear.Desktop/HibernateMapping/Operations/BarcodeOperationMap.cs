@@ -14,6 +14,7 @@ namespace Workwear.HibernateMapping.Stock
 			else 
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
+			Map(x => x.Number).Column("number");
 			References(x => x.Barcode).Column("barcode_id").Not.Nullable();
 			References(x => x.EmployeeIssueOperation).Column("employee_issue_operation_id");
 			References(x => x.WarehouseOperation).Column("warehouse_operation_id");

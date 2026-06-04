@@ -32,3 +32,7 @@ ALTER TABLE nomenclature
 	ADD COLUMN protection_properties VARCHAR(120) NULL DEFAULT NULL AFTER additional_info,
 	ADD COLUMN protection_class VARCHAR(16) NULL DEFAULT NULL AFTER protection_properties;
 
+-- Добавление номера комплекта
+ALTER TABLE operation_barcodes
+	ADD COLUMN number INT UNSIGNED NULL AFTER warehouse_operation_id;
+
