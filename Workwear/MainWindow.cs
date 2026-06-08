@@ -1142,4 +1142,8 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionRentActActivated(object sender, EventArgs e) {
 	}
+	
+	protected void OnActionCausesIssueActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<CauseIssueJournalViewModel>(null);
+	}
 }
