@@ -84,6 +84,12 @@ namespace Workwear.Domain.Stock {
 			get => protectionClass;
 			set => SetField(ref protectionClass, value);
 		}
+		private int weight;
+		[Display(Name = "Вес")]
+		public virtual int Weight {
+			get => weight;
+			set => SetField(ref weight, value);
+		}
 		private string catalogId;
 		[Display(Name = "ID каталога")]
 		[StringLength(24, ErrorMessage = "Максимальная длинна идентификатора в каталоге - 24 символа.")]
@@ -207,6 +213,7 @@ namespace Workwear.Domain.Stock {
 			AdditionalInfo = nomenclature.AdditionalInfo;
 			ProtectionProperties = nomenclature.ProtectionProperties;
 			ProtectionСlass = nomenclature.ProtectionСlass;
+			Weight = nomenclature.Weight;
 
 			foreach(var pt in nomenclature.ProtectionTools) 
 				ProtectionTools.Add(pt);

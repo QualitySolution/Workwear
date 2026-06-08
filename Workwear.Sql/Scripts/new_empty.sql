@@ -491,6 +491,7 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `additional_info` TEXT NULL DEFAULT NULL,
   `protection_properties` VARCHAR(120) NULL DEFAULT NULL,
   `protection_class` VARCHAR(16) NULL DEFAULT NULL,
+  `weight` INT NOT NULL DEFAULT 0,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `catalog_id` CHAR(24) NULL,
   `rating` FLOAT NULL DEFAULT NULL,
