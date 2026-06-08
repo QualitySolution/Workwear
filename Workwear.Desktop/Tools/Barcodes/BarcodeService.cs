@@ -6,15 +6,18 @@ using Workwear.Domain.ClothingService;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Repository.Operations;
 
 namespace Workwear.Tools.Barcodes 
 {
 	public class BarcodeService 
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private EmployeeIssueRepository employeeIssueRepository;
 
-		public BarcodeService(BaseParameters baseParameters) {
+		public BarcodeService(BaseParameters baseParameters, EmployeeIssueRepository employeeIssueRepository) {
 			BaseCode = baseParameters.BarcodePrefix ?? 2001;
+			this.employeeIssueRepository = employeeIssueRepository;
 		}
 
 		/// <summary>
@@ -27,18 +30,32 @@ namespace Workwear.Tools.Barcodes
 		#region Create
 
 		public void CreateBarcodeEAN13(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
+			
+			var usedNumbers = employeeIssueRepository
+				.GetBarcodeNumbersForEmployee(
+					employeeIssueOperations.Select(x => x.Employee).ToList(),
+//// Спорно, может лучше DateTime.Now. По идее должны быть во всех операциях одинаково
+					employeeIssueOperations.Max(x=> x.OperationTime),
+					unitOfWork);
 			foreach(var operation in employeeIssueOperations) {
 				int bcount = operation.BarcodeOperations.Count;
 
 				if(operation.Issued > bcount) {
 					var barcodes = Create(unitOfWork, operation.Issued - bcount, operation.Nomenclature, operation.WearSize, operation.Height);
 					foreach(var barcode in barcodes) {
+						var kitNumper = Enumerable.Range(1, int.MaxValue - 1)
+							.First(n => !usedNumbers
+								.Where(x => x.employeeId == operation.Employee.Id && x.nomenclatureId == operation.Nomenclature.Id)
+								.Select(x => x.kit_number)
+								.Contains(n));
 						var barcodeOperation = new BarcodeOperation {
 							Barcode = barcode,
-							EmployeeIssueOperation = operation
+							EmployeeIssueOperation = operation,
+							KitNumber = kitNumper
 						};
 						operation.BarcodeOperations.Add(barcodeOperation);
 						unitOfWork.Save(barcodeOperation);
+						usedNumbers.Add((operation.Employee.Id,operation.Nomenclature.Id,kitNumper));
 					}
 				}
 			}
@@ -81,7 +98,6 @@ namespace Workwear.Tools.Barcodes
 		#endregion
 
 		#region Private Methods
-
 		static int CheckSum(string upccode)
 		{
 			var sum = 0;
