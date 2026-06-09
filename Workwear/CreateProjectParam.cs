@@ -93,7 +93,6 @@ using Workwear.Tools.Barcodes;
 using Workwear.Tools.Permissions;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.OverNorms;
-using Workwear.Tools.OverNorms.Impl;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Import;
 using Connection = QS.Project.DB.Connection;

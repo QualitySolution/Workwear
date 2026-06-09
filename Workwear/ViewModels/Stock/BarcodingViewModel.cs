@@ -49,7 +49,6 @@ namespace Workwear.ViewModels.Stock {
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
 			this.interactive = interactive;
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 				
 			var entryBuilder = new CommonEEVMBuilderFactory<Barcoding>(this, Entity, UoW, navigation) {
@@ -64,7 +63,7 @@ namespace Workwear.ViewModels.Stock {
 			
 			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
-				logger.Info($"Создание Нового документа маркировки");
+				logger.Info($"Создание нового документа маркировки");
 				Entity.Warehouse = warehouse;
 				if(Entity.Warehouse == null)
 					Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -76,11 +75,9 @@ namespace Workwear.ViewModels.Stock {
 			if(stockBalanceJournalNode != null)
 				OpenReleaseBarcodesWindow(Entity.Warehouse,stockBalanceJournalNode);
 		}
-//1289		
-		private IInteractiveService interactive; 
-//1289
-		private BaseParameters baseParameters;
-		private FeaturesService featuresService;
+		
+		private readonly IInteractiveService interactive; 
+		private readonly FeaturesService featuresService;
 		private readonly BarcodeService barcodeService;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		

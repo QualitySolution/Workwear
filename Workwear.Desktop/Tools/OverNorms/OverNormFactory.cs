@@ -2,9 +2,8 @@
 using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
 using Workwear.Tools.OverNorms.Models;
-using Workwear.Tools.OverNorms.Models.Impl;
 
-namespace Workwear.Tools.OverNorms.Impl 
+namespace Workwear.Tools.OverNorms 
 {
 	public class OverNormFactory : IOverNormFactory
 	{

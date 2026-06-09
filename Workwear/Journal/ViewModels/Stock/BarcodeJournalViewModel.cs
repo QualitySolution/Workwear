@@ -145,17 +145,6 @@ namespace Workwear.Journal.ViewModels.Stock
 		
 		#region Constraint
 
-		private Nomenclature nomenclature;
-		public Nomenclature Nomenclature 
-		{
-			get => nomenclature;
-			set 
-			{
-				SetField(ref nomenclature, value);
-				DataLoader.LoadData(false);
-			}
-		}
-
 		private Size size;
 		public Size Size 
 		{

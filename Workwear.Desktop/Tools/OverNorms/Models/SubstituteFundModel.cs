@@ -8,16 +8,16 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 
-namespace Workwear.Tools.OverNorms.Models.Impl 
+namespace Workwear.Tools.OverNorms.Models
 {
 	/// <summary>
-	/// Модель для создания операций с гостевого склада
+	/// Модель для создания операций с подменного фонда
 	/// </summary>
-	public class GuestModel : OverNormModelBase 
+	public class SubstituteFundModel : OverNormModelBase 
 	{
 		private readonly IUnitOfWork uow;
 
-		public GuestModel(IUnitOfWork uow)
+		public SubstituteFundModel(IUnitOfWork uow) 
 		{
 			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
@@ -25,8 +25,10 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 		//public override bool Editable { get; }
 
 		public override bool CanUseWithBarcodes => true;
+
 		public override bool CanUseWithoutBarcodes => false;
-		public override bool RequiresEmployeeIssueOperation => false;
+
+		public override bool RequiresEmployeeIssueOperation => true;
 
 		public override OverNorm CreateDocument(IList<OverNormParam> @params, Warehouse expenseWarehouse, UserBase createdByUser = null, string docNumber = null, string comment = null) 
 		{
@@ -35,17 +37,20 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			if (RequiresEmployeeIssueOperation && @params.Any(x => x.EmployeeIssueOperation == null)) throw new InvalidOperationException("Необходимо заполнить операции выдачи сотруднику");
 			if (UseBarcodes && @params.Any(x => !x.Barcodes.Any())) throw new InvalidOperationException("При использовании штрихкодов заполните их");
 			if (expenseWarehouse == null) throw new ArgumentNullException(nameof(expenseWarehouse));
-			
-			OverNorm document = new OverNorm() {
+
+			OverNorm document = new OverNorm() 
+			{
 				Warehouse = expenseWarehouse,
 				Comment = comment,
-				Type = OverNormType.Guest,
+				Type = OverNormType.Substitute,
 				CreatedbyUser = createdByUser,
-				DocNumber = docNumber,
+				DocNumber = docNumber
 			};
-			
+
 			foreach (OverNormParam param in @params) 
+			{
 				AddItem(document, param, expenseWarehouse);
+			}
 			
 			return document;
 		}
@@ -55,15 +60,16 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			if (operation == null) throw new ArgumentNullException(nameof(operation));
 			if (receiptWarehouse == null) throw new ArgumentNullException(nameof(receiptWarehouse));
 
-			WarehouseOperation newWarehouseOp = new WarehouseOperation() {
+			WarehouseOperation newWarehouseOp = new WarehouseOperation() 
+			{
 				ReceiptWarehouse = receiptWarehouse,
 				Amount = operation.WarehouseOperation.Amount,
 				Nomenclature = operation.WarehouseOperation.Nomenclature,
 				WearSize = operation.WarehouseOperation.WearSize,
 				Height = operation.WarehouseOperation.Height
 			};
-			
-			OverNormOperation writeOff = CreateOperationWithBarcodes(newWarehouseOp, operation.Employee, operation.BarcodeOperations.Select(x => x.Barcode));
+
+			OverNormOperation writeOff = CreateOperationWithBarcodes(newWarehouseOp, operation.Employee, operation.SubstitutedIssueOperation, operation.BarcodeOperations.Select(x => x.Barcode));
 			operation.ReturnFromOperation = writeOff;
 		}
 
@@ -82,43 +88,55 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 			if (item == null) throw new ArgumentNullException(nameof(item));
 			if (RequiresEmployeeIssueOperation && param.EmployeeIssueOperation == null) throw new InvalidOperationException("Необходимо заполнить операцию выдачи сотруднику");
 			if (UseBarcodes && param.Amount != param.Barcodes.Count) throw new InvalidOperationException("При использовании штрихкодов заполните их");
-			
+
 			item.OverNormOperation.LastUpdate = DateTime.Now;
 			item.OverNormOperation.Employee = param.Employee;
-			item.OverNormOperation.SubstitutedIssueOperation = RequiresEmployeeIssueOperation ? param.EmployeeIssueOperation : item.OverNormOperation.SubstitutedIssueOperation;
-			item.OverNormOperation.Nomenclature = param.Nomenclature;
-			
-			if(param.Amount > 0 && item.OverNormOperation.WarehouseOperation == null) 
-				item.OverNormOperation.WarehouseOperation = new WarehouseOperation() { ExpenseWarehouse = item.Document.Warehouse };
+			item.OverNormOperation.SubstitutedIssueOperation = param.EmployeeIssueOperation ?? item.OverNormOperation.SubstitutedIssueOperation;
+
+			item.OverNormOperation.WarehouseOperation.OperationTime = DateTime.Now;
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
 			item.OverNormOperation.WarehouseOperation.Nomenclature = param.Nomenclature;
 			item.OverNormOperation.WarehouseOperation.WearSize = param.Size;
 			item.OverNormOperation.WarehouseOperation.Height = param.Height;
+
 			List<int> currentBarcodeIds = item.OverNormOperation.BarcodeOperations.Select(bo => bo.Barcode.Id).ToList();
 			if (!UseBarcodes) 
+			{
 				item.OverNormOperation.BarcodeOperations.Clear();
-			else if (UseBarcodes && (param.Barcodes.Any(b => !currentBarcodeIds.Contains(b.Id)) || param.Barcodes.Count != currentBarcodeIds.Count)) {
+			}
+			else if (UseBarcodes && (param.Barcodes.Any(b => !currentBarcodeIds.Contains(b.Id)) || param.Barcodes.Count != currentBarcodeIds.Count)) 
+			{
 				int amountToUpdate = item.OverNormOperation.BarcodeOperations.Count > param.Amount
 					? param.Amount
 					: item.OverNormOperation.BarcodeOperations.Count;   
-				if (item.OverNormOperation.BarcodeOperations.Count > param.Amount) {
+				if (item.OverNormOperation.BarcodeOperations.Count > param.Amount) 
+				{
 					int count = item.OverNormOperation.BarcodeOperations.Count;
 					for (int i = count - 1; i >= count - param.Amount; i--) 
+					{
 						item.OverNormOperation.BarcodeOperations.RemoveAt(i);
-				} else 
+					}
+				}
+				else 
+				{
 					FillOverNormOperation(item.OverNormOperation, param.Barcodes.Skip(amountToUpdate));
+				}
 				
-				for (int i = 0; i < amountToUpdate; i++) {
+				for (int i = 0; i < amountToUpdate; i++) 
+				{
 					BarcodeOperation bo = item.OverNormOperation.BarcodeOperations[i];
 					if (bo.Barcode.Id != param.Barcodes[i].Id) 
+					{
 						bo.Barcode = param.Barcodes[i];
+					}
 				}
 			}
 		}
-		
-		private void AddItem(OverNorm document, OverNormParam param, Warehouse expenseWarehouse)
+
+		private void AddItem(OverNorm document, OverNormParam param, Warehouse expenseWarehouse) 
 		{
-			WarehouseOperation newWarehouseOp = new WarehouseOperation {
+			WarehouseOperation newWarehouseOp = new WarehouseOperation 
+			{
 				ExpenseWarehouse = expenseWarehouse,
 				Amount = param.Amount,
 				Nomenclature = param.Nomenclature,
@@ -127,37 +145,31 @@ namespace Workwear.Tools.OverNorms.Models.Impl
 				//TODO: owner
 			};
 
-			OverNormOperation newOverNormOp;
-			if (UseBarcodes && param.Barcodes.Any()) 
-				newOverNormOp = CreateOperationWithBarcodes(newWarehouseOp, param.Employee,  param.Barcodes);
-			else {
-				newOverNormOp = new OverNormOperation() {
-					WarehouseOperation = newWarehouseOp,
-					Type = OverNormType.Guest,
-					Employee = param.Employee
-				};
-			}
-			
+			OverNormOperation newOverNormOp =
+				CreateOperationWithBarcodes(newWarehouseOp, param.Employee, param.EmployeeIssueOperation, param.Barcodes);
 			document.AddItem(newOverNormOp, param);
 		}
-		
-		private OverNormOperation CreateOperationWithBarcodes(WarehouseOperation newWarehouseOp, EmployeeCard employee, IEnumerable<Barcode> barcodes) 
+
+		private OverNormOperation CreateOperationWithBarcodes(WarehouseOperation newWarehouseOp, EmployeeCard employee, EmployeeIssueOperation employeeIssueOperation, IEnumerable<Barcode> barcodes) 
 		{
-			OverNormOperation newOverNormOp = new OverNormOperation() {
+			OverNormOperation newOverNormOp = new OverNormOperation() 
+			{
+				SubstitutedIssueOperation = employeeIssueOperation,
 				WarehouseOperation = newWarehouseOp,
-				Type = OverNormType.Guest,
-				Employee = employee,
-				Nomenclature = newWarehouseOp.Nomenclature,
+				Type = OverNormType.Substitute,
+				Employee = employee
 			};
-			
+
 			FillOverNormOperation(newOverNormOp, barcodes);
 			return newOverNormOp;
 		}
 
 		private void FillOverNormOperation(OverNormOperation overNormOp, IEnumerable<Barcode> barcodes) 
 		{
-			foreach (Barcode substituteBarcode in barcodes) {
-				BarcodeOperation barcodeOperation = new BarcodeOperation() {
+			foreach (Barcode substituteBarcode in barcodes) 
+			{
+				BarcodeOperation barcodeOperation = new BarcodeOperation() 
+				{
 					Barcode = substituteBarcode,
 					OverNormOperation = overNormOp
 				};

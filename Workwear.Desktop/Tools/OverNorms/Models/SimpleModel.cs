@@ -7,7 +7,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 
-namespace Workwear.Tools.OverNorms.Models.Impl 
+namespace Workwear.Tools.OverNorms.Models
 {
 	/// <summary>
 	/// Модель для создания операций остановочного ремонта

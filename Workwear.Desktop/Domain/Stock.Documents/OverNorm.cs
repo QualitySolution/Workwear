@@ -8,7 +8,6 @@ using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Tools.OverNorms;
-using Workwear.Tools.OverNorms.Impl;
 
 namespace Workwear.Domain.Stock.Documents 
 {

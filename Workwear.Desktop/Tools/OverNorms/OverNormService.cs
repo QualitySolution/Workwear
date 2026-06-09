@@ -8,7 +8,7 @@ using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 
-namespace Workwear.Tools.OverNorms.Impl 
+namespace Workwear.Tools.OverNorms 
 {
 	public class OverNormService : IOverNormService 
 	{

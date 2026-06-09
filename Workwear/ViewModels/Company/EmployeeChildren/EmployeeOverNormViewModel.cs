@@ -33,11 +33,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		public void LoadNodes() {
 			EmployeeOverNormNode resultAlias = null;
 			OverNormOperation overNormOperationAlias = null;
-			OverNormOperation removeOperationAlias = null;
 			OverNormItem overNormDocItemAlias = null;
 			OverNorm overNormDocAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
-WarehouseOperation warehouseOperationAlias1 = null;
 			Nomenclature nomenclatureAlias = null;
 			ItemsType nomenclatureItemTypesAlias = null;
 			MeasurementUnits nomenclatureUnitsAlias = null;
@@ -47,12 +45,6 @@ WarehouseOperation warehouseOperationAlias1 = null;
 			
 			var query = UoW.Session.QueryOver(() => overNormOperationAlias)
 				.Where(e => e.Employee.Id == Entity.Id);
-/*
-			var subQueryRemove = QueryOver.Of(() => removeOperationAlias)
-				.JoinAlias(() => overNormOperationAlias.WarehouseOperation, () => warehouseOperationAlias1, JoinType.LeftOuterJoin)
-				.Where(() => removeOperationAlias.WriteOffOverNormOperation.Id == overNormOperationAlias.Id)
-				.Select (Projections.Sum<WarehouseOperation> (o => o.Amount));
-*/
 			query
 				.JoinEntityAlias(() => overNormDocItemAlias, () => overNormDocItemAlias.OverNormOperation.Id == overNormOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => overNormDocItemAlias.Document, () => overNormDocAlias, JoinType.LeftOuterJoin)
@@ -62,9 +54,7 @@ WarehouseOperation warehouseOperationAlias1 = null;
 				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
-//.Where (e => e.AutoWriteoffDate == null || e.AutoWriteoffDate > DateTime.Today)
 				.SelectList (list => list
-//.SelectGroup (() => expenseOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select(() => overNormOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select(() => overNormDocAlias.Type).WithAlias (() => resultAlias.DocType)
 					.Select(() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
@@ -75,7 +65,6 @@ WarehouseOperation warehouseOperationAlias1 = null;
 					.Select(() => warehouseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
 					.Select(() => warehouseOperationAlias.Amount).WithAlias (() => resultAlias.Added)
 					.Select(() => warehouseOperationAlias.OperationTime).WithAlias (() => resultAlias.Date)
-					//.SelectSubQuery (subQueryRemove).WithAlias (() => resultAlias.Removed)
 				);
 			
 			var items = query

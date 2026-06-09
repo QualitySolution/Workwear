@@ -3,7 +3,6 @@ using QS.Project.Domain;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
-using Workwear.Tools.OverNorms.Impl;
 
 namespace Workwear.Tools.OverNorms.Models 
 {
