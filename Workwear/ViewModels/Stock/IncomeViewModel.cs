@@ -219,11 +219,12 @@ namespace Workwear.ViewModels.Stock {
 		
 		private void SelectWearSize_SizeSelected(AddedSizesEventArgs e, IncomeItem item) {
 			foreach (var i in e.SizesWithAmount.ToList()) {
-				var exist = Entity.FindItem(item.Nomenclature, i.Size, e.Height, item.Owner);
+				var height = i.Height ?? e.Height;
+				var exist = Entity.FindItem(item.Nomenclature, i.Size, height, item.Owner);
 				if(exist != null)
 					exist.Amount = i.Amount;
 				else
-					Entity.AddItem(item.Nomenclature,  i.Size, e.Height, i.Amount, item.Certificate, item.Cost, item.Owner);
+					Entity.AddItem(item.Nomenclature,  i.Size, height, i.Amount, item.Certificate, item.Cost, item.Owner);
 			}
 
 			if(item.WearSize == null) {
