@@ -16,7 +16,6 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
-using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Supply;
@@ -165,12 +164,24 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool ShowShipment => featuresService.Available(WorkwearFeature.Shipment);
 		public string ShipmentLabel => (Entity.Id == 0 && Entity.Shipment == null) ? "Заполнить \nиз поставки:" : "Поставка:";
 
-		public virtual IList<Size> GetSizeVariants(IncomeItem item) {
-			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
-		}
+		public virtual IList<NomenclatureSizes> GetSizeVariants(IncomeItem item) =>
+			GetNomenclatureSizeVariants(item, forWearSize: true);
 		
-		public virtual IList<Size> GetHeightVariants(IncomeItem item) {
-			return sizeService.GetSize(UoW, item.HeightType, onlyUseInNomenclature: true).ToList();
+		public virtual IList<NomenclatureSizes> GetHeightVariants(IncomeItem item) =>
+			GetNomenclatureSizeVariants(item, forWearSize: false);
+
+		private IList<NomenclatureSizes> GetNomenclatureSizeVariants(IncomeItem item, bool forWearSize) {
+			if(item?.Nomenclature?.NomenclatureSizes?.Any() == true)
+				return item.Nomenclature.NomenclatureSizes.ToList();
+
+			var sizes = sizeService.GetSize(UoW, forWearSize ? item.WearSizeType : item.HeightType, onlyUseInNomenclature: true);
+			return sizes
+				.Select(x => new NomenclatureSizes {
+					Nomenclature = item.Nomenclature,
+					WearSize = forWearSize ? x : null,
+					Height = forWearSize ? null : x
+				})
+				.ToList();
 		}
 		#endregion
 
