@@ -223,6 +223,13 @@ namespace Workwear.ViewModels.Supply {
 		}
 		
 		public void AddFromForecasting(List<WarehouseForecastingItem> forecastingItems, ShipmentParams shipmentParameters) {
+			var skippedItemsCount = forecastingItems.Count(i => i.Nomenclature == null && GetForecastingShipmentAmount(i, shipmentParameters.Type) < 0);
+			if(skippedItemsCount > 0) {
+				interactive.ShowMessage(
+					ImportanceLevel.Warning,
+					$"В заявку на поставку не попадет {skippedItemsCount} позиций, так как для них не указана конкретная складская номенклатура.",
+					"Создание заявки на поставку");
+			}
 
 			var nomIds = forecastingItems
 				.Where( i => i.Nomenclature != null)
@@ -246,15 +253,26 @@ namespace Workwear.ViewModels.Supply {
 				.Future();
 			
 			foreach(var fitem in forecastingItems.Where( i => i.Nomenclature != null)) {
-				if(shipmentParameters.Type == ShipmentCreateType.WithDebt && fitem.WithDebt < 0 ||
-				   shipmentParameters.Type == ShipmentCreateType.WithoutDebt && fitem.WithoutDebt < 0)
+				var amount = GetForecastingShipmentAmount(fitem, shipmentParameters.Type);
+				if(amount < 0)
 					Entity.AddItem(
 						UoW.GetInSession(fitem.Nomenclature),
 						UoW.GetInSession(fitem.Size),
 						UoW.GetInSession(fitem.Height),
-						(shipmentParameters.Type == ShipmentCreateType.WithDebt ? fitem.WithDebt : fitem.WithoutDebt) * -1,
+						amount * -1,
 						fitem.Nomenclature.SaleCost ?? 0 //Возможно стоит подвязаться на переключатель типа стоимости в прогнозе
 						);
+			}
+		}
+
+		private int GetForecastingShipmentAmount(WarehouseForecastingItem item, ShipmentCreateType shipmentCreateType) {
+			switch(shipmentCreateType) {
+				case ShipmentCreateType.WithDebt:
+					return item.WithDebt;
+				case ShipmentCreateType.WithoutDebt:
+					return item.WithoutDebt;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(shipmentCreateType), shipmentCreateType, null);
 			}
 		}
 
