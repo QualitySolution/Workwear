@@ -84,6 +84,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<EmployeeVacationsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeViewModel>().AsSelf();
 			builder.RegisterType<EmployeeWearItemsViewModel>().AsSelf();
+			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.RegisterType<ManualEmployeeIssueOperationsViewModel>().AsSelf();
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
 			builder.RegisterType<NormRepository>().AsSelf();
@@ -91,7 +92,6 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<StockBalanceModel>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
-			builder.Register(x => Substitute.For<BarcodeService>(baseParameters)).AsSelf();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
 			builder.Register(x => commonMessages).As<CommonMessages>();
