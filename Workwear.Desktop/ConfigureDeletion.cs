@@ -418,6 +418,7 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<CausesWriteOff>()
 				.AddClearDependence<WriteoffItem>(x => x.CausesWriteOff);
+			DeleteConfig.AddHibernateDeleteInfo<CausesIssue>();
 			
 			#endregion
 			#region Поставка
