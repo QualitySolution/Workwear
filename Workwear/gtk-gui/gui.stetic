@@ -5132,7 +5132,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Window" id="MainWindow" design-size="1116 458">
+  <widget class="Gtk.Window" id="MainWindow" design-size="1875 458">
     <action-group name="Default">
       <action id="Action46">
         <property name="Type">Action</property>
@@ -5900,6 +5900,30 @@
         <property name="ShortLabel" translatable="yes">Причины выдачи</property>
         <signal name="Activated" handler="OnActionCausesIssueActivated" />
       </action>
+      <action id="Action48">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Будьте в курсе</property>
+        <property name="ShortLabel" translatable="yes">Будьте в курсе</property>
+        <property name="StockId">www</property>
+      </action>
+      <action id="TelegramAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Канал в Telegram</property>
+        <property name="ShortLabel" translatable="yes">Канал в Telegram</property>
+        <signal name="Activated" handler="OnTelegramActionActivated" />
+      </action>
+      <action id="MAXAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Канал в MAX</property>
+        <property name="ShortLabel" translatable="yes">Канал в MAX</property>
+        <signal name="Activated" handler="OnMAXActionActivated" />
+      </action>
+      <action id="EmailAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Email-рассылка</property>
+        <property name="ShortLabel" translatable="yes">Email-рассылка</property>
+        <signal name="Activated" handler="OnEmailActionActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6054,6 +6078,11 @@
                 <node type="Menuitem" action="ActionUpdate" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSite" />
+                <node type="Menu" action="Action48">
+                  <node type="Menuitem" action="TelegramAction" />
+                  <node type="Menuitem" action="MAXAction" />
+                  <node type="Menuitem" action="EmailAction" />
+                </node>
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionSN" />
                 <node type="Separator" />

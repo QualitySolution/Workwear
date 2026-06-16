@@ -1146,4 +1146,19 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionCausesIssueActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<CauseIssueJournalViewModel>(null);
 	}
+
+	protected void OnTelegramActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenTelegram");
+		OpenHelper.OpenUrl("https://t.me/qs_specodezhda");
+	}
+
+	protected void OnMAXActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenMax");
+		OpenHelper.OpenUrl("https://max.ru/id7810524703_biz");
+	}
+
+	protected void OnEmailActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenEmail");
+		OpenHelper.OpenUrl("https://forms.msndr.net/subscriptions/3db9fe188746bac0e094a6a715d45444/form");
+	}
 }
