@@ -357,6 +357,8 @@ namespace Workwear.Tools.Features
 		Visits,
 		[Display(Name = "Заявки на выдачу")]
 		IssuanceRequest,
+		[Display(Name = "Аренда")]
+		Rent,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Спецкойны")]

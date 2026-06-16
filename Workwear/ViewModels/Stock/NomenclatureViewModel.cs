@@ -116,6 +116,8 @@ namespace Workwear.ViewModels.Stock
 			get => currentTab;
 			set => SetField(ref currentTab, value);
 		}
+
+		public string UsedCurrency => CurrencyWorks.CurrencyShortName;
 		#endregion
 		#region ChildrenViewModels	
 		public NomenclatureProtectionToolsViewModel ProtectionToolsViewModel;
@@ -126,6 +128,7 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleClothesSex => true; //Поле стало в базе обязательным для всех номенклатур.
 
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
+		public bool VisibleRentCost => featuresService.Available(WorkwearFeature.Rent);
 		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		public bool VisibleBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 		public bool VisibleWashable => featuresService.Available(WorkwearFeature.ClothingService);

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Gamma.Utilities;
 using Gamma.Widgets;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control;
 using Workwear.Domain.Company;
@@ -25,7 +28,6 @@ namespace Workwear.ReportParameters.ViewModels {
 		{
 			FeaturesService = featuresService;
 			Title = "Справка о выдачах по дежурным нормам";
-			Identifier = "DutyNorms.AmountIssuedDutyNorms";
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -38,14 +40,25 @@ namespace Workwear.ReportParameters.ViewModels {
 			ChoiceSubdivisionViewModel.PropertyChanged += (s,e) => OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		
-		private DateTime? startDate;
+		public override string Identifier { 
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+			set => throw new InvalidOperationException();
+		}
+		
+		private AmountIssuedDutyNormsReportType reportType;
+		public virtual AmountIssuedDutyNormsReportType ReportType {
+			get => reportType;
+			set => SetField(ref reportType, value);
+		}
+		
+		private DateTime? startDate = DateTime.Now.AddMonths(-1);
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? StartDate {
 			get => startDate;
 			set => SetField(ref startDate, value);
 		}
 
-		private DateTime? endDate;
+		private DateTime? endDate = DateTime.Now;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? EndDate {
 			get => endDate;
@@ -111,5 +124,14 @@ namespace Workwear.ReportParameters.ViewModels {
 		                             && StartDate != null && EndDate != null && startDate <= endDate;
 		public bool VisibleShowCost => FeaturesService.Available(WorkwearFeature.Selling);
 		public bool VisibleOwners;
+	}
+
+	public enum AmountIssuedDutyNormsReportType {
+		[ReportIdentifier("DutyNorms.AmountIssuedDutyNorms")]
+		[Display(Name = "Форматировано")]
+		Common,
+		[ReportIdentifier("DutyNorms.AmountIssuedDutyNormsFlat")]
+		[Display(Name = "Только данные")]
+		Flat
 	}
 }

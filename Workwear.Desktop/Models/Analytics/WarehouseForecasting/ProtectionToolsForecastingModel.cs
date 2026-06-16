@@ -40,36 +40,32 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 					supplyType = (stocks.OrderByDescending(x => x.Amount).FirstOrDefault()?.Position.Nomenclature.Sex ?? ClothesSex.Universal) == ClothesSex.Universal ? SupplyType.Unisex : SupplyType.TwoSex;
 				if (supplyType == SupplyType.Unisex) {
 					var nomenclature = DetermineNomenclature(group.Key.ProtectionTools, ClothesSex.Universal, stocks);
-					var (rs, rh, status) = WarehouseForecastingItem.ResolveSizeForNomenclature(nomenclature, group.Key.Size, group.Key.Height, allNomenclatureSizes);
-					var resolvedKey = (group.Key.ProtectionTools, rs, rh);
-					var item = new WarehouseForecastingItem(columnsModel, resolvedKey, group.ToList(), stocks, ClothesSex.Universal);
+					var (_, _, status) = WarehouseForecastingItem.ResolveSizeForNomenclature(nomenclature, group.Key.Size, group.Key.Height, allNomenclatureSizes);
+					var item = new WarehouseForecastingItem(columnsModel, group.Key, group.ToList(), stocks, ClothesSex.Universal);
 					item.SizeMatchStatus = status;
 					result.Add(item);
 				} else {
 					var mensIssues = group.OfType<FutureIssueEmployee>().Where(x => x.Employee.Sex == Sex.M).ToList<FutureIssue>();
 					if (mensIssues.Any()) {
 						var nomenclature = DetermineNomenclature(group.Key.ProtectionTools, ClothesSex.Men, stocks);
-						var (rs, rh, status) = WarehouseForecastingItem.ResolveSizeForNomenclature(nomenclature, group.Key.Size, group.Key.Height, allNomenclatureSizes);
-						var resolvedKey = (group.Key.ProtectionTools, rs, rh);
-						var item = new WarehouseForecastingItem(columnsModel, resolvedKey, mensIssues, stocks, ClothesSex.Men);
+						var (_, _, status) = WarehouseForecastingItem.ResolveSizeForNomenclature(nomenclature, group.Key.Size, group.Key.Height, allNomenclatureSizes);
+						var item = new WarehouseForecastingItem(columnsModel, group.Key, mensIssues, stocks, ClothesSex.Men);
 						item.SizeMatchStatus = status;
 						result.Add(item);
 					}
 					var womenIssues = group.OfType<FutureIssueEmployee>().Where(x => x.Employee.Sex == Sex.F).ToList<FutureIssue>();
 					if(womenIssues.Any()) {
 						var nomenclature = DetermineNomenclature(group.Key.ProtectionTools, ClothesSex.Women, stocks);
-						var (rs, rh, status) = WarehouseForecastingItem.ResolveSizeForNomenclature(nomenclature, group.Key.Size, group.Key.Height, allNomenclatureSizes);
-						var resolvedKey = (group.Key.ProtectionTools, rs, rh);
-						var item = new WarehouseForecastingItem(columnsModel, resolvedKey, womenIssues, stocks, ClothesSex.Women);
+						var (_, _, status) = WarehouseForecastingItem.ResolveSizeForNomenclature(nomenclature, group.Key.Size, group.Key.Height, allNomenclatureSizes);
+						var item = new WarehouseForecastingItem(columnsModel, group.Key, womenIssues, stocks, ClothesSex.Women);
 						item.SizeMatchStatus = status;
 						result.Add(item);
 					}
 					var universalIssues = group.Where(x => !(x is FutureIssueEmployee)).ToList();
 					if(universalIssues.Any()) {
 						var nomenclature = DetermineNomenclature(group.Key.ProtectionTools, ClothesSex.Universal, stocks);
-						var (rs, rh, status) = WarehouseForecastingItem.ResolveSizeForNomenclature(nomenclature, group.Key.Size, group.Key.Height, allNomenclatureSizes);
-						var resolvedKey = (group.Key.ProtectionTools, rs, rh);
-						var item = new WarehouseForecastingItem(columnsModel, resolvedKey, universalIssues, stocks, ClothesSex.Universal);
+						var (_, _, status) = WarehouseForecastingItem.ResolveSizeForNomenclature(nomenclature, group.Key.Size, group.Key.Height, allNomenclatureSizes);
+						var item = new WarehouseForecastingItem(columnsModel, group.Key, universalIssues, stocks, ClothesSex.Universal);
 						item.SizeMatchStatus = status;
 						result.Add(item);
 					}

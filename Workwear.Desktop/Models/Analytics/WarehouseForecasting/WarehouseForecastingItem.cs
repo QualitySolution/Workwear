@@ -208,13 +208,11 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			if(allNomenclatureSizes != null) {
 				var nomSizesList = allNomenclatureSizes as IList<Size> ?? allNomenclatureSizes.ToList();
 				if(nomSizesList.Any()) {
-					// Для размера: фильтруем по типу размера сотрудника
 					Size resolvedSize = employeeSize == null ? null
 						: nomSizesList
 							.Where(s => s.SizeType.Id == employeeSize.SizeType.Id)
 							.FirstOrDefault(s => SizeService.IsSuitable(employeeSize, s));
 
-					// Для роста: фильтруем по типу размера сотрудника
 					Size resolvedHeight = employeeHeight == null ? null
 						: nomSizesList
 							.Where(s => s.SizeType.Id == employeeHeight.SizeType.Id)

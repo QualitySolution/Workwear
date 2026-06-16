@@ -268,9 +268,9 @@ namespace workwear.Journal
 					.AddColumn("Название").AddReadOnlyTextRenderer(n => n.Name)
 					.AddColumn("Размещение").AddReadOnlyTextRenderer(n => n.Location)
 					.AddColumn("Тип").AddReadOnlyTextRenderer(n => n.Type.ToString())
-					.AddColumn("Был онлайн").AddReadOnlyTextRenderer(x => x.LastOnline?.ToDateTime().ToString("g"))
-						.AddSetter((c, n) => c.Foreground = n.LastOnline?.ToDateTime() < jvm.RequestTime.AddMinutes(-15) ? "red" : 
-						(n.LastOnline?.ToDateTime() < jvm.RequestTime.AddMinutes(-3) ? "orange" : "green"))
+					.AddColumn("Был онлайн").AddReadOnlyTextRenderer(x => x.LastOnline?.ToDateTime().ToLocalTime().ToString("g"))
+						.AddSetter((c, n) => c.Foreground = n.LastOnline?.ToDateTime().ToLocalTime() < jvm.RequestTime.AddMinutes(-15) ? "red" :
+						(n.LastOnline?.ToDateTime().ToLocalTime() < jvm.RequestTime.AddMinutes(-3) ? "orange" : "green"))
 					.AddColumn("Старейшая закладка")
 						.ToolTipText(jvm.GetLongestPickupTooltip)
 						.AddReadOnlyTextRenderer(x => x.Cells.Min(c => c.CreateTime)?.ToDateTime().ToShortDateString())
@@ -491,6 +491,13 @@ namespace workwear.Journal
 			
 			TreeViewColumnsConfigFactory.Register<CauseWriteOffJournalViewModel>(
 				() => FluentColumnsConfig<CauseWriteOffJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node=>node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node=>node.Name).SearchHighlight()
+					.Finish()
+			);
+			
+			TreeViewColumnsConfigFactory.Register<CauseIssueJournalViewModel>(
+				() => FluentColumnsConfig<CauseIssueJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node=>node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").AddTextRenderer(node=>node.Name).SearchHighlight()
 					.Finish()

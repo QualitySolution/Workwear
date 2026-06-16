@@ -75,7 +75,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		public virtual string Title => $"Возврат от работника №{DocNumberText} от {Date:d}";
+		public virtual string Title => $"Списание №{DocNumberText} от {Date:d}";
 
 		#region IValidatableObject implementation
 

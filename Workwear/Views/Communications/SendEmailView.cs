@@ -9,7 +9,7 @@ namespace Workwear.Views.Communications {
 		{
 			this.Build();
 			
-			yentryEAdress.ValidationMode = ValidationType.Email;
+			yentryEAdress.ValidationMode = ValidationType.MultipleEmail;
 			yentryEAdress.Binding
 				.AddBinding(ViewModel, vm => vm.EmailAddress, w => w.Text).InitializeFromSource();
 			yentryTopic.Binding

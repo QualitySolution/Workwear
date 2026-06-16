@@ -6,6 +6,9 @@ namespace Workwear.ReportParameters.Views {
 		public AmountIssuedDutyNormsView(AmountIssuedDutyNormsViewModel viewModel) : base(viewModel) {
 			this.Build();
 			
+			comboReportType.ItemsEnum = typeof(AmountIssuedDutyNormsReportType);
+			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
+			
 			ydateperiodpicker.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.StartDate, w => w.StartDateOrNull)
 				.AddBinding(v => v.EndDate, w => w.EndDateOrNull)
@@ -29,7 +32,7 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(wm => wm.SelectOwner, w => w.SelectedItem)
 				.InitializeFromSource();
 
-			checkShowCost.Visible = ViewModel.VisibleShowCost; ;
+			checkShowCost.Visible = ViewModel.VisibleShowCost;
 			checkShowCost.Binding
 				.AddBinding(ViewModel, wm => wm.ShowCost, w => w.Active)
 				.InitializeFromSource();

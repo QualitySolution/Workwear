@@ -59,10 +59,12 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
 				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent)
+				.AddClearDependence<Department>(x => x.HeadOfDepartment)
 				.AddClearDependence<DutyNorm>(x => x.ResponsibleEmployee)
 				.AddClearDependence<ExpenseDutyNorm>(x => x.ResponsibleEmployee)
 				.AddClearDependence<IssuanceSheet>(x => x.TransferAgent)
 				.AddClearDependence<Leader>(x => x.Employee)
+				.AddClearDependence<Subdivision>(x => x.HeadOfDivision)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<EmployeeCostCenter>(x => x.Employee)
@@ -90,7 +92,6 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeSelectedNomenclature>();
 
 			DeleteConfig.AddHibernateDeleteInfo<Leader>()
-				.AddClearDependence<EmployeeCard>(x => x.Leader)
 				.AddClearDependence<IssuanceSheet>(x => x.HeadOfDivisionPerson)
 				.AddClearDependence<IssuanceSheet>(x => x.ResponsiblePerson)
 				.AddClearDependence<UserSettings>(x => x.DefaultResponsiblePerson)
@@ -417,6 +418,7 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<CausesWriteOff>()
 				.AddClearDependence<WriteoffItem>(x => x.CausesWriteOff);
+			DeleteConfig.AddHibernateDeleteInfo<CausesIssue>();
 			
 			#endregion
 			#region Поставка

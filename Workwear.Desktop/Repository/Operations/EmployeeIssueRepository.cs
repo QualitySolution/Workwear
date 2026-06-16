@@ -9,6 +9,7 @@ using NHibernate;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Models.Operations;
@@ -71,6 +72,44 @@ namespace Workwear.Repository.Operations
 			makeEager?.Invoke(query);
 
 			return query.List();
+		}
+
+		/// <summary>
+		/// Загружает операции выдачи для указанных сотрудников в виде лёгкого DTO.
+		/// В отличие от <see cref="AllOperationsFor"/>, результат НЕ попадает в Identity Map NHibernate,
+		/// что резко снижает потребление памяти при работе с большими базами.
+		/// Используется в прогнозировании склада.
+		/// </summary>
+		public virtual IList<GraphIssueOperationDto> AllOperationsForGraph(int[] employeeIds, IUnitOfWork uow = null) {
+			EmployeeIssueOperation opAlias = null;
+			GraphIssueOperationDto dtoAlias = null;
+
+			var dtos = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => opAlias)
+				.Where(() => opAlias.Employee.Id.IsIn(employeeIds))
+				.SelectList(list => list
+					.Select(() => opAlias.Id).WithAlias(() => dtoAlias.Id)
+					.Select(() => opAlias.OperationTime).WithAlias(() => dtoAlias.OperationTime)
+					.Select(() => opAlias.StartOfUse).WithAlias(() => dtoAlias.StartOfUse)
+					.Select(() => opAlias.AutoWriteoffDate).WithAlias(() => dtoAlias.AutoWriteoffDate)
+					.Select(() => opAlias.ExpiryByNorm).WithAlias(() => dtoAlias.ExpiryByNorm)
+					.Select(() => opAlias.Issued).WithAlias(() => dtoAlias.Issued)
+					.Select(() => opAlias.Returned).WithAlias(() => dtoAlias.Returned)
+					.Select(() => opAlias.OverrideBefore).WithAlias(() => dtoAlias.OverrideBefore)
+					.Select(() => opAlias.IssuedOperation.Id).WithAlias(() => dtoAlias.IssuedOperationId)
+					.Select(() => opAlias.Employee.Id).WithAlias(() => dtoAlias.EmployeeId)
+					.Select(() => opAlias.ProtectionTools.Id).WithAlias(() => dtoAlias.ProtectionToolsId)
+				)
+				.TransformUsing(Transformers.AliasToBean<GraphIssueOperationDto>())
+				.List<GraphIssueOperationDto>();
+
+			// Разрешаем ссылки IssuedOperation внутри загруженного набора
+			var dtoById = dtos.Where(d => d.Id != 0).ToDictionary(d => d.Id);
+			foreach(var dto in dtos.Where(d => d.IssuedOperationId.HasValue)) {
+				if(dtoById.TryGetValue(dto.IssuedOperationId.Value, out var issuedOp))
+					dto.IssuedOperation = issuedOp;
+			}
+
+			return dtos;
 		}
 
 		/// <summary>
@@ -334,6 +373,35 @@ namespace Workwear.Repository.Operations
 				.Where(o => issueOperations.Contains(o.IssuedOperation))
 				.ToList();
 			return writeOffOperations;
+		}
+
+		/// <summary>
+		/// Получает все актуальные для сотрудника номера маркированных выдач на указанную дату.
+		/// * Не учитываются ручные списания и возвраты.
+		/// </summary>
+		public virtual List<(int employeeId, int nomenclatureId, int kit_number)> GetBarcodeNumbersForEmployee(
+			IList<EmployeeCard> employees, 
+			DateTime onDate, 
+			IUnitOfWork uow = null)
+		{
+			EmployeeIssueOperation issueOperationAlias = null;
+			BarcodeOperation barcodeOperation = null;
+			
+			return (uow ?? RepoUow).Session.QueryOver(() => issueOperationAlias)
+				.WhereRestrictionOn(() => issueOperationAlias.Employee.Id).IsIn(employees.Select(e => e.Id).ToList())
+				.Where(() => issueOperationAlias.OperationTime <= onDate)
+				.Where(() => issueOperationAlias.AutoWriteoffDate == null || issueOperationAlias.AutoWriteoffDate > onDate)
+				.JoinAlias(x => x.BarcodeOperations, () => barcodeOperation)
+				.SelectList(list => list
+					.Select(() => issueOperationAlias.Employee.Id)
+					.Select(() => issueOperationAlias.Nomenclature.Id)
+					.Select(() => barcodeOperation.KitNumber))   
+				.List<object[]>()
+				.Select(row => (
+					employeeId: (int)row[0],
+					nomenclatureId: (int)row[1],
+					barcodeNumber: (int)row[2]))
+				.ToList();
 		}
 	}
 	

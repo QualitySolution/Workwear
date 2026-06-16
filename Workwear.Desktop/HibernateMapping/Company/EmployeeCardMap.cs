@@ -39,7 +39,6 @@ namespace Workwear.HibernateMapping.Company
 			References(x => x.Subdivision).Column("subdivision_id");
 			References(x => x.Department).Column("department_id");
 			References(x => x.Post).Column("post_id");
-			References(x => x.Leader).Column("leader_id");
 			References(x => x.CreatedbyUser).Column("user_id");
 
 			HasMany(x => x.WorkwearItems)
