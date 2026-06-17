@@ -420,6 +420,7 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<CausesWriteOff>()
 				.AddClearDependence<WriteoffItem>(x => x.CausesWriteOff);
+			DeleteConfig.AddHibernateDeleteInfo<CausesIssue>();
 			
 			DeleteConfig.AddHibernateDeleteInfo<OverNorm>()
 				.AddDeleteDependence<OverNormItem>(x => x.Document);

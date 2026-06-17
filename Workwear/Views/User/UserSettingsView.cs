@@ -21,7 +21,7 @@ namespace Workwear.Views.User
 			entityentryLeader.ViewModel = ViewModel.LeaderFromEntryViewModel;
 			entityentryOrganization.ViewModel = ViewModel.OrganizationFromEntryViewModel;
 			entityentryResponsiblePerson.ViewModel = ViewModel.ResponsiblePersonFromEntryViewModel;
-			yentryByerEmail.ValidationMode = ValidationType.Email;
+			yentryByerEmail.ValidationMode = ValidationType.MultipleEmail;
 			yentryByerEmail.Binding
 				.AddBinding(Entity, e => e.BuyerEmail, w => w.Text).InitializeFromSource();
 

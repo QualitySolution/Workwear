@@ -489,11 +489,15 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `comment` TEXT NULL DEFAULT NULL,
   `number` VARCHAR(20) NULL DEFAULT NULL,
   `additional_info` TEXT NULL DEFAULT NULL,
+  `protection_properties` VARCHAR(120) NULL DEFAULT NULL,
+  `protection_class` VARCHAR(16) NULL DEFAULT NULL,
+  `weight` INT NOT NULL DEFAULT 0,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `catalog_id` CHAR(24) NULL,
   `rating` FLOAT NULL DEFAULT NULL,
   `rating_count` INT NULL DEFAULT NULL,
   `sale_cost` DECIMAL(10,2) UNSIGNED NULL DEFAULT NULL,
+  `rent_cost_day` DECIMAL(7,2) UNSIGNED NULL DEFAULT NULL,
   `use_barcode` TINYINT(1) NOT NULL DEFAULT 0,
   `washable` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Можно отдать в стирку',
   PRIMARY KEY (`id`),
@@ -1544,6 +1548,17 @@ create table causes_write_off
 insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
 
 -- -----------------------------------------------------
+-- Table `causes_issue`
+-- -----------------------------------------------------
+create table causes_issue
+(
+	id int UNSIGNED auto_increment primary key,
+	name varchar(120) not null
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+insert into causes_issue (name) values ('Вновь принятый'), ('По окончании срока носки'), ('Замена размера'), ('Досрочное списание'), ('Перевод');
+
+-- -----------------------------------------------------
 -- Table `stock_collective_expense`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
@@ -2092,6 +2107,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `employee_issue_operation_id` INT UNSIGNED NULL,
   `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
+  `kit_number` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_id` INT UNSIGNED NULL,
   `over_norm_operation_id` int unsigned null,
 	PRIMARY KEY (`id`),
@@ -3097,7 +3113,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.11');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.12');
 
 COMMIT;
 

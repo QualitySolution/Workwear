@@ -292,15 +292,45 @@ namespace Workwear.Models.Operations {
 			progress?.Add(text: "Подгружаем операции");
 			if(!employees.Any())
 				return;
-			var operations = employeeIssueRepository.AllOperationsFor(employees).ToList();
+			
+			// Загружаем только нужные поля через проекцию — полные сущности НЕ попадают в Identity Map.
+			// Это снижает потребление памяти на крупных базах с ~2 ГБ до десятков МБ.
+			var employeeIds = employees.Select(e => e.Id).ToArray();
+			var dtos = employeeIssueRepository.AllOperationsForGraph(employeeIds);
+
 			progress?.Add(text: "Добавляем несохранённые");
-			if(notSavedOperations != null)
-				operations.AddRange(notSavedOperations);
-			var employeeGroups = operations.GroupBy(x => x.Employee.Id).ToDictionary(x => x.Key, x => x.ToList());
+			
+			// Группируем: employeeId → protectionToolsId → список операций
+			var byEmployee = dtos
+				.GroupBy(x => x.EmployeeId)
+				.ToDictionary(
+					eg => eg.Key,
+					eg => eg
+						.Where(x => x.ProtectionToolsId != 0)
+						.GroupBy(x => x.ProtectionToolsId)
+						.ToDictionary(
+							pg => pg.Key,
+							pg => pg.ToList<IGraphIssueOperation>()));
+
+			// Объединяем с несохранёнными операциями (если есть)
+			if(notSavedOperations != null) {
+				foreach(var op in notSavedOperations.Where(x => x.ProtectionTools != null)) {
+					var empId = op.Employee.Id;
+					var ptId = op.ProtectionTools.Id;
+					if(!byEmployee.ContainsKey(empId))
+						byEmployee[empId] = new Dictionary<int, List<IGraphIssueOperation>>();
+					if(!byEmployee[empId].ContainsKey(ptId))
+						byEmployee[empId][ptId] = new List<IGraphIssueOperation>();
+					byEmployee[empId][ptId].Add(op);
+				}
+			}
+
 			foreach(var employee in employees) {
 				progress?.Add(text: $"Заполняем {employee.ShortName}");
-				var ops = employeeGroups.ContainsKey(employee.Id) ? employeeGroups[employee.Id] : new List<EmployeeIssueOperation>();
-				employee.FillWearReceivedInfo(ops);
+				var byPt = byEmployee.TryGetValue(employee.Id, out var dict)
+					? dict
+					: new Dictionary<int, List<IGraphIssueOperation>>();
+				employee.FillWearReceivedInfo(byPt);
 			}
 			progress?.Update("Готово");
 			if(needClose)
@@ -330,10 +360,12 @@ namespace Workwear.Models.Operations {
 				.Fetch(SelectMode.Fetch, p => p.Type.Units)
 				.Future();
 
+			ProtectionToolsNomenclature protNomAlias = null;
 			UoW.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))
-				.Fetch(SelectMode.ChildFetch, p => p)
-				.Fetch(SelectMode.Fetch, p => p.Nomenclatures)
+				.JoinAlias(p => p.ProtectionToolsNomenclatures, () => protNomAlias, JoinType.LeftOuterJoin)
+				.Fetch(SelectMode.Fetch, p => p.ProtectionToolsNomenclatures)
+				.Fetch(SelectMode.Fetch, () => protNomAlias.Nomenclature)
 				.Future();
 
 			query.ToList();
