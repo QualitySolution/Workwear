@@ -29,15 +29,10 @@ namespace Workwear.ViewModels.Stock.Widgets
 			this.balanceNode = node ?? throw new ArgumentNullException(nameof(node));
 
 			StockPosition stockPosition = node.GetStockPosition(uow);
-////1289			
-var nomenclature = stockPosition.Nomenclature;
-Size size = stockPosition.WearSize;
-Size height = stockPosition.Height;
 			
 			NomenclatureAmount = node.Amount;
-			WithBarcodesAmount = barcodeService.CountAllBarcodes(uow, stockPosition);
+			WithBarcodesAmount = barcodeService.CountBarcodesOnWarehouse(uow, stockPosition, warehouse);
 			WithoutBarcodesAmount = node.Amount - WithBarcodesAmount;
-			BarcodesInStockAmount = this.barcodeService.CountBalanceInStock(uow, nomenclature, size, height, warehouse);
 			WarehouseId = warehouse.Id;
 				
 			Title = "Создать штрихкоды";
@@ -74,7 +69,6 @@ Size height = stockPosition.Height;
 		public int NomenclatureAmount { get; set; }
 		public int WithoutBarcodesAmount { get; }
 		public int WithBarcodesAmount { get; }
-		public int BarcodesInStockAmount { get; }
 		public bool NeedPrint { get; set; } = false;
 		public int WarehouseId { get; }
 

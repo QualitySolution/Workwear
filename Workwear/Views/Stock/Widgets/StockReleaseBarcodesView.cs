@@ -29,9 +29,6 @@ namespace Workwear.Views.Stock.Widgets
 			labelWithBarcodesAmount.Binding
 				.AddBinding(ViewModel, vm => vm.WithBarcodesAmount, w => w.Text, new IntToStringConverter())
 				.InitializeFromSource();
-			labelBarcodesInStock.Binding
-				.AddBinding(ViewModel, vm => vm.BarcodesInStockAmount, w => w.Text, new IntToStringConverter())
-				.InitializeFromSource();
 			
 			entryBarcodesLabel.Binding.AddBinding(ViewModel, vm => vm.Label, w => w.Text).InitializeFromSource();
 
