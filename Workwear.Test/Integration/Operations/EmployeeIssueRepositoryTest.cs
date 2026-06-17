@@ -12,6 +12,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 
 namespace Workwear.Test.Integration.Operations
 {
@@ -534,6 +535,151 @@ namespace Workwear.Test.Integration.Operations
 				Assert.That(result, Has.No.Member(opE3P2));
 			}
 		}
+		#endregion
+
+		#region GetBarcodeNumbersForEmployee
+
+		[Test(Description = "Проверяем что строки маркировки без номера комплекта не ломают выборку занятых номеров.")]
+		[Category("Integrated")]
+		public void GetBarcodeNumbersForEmployee_SkipBarcodeWithoutKitNumberTest()
+		{
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
+				uow.Save(nomenclature);
+
+				var protectionTools = new ProtectionTools {
+					Name = "СИЗ для тестирования"
+				};
+				protectionTools.AddNomenclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+
+				var issueOperation = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2022, 1, 1, 13, 0, 0),
+					Employee = employee,
+					Nomenclature = nomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 2
+				};
+				uow.Save(issueOperation);
+
+				var barcodeWithKitNumber = new Barcode {
+					Title = "2040000066574",
+					Nomenclature = nomenclature
+				};
+				uow.Save(barcodeWithKitNumber);
+
+				var barcodeWithoutKitNumber = new Barcode {
+					Title = "2040000066581",
+					Nomenclature = nomenclature
+				};
+				uow.Save(barcodeWithoutKitNumber);
+
+				var barcodeOperationWithKitNumber = new BarcodeOperation {
+					Barcode = barcodeWithKitNumber,
+					EmployeeIssueOperation = issueOperation,
+					KitNumber = 1
+				};
+				uow.Save(barcodeOperationWithKitNumber);
+
+				var barcodeOperationWithoutKitNumber = new BarcodeOperation {
+					Barcode = barcodeWithoutKitNumber,
+					EmployeeIssueOperation = issueOperation
+				};
+				uow.Save(barcodeOperationWithoutKitNumber);
+				uow.Commit();
+
+				var repository = new EmployeeIssueRepository(uow);
+				var result = repository.GetBarcodeNumbersForEmployee(
+					new[] { employee },
+					new DateTime(2022, 1, 2),
+					uow);
+
+				Assert.That(result, Has.Count.EqualTo(1));
+				Assert.That(result.First().KitNumber, Is.EqualTo(1));
+			}
+		}
+
+		[Test(Description = "Проверяем что номер комплекта считается по потребности, а не по фактической номенклатуре.")]
+		[Category("Integrated")]
+		public void GetNextKitNumber_UseProtectionToolsForDifferentNomenclaturesTest()
+		{
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var nomenclatureType = new ItemsType {
+					Name = "Тестовый тип номенклатуры"
+				};
+				uow.Save(nomenclatureType);
+
+				var firstNomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
+				uow.Save(firstNomenclature);
+
+				var replacementNomenclature = new Nomenclature {
+					Type = nomenclatureType
+				};
+				uow.Save(replacementNomenclature);
+
+				var protectionTools = new ProtectionTools {
+					Name = "СИЗ для тестирования"
+				};
+				protectionTools.AddNomenclature(firstNomenclature);
+				protectionTools.AddNomenclature(replacementNomenclature);
+				uow.Save(protectionTools);
+
+				var employee = new EmployeeCard();
+				uow.Save(employee);
+
+				var firstIssueOperation = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2022, 1, 1, 13, 0, 0),
+					Employee = employee,
+					Nomenclature = firstNomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
+				uow.Save(firstIssueOperation);
+
+				var barcode = new Barcode {
+					Title = "2040000066574",
+					Nomenclature = firstNomenclature
+				};
+				uow.Save(barcode);
+
+				var barcodeOperation = new BarcodeOperation {
+					Barcode = barcode,
+					EmployeeIssueOperation = firstIssueOperation,
+					KitNumber = 1
+				};
+				uow.Save(barcodeOperation);
+
+				var replacementIssueOperation = new EmployeeIssueOperation {
+					OperationTime = new DateTime(2022, 1, 2, 13, 0, 0),
+					Employee = employee,
+					Nomenclature = replacementNomenclature,
+					ProtectionTools = protectionTools,
+					Issued = 1
+				};
+				uow.Save(replacementIssueOperation);
+				uow.Commit();
+
+				var repository = new EmployeeIssueRepository(uow);
+				var barcodeService = new BarcodeService(Substitute.For<BaseParameters>(), repository);
+
+				var result = barcodeService.GetNextKitNumber(uow, replacementIssueOperation);
+
+				Assert.That(result, Is.EqualTo(2));
+			}
+		}
+
 		#endregion
 
 		#region ItemsBalance

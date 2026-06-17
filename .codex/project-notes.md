@@ -4,7 +4,7 @@
 
 - Main non-SQL test project:
   `dotnet test Workwear.Test/Workwear.Test.csproj --no-restore -v:q`
-- SQL tests are in `Workwear.Test.Sql/Workwear.Test.Sql.csproj`; skip them when the request says "except SQL".
+- SQL tests are in `Workwear.Test.Sql/Workwear.Test.Sql.csproj`; do not run them unless database scripts, migrations, or SQL-related code changed, or the user explicitly asks for SQL tests.
 - Old UI/ViewModel test project `WorkwearTest/WorkwearTest.csproj` targets .NET Framework 4.6.2.
   `dotnet test WorkwearTest/WorkwearTest.csproj` can return `0` without discovering/running tests.
 - Build `WorkwearTest` with Mono MSBuild:
