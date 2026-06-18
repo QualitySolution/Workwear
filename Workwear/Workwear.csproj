@@ -140,6 +140,7 @@
     <Compile Include="Journal\ViewModels\Regulations\DutyNormBalanceJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Regulations\DutyNormsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\BarcodeJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\CauseIssueJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\CauseWriteOffJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\OwnerJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="ViewModels\Postomats\PostomatDocumentViewModel.cs" />
     <Compile Include="ViewModels\Regulations\DutyNormViewModel.cs" />
     <Compile Include="ViewModels\Sizes\StockPositionSizeReplaceViewModel.cs" />
+    <Compile Include="ViewModels\Stock\CauseIssueViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureServicesViewModel.cs" />
     <Compile Include="ViewModels\Stock\NomenclatureChildren\NomenclatureSizesViewModel.cs" />
     <Compile Include="ViewModels\Stock\Widgets\BarcodeAddWidgetViewModel.cs" />
@@ -581,6 +583,8 @@
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.RentMovementsView.cs" />
     <Compile Include="ReportParameters\Views\RentActView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.RentActView.cs" />
+    <Compile Include="Views\Stock\CauseIssueView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.CauseIssueView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

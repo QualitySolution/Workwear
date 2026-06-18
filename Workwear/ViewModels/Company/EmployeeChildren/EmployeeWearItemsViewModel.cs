@@ -94,7 +94,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			OnPropertyChanged(nameof(ObservableWorkwearItems));
 			Entity.PropertyChanged += EntityOnPropertyChanged;
 			performance.End();
-			logger.Info($"Таблица «Спецодежда по нормам» заполена за {performance.TotalTime.TotalSeconds} сек." );
+			logger.Info($"Таблица «Спецодежда по нормам» заполнена за {performance.TotalTime.TotalSeconds} сек." );
 		}
 
 		#endregion
@@ -113,7 +113,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		}
 		#endregion
 
-		#region Sensetive And Visibility
+		#region Sensitive And Visibility
 		public bool VisibleEmployeeChoose => FeaturesService.Available(WorkwearFeature.EmployeeChoose);
 		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null && !SelectedWorkwearItem.ProtectionTools.Dispenser;
 

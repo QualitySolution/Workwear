@@ -28,6 +28,12 @@ namespace Workwear.Views.Stock {
 				.AddBinding(Entity, e => e.Number, w => w.Text).InitializeFromSource();
 			yentryAdditionalInfo.Binding
 				.AddBinding(Entity, e => e.AdditionalInfo, w => w.Text).InitializeFromSource();
+			yentryProtectionProperties.Binding
+				.AddBinding(Entity, e => e.ProtectionProperties, w => w.Text).InitializeFromSource();
+			yentryProtectionClass.Binding
+				.AddBinding(Entity, e => e.ProtectionСlass, w => w.Text).InitializeFromSource();
+			yspinbuttonWeight.Binding
+				.AddBinding(Entity, e => e.Weight, w => w.ValueAsInt).InitializeFromSource();
 			ylabelCatalogId.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleCatalogId, w => w.Visible).InitializeFromSource();
 			yentryItemsCatalogId.Binding

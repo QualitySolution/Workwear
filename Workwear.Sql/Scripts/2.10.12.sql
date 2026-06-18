@@ -18,3 +18,24 @@ ALTER TABLE departments
 ALTER TABLE nomenclature
 	ADD COLUMN rent_cost_day DECIMAL(7,2) UNSIGNED NULL DEFAULT NULL AFTER sale_cost;
 
+-- Причины выдачи
+create table causes_issue
+(
+	id int UNSIGNED auto_increment primary key,
+	name varchar(120) not null
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+insert into causes_issue (name) values ('Вновь принятый'), ('По окончании срока носки'), ('Замена размера'), ('Досрочное списание'), ('Перевод');
+
+-- Добавление свойств и класса защиты в номенклатуру
+ALTER TABLE nomenclature
+	ADD COLUMN protection_properties VARCHAR(120) NULL DEFAULT NULL AFTER additional_info,
+	ADD COLUMN protection_class VARCHAR(16) NULL DEFAULT NULL AFTER protection_properties;
+
+-- Добавление веса номенклатуры
+ALTER TABLE nomenclature
+	ADD COLUMN weight INT NOT NULL DEFAULT 0 AFTER protection_class;
+
+-- Добавление номера комплекта
+ALTER TABLE operation_barcodes
+	ADD COLUMN kit_number INT UNSIGNED NULL AFTER warehouse_operation_id;

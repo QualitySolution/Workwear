@@ -489,6 +489,9 @@ CREATE TABLE IF NOT EXISTS `nomenclature` (
   `comment` TEXT NULL DEFAULT NULL,
   `number` VARCHAR(20) NULL DEFAULT NULL,
   `additional_info` TEXT NULL DEFAULT NULL,
+  `protection_properties` VARCHAR(120) NULL DEFAULT NULL,
+  `protection_class` VARCHAR(16) NULL DEFAULT NULL,
+  `weight` INT NOT NULL DEFAULT 0,
   `archival` TINYINT(1) NOT NULL DEFAULT 0,
   `catalog_id` CHAR(24) NULL,
   `rating` FLOAT NULL DEFAULT NULL,
@@ -1545,6 +1548,17 @@ create table causes_write_off
 insert into causes_write_off (name) values ('Увольнение'), ('Преждевременный износ'), ('Изменение должности'), ('Прочее');
 
 -- -----------------------------------------------------
+-- Table `causes_issue`
+-- -----------------------------------------------------
+create table causes_issue
+(
+	id int UNSIGNED auto_increment primary key,
+	name varchar(120) not null
+)
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+insert into causes_issue (name) values ('Вновь принятый'), ('По окончании срока носки'), ('Замена размера'), ('Досрочное списание'), ('Перевод');
+
+-- -----------------------------------------------------
 -- Table `stock_collective_expense`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stock_collective_expense` (
@@ -2092,6 +2106,7 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `employee_issue_operation_id` INT UNSIGNED NULL,
   `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
+  `kit_number` INT UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
