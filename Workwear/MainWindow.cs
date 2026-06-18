@@ -103,14 +103,14 @@ public partial class MainWindow : Gtk.Window {
 
 	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
+		toolbarMain.Sensitive = false;
+		menubar1.Sensitive = false;
+		entitySearchEmployee.Sensitive = false;
 		ProgressBar = progresswidget1;
 		var progress = new ProgressPerformanceHelper(ProgressBar, 34, "Подготовка статусной строк", logger, showProgressText: true);
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
-		toolbarMain.Sensitive = false;
-		menubar1.Sensitive = false;
-		entitySearchEmployee.Sensitive = false;
 
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig(progress);
