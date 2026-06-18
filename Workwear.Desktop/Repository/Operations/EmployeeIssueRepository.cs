@@ -11,6 +11,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Models.Operations;
 

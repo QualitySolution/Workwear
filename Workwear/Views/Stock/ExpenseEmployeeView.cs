@@ -53,6 +53,19 @@ namespace Workwear.Views.Stock
 			entityWarehouseExpense.Binding
 				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
 				.InitializeFromSource();
+			yspeccomboboxCause
+				
+			ylabelCause.Visible = yspeccomboboxCause.Visible = ViewModel.VisibleCause;
+			yspeccomboboxCause.SelectedItemStrictTyped = false;
+			yspeccomboboxCause.Binding
+				.AddBinding(ViewModel, wm => wm.Causes, w => w.ItemsList)
+				.AddBinding(Entity, e => e.CauseIssue, w => w.SelectedItem)
+				.InitializeFromSource();
+			
+			entityCauseIssue.ViewModel = ViewModel.CauseIssueEntryViewModel;
+			entityCauseIssue.Binding
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+				.InitializeFromSource();
 			yentryEmployee.ViewModel = ViewModel.EmployeeCardEntryViewModel;
 			yentryEmployee.Binding
 				.AddBinding(ViewModel,vm => vm.SensitiveEntryEmployee, w => w.Sensitive)

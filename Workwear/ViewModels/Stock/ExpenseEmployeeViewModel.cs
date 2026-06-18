@@ -148,6 +148,11 @@ namespace Workwear.ViewModels.Stock {
 									.Finish();
 			WarehouseEntryViewModel.IsEditable = CanEdit;
 			
+			CauseIssueEntryViewModel = entryBuilder.ForProperty(x => x.CauseIssue)
+									.UseViewModelJournalAndAutocompleter<CauseIssueJournalViewModel>()
+									.UseViewModelDialog<CauseIssueViewModel>()
+									.Finish();
+			CauseIssueEntryViewModel.IsEditable = CanEdit;
 			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.Employee)
 									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel, EmployeeFilterViewModel>(f => f.Date = Entity.Date)
 									.UseViewModelDialog<EmployeeViewModel>()
@@ -192,6 +197,7 @@ namespace Workwear.ViewModels.Stock {
 		#region EntityViewModels
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		public readonly EntityEntryViewModel<EmployeeCard> EmployeeCardEntryViewModel;
+		public readonly EntityEntryViewModel<CausesIssue> CauseIssueEntryViewModel;
 		#endregion
 
 		#region Свойства для View
