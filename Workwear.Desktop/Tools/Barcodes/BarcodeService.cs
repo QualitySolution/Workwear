@@ -108,16 +108,20 @@ namespace Workwear.Tools.Barcodes
 			}
 		}
 
-		public int CountAllBarcodes(IUnitOfWork unitOfWork, StockPosition stockPosition)
-//public int CountAllBarcodes(IUnitOfWork unitOfWork, Nomenclature nomenclature, Size size = null, Size height = null) 
+		public int CountBarcodesOnWarehouse(IUnitOfWork unitOfWork, StockPosition stockPosition, Warehouse warehouse)
 		{
 			if (unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
 			if (stockPosition == null) throw new ArgumentNullException(nameof(stockPosition));
+			if (warehouse == null) throw new ArgumentNullException(nameof(warehouse));
 
 			Barcode bAlias = null;
+			WarehouseOperation who = null;
 			int barcodesInStock = unitOfWork.Session.QueryOver<BarcodeOperation>()
 				.JoinAlias(bo => bo.Barcode, () => bAlias)
-				.Where(b => bAlias.Nomenclature == stockPosition.Nomenclature && bAlias.Size == stockPosition.WearSize && bAlias.Height == stockPosition.Height)
+				.JoinAlias(bo => bo.WarehouseOperation, () => who)
+				.Where(b => bAlias.Nomenclature == stockPosition.Nomenclature && bAlias.Size == stockPosition.WearSize &&
+				            bAlias.Height == stockPosition.Height)
+				.Where(() => who.ReceiptWarehouse.Id == warehouse.Id)
 				.SelectList(list => list
 					.SelectCountDistinct(() => bAlias.Id)
 				)
@@ -128,6 +132,7 @@ namespace Workwear.Tools.Barcodes
 		#endregion
 		
 		#region Barcodes In Stock
+//// Для выдач должно использоваться
 		public int CountBalanceInStock(IUnitOfWork uow, Nomenclature nomenclature, Size size = null, Size height = null, Warehouse warehouse = null) 
 		{
 			if (nomenclature == null) throw new ArgumentNullException(nameof(nomenclature));
