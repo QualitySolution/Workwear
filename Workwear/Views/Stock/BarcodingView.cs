@@ -30,8 +30,11 @@ namespace Workwear.Views.Stock {
 				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp).InitializeFromSource();
-			ytreeItems.Selection.Changed += Items_Selection_Changed;
 			entityWarehouse.ViewModel = ViewModel.EntryWarehouseViewModel;
+			entityWarehouse.Binding.AddBinding(ViewModel, vm => vm.SensitiveWarehouse, w => w.Sensitive).InitializeFromSource();
+			
+			ytreeItems.Selection.Changed += Items_Selection_Changed;
+			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.SensitiveAddItems, w => w.Sensitive).InitializeFromSource();
 			ybuttonAdd.Clicked += OnButtonAddClicked;
 			ybuttonDel.Clicked += OnButtonDelClicked;
 			buttonPrintAll.Clicked += OnButtonPrintAllClicked;

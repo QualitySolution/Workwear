@@ -25,7 +25,6 @@ using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
-using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock.Widgets;
@@ -40,7 +39,6 @@ namespace Workwear.ViewModels.Stock {
 			IInteractiveService interactive,
 			ILifetimeScope autofacScope,
 			BarcodeService barcodeService,
-			BaseParameters baseParameters,
 			FeaturesService featuresService,
 			StockRepository stockRepository,
 			Warehouse warehouse = null,
@@ -51,10 +49,6 @@ namespace Workwear.ViewModels.Stock {
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 				
-			var entryBuilder = new CommonEEVMBuilderFactory<Barcoding>(this, Entity, UoW, navigation) {
-				AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
-			};
-			
 			var builder = new CommonEEVMBuilderFactory<Barcoding>(this, Entity, UoW, NavigationManager, autofacScope);
 			EntryWarehouseViewModel = builder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
@@ -82,7 +76,7 @@ namespace Workwear.ViewModels.Stock {
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		
 		public readonly EntityEntryViewModel<Warehouse> EntryWarehouseViewModel;
-
+		
 		#region Для View
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
@@ -103,6 +97,9 @@ namespace Workwear.ViewModels.Stock {
 			}
 		}
 
+		public bool SensitiveWarehouse => !Entity.Items.Any(); //Если попросят возможность смены, надо дусмть как аккуратно менять в штрихкодах 
+		public bool SensitiveAddItems => Entity.Warehouse != null; //В основном, для отсутствия дефолтного склада
+		
 		#endregion
 		
 		private string total;
@@ -121,6 +118,7 @@ namespace Workwear.ViewModels.Stock {
 				UoW.Delete(item);
 			}
 			Entity.RemoveItem(item);
+			OnPropertyChanged(nameof(SensitiveWarehouse));
 			CalculateTotal();
 		}
 		
@@ -199,6 +197,7 @@ namespace Workwear.ViewModels.Stock {
 				}
 				Entity.AddItem(operationExpance, operationReceipt, barcodes);
 				Save();
+				OnPropertyChanged(nameof(SensitiveWarehouse));
 				
 				if(widgetVm.NeedPrint) 
 					PrintBarcodes(barcodes);
@@ -214,17 +213,6 @@ namespace Workwear.ViewModels.Stock {
 				}
 			};
 			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(null, reportInfo);
-		}
-
-////1289
-		private void LoadItems(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
-			var addedAmount = ((StockBalanceJournalViewModel)sender).Filter.AddAmount;
-			
-			foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
-				Entity.AddItem(node.GetStockPosition(UoW),
-					((StockBalanceJournalViewModel)sender).Filter.Warehouse, 
-					addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
-			CalculateTotal();
 		}
 
 		private void loadBarcodes() {
@@ -269,9 +257,9 @@ namespace Workwear.ViewModels.Stock {
 			logger.Info ("Ok");
 			return true;
 		}
-////1289		
+
 		private void CalculateTotal() {
-			Total = $"Позиций в документе: {Entity.Items.Count}";
+			Total = $"Позиций в документе: {Entity.Items.Count}, Общее количество: {Entity.Items.Sum(i => i.Amount)}";
 		}
 
 		public void PrintBarcodesforItems(IList<BarcodingItem> items = null) {
@@ -279,7 +267,7 @@ namespace Workwear.ViewModels.Stock {
 				items = Entity.Items;
 			PrintBarcodes(items.SelectMany(i => i.Barcodes).ToList());
 		}
-
+////1289 не реализовано и не факт, что нужно
 		public void Print() {
 			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
 				return;
