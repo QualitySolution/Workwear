@@ -41649,13 +41649,19 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonDel">
+                  <widget class="QS.Widgets.MenuButton" id="buttonDel">
                     <property name="MemberName" />
+                    <property name="Sensitive">False</property>
                     <property name="CanFocus">True</property>
                     <property name="Type">TextAndIcon</property>
                     <property name="Icon">stock:gtk-remove Menu</property>
                     <property name="Label" translatable="yes">Удалить</property>
                     <property name="UseUnderline">True</property>
+                    <property name="FocusOnClick">False</property>
+                    <property name="Xalign">0</property>
+                    <property name="Yalign">0</property>
+                    <property name="UseMarkup">False</property>
+                    <property name="LabelXAlign">0</property>
                   </widget>
                   <packing>
                     <property name="Position">1</property>

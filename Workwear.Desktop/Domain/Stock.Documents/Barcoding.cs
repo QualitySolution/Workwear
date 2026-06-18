@@ -67,7 +67,7 @@ namespace Workwear.Domain.Stock.Documents {
         
 		}
 
-		public virtual BarcodingItem AddItem(WarehouseOperation operationExpance, WarehouseOperation operationReceipt, IEnumerable<Barcode> barcodes) {
+		public virtual BarcodingItem AddItem(WarehouseOperation operationExpance, WarehouseOperation operationReceipt, IList<Barcode> barcodes) {
 			var item = (new BarcodingItem() {
 				Document = this,
 				OperationExpence = operationExpance,

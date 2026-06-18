@@ -56,7 +56,7 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton ybuttonAdd;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonDel;
+		private global::QS.Widgets.MenuButton buttonDel;
 
 		private global::Gtk.Button buttonPrintSelect;
 
@@ -125,6 +125,7 @@ namespace Workwear.Views.Stock
 			w7.Fill = false;
 			// Container child dialog_VBox.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
+			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(3));
 			// Container child hbox1.Gtk.Box+BoxChild
@@ -332,16 +333,22 @@ namespace Workwear.Views.Stock
 			w27.Expand = false;
 			w27.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
-			this.ybuttonDel = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonDel.CanFocus = true;
-			this.ybuttonDel.Name = "ybuttonDel";
-			this.ybuttonDel.UseUnderline = true;
-			this.ybuttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
+			this.buttonDel = new global::QS.Widgets.MenuButton();
+			this.buttonDel.Sensitive = false;
+			this.buttonDel.CanFocus = true;
+			this.buttonDel.Name = "buttonDel";
+			this.buttonDel.UseUnderline = true;
+			this.buttonDel.FocusOnClick = false;
+			this.buttonDel.Xalign = 0F;
+			this.buttonDel.Yalign = 0F;
+			this.buttonDel.UseMarkup = false;
+			this.buttonDel.LabelXAlign = 0F;
+			this.buttonDel.Label = global::Mono.Unix.Catalog.GetString("Удалить");
 			global::Gtk.Image w28 = new global::Gtk.Image();
 			w28.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-remove", global::Gtk.IconSize.Menu);
-			this.ybuttonDel.Image = w28;
-			this.hbox8.Add(this.ybuttonDel);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonDel]));
+			this.buttonDel.Image = w28;
+			this.hbox8.Add(this.buttonDel);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
 			w29.Position = 1;
 			w29.Expand = false;
 			w29.Fill = false;

@@ -98,7 +98,6 @@ namespace Workwear.ViewModels.Stock {
 		}
 
 		public bool SensitiveWarehouse => !Entity.Items.Any(); //Если попросят возможность смены, надо дусмть как аккуратно менять в штрихкодах 
-		public bool SensitiveAddItems => Entity.Warehouse != null; //В основном, для отсутствия дефолтного склада
 		
 		#endregion
 		
@@ -108,21 +107,37 @@ namespace Workwear.ViewModels.Stock {
 			set => SetField(ref total, value);
 		}
 
-		public void DeleteItem(BarcodingItem item) {
+		public void DeleteFromItem(BarcodingItem item, Barcode barcode = null) {
 			if(item.Id > 0) {
 ////1289 Пока не придумал, как задать через мапинг, возможно сделать через удалялку
 				foreach(var operationBarcode in
 				        item.Barcodes.SelectMany(b => b.BarcodeOperations
-					        .Where(o => o.WarehouseOperation.Id == item.OperationReceipt.Id))) 
+					        .Where(o => o.WarehouseOperation.Id == item.OperationReceipt.Id)
+					        .Where(o => barcode == null || o.Barcode.Id == barcode.Id))) {
 					UoW.Delete(operationBarcode);
-				UoW.Delete(item);
+					item.OperationExpence.Amount--;
+				}
+				if(item.OperationExpence.Amount == 0)
+					UoW.Delete(item);
 			}
-			Entity.RemoveItem(item);
+			if(item.OperationExpence.Amount == 0)
+				Entity.RemoveItem(item);
 			OnPropertyChanged(nameof(SensitiveWarehouse));
 			CalculateTotal();
 		}
 		
+	/*	public void DeleteFromItem(BarcodingItem item, Barcode barcode) {
+			item.BarcodeOperations
+			UoW.Delete(opBarcode);
+			item.BarcodeOperations.Remove(opBarcode);
+		}*/
+		
 		public void AddItems() {
+			if(Entity.Warehouse == null) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Выберите склад.");
+				return;
+			}
+
 			var selectJournal = NavigationManager.OpenViewModel<StockBalanceJournalViewModel>
 				(this,
 					OpenPageOptions.AsSlave,
@@ -232,7 +247,8 @@ namespace Workwear.ViewModels.Stock {
 
 			foreach(var item in Entity.Items) {
 				item.Barcodes = barcodes.Where(b => b.BarcodeOperations
-					.Any(bo => bo?.WarehouseOperation.Id == item.OperationReceipt.Id));
+					.Any(bo => bo?.WarehouseOperation.Id == item.OperationReceipt.Id))
+					.ToList();
 			}
 		}
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gamma.GtkWidgets;
+using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Stock.Documents;
 using Workwear.ViewModels.Stock;
@@ -34,9 +36,7 @@ namespace Workwear.Views.Stock {
 			entityWarehouse.Binding.AddBinding(ViewModel, vm => vm.SensitiveWarehouse, w => w.Sensitive).InitializeFromSource();
 			
 			ytreeItems.Selection.Changed += Items_Selection_Changed;
-			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.SensitiveAddItems, w => w.Sensitive).InitializeFromSource();
 			ybuttonAdd.Clicked += OnButtonAddClicked;
-			ybuttonDel.Clicked += OnButtonDelClicked;
 			buttonPrintAll.Clicked += OnButtonPrintAllClicked;
 			buttonPrintSelect.Clicked += OnButtonPrintSelectClicked;
 		}
@@ -69,14 +69,30 @@ namespace Workwear.Views.Stock {
 				.AddBinding(Entity, vm => vm.Items, w => w.ItemsDataSource)
 				.InitializeFromSource();
 		}
-		
-		private void OnButtonDelClicked(object sender, EventArgs e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<BarcodingItem>());
+
+		void MakeMenu() {
+			var delMenu = new Menu();
+			var item = new yMenuItem("Все");
+			item.Activated += (sender, e) => ViewModel.DeleteFromItem(ytreeItems.GetSelectedObject<BarcodingItem>());
+			delMenu.Add(item);
+			if(ytreeItems.GetSelectedObject<BarcodingItem>()?.Barcodes?.Any() ?? false)
+				foreach(var barcode in ytreeItems.GetSelectedObject<BarcodingItem>().Barcodes) {
+					item = new yMenuItem(barcode.Title);
+					item.Activated += (sender, e) => ViewModel.DeleteFromItem(ytreeItems.GetSelectedObject<BarcodingItem>(), barcode);
+					delMenu.Add(item);
+				}
+
+			buttonDel.Menu = delMenu;
+			delMenu.ShowAll();
+		}
+
 		private void OnButtonAddClicked(object sender, EventArgs e) => ViewModel.AddItems();
 		private void OnButtonPrintSelectClicked(object sender, EventArgs e) => 
 			ViewModel.PrintBarcodesforItems(new List<BarcodingItem>() {ytreeItems.GetSelectedObject<BarcodingItem>()});
 		private void OnButtonPrintAllClicked(object sender, EventArgs e) => ViewModel.PrintBarcodesforItems();
 		private void Items_Selection_Changed(object sender, EventArgs e){
-			ybuttonDel.Sensitive = buttonPrintSelect.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+			buttonDel.Sensitive = buttonPrintSelect.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+			MakeMenu();
 		}
 	}
 }
