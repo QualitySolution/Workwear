@@ -380,30 +380,37 @@ namespace Workwear.Repository.Operations
 		/// Получает все актуальные для сотрудника номера маркированных выдач на указанную дату.
 		/// * Не учитываются ручные списания и возвраты.
 		/// </summary>
-		public virtual List<(int employeeId, int nomenclatureId, int kit_number)> GetBarcodeNumbersForEmployee(
+		public virtual IList<BarcodeNumberInfo> GetBarcodeNumbersForEmployee(
 			IList<EmployeeCard> employees, 
 			DateTime onDate, 
 			IUnitOfWork uow = null)
 		{
 			EmployeeIssueOperation issueOperationAlias = null;
 			BarcodeOperation barcodeOperation = null;
+			BarcodeNumberInfo resultAlias = null;
 			
 			return (uow ?? RepoUow).Session.QueryOver(() => issueOperationAlias)
 				.WhereRestrictionOn(() => issueOperationAlias.Employee.Id).IsIn(employees.Select(e => e.Id).ToList())
 				.Where(() => issueOperationAlias.OperationTime <= onDate)
 				.Where(() => issueOperationAlias.AutoWriteoffDate == null || issueOperationAlias.AutoWriteoffDate > onDate)
+				.Where(() => issueOperationAlias.ProtectionTools != null)
 				.JoinAlias(x => x.BarcodeOperations, () => barcodeOperation)
+				.Where(() => barcodeOperation.KitNumber > 0)
 				.SelectList(list => list
-					.Select(() => issueOperationAlias.Employee.Id)
-					.Select(() => issueOperationAlias.Nomenclature.Id)
-					.Select(() => barcodeOperation.KitNumber))   
-				.List<object[]>()
-				.Select(row => (
-					employeeId: (int)row[0],
-					nomenclatureId: (int)row[1],
-					barcodeNumber: (int)row[2]))
+					.Select(() => issueOperationAlias.Employee.Id).WithAlias(() => resultAlias.EmployeeId)
+					.Select(() => issueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
+					.Select(() => barcodeOperation.KitNumber).WithAlias(() => resultAlias.KitNumber))
+				.TransformUsing(Transformers.AliasToBean<BarcodeNumberInfo>())
+				.List<BarcodeNumberInfo>()
 				.ToList();
 		}
+	}
+
+	public class BarcodeNumberInfo
+	{
+		public int EmployeeId { get; set; }
+		public int ProtectionToolsId { get; set; }
+		public int? KitNumber { get; set; }
 	}
 	
 	public class EmployeeReceivedInfo

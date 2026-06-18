@@ -1,4 +1,4 @@
-﻿-- Добавление руководителя подразделения в таблицу подразделений
+-- Добавление руководителя подразделения в таблицу подразделений
 ALTER TABLE subdivisions
 	ADD COLUMN head_of_division_id INT UNSIGNED NULL DEFAULT NULL AFTER comment,
 	ADD INDEX fk_subdivisions_head_of_division_idx (head_of_division_id ASC),
@@ -32,23 +32,11 @@ ALTER TABLE nomenclature
 	ADD COLUMN protection_properties VARCHAR(120) NULL DEFAULT NULL AFTER additional_info,
 	ADD COLUMN protection_class VARCHAR(16) NULL DEFAULT NULL AFTER protection_properties;
 
+-- Добавление веса номенклатуры
+ALTER TABLE nomenclature
+	ADD COLUMN weight INT NOT NULL DEFAULT 0 AFTER protection_class;
+
 -- Добавление номера комплекта
 ALTER TABLE operation_barcodes
 	ADD COLUMN kit_number INT UNSIGNED NULL AFTER warehouse_operation_id;
 
--- Добавление причины выдачи в документ расхода
-ALTER TABLE stock_expense
-	ADD COLUMN cause_issue_id INT UNSIGNED NULL AFTER warehouse_id,
-	ADD INDEX fk_stock_expense_cause_issue_idx (cause_issue_id ASC),
-	ADD CONSTRAINT fk_stock_expense_cause_issue
-		FOREIGN KEY (cause_issue_id) REFERENCES causes_issue (id)
-			ON DELETE SET NULL ON UPDATE CASCADE;ALTER TABLE stock_expense
-	ADD cause_issue_id INT UNSIGNED NULL
-		AFTER employee_id;
-
-ALTER TABLE stock_expense
-	ADD CONSTRAINT stock_expense_causes_issue_id_fk
-		FOREIGN KEY (cause_issue_id)
-			REFERENCES causes_issue (id)
-			ON UPDATE CASCADE
-			ON DELETE SET NULL;

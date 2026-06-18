@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using QS.BusinessCommon.Domain;
-using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
@@ -88,15 +87,39 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		private Size wearSize;
 		[Display(Name = "Размер")]
+		[PropertyChangedAlso(nameof(WearSizeVariant))]
 		public virtual Size WearSize {
 			get => wearSize;
-			set => wearSize = value;
+			set => SetField(ref wearSize, value);
 		}
 		private Size height;
 		[Display(Name = "Рост одежды")]
+		[PropertyChangedAlso(nameof(HeightVariant))]
 		public virtual Size Height {
 			get => height;
-			set => height = value;
+			set => SetField(ref height, value);
+		}
+
+		[IgnoreHistoryTrace]
+		public virtual NomenclatureSizes WearSizeVariant {
+			get => new NomenclatureSizes { Nomenclature = Nomenclature, WearSize = WearSize, Height = Height };
+			set {
+				WearSize = value?.WearSize;
+				if(value?.Height != null)
+					Height = value.Height;
+				OnPropertyChanged(nameof(WearSizeVariant));
+			}
+		}
+
+		[IgnoreHistoryTrace]
+		public virtual NomenclatureSizes HeightVariant {
+			get => new NomenclatureSizes { Nomenclature = Nomenclature, WearSize = WearSize, Height = Height };
+			set {
+				Height = value?.Height;
+				if(value?.WearSize != null)
+					WearSize = value.WearSize;
+				OnPropertyChanged(nameof(HeightVariant));
+			}
 		}
 
 		[Display(Name = "Собственник имущества")]
@@ -140,4 +163,3 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 	}
 }
-

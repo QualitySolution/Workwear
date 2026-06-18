@@ -239,6 +239,14 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionCausesIssue;
 
+	private global::Gtk.Action Action48;
+
+	private global::Gtk.Action TelegramAction;
+
+	private global::Gtk.Action MAXAction;
+
+	private global::Gtk.Action EmailAction;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -641,6 +649,18 @@ public partial class MainWindow
 		this.ActionCausesIssue = new global::Gtk.Action("ActionCausesIssue", global::Mono.Unix.Catalog.GetString("Причины выдачи"), null, null);
 		this.ActionCausesIssue.ShortLabel = global::Mono.Unix.Catalog.GetString("Причины выдачи");
 		w1.Add(this.ActionCausesIssue, null);
+		this.Action48 = new global::Gtk.Action("Action48", global::Mono.Unix.Catalog.GetString("Будьте в курсе"), null, "www");
+		this.Action48.ShortLabel = global::Mono.Unix.Catalog.GetString("Будьте в курсе");
+		w1.Add(this.Action48, null);
+		this.TelegramAction = new global::Gtk.Action("TelegramAction", global::Mono.Unix.Catalog.GetString("Канал в Telegram"), null, null);
+		this.TelegramAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Канал в Telegram");
+		w1.Add(this.TelegramAction, null);
+		this.MAXAction = new global::Gtk.Action("MAXAction", global::Mono.Unix.Catalog.GetString("Канал в MAX"), null, null);
+		this.MAXAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Канал в MAX");
+		w1.Add(this.MAXAction, null);
+		this.EmailAction = new global::Gtk.Action("EmailAction", global::Mono.Unix.Catalog.GetString("Email-рассылка"), null, null);
+		this.EmailAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Email-рассылка");
+		w1.Add(this.EmailAction, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -738,9 +758,12 @@ public partial class MainWindow
 				"nChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelSta" +
 				"ble\' action=\'ActionChannelStable\'/><menuitem name=\'ActionOffAutoUpdate\' action=\'" +
 				"ActionOffAutoUpdate\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'" +
-				"/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><separator/><menu" +
-				"item name=\'ActionSN\' action=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\'" +
-				" action=\'aboutAction\'/></menu></menubar></ui>");
+				"/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menu name=\'Actio" +
+				"n48\' action=\'Action48\'><menuitem name=\'TelegramAction\' action=\'TelegramAction\'/>" +
+				"<menuitem name=\'MAXAction\' action=\'MAXAction\'/><menuitem name=\'EmailAction\' acti" +
+				"on=\'EmailAction\'/></menu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'" +
+				"/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menuba" +
+				"r></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -878,7 +901,7 @@ public partial class MainWindow
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 1116;
+		this.DefaultWidth = 1875;
 		this.DefaultHeight = 458;
 		this.progresswidget1.Hide();
 		this.Show();
@@ -986,6 +1009,9 @@ public partial class MainWindow
 		this.ActionRentMovements.Activated += new global::System.EventHandler(this.OnActionRentMovementsActivated);
 		this.ActionRentAct.Activated += new global::System.EventHandler(this.OnActionRentActActivated);
 		this.ActionCausesIssue.Activated += new global::System.EventHandler(this.OnActionCausesIssueActivated);
+		this.TelegramAction.Activated += new global::System.EventHandler(this.OnTelegramActionActivated);
+		this.MAXAction.Activated += new global::System.EventHandler(this.OnMAXActionActivated);
+		this.EmailAction.Activated += new global::System.EventHandler(this.OnEmailActionActivated);
 		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }

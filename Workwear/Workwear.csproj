@@ -581,10 +581,11 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.NomenclatureChildren.NomenclatureSizesView.cs" />
     <Compile Include="ReportParameters\Views\RentMovementsView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.RentMovementsView.cs" />
-    <Compile Include="Views\Stock\CauseIssueView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Stock.CauseIssueView.cs" />
     <Compile Include="ReportParameters\Views\RentActView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.RentActView.cs" />
+    <Compile Include="Views\Stock\CauseIssueView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Stock.CauseIssueView.cs" />
+>>>>>>>>> Temporary merge branch 2
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
