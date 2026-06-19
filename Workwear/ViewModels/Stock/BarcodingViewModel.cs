@@ -126,12 +126,6 @@ namespace Workwear.ViewModels.Stock {
 			CalculateTotal();
 		}
 		
-	/*	public void DeleteFromItem(BarcodingItem item, Barcode barcode) {
-			item.BarcodeOperations
-			UoW.Delete(opBarcode);
-			item.BarcodeOperations.Remove(opBarcode);
-		}*/
-		
 		public void AddItems() {
 			if(Entity.Warehouse == null) {
 				interactive.ShowMessage(ImportanceLevel.Warning, "Выберите склад.");
@@ -222,7 +216,7 @@ namespace Workwear.ViewModels.Stock {
 		private void PrintBarcodes(IList<Barcode> barcodes) {
 			ReportInfo reportInfo = new ReportInfo() {
 				Title = "Штрихкод",
-				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Identifier = "Barcodes.BarcodeOnWarehouse",
 				Parameters = new Dictionary<string, object> {
 					{ "barcodes", barcodes.Select(x => x.Id).ToList() }
 				}
