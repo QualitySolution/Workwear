@@ -204,7 +204,8 @@ namespace Workwear.ViewModels.Postomats {
 				return;
 			}
 			
-			Save();
+			if(!Save())
+				return;
 			switch(type) 
 			{
 				case PostomatPrintType.Document: PrintDocument(type);
