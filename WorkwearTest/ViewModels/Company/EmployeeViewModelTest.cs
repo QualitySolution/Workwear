@@ -93,6 +93,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.Register(x => baseParameters).As<BaseParameters>();
 			builder.Register(x => commonMessages).As<CommonMessages>();
 			builder.Register(x => deleteEntityService).As<IDeleteEntityService>();
+			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.Register(x => featureService).As<FeaturesService>();
 			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>().As<IInteractiveQuestion>();
 			builder.Register(x => lkUserManagerService).As<LkUserManagerService>();
