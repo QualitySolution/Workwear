@@ -119,8 +119,12 @@ namespace Workwear.Tools.Barcodes
 			int barcodesInStock = unitOfWork.Session.QueryOver<BarcodeOperation>()
 				.JoinAlias(bo => bo.Barcode, () => bAlias)
 				.JoinAlias(bo => bo.WarehouseOperation, () => who)
-				.Where(b => bAlias.Nomenclature == stockPosition.Nomenclature && bAlias.Size == stockPosition.WearSize &&
-				            bAlias.Height == stockPosition.Height)
+				.Where(b =>
+					bAlias.Nomenclature == stockPosition.Nomenclature &&
+					bAlias.Size == stockPosition.WearSize &&
+					bAlias.Height == stockPosition.Height &&
+					who.WearPercent == stockPosition.WearPercent &&
+					who.Owner == stockPosition.Owner)
 				.Where(() => who.ReceiptWarehouse.Id == warehouse.Id)
 				.SelectList(list => list
 					.SelectCountDistinct(() => bAlias.Id)
