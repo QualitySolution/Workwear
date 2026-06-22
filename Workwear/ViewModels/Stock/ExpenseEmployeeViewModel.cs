@@ -100,6 +100,9 @@ namespace Workwear.ViewModels.Stock {
 			this.sizeService.RefreshSizes(UoW); //Загружаем размеры
 			performance.CheckPoint("Предварительная загрузка документа");
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
+
+			Causes = UoW.GetAll<CausesIssue>().ToList();
+
 			if(UoW.IsNew) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
@@ -203,6 +206,14 @@ namespace Workwear.ViewModels.Stock {
 		public bool IssuanceSheetPrintVisible => Entity.IssuanceSheet != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		public bool SensitiveEntryEmployee => Entity.Id == 0 && CanEdit;
+
+		private IList<CausesIssue> causes = new List<CausesIssue>();
+		public IList<CausesIssue> Causes {
+			get => causes;
+			set => SetField(ref causes, value);
+		}
+
+		public bool VisibleCause => causes.Any();
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
