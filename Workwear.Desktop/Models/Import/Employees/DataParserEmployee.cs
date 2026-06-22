@@ -43,25 +43,26 @@ namespace Workwear.Models.Import.Employees
 		}
 
 		#region Типы данных
+
 		public void CreateDatatypes(IUnitOfWork uow, IImportModel model, SettingsMatchEmployeesViewModel settings) {
 			SupportDataTypes.Add(new DataTypeNameWithInitials());
 			SupportDataTypes.Add(new DataTypeFio(personNames));
 			if(featuresService.Available(WorkwearFeature.IdentityCards))
 				SupportDataTypes.Add(item: new DataTypeSimpleString(
-							DataTypeEmployee.CardKey,
-							x => x.CardKey,
-							new[] {
-								"CARD_KEY",
-								"card",
-								"uid"
-							}
-						)
-					);
+						DataTypeEmployee.CardKey,
+						x => x.CardKey,
+						new[] {
+							"CARD_KEY",
+							"card",
+							"uid"
+						}
+					)
+				);
 			SupportDataTypes.Add(new DataTypeFirstName(personNames));
 			SupportDataTypes.Add(new DataTypeSimpleString(
 				DataTypeEmployee.LastName,
 				x => x.LastName,
-				new []{
+				new[] {
 					"LAST_NAME",
 					"фамилия",
 					"LAST NAME",
@@ -71,7 +72,7 @@ namespace Workwear.Models.Import.Employees
 			SupportDataTypes.Add(new DataTypeSimpleString(
 				DataTypeEmployee.Patronymic,
 				x => x.Patronymic,
-				new []{
+				new[] {
 					"SECOND_NAME",
 					"SECOND NAME",
 					"Patronymic",
@@ -85,7 +86,7 @@ namespace Workwear.Models.Import.Employees
 			SupportDataTypes.Add(new DataTypeSimpleDate(
 				DataTypeEmployee.HireDate,
 				x => x.HireDate,
-				new []{
+				new[] {
 					"Дата приема",
 					"Дата приёма",
 					"Принят"
@@ -94,7 +95,7 @@ namespace Workwear.Models.Import.Employees
 			SupportDataTypes.Add(new DataTypeSimpleDate(
 				DataTypeEmployee.DismissDate,
 				x => x.DismissDate,
-				new []{
+				new[] {
 					"Дата увольнения",
 					"Уволен"
 				}
@@ -102,7 +103,7 @@ namespace Workwear.Models.Import.Employees
 			SupportDataTypes.Add(new DataTypeSimpleDate(
 				DataTypeEmployee.BirthDate,
 				x => x.BirthDate,
-				new []{
+				new[] {
 					"Дата рождения",
 					"День рождения",
 					"BirthDay"
@@ -113,8 +114,7 @@ namespace Workwear.Models.Import.Employees
 			SupportDataTypes.Add(new DataTypePost(this, model));
 
 			var sizeTypes = sizeService.GetSizeType(uow, true);
-			foreach (var sizeType in sizeTypes)
-			{
+			foreach(var sizeType in sizeTypes) {
 				var datatype = new DataTypeEmployeeSize(sizeService, sizeType);
 				SupportDataTypes.Add(datatype);
 				if(sizeType.Id == 2)
@@ -125,6 +125,12 @@ namespace Workwear.Models.Import.Employees
 			var wearSize = sizeTypes.FirstOrDefault(x => x.Id == 2);
 			if(wearSize != null && heightSize != null)
 				SupportDataTypes.Add(new DataTypeSizeAndHeight(sizeService, wearSize, heightSize));
+
+			if(featuresService.Available(WorkwearFeature.CostCenter)) {
+				var dataTypeCostCenter = new DataTypeCostCenter(this, model);
+				SupportDataTypes.Add(dataTypeCostCenter);
+				SupportDataTypes.Add(new DataTypeCostCenterNumber(dataTypeCostCenter, model));
+			}
 		}
 		
 		#endregion
@@ -301,6 +307,7 @@ namespace Workwear.Models.Import.Employees
 		public readonly List<Subdivision> UsedSubdivisions = new List<Subdivision>();
 		public readonly List<Post> UsedPosts = new List<Post>();
 		public readonly List<Department> UsedDepartment = new List<Department>();
+		public readonly List<CostCenter> UsedCostCenter = new List<CostCenter>();
 
 		public void FillExistEntities(
 			IUnitOfWork uow, 
@@ -308,7 +315,7 @@ namespace Workwear.Models.Import.Employees
 			ImportModelEmployee model, 
 			IProgressBarDisplayable progress)
 		{
-			progress.Start(3, text: "Загружаем подразделения");
+			progress.Start(4, text: "Загружаем подразделения");
 			var subdivisionColumn = model.GetColumnForDataType(DataTypeEmployee.Subdivision);
 			if(subdivisionColumn != null) {
 				UsedSubdivisions.AddRange(uow.GetAll<Subdivision>());
@@ -328,6 +335,12 @@ namespace Workwear.Models.Import.Employees
 				UsedPosts.AddRange( uow.Session.QueryOver<Post>()
 					.Where(x => x.Name.IsIn(postNames))
 					.List());
+			}
+			progress.Add(text: "Загружаем МВЗ");
+			var costCenterColumn = model.GetColumnForDataType(DataTypeEmployee.CostCenter);
+			var costCenterNumberColumn = model.GetColumnForDataType(DataTypeEmployee.CostCenterNumber);
+			if(costCenterColumn != null || costCenterNumberColumn != null) {
+				UsedCostCenter.AddRange(uow.GetAll<CostCenter>());
 			}
 			progress.Add(text: "Загружаем номера карточек");
 			var cardNumberColumn = model.GetColumnForDataType(DataTypeEmployee.CardNumber);
