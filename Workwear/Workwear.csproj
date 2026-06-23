@@ -1024,10 +1024,13 @@
     <None Include="Reports\Statements\IssuanceSheet_0504210_2.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Reports\Statements\MetroIssuanceSheetVertical.rdl">
+    <None Include="Reports\Statements\MetroIssuanceSheet.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\Statements\MetroReturnSheet.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\Statements\MetroIssuanceSheet.rdl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\Statements\ReturnStatementHorizontal.rdl">

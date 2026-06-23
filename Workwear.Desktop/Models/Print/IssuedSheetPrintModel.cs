@@ -66,7 +66,7 @@ namespace Workwear.Models.Print {
 	public enum IssuedSheetPrint
 	{
 		[Display(Name = "Накладная на выдачу")]
-		[ReportIdentifier("Statements.MetroIssuanceSheetVertical")]
+		[ReportIdentifier("Statements.MetroIssuanceSheet")]
 		MetroIssuanceSheet,
 		[Display(Name = "Альбомная МБ-7")]
 		[ReportIdentifier("Statements.IssuanceSheet")]

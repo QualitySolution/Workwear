@@ -3280,7 +3280,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseEmployeeView" design-size="729 441">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseEmployeeView" design-size="747 441">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -3621,9 +3621,9 @@
                     <property name="Items" translatable="yes" />
                     <property name="AddIfNotExist">False</property>
                     <property name="DefaultFirst">False</property>
-                    <property name="ShowSpecialStateAll">True</property>
+                    <property name="ShowSpecialStateAll">False</property>
                     <property name="ShowSpecialStateNot">True</property>
-                    <property name="NameForSpecialStateNot">Без собственника</property>
+                    <property name="NameForSpecialStateNot" />
                   </widget>
                   <packing>
                     <property name="TopAttach">3</property>

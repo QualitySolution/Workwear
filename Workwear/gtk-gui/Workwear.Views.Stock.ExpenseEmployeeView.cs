@@ -306,9 +306,9 @@ namespace Workwear.Views.Stock
 			this.yspeccomboboxCause.Name = "yspeccomboboxCause";
 			this.yspeccomboboxCause.AddIfNotExist = false;
 			this.yspeccomboboxCause.DefaultFirst = false;
-			this.yspeccomboboxCause.ShowSpecialStateAll = true;
+			this.yspeccomboboxCause.ShowSpecialStateAll = false;
 			this.yspeccomboboxCause.ShowSpecialStateNot = true;
-			this.yspeccomboboxCause.NameForSpecialStateNot = "Без собственника";
+			this.yspeccomboboxCause.NameForSpecialStateNot = "";
 			this.table2.Add(this.yspeccomboboxCause);
 			global::Gtk.Table.TableChild w23 = ((global::Gtk.Table.TableChild)(this.table2[this.yspeccomboboxCause]));
 			w23.TopAttach = ((uint)(3));
