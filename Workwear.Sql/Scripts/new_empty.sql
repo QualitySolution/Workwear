@@ -1143,6 +1143,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   `doc_number` VARCHAR(16) NULL DEFAULT NULL,
   `warehouse_id` INT(10) UNSIGNED NOT NULL DEFAULT 1,
   `employee_id` INT UNSIGNED NULL DEFAULT NULL,
+  `cause_issue_id` INT UNSIGNED NULL,
   `date` DATE NOT NULL,
   `issue_date` date NULL DEFAULT NULL,
   `user_id` INT UNSIGNED NULL DEFAULT NULL,
@@ -1153,6 +1154,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
   INDEX `index_stock_expense_date` (`date` ASC),
+  INDEX `fk_stock_expense_cause_issue_idx` (`cause_issue_id` ASC),
   CONSTRAINT `fk_stock_expense_1`
     FOREIGN KEY (`warehouse_id`)
     REFERENCES `warehouse` (`id`)
@@ -1166,6 +1168,11 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   CONSTRAINT `fk_stock_expense_user`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_expense_cause_issue`
+    FOREIGN KEY (`cause_issue_id`)
+    REFERENCES `causes_issue` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
 ENGINE = InnoDB

@@ -67,7 +67,6 @@ namespace Workwear.Domain.Stock.Documents
 
 		private CausesIssue causeIssue;
 		[Display(Name = "Причина выдачи")]
-		[IgnoreHistoryTrace]
 		public virtual CausesIssue CauseIssue {
 			get => causeIssue;
 			set => SetField(ref causeIssue, value);
