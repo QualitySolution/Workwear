@@ -158,8 +158,9 @@ namespace Workwear.Domain.Stock.Documents
 				return "необходимо создать";
 			else { //Рассчитываем максимум на 3 строки, если штрих кода 3, отображаем их все. Если больше 3-х третью строку занимаем под надпись...
 				var willTake = actualOperations.Count() > 3 ? 2 : 3;
-				var text = String.Join("\n", actualOperations.Take(willTake).Select(x => x.Barcode.Title));
-				if(actualOperations.Count > 3) {
+				var text = String.Join("\n", actualOperations.Take(willTake).Select(x => 
+					$"{x.Barcode.Title} ({x.KitNumber})"));
+				if(actualOperations.Count > 4) {
 					text += $"\nещё {actualOperations.Count - 2}";
 				}
 				return text;
