@@ -542,11 +542,12 @@ namespace Workwear.ViewModels.Analytics {
 					throw new ArgumentOutOfRangeException();
 			}
 
-			ForecastColumns = list.ToArray();
-			foreach(var item in Items) {
+			forecastColumns = list.ToArray();
+			foreach(var item in InternalItems) {
 				item.FillForecast();
 			}
 			
+			OnPropertyChanged(nameof(ForecastColumns));
 			OnPropertyChanged(nameof(CanCreateShipment));
 		}
 
