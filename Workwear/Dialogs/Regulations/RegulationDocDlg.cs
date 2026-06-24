@@ -56,7 +56,8 @@ namespace workwear.Dialogs.Regulations
 			if (!validator.Validate(Entity))
 				return false;
 
-			UoWGeneric.Save();
+			UoW.Save(Entity);
+			UoW.Commit();
 
 			logger.Info("Ok");
 			return true;

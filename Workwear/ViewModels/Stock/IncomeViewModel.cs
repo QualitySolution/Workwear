@@ -275,10 +275,11 @@ namespace Workwear.ViewModels.Stock {
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
 			
-			UoWGeneric.Save ();
+			UoW.Save(Entity);
+			UoW.Commit();
 			
 			if(Entity.Shipment != null)
-				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id, UoWGeneric);
+				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id, UoW);
 
 			logger.Info ("Документ сохранён.");
 			return true;

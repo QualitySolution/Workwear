@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.Stock
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<Completion>(this, Entity, UoW, navigation, autofacScope);
 			
-			if(UoW.IsNew) 
+			if(Entity.Id == 0) 
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			else 
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
