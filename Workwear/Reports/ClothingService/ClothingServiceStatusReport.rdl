@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>11in</PageHeight>
-  <PageWidth>35in</PageWidth>
+  <PageWidth>36.5in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -38,6 +38,8 @@
     postomat_documents.terminal_location AS disp_location,
     postomat_document_items.cell_number AS disp_cell,
     employees.personnel_number AS tab_num,
+    IF(clothing_service_claim.need_for_repair, 'Да', '') AS need_for_repair,
+    clothing_service_claim.defect,
 
     IF(@show_emoloyee, CONCAT_WS(' ', employees.last_name, employees.first_name,employees.patronymic_name), '') AS 'FIO',
     IF(@show_emoloyee, posts.name, '') AS post,
@@ -169,6 +171,14 @@ ORDER BY start_date</CommandText>
           <DataField>state_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="need_for_repair">
+          <DataField>need_for_repair</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="defect">
+          <DataField>defect</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -215,7 +225,7 @@ ORDER BY start_date</CommandText>
           <TableColumn>
             <Width>67.7pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>86.2pt</Width>
             <Visibility>
               <Hidden>=!{?all_status}</Hidden>
@@ -288,6 +298,12 @@ ORDER BY start_date</CommandText>
               <Hidden>=!{?show_phone}</Hidden>
             </Visibility>
           </TableColumn>
+          <TableColumn >
+            <Width>46.2pt</Width>
+          </TableColumn>
+          <TableColumn >
+            <Width>109.2pt</Width>
+          </TableColumn>
           <TableColumn>
             <Width>269.6pt</Width>
             <Visibility>
@@ -354,7 +370,7 @@ ORDER BY start_date</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox21">
                       <Value>Текущий статус</Value>
@@ -562,6 +578,38 @@ ORDER BY start_date</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox28">
+                      <Value>Ремонт</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox26">
+                      <Value>Отметка о ремонте</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox14">
@@ -652,7 +700,7 @@ ORDER BY start_date</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox25">
                       <Value>=Fields!state_name.Value</Value>
@@ -857,6 +905,37 @@ ORDER BY start_date</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox29">
+                      <Value>=Fields!need_for_repair.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor  />
+                        <BorderWidth  />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell >
+                  <ReportItems>
+                    <Textbox Name="Textbox27">
+                      <Value>=Fields!defect.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor  />
+                        <BorderWidth  />
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="start_comment">
@@ -1019,7 +1098,7 @@ ORDER BY start_date</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
-      <Prompt />
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
 </Report>

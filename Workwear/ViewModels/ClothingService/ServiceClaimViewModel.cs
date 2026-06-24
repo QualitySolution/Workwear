@@ -37,10 +37,13 @@ namespace Workwear.ViewModels.ClothingService {
 			if(this.featuresService.Available(WorkwearFeature.Postomats))
 				Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
 
-			foreach(var service in Entity.Barcode.Nomenclature.UseServices) //Делаем список для заполнения услуг во вьюшке
-				services.Add(new SelectableEntity<Service>(service.Id, service.Name, entity:service)
-					{Select = Entity.ProvidedServices.Any(provided => DomainHelper.EqualDomainObjects(service, provided))});
-
+			foreach(var service in Entity.Barcode.Nomenclature.UseServices) { //Все услуги оказываемые для номенклатуры
+				ProvidedService provServ = Entity.ProvidedServices.FirstOrDefault(x => DomainHelper.EqualDomainObjects(service, x.Service))
+				                           ?? new ProvidedService(Entity, service); // Заготовка не сохранённая в UoW, при выборе пользователем надо сохранять
+				provideServices.Add(new SelectableEntity<ProvidedService>(service.Id, service.Name, entity: provServ)
+					{ Select = provServ.Id != 0 }); //Если в базе есть, значит уже выбран
+			}
+			
 		}
 
 		#region Postamat
@@ -72,10 +75,10 @@ namespace Workwear.ViewModels.ClothingService {
 		public virtual bool IsClosed => Entity.IsClosed;
 		public virtual IObservableList<StateOperation> States => Entity.States;
 		
-		private IObservableList<SelectableEntity<Service>> services = new ObservableList<SelectableEntity<Service>>();
-		public virtual IObservableList<SelectableEntity<Service>> Services {
-			get => services;
-			set => SetField(ref services, value);
+		private IObservableList<SelectableEntity<ProvidedService>> provideServices = new ObservableList<SelectableEntity<ProvidedService>>();
+		public virtual IObservableList<SelectableEntity<ProvidedService>> ProvideServices {
+			get => provideServices;
+			set => SetField(ref provideServices, value);
 		}
 		
 		public virtual bool NeedForRepair {
@@ -106,12 +109,11 @@ namespace Workwear.ViewModels.ClothingService {
 		#region Сохранение
 
 		public override bool Save() {
-			foreach(var s in services) {
-				var providedService = Entity.ProvidedServices.FirstOrDefault(provided => DomainHelper.EqualDomainObjects(s.Entity, provided));
-				if(s.Select && providedService == null)
+			foreach(var s in provideServices) {
+				if(s.Select && !Entity.ProvidedServices.Any(x => DomainHelper.EqualDomainObjects(s.Entity.Service, x.Service)))
 					Entity.ProvidedServices.Add(s.Entity);
-				else if(!s.Select && providedService != null)
-                    Entity.ProvidedServices.Remove(providedService);
+				if(!s.Select && Entity.ProvidedServices.Any(x => DomainHelper.EqualDomainObjects(s.Entity.Service, x.Service)))
+					Entity.ProvidedServices.Remove(s.Entity);
 			}
 			return base.Save();
 		}

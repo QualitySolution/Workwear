@@ -25,11 +25,11 @@ namespace Workwear.Domain.Stock.Documents {
 
 	public class ExpenseDutyNorm : StockDocument, IValidatableObject{
 		
-		#region Генерирумые Сввойства
+		#region Генерирумые Свойства
 		public virtual string Title => $"Выдача по деж. норме №{DocNumberText} от {Date:d}";
 		#endregion
 		
-		#region Хранимые Сввойства
+		#region Хранимые Свойства
 
 		private EmployeeCard responsibleEmployee;
 		[Display (Name = "Ответственный сотрудник")]

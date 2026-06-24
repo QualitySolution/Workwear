@@ -25,6 +25,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
@@ -44,7 +45,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly SizeService sizeService;
 		private readonly CurrentUserSettings currentUserSettings;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		public ExpenseDocItemsEmployeeViewModel DocItemsEmployeeViewModel;
+		public ExpenseEmployeeItemsViewModel EmployeeItemsViewModel;
 		private IInteractiveService interactive;
 		private readonly CommonMessages commonMessages;
 		private readonly FeaturesService featuresService;
@@ -148,7 +149,7 @@ namespace Workwear.ViewModels.Stock {
 			WarehouseEntryViewModel.IsEditable = CanEdit;
 			
 			EmployeeCardEntryViewModel = entryBuilder.ForProperty(x => x.Employee)
-									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+									.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel, EmployeeFilterViewModel>(f => f.Date = Entity.Date)
 									.UseViewModelDialog<EmployeeViewModel>()
 									.Finish();
 			EmployeeCardEntryViewModel.IsEditable = SensitiveEntryEmployee;
@@ -158,7 +159,7 @@ namespace Workwear.ViewModels.Stock {
 			performance.CheckPoint("Создаем дочерние модели");
 			var parameter = new TypedParameter(typeof(ExpenseEmployeeViewModel), this);
 			var parameter2 = new TypedParameter(typeof(IList<Owner>), ownersQuery.ToList());
-			DocItemsEmployeeViewModel = this.autofacScope.Resolve<ExpenseDocItemsEmployeeViewModel>(parameter, parameter2);
+			EmployeeItemsViewModel = this.autofacScope.Resolve<ExpenseEmployeeItemsViewModel>(parameter, parameter2);
 			Entity.PropertyChanged += EntityChange;
 			
 			if(UoW.IsNew) {
@@ -283,6 +284,12 @@ namespace Workwear.ViewModels.Stock {
 		}
 
 		private void UpdateAmounts() {
+			// Graph заполняется только при вызове FillUnderreceived, который срабатывает при смене сотрудника
+			// или при создании нового документа. При открытии существующего документа Graph не заполняется,
+			// чтобы не тратить время при простом просмотре. Поэтому заполняем его здесь лениво — только
+			// в момент первого реального использования (когда пользователь меняет дату и подтверждает обновление).
+			if(Entity.Employee != null && Entity.Items.Any(x => x.EmployeeCardItem?.Graph == null))
+				issueModel.FillWearReceivedInfo(new[] { Entity.Employee });
 			foreach(var item in Entity.Items) {
 				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(baseParameters, Entity.Date) ?? 0;
 			}
@@ -318,10 +325,10 @@ namespace Workwear.ViewModels.Stock {
 				return true;
 			}
 			
-			if(!SkipBarcodeCheck && DocItemsEmployeeViewModel.NeedUpdateBarcodes) {
+			if(!SkipBarcodeCheck && EmployeeItemsViewModel.NeedUpdateBarcodes) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Перед окончательным сохранением необходимо обновить маркировку." +
-				    (DocItemsEmployeeViewModel.NeedAddBarcodes ? "\nЕсть строки, где выдано больше, чем промаркировано." : "") +
-					(DocItemsEmployeeViewModel.NeedRemoveBarcodes ? "\nВ некоторых строках нужно удалить лишние метки(это можно сделать через контекстное меню)." : "") );
+				    (EmployeeItemsViewModel.NeedAddBarcodes ? "\nЕсть строки, где выдано больше, чем промаркировано." : "") +
+					(EmployeeItemsViewModel.NeedRemoveBarcodes ? "\nВ некоторых строках нужно удалить лишние метки(это можно сделать через контекстное меню)." : "") );
 				logger.Warn("Необходимо обновить маркировку.");
 				return false;
 			}
@@ -417,7 +424,7 @@ namespace Workwear.ViewModels.Stock {
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;
-					if(interactive.Question("Обновить количество по потребности на новую дату документа?"))
+					if(Entity.Items.Any() && interactive.Question("Обновить количество по потребности на новую дату документа?"))
 						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):
@@ -439,7 +446,7 @@ namespace Workwear.ViewModels.Stock {
 
 		#region ISelectItem
 		public void SelectItem(int id) {
-			DocItemsEmployeeViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
+			EmployeeItemsViewModel.SelectedItem = Entity.Items.FirstOrDefault(x => x.Id == id);
 		}
 		#endregion
 

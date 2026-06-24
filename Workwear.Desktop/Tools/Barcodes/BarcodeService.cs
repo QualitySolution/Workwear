@@ -6,15 +6,18 @@ using Workwear.Domain.ClothingService;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Repository.Operations;
 
 namespace Workwear.Tools.Barcodes 
 {
 	public class BarcodeService 
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private EmployeeIssueRepository employeeIssueRepository;
 
-		public BarcodeService(BaseParameters baseParameters) {
+		public BarcodeService(BaseParameters baseParameters, EmployeeIssueRepository employeeIssueRepository) {
 			BaseCode = baseParameters.BarcodePrefix ?? 2001;
+			this.employeeIssueRepository = employeeIssueRepository;
 		}
 
 		/// <summary>
@@ -27,22 +30,66 @@ namespace Workwear.Tools.Barcodes
 		#region Create
 
 		public void CreateBarcodeEAN13(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
+			
+			var usedNumbers = employeeIssueRepository
+				.GetBarcodeNumbersForEmployee(
+					employeeIssueOperations.Select(x => x.Employee).ToList(),
+//// Спорно, может лучше DateTime.Now. По идее должны быть во всех операциях одинаково
+					employeeIssueOperations.Max(x=> x.OperationTime),
+					unitOfWork)
+				.ToList();
 			foreach(var operation in employeeIssueOperations) {
 				int bcount = operation.BarcodeOperations.Count;
 
 				if(operation.Issued > bcount) {
 					var barcodes = Create(unitOfWork, operation.Issued - bcount, operation.Nomenclature, operation.WearSize, operation.Height);
 					foreach(var barcode in barcodes) {
+						var kitNumper = GetNextKitNumber(usedNumbers, operation);
 						var barcodeOperation = new BarcodeOperation {
 							Barcode = barcode,
-							EmployeeIssueOperation = operation
+							EmployeeIssueOperation = operation,
+							KitNumber = kitNumper
 						};
 						operation.BarcodeOperations.Add(barcodeOperation);
 						unitOfWork.Save(barcodeOperation);
+						usedNumbers.Add(new BarcodeNumberInfo {
+							EmployeeId = operation.Employee.Id,
+							ProtectionToolsId = GetProtectionToolsId(operation),
+							KitNumber = kitNumper
+						});
 					}
 				}
 			}
 		}
+
+		public int GetNextKitNumber(IUnitOfWork unitOfWork, EmployeeIssueOperation operation) {
+			var usedNumbers = employeeIssueRepository
+				.GetBarcodeNumbersForEmployee(new[] { operation.Employee }, operation.OperationTime, unitOfWork)
+				.ToList();
+			usedNumbers.AddRange(operation.BarcodeOperations
+				.Where(x => x.KitNumber > 0)
+				.Select(x => new BarcodeNumberInfo {
+					EmployeeId = operation.Employee.Id,
+					ProtectionToolsId = GetProtectionToolsId(operation),
+					KitNumber = x.KitNumber
+				}));
+			return GetNextKitNumber(usedNumbers, operation);
+		}
+
+		private static int GetNextKitNumber(
+			IEnumerable<BarcodeNumberInfo> usedNumbers,
+			EmployeeIssueOperation operation)
+		{
+			var protectionToolsId = GetProtectionToolsId(operation);
+			return Enumerable.Range(1, int.MaxValue - 1)
+				.First(n => !usedNumbers
+					.Where(x => x.EmployeeId == operation.Employee.Id && x.ProtectionToolsId == protectionToolsId)
+					.Select(x => x.KitNumber.Value)
+					.Contains(n));
+		}
+
+		private static int GetProtectionToolsId(EmployeeIssueOperation operation) =>
+			operation.ProtectionTools?.Id ?? operation.NormItem?.ProtectionTools?.Id ?? 0;
 		
 		public IList<Barcode> Create(IUnitOfWork unitOfWork, int amount, Nomenclature nomenclature, Size size, Size height) {
 			var barCodeList = new List<Barcode>();
@@ -81,7 +128,6 @@ namespace Workwear.Tools.Barcodes
 		#endregion
 
 		#region Private Methods
-
 		static int CheckSum(string upccode)
 		{
 			var sum = 0;

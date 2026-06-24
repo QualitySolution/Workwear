@@ -122,13 +122,6 @@ namespace Workwear.Domain.Company
 			set => SetField(ref post, value);
 		}
 
-		private Leader leader;
-		[Display (Name = "Руководитель")]
-		public virtual Leader Leader {
-			get => leader;
-			set => SetField(ref leader, value);
-		}
-
 		private DateTime? hireDate;
 		[Display (Name = "Дата поступления")]
 		public virtual DateTime? HireDate {
@@ -509,6 +502,19 @@ namespace Workwear.Domain.Company
 					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList<IGraphIssueOperation>());
 				else 
 					item.Graph = new IssueGraph(new List<IGraphIssueOperation>());
+			}
+		}
+
+		/// <summary>
+		/// Метод заполняет информацию о получениях для строк потребности в виде графа Graph.
+		/// Принимает уже сгруппированный по Id номенклатуры нормы словарь операций.
+		/// Используется при массовой загрузке через <see cref="GraphIssueOperationDto"/> для экономии памяти.
+		/// </summary>
+		public virtual void FillWearReceivedInfo(IDictionary<int, List<IGraphIssueOperation>> operationsByProtectionToolsId) {
+			foreach (var item in WorkwearItems) {
+				item.Graph = operationsByProtectionToolsId.TryGetValue(item.ProtectionTools.Id, out var ops)
+					? new IssueGraph(ops)
+					: new IssueGraph(new List<IGraphIssueOperation>());
 			}
 		}
 

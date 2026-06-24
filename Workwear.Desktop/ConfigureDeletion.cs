@@ -33,12 +33,16 @@ namespace Workwear
 			#region Обслуживание спецодежды
 			DeleteConfig.AddHibernateDeleteInfo<ServiceClaim>()
 				.AddDeleteDependence<StateOperation>(x => x.Claim)
+				.AddDeleteDependence<ProvidedService>(x => x.Claim)
 				.AddClearDependence<PostomatDocumentItem>(x => x.ServiceClaim);
 
 			DeleteConfig.AddHibernateDeleteInfo<StateOperation>();
 		
 			DeleteConfig.AddHibernateDeleteInfo<Service>()
+				.AddDeleteDependence<ProvidedService>(x => x.Service)
 				.AddRemoveFromDependence<Nomenclature>(x => x.UseServices);
+			
+			DeleteConfig.AddHibernateDeleteInfo<ProvidedService>();
 			
 			#endregion
 			#region Связь
@@ -55,10 +59,12 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeCard>()
 				.AddClearDependence<CollectiveExpense>(x => x.TransferAgent)
+				.AddClearDependence<Department>(x => x.HeadOfDepartment)
 				.AddClearDependence<DutyNorm>(x => x.ResponsibleEmployee)
 				.AddClearDependence<ExpenseDutyNorm>(x => x.ResponsibleEmployee)
 				.AddClearDependence<IssuanceSheet>(x => x.TransferAgent)
 				.AddClearDependence<Leader>(x => x.Employee)
+				.AddClearDependence<Subdivision>(x => x.HeadOfDivision)
 				.AddDeleteDependence<CollectiveExpenseItem>(x => x.Employee)
 				.AddDeleteDependence<EmployeeCardItem>(x => x.EmployeeCard)
 				.AddDeleteDependence<EmployeeCostCenter>(x => x.Employee)
@@ -86,7 +92,6 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeSelectedNomenclature>();
 
 			DeleteConfig.AddHibernateDeleteInfo<Leader>()
-				.AddClearDependence<EmployeeCard>(x => x.Leader)
 				.AddClearDependence<IssuanceSheet>(x => x.HeadOfDivisionPerson)
 				.AddClearDependence<IssuanceSheet>(x => x.ResponsiblePerson)
 				.AddClearDependence<UserSettings>(x => x.DefaultResponsiblePerson)
@@ -253,6 +258,8 @@ namespace Workwear
 				.AddClearDependence<WriteoffItem>(x => x.Height)
 				.AddClearDependence<WriteoffItem>(x => x.WearSize)
 				.AddDeleteDependence<EmployeeSize>(x => x.Size)
+				.AddDeleteDependence<NomenclatureSizes>(x => x.Height)
+				.AddDeleteDependence<NomenclatureSizes>(x => x.WearSize)
 				;
 
 			DeleteConfig.AddHibernateDeleteInfo<SizeType>()
@@ -262,6 +269,8 @@ namespace Workwear
 				.AddClearDependence<ItemsType>(x => x.HeightType);
 
 			DeleteConfig.AddHibernateDeleteInfo<EmployeeSize>();
+
+			DeleteConfig.AddHibernateDeleteInfo<NomenclatureSizes>();
 			#endregion
 			#region Statements
 
@@ -316,6 +325,7 @@ namespace Workwear
 				.AddDeleteDependence<ExpenseItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IncomeItem> (x => x.Nomenclature)
 				.AddDeleteDependence<IssuanceSheetItem>(x => x.Nomenclature)
+				.AddDeleteDependence<NomenclatureSizes>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Nomenclature)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Nomenclature)
 				.AddDeleteDependence<ReturnItem> (x => x.Nomenclature)
@@ -408,6 +418,7 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<CausesWriteOff>()
 				.AddClearDependence<WriteoffItem>(x => x.CausesWriteOff);
+			DeleteConfig.AddHibernateDeleteInfo<CausesIssue>();
 			
 			#endregion
 			#region Поставка

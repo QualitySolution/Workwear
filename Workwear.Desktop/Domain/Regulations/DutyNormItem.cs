@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using QS.DomainModel.Entity;
-using QS.DomainModel.UoW;
 using QS.Utilities;
-using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Models.Operations;
 using Workwear.Tools;
@@ -160,17 +158,23 @@ namespace Workwear.Domain.Regulations {
 		/// Рассчитывает дату следующей выдачи.
 		/// </summary>
 		public virtual DateTime? CalculateNextIssue() {
+			if(Graph == null)
+				throw new NullReferenceException("Перед выполнением расчета CalculateNextIssue, Graph должен быть заполнен!");
 			DateTime? wantIssue = new DateTime();
 			if(Graph.Intervals.Any()) {
 				var listReverse = Graph.Intervals.OrderByDescending(x => x.StartDate).ToList();
 				wantIssue = listReverse.First().StartDate;
-				//Ищем первый с конца интервал где не хватает выданного до нормы.
-				foreach(var interval in listReverse) {
-					if(interval.CurrentCount < Amount)
-						wantIssue = interval.StartDate;
-					else
-						break;
-				}
+
+				if(listReverse.First().CurrentCount >= Amount)
+					//Если количество в последнем интервале достаточно, значит нет автосписания
+					wantIssue = null;
+				else
+					foreach(var interval in listReverse) 
+						//Ищем первый с конца интервал где не хватает выданного до нормы.
+						if(interval.CurrentCount < Amount)
+							wantIssue = interval.StartDate;
+						else
+							break;
 			}
 
 			if(wantIssue == default(DateTime))
@@ -233,6 +237,20 @@ namespace Workwear.Domain.Regulations {
 			}
 		}
 		
+		public virtual string LifeText {
+			get {
+				switch(NormPeriod) {
+					case DutyNormPeriodType.Year:
+					case DutyNormPeriodType.Month:
+						return $"{PeriodCount} {PeriodText}";
+					case DutyNormPeriodType.Wearout:
+						return "До износа";
+					default:
+						return String.Empty;
+				}
+			}
+		}
+
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);

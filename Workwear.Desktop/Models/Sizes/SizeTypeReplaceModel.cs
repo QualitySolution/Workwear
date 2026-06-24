@@ -9,6 +9,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Supply;
 using Workwear.Repository.Sizes;
 
 namespace Workwear.Models.Sizes {
@@ -66,7 +67,7 @@ namespace Workwear.Models.Sizes {
 				text += " и ростов: " + String.Join(", ", usedHeights.Select(x => x.Name));
 			text += " складских операциях. Продолжить?";
 			if(interactive.Question(text)) {
-				progress.Start(usedSizesAll.Count * 7);
+				progress.Start(usedSizesAll.Count * 10);
 				ReplaceSize(uow, progress, usedSizes, nomenclatures, newSizeType);
 				ReplaceHeight(uow, progress, usedHeights, nomenclatures, newHeight);
 				progress.Close();
@@ -148,7 +149,30 @@ namespace Workwear.Models.Sizes {
 					.Set(x => x.WearSize, newSize)
 					.Update();
 				
-				//Есть еще ссылки с SubdivisionIssueOperation но не понятно как это используется, возможно эти ссылки вообще не нужны.
+				progress.Add();
+				uow.GetAll<DutyNormIssueOperation>()
+					.Where(x => x.WearSize.Id == size.Id)
+					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
+					.UpdateBuilder()
+					.Set(x => x.WearSize, newSize)
+					.Update();
+
+				progress.Add();
+				uow.GetAll<ReturnItem>()
+					.Where(x => x.WearSize.Id == size.Id)
+					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
+					.UpdateBuilder()
+					.Set(x => x.WearSize, newSize)
+					.Update();
+
+				progress.Add();
+				uow.GetAll<ShipmentItem>()
+					.Where(x => x.WearSize.Id == size.Id)
+					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
+					.UpdateBuilder()
+					.Set(x => x.WearSize, newSize)
+					.Update();
+				
 				//Так же есть ссылка из Barcode, но пока не уверен, стоит ли менять размер после выпуска штрихкода.
 			}
 		}
@@ -212,8 +236,31 @@ namespace Workwear.Models.Sizes {
 					.UpdateBuilder()
 					.Set(x => x.Height, newHeight)
 					.Update();
+				
+				progress.Add();
+				uow.GetAll<DutyNormIssueOperation>()
+					.Where(x => x.Height.Id == height.Id)
+					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
+					.UpdateBuilder()
+					.Set(x => x.Height, newHeight)
+					.Update();
 
-				//Есть еще ссылки с SubdivisionIssueOperation но не понятно как это используется, возможно эти ссылки вообще не нужны.
+				progress.Add();
+				uow.GetAll<ReturnItem>()
+					.Where(x => x.Height.Id == height.Id)
+					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
+					.UpdateBuilder()
+					.Set(x => x.Height, newHeight)
+					.Update();
+
+				progress.Add();
+				uow.GetAll<ShipmentItem>()
+					.Where(x => x.Height.Id == height.Id)
+					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
+					.UpdateBuilder()
+					.Set(x => x.Height, newHeight)
+					.Update();
+				
 				//Так же есть ссылка из Barcode, но пока не уверен, стоит ли менять размер после выпуска штрихкода.
 			}
 		}

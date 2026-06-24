@@ -190,14 +190,14 @@ namespace Workwear.ViewModels.Stock
 			var performance = new ProgressPerformanceHelper(progressCreator, 6, "Подготовка документа...", logger, showProgressText: true);
 			Entity.CleanupItems();
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
+			performance.CheckPoint("Сохранение документа...");
+			UoWGeneric.Session.SaveOrUpdate(Entity);
 			performance.CheckPoint("Обновление ведомости...");
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
-
-			performance.CheckPoint("Сохранение...");
-			UoWGeneric.Save();
-			UoW.Commit();
+			performance.CheckPoint("Завершение транзакции...");
+			UoWGeneric.Commit();
 			performance.CheckPoint("Обновление карточек сотрудников...");
 			if(changedOperations.Any()) {
 				progressCreator.UpdateMax(6 + changedOperations.Length + 1);
@@ -205,7 +205,6 @@ namespace Workwear.ViewModels.Stock
 			}
 			
 			performance.CheckPoint("Завершение...");
-			UoWGeneric.Commit();
 			performance.End();
 			logger.Info("Ok");
 			return true;

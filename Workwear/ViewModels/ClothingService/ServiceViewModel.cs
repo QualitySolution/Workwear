@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Gamma.Widgets;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
@@ -12,10 +13,12 @@ using Workwear.Domain.ClothingService;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Barcodes;
+using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class ServiceViewModel : EntityDialogViewModelBase<Service> {
 		public ServiceViewModel(
+			FeaturesService featuresService,
 			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
@@ -23,10 +26,13 @@ namespace Workwear.ViewModels.ClothingService {
 			: base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 		}
 		
 		private readonly INavigationManager navigation;
+		private readonly FeaturesService featuresService;
 
+		public bool ShowAlternativeName => featuresService.Available(WorkwearFeature.ReportServiceServiced);
 		public IObservableList<Nomenclature> ObservableNomenclatures  => Entity.Nomenclatures;
 		public void AddNomenclature() {
 			var selectJournal = navigation.OpenViewModel<NomenclatureJournalViewModel>(this, OpenPageOptions.AsSlave);
@@ -37,7 +43,18 @@ namespace Workwear.ViewModels.ClothingService {
 					Entity.AddNomenclature(n);
 			};
 		}
-
+		
+		public object SelectState {
+			get => (object)Entity.WithState ?? SpecialComboState.Not;
+			set {
+				switch(value) {
+					case (SpecialComboState.Not): Entity.WithState = null; break;
+					default: Entity.WithState = (ClaimState?)value; break;
+				}
+				OnPropertyChanged();
+			}
+		}
+		
 		public override bool Save() {
 
 			if(Entity.Code == null)

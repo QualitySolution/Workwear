@@ -13,6 +13,9 @@ using Workwear.ViewModels.Regulations;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
+	/// <summary>
+	/// Вкладка "Применённые нормы"
+	/// </summary>
 	public class EmployeeNormsViewModel : ViewModelBase
 	{
 		private readonly EmployeeViewModel employeeViewModel;

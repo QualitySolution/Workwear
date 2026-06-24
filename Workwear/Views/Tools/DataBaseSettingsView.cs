@@ -84,6 +84,11 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.StartDateOfOperationsVisible, w => w.Visible)
 			    .InitializeFromSource();
 			    
+		    ycheckbuttonIsGenericName.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.IsGenericName, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+			    
 		    
 			CommonButtonSubscription();
 		}

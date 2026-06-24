@@ -21,9 +21,13 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.Comment).Column("comment");
 			Map(x => x.Number).Column("number");
 			Map(x => x.AdditionalInfo).Column("additional_info");
+			Map(x => x.ProtectionСlass).Column("protection_class");
+			Map(x => x.ProtectionProperties).Column("protection_properties");
+			Map(x => x.Weight).Column("weight");
 			Map(x => x.CatalogId).Column("catalog_id");
 			Map(x => x.Archival).Column("archival");
 			Map(x => x.SaleCost).Column("sale_cost");
+			Map(x => x.RentCost).Column("rent_cost_day");
 			Map(x => x.Rating).Column("rating");
 			Map(x => x.RatingCount).Column("rating_count");
 			Map(x => x.UseBarcode).Column("use_barcode");
@@ -40,7 +44,12 @@ namespace Workwear.HibernateMapping.Stock
 				.Table("clothing_service_services_nomenclature")
 				.ParentKeyColumn("nomenclature_id")
 				.ChildKeyColumn("service_id");
+			
+			HasMany (x => x.NomenclatureSizes)
+				.Inverse()
+				.KeyColumn ("nomenclature_id").Not.KeyNullable ()
+				.Cascade.AllDeleteOrphan ()
+				.LazyLoad ();
 		}
 	}
 }
-

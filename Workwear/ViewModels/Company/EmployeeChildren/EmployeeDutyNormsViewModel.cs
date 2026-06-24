@@ -17,6 +17,9 @@ using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren {
+	/// <summary>
+	/// Вкладка "Дежурное"
+	/// </summary>
 	public class EmployeeDutyNormsViewModel: ViewModelBase {
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly INavigationManager navigation;

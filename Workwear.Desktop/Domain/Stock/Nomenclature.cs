@@ -70,6 +70,26 @@ namespace Workwear.Domain.Stock {
 			get => additionalInfo;
 			set => SetField(ref additionalInfo, value);
 		}
+		private string protectionProperties;
+		[Display(Name = "Защитные свойства")]
+		[StringLength(120)]
+		public virtual string ProtectionProperties {
+			get => protectionProperties;
+			set => SetField(ref protectionProperties, value);
+		}
+		private string protectionClass;
+		[Display(Name = "Класс защиты")]
+		[StringLength(16)]
+		public virtual string ProtectionСlass {
+			get => protectionClass;
+			set => SetField(ref protectionClass, value);
+		}
+		private int weight;
+		[Display(Name = "Вес")]
+		public virtual int Weight {
+			get => weight;
+			set => SetField(ref weight, value);
+		}
 		private string catalogId;
 		[Display(Name = "ID каталога")]
 		[StringLength(24, ErrorMessage = "Максимальная длинна идентификатора в каталоге - 24 символа.")]
@@ -89,6 +109,13 @@ namespace Workwear.Domain.Stock {
 		public virtual decimal? SaleCost {
 			get => saleCost;
 			set => SetField(ref saleCost, value);
+		}		
+		
+		private decimal? rentCost;
+		[Display(Name = "Цена Аренды")]
+		public virtual decimal? RentCost {
+			get => rentCost;
+			set => SetField(ref rentCost, value);
 		}
 		
 		private float? rating;
@@ -145,6 +172,19 @@ namespace Workwear.Domain.Stock {
 					}
 				}
 			}
+
+			if(NomenclatureSizes.Any()) {
+				var duplicates = NomenclatureSizes
+					.GroupBy(x => (x.Height, Size: x.WearSize))
+					.Where(g => g.Count() > 1)
+					.SelectMany(x => x)
+					.ToList();
+				
+				foreach(var item in duplicates.Select(x => x.Title).Distinct()) {
+					yield return new ValidationResult(
+						$"Не должно быть повторяющихся вариантов размеров. {item} повторяется.");
+				}
+			}
 		}
 		#endregion
 		#region Функции
@@ -170,6 +210,10 @@ namespace Workwear.Domain.Stock {
 			Archival = nomenclature.Archival;
 			SaleCost = nomenclature.SaleCost;
 			UseBarcode = nomenclature.UseBarcode;
+			AdditionalInfo = nomenclature.AdditionalInfo;
+			ProtectionProperties = nomenclature.ProtectionProperties;
+			ProtectionСlass = nomenclature.ProtectionСlass;
+			Weight = nomenclature.Weight;
 
 			foreach(var pt in nomenclature.ProtectionTools) 
 				ProtectionTools.Add(pt);
@@ -199,6 +243,15 @@ namespace Workwear.Domain.Stock {
 		}
 		#endregion
 		
+		#region Размеры номенклатуры
+		private IObservableList<NomenclatureSizes> nomenclatureSizes = new ObservableList<NomenclatureSizes>();
+		[Display(Name = "Варианты размеров номенклатуры")]
+		public virtual IObservableList<NomenclatureSizes> NomenclatureSizes {
+			get => nomenclatureSizes;
+			set => SetField(ref nomenclatureSizes, value);
+		}
+		#endregion
+		
 		#region Обслуживание одежды
 		private IObservableList<Service> useServices = new ObservableList<Service>();
 		[Display(Name = "Услуги обслуживания")]
@@ -209,7 +262,7 @@ namespace Workwear.Domain.Stock {
 
 		public virtual void AddService(Service service) {
 			if(UseServices.Any(p => DomainHelper.EqualDomainObjects(p, service))) {
-				logger.Warn("Услуга уже добавлен. Пропускаем...");
+				logger.Warn("Услуга уже добавлена. Пропускаем...");
 				return;
 			}
 			UseServices.Add(service);

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
 using ClosedXML.Excel;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.SqlCommand;
+using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -34,12 +37,15 @@ using Workwear.ViewModels.Supply;
 namespace Workwear.ViewModels.Analytics {
 	public class WarehouseForecastingViewModel : UowDialogViewModelBase, IDialogDocumentation, IForecastColumnsModel
 	{
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 		private readonly ILifetimeScope autofacScope;
 		private readonly NomenclatureRepository nomenclatureRepository;
 		private readonly ShipmentRepository shipmentRepository;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly FeaturesService featuresService;
 		private readonly FutureIssueModel futureIssueModel;
+		private readonly DutyNormIssueModel dutyNormIssueModel;
+		private readonly DutyNormRepository dutyNormRepository;
 		private readonly StockBalanceModel stockBalance;
 		private readonly SizeService sizeService;
 		private readonly IFileDialogService fileDialogService;
@@ -49,6 +55,8 @@ namespace Workwear.ViewModels.Analytics {
 			EmployeeIssueModel issueModel,
 			FeaturesService featuresService,
 			FutureIssueModel futureIssueModel,
+			DutyNormIssueModel dutyNormIssueModel,
+			DutyNormRepository dutyNormRepository,
 			IFileDialogService fileDialogService,
 			ILifetimeScope autofacScope,
 			INavigationManager navigation,
@@ -68,6 +76,8 @@ namespace Workwear.ViewModels.Analytics {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.futureIssueModel = futureIssueModel ?? throw new ArgumentNullException(nameof(futureIssueModel));
+			this.dutyNormIssueModel = dutyNormIssueModel ?? throw new ArgumentNullException(nameof(dutyNormIssueModel));
+			this.dutyNormRepository = dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
 			this.stockBalance = stockBalance ?? throw new ArgumentNullException(nameof(stockBalance));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.fileDialogService = fileDialogService ?? throw new ArgumentNullException(nameof(fileDialogService));
@@ -105,14 +115,14 @@ namespace Workwear.ViewModels.Analytics {
 						if(choiceNomenclatureViewModel == null) {
 							choiceNomenclatureViewModel =
 								new ChoiceListViewModel<Nomenclature>(nomenclatureRepository.GetActiveNomenclatures());
-							choiceNomenclatureViewModel.SelectionChanged += (sender, args) => MakeForecast();
+							choiceNomenclatureViewModel.SelectionChanged += (sender, args) => ShowItemsList();
 						}
 						return choiceNomenclatureViewModel;
 					case ForecastingNomenclatureType.ProtectionTools:
 						if(choiceProtectionToolsViewModel == null) {
 							choiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>
 								(protectionToolsRepository.GetActiveProtectionTools(UoW));
-							choiceProtectionToolsViewModel.SelectionChanged += (sender, args) => MakeForecast();
+							choiceProtectionToolsViewModel.SelectionChanged += (sender, args) => ShowItemsList();
 						}
 						return choiceProtectionToolsViewModel;
 					default:
@@ -132,7 +142,8 @@ namespace Workwear.ViewModels.Analytics {
 			get => endDate;
 			set {
 				if(SetField(ref endDate, value)) {
-					if(EndDate > lastForecastUntil || employees != null)
+					// Пересчёт только если дата вышла за пределы уже рассчитанного периода.
+					if(employees != null && EndDate > lastForecastUntil)
 						MakeForecast();
 					RefreshColumns();
 				}
@@ -242,20 +253,18 @@ namespace Workwear.ViewModels.Analytics {
 					case ForecastingNomenclatureType.ProtectionTools:
 						return autofacScope.Resolve<ProtectionToolsForecastingModel>(new TypedParameter(typeof(IForecastColumnsModel), this));
 					case ForecastingNomenclatureType.Nomenclature:
-						var model = autofacScope.Resolve<NomenclatureForecastingModel>(new TypedParameter(typeof(IForecastColumnsModel), this));
-						model.RestrictNomenclatures =
-							choiceNomenclatureViewModel.AllSelected ? null : choiceNomenclatureViewModel.SelectedEntities;
-						return model;
+						return autofacScope.Resolve<NomenclatureForecastingModel>(new TypedParameter(typeof(IForecastColumnsModel), this));
 					default:
 						throw new NotImplementedException();
 				}
 			}
 		}
 		private bool NomenclatureAllSelected => NomenclatureType == ForecastingNomenclatureType.Nomenclature 
-			? choiceNomenclatureViewModel.AllSelected
-			: choiceProtectionToolsViewModel.AllSelected;
+			? (choiceNomenclatureViewModel?.AllSelected ?? true)
+			: (choiceProtectionToolsViewModel?.AllSelected ?? true);
 		
 		IList<EmployeeCard> employees;
+		IList<DutyNormItem> dutyNormItems;
 		DateTime lastForecastUntil;
 		private List<FutureIssue> futureIssues = new List<FutureIssue>();
 		#endregion
@@ -265,7 +274,10 @@ namespace Workwear.ViewModels.Analytics {
 			SensitiveSettings = false;
 			SensitiveFill = false; //Специально отключаем навсегда, так как при повторном заполнении дублируются данные. Если нужно будет включить придется разбираться.
 			stockBalance.Warehouse = Warehouse;
-			ProgressTotal.Start(5, text:"Получение данных");
+			
+			LogMemory("Fill: начало");
+			
+			ProgressTotal.Start(10, text:"Получение данных");
 			ProgressLocal.Start(4, text:"Загрузка размеров");
 			sizeService.RefreshSizes(UoW);
 			ProgressLocal.Add(text: "Получение работающих сотрудников");
@@ -287,43 +299,92 @@ namespace Workwear.ViewModels.Analytics {
 			ProgressTotal.Add(text: "Получение выданных вещей");
 			issueModel.FillWearReceivedInfo(employees.ToArray(), progress: ProgressLocal);
 
+			ProgressTotal.Add(text: "Загрузка дежурных норм");
+			dutyNormItems = dutyNormRepository.AllItemsFor(uow: UoW);
+			ProgressTotal.Add(text: "Заполнение дежурных норм");
+			dutyNormIssueModel.FillDutyNormItems(dutyNormItems.ToArray(), progress: ProgressLocal);
+
 			ProgressTotal.Add(text: "Прогнозирование выдач");
 			MakeForecast();
+			
+			LogMemory("Fill: конец");
 		}
 		
+		/// <summary>
+		/// Предзагрузка данных для устранения N+1: supply-номенклатуры ProtectionTools,
+		/// их ProtectionToolsNomenclatures и NomenclatureSizes.
+		/// </summary>
+		private void PreloadForecastingData() {
+			var ptIds = futureIssues.Select(x => x.ProtectionTools.Id).Distinct().ToArray();
+			if(!ptIds.Any()) return;
+
+			// Загружаем supply-номенклатуры (References, без дублей строк) и ProtectionToolsNomenclatures (HasMany) — двумя Future-запросами
+			var ptsFuture = UoW.Session.QueryOver<ProtectionTools>()
+				.WhereRestrictionOn(p => p.Id).IsIn(ptIds)
+				.Fetch(SelectMode.Fetch, p => p.SupplyNomenclatureUnisex)
+				.Fetch(SelectMode.Fetch, p => p.SupplyNomenclatureMale)
+				.Fetch(SelectMode.Fetch, p => p.SupplyNomenclatureFemale)
+				.Future();
+
+			ProtectionToolsNomenclature ptnAlias = null;
+			UoW.Session.QueryOver<ProtectionTools>()
+				.WhereRestrictionOn(p => p.Id).IsIn(ptIds)
+				.JoinAlias(p => p.ProtectionToolsNomenclatures, () => ptnAlias, JoinType.LeftOuterJoin)
+				.Fetch(SelectMode.Fetch, p => p.ProtectionToolsNomenclatures)
+				.Fetch(SelectMode.Fetch, () => ptnAlias.Nomenclature)
+				.Future();
+
+			var pts = ptsFuture.ToList();
+
+			// Загружаем NomenclatureSizes для всех supply-номенклатур, чтобы ResolveSizeForNomenclature не делал N+1
+			var nomIds = pts
+				.SelectMany(p => new[] { p.SupplyNomenclatureUnisex?.Id, p.SupplyNomenclatureMale?.Id, p.SupplyNomenclatureFemale?.Id })
+				.Where(id => id.HasValue).Select(id => id.Value)
+				.Distinct().ToArray();
+
+			if(nomIds.Any()) {
+				UoW.Session.QueryOver<Nomenclature>()
+					.WhereRestrictionOn(n => n.Id).IsIn(nomIds)
+					.Fetch(SelectMode.ChildFetch, n => n)
+					.Fetch(SelectMode.Fetch, n => n.NomenclatureSizes)
+					.List();
+			}
+		}
+
 		private void MakeForecast() {
 			if(employees == null)
 				return;
 			SensitiveSettings = false;
 			if(!ProgressTotal.IsStarted)
-				ProgressTotal.Start(3, text: "Прогнозирование выдач");
+				ProgressTotal.Start(6, text: "Прогнозирование выдач сотрудникам");
+
+			// Инициализирует нужный ChoiceListViewModel до обращения к forecastingModel.
+			var _ = ChoiceGoodsViewModel;
+
+			LogMemory("MakeForecast: начало");
 			
 			var wearCardsItems = employees.SelectMany(x => x.WorkwearItems).ToList();
-			HashSet<ProtectionTools> hashPt = new HashSet<ProtectionTools>();
-			if(!NomenclatureAllSelected) {
-				var protectionTools = NomenclatureType == ForecastingNomenclatureType.ProtectionTools
-					? choiceProtectionToolsViewModel.SelectedEntities
-					: UoW.GetAll<ProtectionTools>().Where(p =>
-						choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureUnisex)
-						|| choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureMale)
-						|| choiceNomenclatureViewModel.SelectedEntities.Contains(p.SupplyNomenclatureFemale));
-				hashPt = new HashSet<ProtectionTools>(protectionTools);
-				wearCardsItems = wearCardsItems.Where(item => hashPt.Contains(item.ProtectionTools)).ToList();
-			}
 
 			var issues = futureIssueModel.CalculateIssues(DateTime.Today, EndDate, true, wearCardsItems, ProgressLocal);
 			futureIssues.AddRange(issues);
+
+			ProgressTotal.Add(text: "Прогнозирование выдач по дежурным нормам");
+			if(dutyNormItems.Any()) {
+				var dutyIssues = futureIssueModel.CalculateDutyNormIssues(DateTime.Today, EndDate, true, dutyNormItems, ProgressLocal);
+				futureIssues.AddRange(dutyIssues);
+			}
+
 			lastForecastUntil = EndDate;
 			ProgressTotal.Add(text: "Получение складских остатков");
 			var nomenclatures = NomenclatureType == ForecastingNomenclatureType.ProtectionTools 
-				? issues.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().Where(x => !x.Archival).ToArray()
+				? futureIssues.SelectMany(x => x.ProtectionTools.Nomenclatures).Distinct().Where(x => !x.Archival).ToArray()
 				: choiceNomenclatureViewModel.SelectedEntities.ToArray();
 			stockBalance.AddNomenclatures(nomenclatures);
-			ProgressTotal.Add(text: "Фильтрация выдач");
-			var filteredIssues = NomenclatureAllSelected ? futureIssues : futureIssues.Where(i => hashPt.Contains(i.ProtectionTools)).ToList();
-			
+
+			ProgressTotal.Add(text: "Предзагрузка данных");
+			PreloadForecastingData();
 			ProgressTotal.Add(text: "Формируем прогноз");
-			var result = forecastingModel.MakeForecastingItems(ProgressLocal, filteredIssues);
+			var result = forecastingModel.MakeForecastingItems(ProgressLocal, futureIssues);
 			
 			ProgressTotal.Add(text: "Заполнение заказанного");
 			if(featuresService.Available(WorkwearFeature.Shipment)) {
@@ -335,11 +396,11 @@ namespace Workwear.ViewModels.Analytics {
 				}
 			}
 
-			ProgressLocal.Add(text: "Сортировка");
+			ProgressTotal.Add(text: "Сортировка");
 			InternalItems = result.OrderBy(x => x.Name).ThenBy(x => x.Size?.Name).ThenBy(x => x.Height?.Name).ToList();
 			
-			ProgressLocal.Close();
 			ProgressTotal.Close();
+			LogMemory("MakeForecast: конец");
 			SensitiveSettings = true;
 		}
 
@@ -443,6 +504,18 @@ namespace Workwear.ViewModels.Analytics {
 
 		#region Private
 
+		private void LogMemory(string label) {
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			GC.Collect();
+			var gcManaged = GC.GetTotalMemory(false);
+			var workingSet = Process.GetCurrentProcess().WorkingSet64;
+			Logger.Info("[Память] {0}: управляемая куча = {1:N0} КБ, рабочий набор = {2:N0} КБ",
+				label,
+				gcManaged / 1024,
+				workingSet / 1024);
+		}
+
 		private void RefreshColumns() {
 			var list = new List<ForecastColumn>();
 			switch(Granularity) {
@@ -469,24 +542,36 @@ namespace Workwear.ViewModels.Analytics {
 					throw new ArgumentOutOfRangeException();
 			}
 
-			ForecastColumns = list.ToArray();
-			foreach(var item in Items) {
+			forecastColumns = list.ToArray();
+			foreach(var item in InternalItems) {
 				item.FillForecast();
 			}
 			
+			OnPropertyChanged(nameof(ForecastColumns));
 			OnPropertyChanged(nameof(CanCreateShipment));
 		}
 
 		private void ShowItemsList() {
+			IEnumerable<WarehouseForecastingItem> filtered = InternalItems;
+			if(!NomenclatureAllSelected) {
+				if(NomenclatureType == ForecastingNomenclatureType.ProtectionTools) {
+					var selectedPt = new HashSet<ProtectionTools>(choiceProtectionToolsViewModel.SelectedEntities);
+					filtered = filtered.Where(x => x.ProtectionTool != null && selectedPt.Contains(x.ProtectionTool));
+				} else {
+					var selectedNoms = new HashSet<Nomenclature>(choiceNomenclatureViewModel.SelectedEntities);
+					filtered = filtered.Where(x => x.Nomenclature != null && selectedNoms.Contains(x.Nomenclature));
+				}
+			}
+
 			switch(ShowMode) {
 				case WarehouseForecastingShowMode.AllData:
-					Items = InternalItems;
+					Items = filtered.ToList();
 					break;
 				case WarehouseForecastingShowMode.JustShortfall:
-					Items = InternalItems.Where(x => x.WithDebt < 0).ToList();
+					Items = filtered.Where(x => x.WithDebt < 0).ToList();
 					break;
 				case WarehouseForecastingShowMode.JustSurplus:
-					Items = InternalItems.Where(x => x.WithDebt > 0).ToList();
+					Items = filtered.Where(x => x.WithDebt > 0).ToList();
 					break;
 				default:
 					throw new NotImplementedException();

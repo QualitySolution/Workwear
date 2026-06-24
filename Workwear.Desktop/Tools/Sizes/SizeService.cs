@@ -84,6 +84,13 @@ namespace Workwear.Tools.Sizes
 
 		public const int MaxStandardSizeId = 1000, MaxStandardSizeTypeId = 100;
 
+		/// <summary>
+		/// Возвращает кэшированные размеры, подходящие для использования в номенклатуре.
+		/// Предполагает что <see cref="RefreshSizes"/> уже был вызван.
+		/// </summary>
+		public IEnumerable<Size> GetNomenclatureSizesCached() =>
+			sizes?.Where(x => x.ShowInNomenclature) ?? Enumerable.Empty<Size>();
+
 		#region Статика
 		/// <summary>
 		/// Возвращает строковое представление размера с ростом, если рост не null.

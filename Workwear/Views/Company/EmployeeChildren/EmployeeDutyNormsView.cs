@@ -5,6 +5,7 @@ using Workwear.Domain.Regulations;
 using Workwear.ViewModels.Company.EmployeeChildren;
 
 namespace Workwear.Views.Company.EmployeeChildren {
+	[System.ComponentModel.ToolboxItem(true)]
 	public partial class EmployeeDutyNormsView : Gtk.Bin {
 		public EmployeeDutyNormsView() {
 			this.Build();
@@ -42,7 +43,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 				.AddColumn("Числится")
 					.AddTextRenderer(i => i.Issued(DateTime.Now)!=0 ? i.Issued(DateTime.Now).ToString() : String.Empty)
 					.AddSetter((w, i) => w.Foreground = i.DutyNorm.Archival ? "gray" : i.AmountColor)
-					.AddTextRenderer(i => i.AmountUnitText(i.Issued(DateTime.Now)))
+					.AddTextRenderer(i => i.Issued(DateTime.Now)!=0 ? i.AmountUnitText(i.Issued(DateTime.Now)) : String.Empty)
 				.AddColumn("След. получение")
 					.AddTextRenderer(i => i.NextIssueText)
 					.AddSetter((w, i) => w.Foreground = i.DutyNorm.Archival ? "gray" : i.NextIssueColor)

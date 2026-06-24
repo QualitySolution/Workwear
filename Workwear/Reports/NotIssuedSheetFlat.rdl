@@ -1153,7 +1153,7 @@ FROM
                             LEFT JOIN employees as b_emp ON b_op.employee_id = b_emp.id
                             LEFT JOIN protection_tools as b_pt on b_op.protection_tools_id = b_pt.id
                             LEFT JOIN operation_issued_by_employee as b_opwo on b_op.id = b_opwo.issued_operation_id
-                   WHERE b_emp.dismiss_date is null
+                   WHERE (b_emp.dismiss_date &gt; CONVERT(@report_date, DATE) OR b_emp.dismiss_date is null)
                      AND( @subdivision_id = -1 OR b_emp.subdivision_id = @subdivision_id )
                      AND (@department_id = -1 OR b_emp.department_id = @department_id)
                      AND b_op.auto_writeoff_date &gt; CONVERT(@report_date, DATE)
@@ -1207,7 +1207,7 @@ FROM
                       AND (heightTypeAlias.id IS NULL OR stock.height_id IS NULL OR stock.height_id = employeeHeightAlias.size_id OR stock.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
                       )
 WHERE
-    employees.dismiss_date IS NULL
+    (employees.dismiss_date &gt; CONVERT(@report_date, DATE) OR employees.dismiss_date IS NULL)
   AND (@exclude_in_vacation = false
          OR employees.id NOT IN (SELECT DISTINCT v.employee_id FROM employees_vacations as v WHERE CONVERT(@report_date, DATE) BETWEEN v.begin_date AND v.end_date))
   AND (@subdivision_id = -1 OR employees.subdivision_id = @subdivision_id )
@@ -1222,8 +1222,8 @@ WHERE
                   AND gi.employee_group_id IN (@employee_groups_ids))) )
   AND (@condition = false OR norm_conditions.issuance_start is null OR
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
-          SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6),
-          SUBSTRING(@report_date,6) &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR SUBSTRING(@report_date,6) &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
+          DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6),
+          DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
   AND( @issue_type = '' OR nomenclatureTypes.issue_type = @issue_type )
   AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
   AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; employee_cards_item.next_issue)

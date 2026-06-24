@@ -66,6 +66,13 @@ namespace Workwear.Domain.Company
 			get => parentSubdivision;
 			set => SetField(ref parentSubdivision, value);
 		}
+		
+		private EmployeeCard headOfDivision;
+		[Display(Name = "Руководитель подразделения")]
+		public virtual EmployeeCard HeadOfDivision {
+			get => headOfDivision;
+			set => SetField(ref headOfDivision, value);
+		}
 
 		private string comment;
 		[Display(Name = "Комментарий")]

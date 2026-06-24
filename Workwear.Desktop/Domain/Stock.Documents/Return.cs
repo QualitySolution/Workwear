@@ -7,7 +7,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
-using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Repository.Operations;
 
@@ -38,8 +37,8 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref items, value, () => Items); }
 		}
 		#endregion
-		public virtual string Title => $"Возврат от работника №{DocNumber ?? Id.ToString()} от {Date:d}";
-		
+		public virtual string Title => $"Возврат от работника №{DocNumberText} от {Date:d}";
+        		
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Date < new DateTime(2008, 1, 1))

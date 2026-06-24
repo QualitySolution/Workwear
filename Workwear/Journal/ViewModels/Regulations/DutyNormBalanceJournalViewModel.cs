@@ -25,17 +25,13 @@ namespace workwear.Journal.ViewModels.Regulations {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,
-			ILifetimeScope autofacScope,
-			DutyNorm dutyNorm = null
+			ILifetimeScope autofacScope
 		) : base(unitOfWorkFactory, interactiveService, navigationManager) {
 			var dataLoader = new ThreadDataLoader<DutyNormBalanceJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(ItemsQuery);
 			DataLoader = dataLoader;
-			JournalFilter =  Filter = autofacScope.Resolve<DutyNormBalanceFilterViewModel>(
-				new TypedParameter(typeof(JournalViewModelBase), this),
-				new TypedParameter(typeof(DutyNorm), dutyNorm)
-			);
-			Title = dutyNorm != null
+			JournalFilter =  Filter = autofacScope.Resolve<DutyNormBalanceFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			Title = Filter.DutyNorm != null
 				? $"Числится по дежурной норме {Filter.DutyNorm.Name}"
 				: "Остатки по дежурным нормам";
 			SelectionMode = JournalSelectionMode.Multiple;

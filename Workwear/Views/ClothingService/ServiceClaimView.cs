@@ -1,4 +1,6 @@
-﻿using Gamma.Utilities;
+﻿using System;
+using System.Globalization;
+using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.ViewModels.Control;
 using QS.Views.Dialog;
@@ -44,12 +46,14 @@ namespace Workwear.Views.ClothingService {
 				.AddBinding(v => v.States, w => w.ItemsDataSource)
 				.InitializeFromSource();
 			
-			treeServices.CreateFluentColumnsConfig<SelectableEntity<Service>>()			
+			treeServices.CreateFluentColumnsConfig<SelectableEntity<ProvidedService>>()			
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Услуга").AddReadOnlyTextRenderer(x => x.Label)
+				.AddColumn("Стоимость").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.Cost.ToString(CultureInfo.InvariantCulture) : String.Empty)
+				.AddColumn("Дата оказания").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.ServiceDate.ToShortDateString().ToString(CultureInfo.InvariantCulture) : String.Empty)
 				.Finish();
 			treeServices.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.Services, w => w.ItemsDataSource)
+				.AddBinding(v => v.ProvideServices, w => w.ItemsDataSource)
 				.InitializeFromSource();
 
 			ytextComment.Binding

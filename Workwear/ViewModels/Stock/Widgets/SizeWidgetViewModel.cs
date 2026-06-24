@@ -6,6 +6,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.Sizes;
+using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.Sizes;
 
@@ -19,6 +20,8 @@ namespace Workwear.ViewModels.Stock.Widgets
 		public bool IsUseHeight { get; set; }
 		public IList<IDocItemSizeInfo> ExistItems { get; set; }
 		private readonly SizeService sizeService;
+		private readonly IList<NomenclatureSizes> fixedSizeVariants;
+		private bool IsFixedSizeMode => fixedSizeVariants?.Any() == true;
 
 		private IDocItemSizeInfo selectItemInput;
 		private readonly IUnitOfWork uoW;
@@ -36,6 +39,7 @@ namespace Workwear.ViewModels.Stock.Widgets
 			this.uoW = uoW;
 			selectItemInput = selectItem;
 			ExistItems = existItems;
+			fixedSizeVariants = (selectItem as IncomeItem)?.Nomenclature?.NomenclatureSizes?.ToList();
 			ConfigureSizes();
 			height = selectItemInput.Height ?? WearHeights?.FirstOrDefault();
 			UpdateAmounts();
@@ -45,11 +49,19 @@ namespace Workwear.ViewModels.Stock.Widgets
 		/// Конфигурирует списки ростов и размеров
 		/// </summary>
 		private void ConfigureSizes() {
-			if (selectItemInput.HeightType != null) {
+			if(IsFixedSizeMode) {
+				SizeItems = fixedSizeVariants.Select(x => new AddSizeItem(x.WearSize, x.Height, x.Title)).ToList();
+				foreach(var item in SizeItems) {
+					item.PropertyChanged += Item_PropertyChanged;
+				}
+				return;
+			}
+			
+			if (selectItemInput?.HeightType != null) {
 				WearHeights = sizeService.GetSize(uoW, selectItemInput.HeightType,false, true).ToList();
 				IsUseHeight = true;
 			}
-			WearSizes = selectItemInput.WearSizeType != null ? 
+			WearSizes = selectItemInput?.WearSizeType != null ? 
 				sizeService.GetSize(uoW, selectItemInput.WearSizeType,false, true).ToList() : new List<Size>();
 
 			SizeItems = WearSizes.Select(s => new AddSizeItem(s)).ToList();
@@ -74,8 +86,15 @@ namespace Workwear.ViewModels.Stock.Widgets
 			}
 		}
 
-		public bool SensitiveAddButton => SizeItems.Any(x => x.IsUsed && x.Amount > 0);
-		public string TotalText => $"Размеров выбрано: {SizeItems.Count(x => x.IsUsed)}\nКоличество итого: {SizeItems.Where(x => x.IsUsed).Sum(x => x.Amount)}";
+		private bool visibleAmount = true;
+		public virtual bool VisibleAmount {
+			get => visibleAmount;
+			set => SetField(ref visibleAmount, value);
+		}
+
+		public bool SensitiveAddButton => SizeItems.Any(x => x.IsUsed && (x.Amount > 0) || !VisibleAmount);
+		public string TotalText => $"Размеров выбрано: {SizeItems.Count(x => x.IsUsed)}" +
+		                           (VisibleAmount ? $"\nКоличество итого: {SizeItems.Where(x => x.IsUsed).Sum(x => x.Amount)}" : "");
 		#endregion
 
 		#region Actions
@@ -94,18 +113,28 @@ namespace Workwear.ViewModels.Stock.Widgets
 		private void UpdateAmounts() {
 			foreach(var item in SizeItems) {
 				if(!item.IsUsed)
-					item.Amount = ExistItems.Where(x => x.Height == Height && x.WearSize == item.Size).Select(x => x.Amount).FirstOrDefault();
+					item.Amount = ExistItems
+						.Where(x => x.Height == (IsFixedSizeMode ? item.Height : Height) && x.WearSize == item.Size)
+						.Select(x => x.Amount)
+						.FirstOrDefault();
 			}
 		}
 		#endregion
 	}
 
 	public class AddSizeItem : PropertyChangedBase {
-		public AddSizeItem(Size size) {
-			Size = size ?? throw new ArgumentNullException(nameof(size));
+		public AddSizeItem(Size size) : this(size, null, size?.Name) {
 		}
 
+		public AddSizeItem(Size size, Size height, string title) {
+			Size = size;
+			Height = height;
+			Title = title;
+		}
+		
 		public Size Size { get; }
+		public Size Height { get; }
+		public string Title { get; }
 
 		private bool isUsed;
 		public virtual bool IsUsed {

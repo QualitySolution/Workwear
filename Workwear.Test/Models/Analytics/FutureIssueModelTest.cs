@@ -10,6 +10,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Models.Analytics;
 using Workwear.Tools;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Test.Models.Analytics {
 	[TestFixture(TestOf = typeof(FutureIssueModel))]
@@ -353,6 +354,103 @@ namespace Workwear.Test.Models.Analytics {
 			Assert.That(result.Exists(x => x.OperationDate == new DateTime(2026, 2, 28) && x.Amount == 3), Is.True, "Выдача в последний день периода (норма 3) должна попасть");
 			Assert.That(result.Exists(x => x.OperationDate == new DateTime(2026, 1, 31)), Is.False, "Выдача до начала периода не должна попасть");
 			Assert.That(result.Exists(x => x.OperationDate == new DateTime(2026, 3, 1)), Is.False, "Выдача после конца периода не должна попасть");
+		}
+		[Test(Description = "Проверяем стандартное прогнозирование по дежурной норме, выдачу каждые 3 месяца")]
+		public void CalculateDutyNormIssues_StandardForecast_Calculated()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+			var protectionTools = new ProtectionTools {
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() { Nomenclature = new Nomenclature() }
+				}
+			};
+
+			var dutyNorm = new DutyNorm {
+				Name = "Дежурная норма для теста",
+				DateFrom = new DateTime(2024, 1, 5)
+			};
+
+			var dutyNormItem = new DutyNormItem {
+				DutyNorm = dutyNorm,
+				ProtectionTools = protectionTools,
+				Amount = 5,
+				NormPeriod = DutyNormPeriodType.Month,
+				PeriodCount = 3,
+				NextIssue = new DateTime(2024, 1, 5),
+				Graph = new IssueGraph(new List<IGraphIssueOperation>())
+			};
+
+			var dutyNormItems = new List<DutyNormItem> { dutyNormItem };
+
+			// act
+			var result = model.CalculateDutyNormIssues(new DateTime(2024, 1, 1), new DateTime(2024, 12, 31), false, dutyNormItems);
+
+			// assert
+			Assert.That(result.Count, Is.EqualTo(4));
+
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2024, 1, 5)));
+			Assert.That(result[0].Amount, Is.EqualTo(5));
+
+			Assert.That(result[1].OperationDate, Is.EqualTo(new DateTime(2024, 4, 5)));
+			Assert.That(result[1].Amount, Is.EqualTo(5));
+
+			Assert.That(result[2].OperationDate, Is.EqualTo(new DateTime(2024, 7, 5)));
+			Assert.That(result[2].Amount, Is.EqualTo(5));
+
+			Assert.That(result[3].OperationDate, Is.EqualTo(new DateTime(2024, 10, 5)));
+			Assert.That(result[3].Amount, Is.EqualTo(5));
+		}
+
+		[Category("Real case")]
+		[Test(Description = "Убеждаемся что просроченный долг по дежурной норме переносится на начало периода прогнозирования при moveDebt=true")]
+		public void CalculateDutyNormIssues_ExpiredIssue_DebtMovedToStartDate()
+		{
+			// arrange
+			var baseParameters = Substitute.For<BaseParameters>();
+			var model = new FutureIssueModel(baseParameters);
+			var protectionTools = new ProtectionTools {
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
+					new ProtectionToolsNomenclature() { Nomenclature = new Nomenclature() }
+				}
+			};
+
+			var dutyNorm = new DutyNorm {
+				Name = "Дежурная норма для теста",
+				DateFrom = new DateTime(2022, 1, 1)
+			};
+
+			var operations = new List<IGraphIssueOperation>() {
+				new DutyNormIssueOperation {
+					OperationTime = new DateTime(2022, 6, 1),
+					Issued = 3,
+					AutoWriteoffDate = new DateTime(2024, 6, 1),
+					ExpiryByNorm = new DateTime(2024, 6, 1)
+				}
+			};
+
+			var dutyNormItem = new DutyNormItem {
+				DutyNorm = dutyNorm,
+				ProtectionTools = protectionTools,
+				Amount = 3,
+				NormPeriod = DutyNormPeriodType.Year,
+				PeriodCount = 2,
+				NextIssue = new DateTime(2022, 6, 1),
+				Graph = new IssueGraph(operations)
+			};
+
+			var dutyNormItems = new List<DutyNormItem> { dutyNormItem };
+
+			// act
+			var result = model.CalculateDutyNormIssues(new DateTime(2024, 11, 1), new DateTime(2024, 12, 31), true, dutyNormItems);
+
+			// assert
+			Assert.That(result.Count, Is.EqualTo(1));
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2024, 11, 1)));
+			Assert.That(result[0].DelayIssueDate, Is.EqualTo(new DateTime(2022, 6, 1)));
+			Assert.That(result[0].Amount, Is.EqualTo(3));
+			Assert.That(result[0].DutyNormItem, Is.EqualTo(dutyNormItem));
 		}
 	}
 }

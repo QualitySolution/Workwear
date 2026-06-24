@@ -2,6 +2,7 @@ using System;
 using Gamma.Binding.Converters;
 using Gtk;
 using NLog;
+using QS.Utilities;
 using QS.Views.Dialog;
 using QS.Views.Resolve;
 using Workwear.Domain.Sizes;
@@ -27,6 +28,12 @@ namespace Workwear.Views.Stock {
 				.AddBinding(Entity, e => e.Number, w => w.Text).InitializeFromSource();
 			yentryAdditionalInfo.Binding
 				.AddBinding(Entity, e => e.AdditionalInfo, w => w.Text).InitializeFromSource();
+			yentryProtectionProperties.Binding
+				.AddBinding(Entity, e => e.ProtectionProperties, w => w.Text).InitializeFromSource();
+			yentryProtectionClass.Binding
+				.AddBinding(Entity, e => e.ProtectionСlass, w => w.Text).InitializeFromSource();
+			yspinbuttonWeight.Binding
+				.AddBinding(Entity, e => e.Weight, w => w.ValueAsInt).InitializeFromSource();
 			ylabelCatalogId.Binding
 				.AddBinding(ViewModel, vm => vm.VisibleCatalogId, w => w.Visible).InitializeFromSource();
 			yentryItemsCatalogId.Binding
@@ -46,9 +53,15 @@ namespace Workwear.Views.Stock {
 			ycheckArchival.Binding
 				.AddBinding(Entity, e => e.Archival, w => w.Active).InitializeFromSource();
 			labelSaleCost.Visible = ViewModel.VisibleSaleCost;
-			yspinbuttonSaleCost.Visible = ViewModel.VisibleSaleCost;
+			yspinbuttonSaleCost.Visible = ylabel_Currency1.Visible = ViewModel.VisibleSaleCost;
+			ylabel_Currency1.Binding.AddBinding(ViewModel, vm => vm.UsedCurrency, w => w.LabelProp).InitializeFromSource();
 			yspinbuttonSaleCost.Binding
 				.AddBinding(Entity, e => e.SaleCost, w=> w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
+			labelSaleRent.Visible = ylabel_Currency2.Visible = ViewModel.VisibleRentCost;
+			ylabel_Currency2.Binding.AddBinding(ViewModel, vm => vm.UsedCurrency, w => w.LabelProp).InitializeFromSource();
+			yspinbuttonRentCost.Visible = ViewModel.VisibleRentCost;
+			yspinbuttonRentCost.Binding
+				.AddBinding(Entity, e => e.RentCost, w => w.ValueAsDecimal, new NullToZeroConverter()).InitializeFromSource();
 			ybuttonratingDetails.Binding
 				.AddSource(ViewModel)
 					.AddBinding(vm => vm.VisibleRating, w => w.Visible)
@@ -69,16 +82,13 @@ namespace Workwear.Views.Stock {
 				yentryItemsCatalogId.ViewModel = ViewModel.EntryCatalogItemsViewModel;
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			MakeMenu();
-
-			var protectionToolsView = viewResolver.Resolve(ViewModel.ProtectionToolsViewModel);
-			dialog1_VBox.Add(protectionToolsView);
-			protectionToolsView.Show();
-
-			if(ViewModel.VisibleServices) {
-				var servicesToolsView = viewResolver.Resolve(ViewModel.ServicesViewModel);
-				dialog1_VBox.Add(servicesToolsView);
-				servicesToolsView.Show();
-			}
+			
+			tabs.AppendPage(viewResolver.Resolve(ViewModel.ProtectionToolsViewModel), "Номенклатуры норм");
+			if(ViewModel.ShowServices)
+				tabs.AppendPage(viewResolver.Resolve(ViewModel.ServicesViewModel), "Оказываемые услуги");
+			if(ViewModel.ShowNomenclatureSizes)
+            	tabs.AppendPage(viewResolver.Resolve(ViewModel.NomenclatureSizesViewModel), "Варианты размеров");
+            tabs.Binding.AddBinding(ViewModel, v => v.CurrentTab, w => w.CurrentPage).InitializeFromSource();
 		}
 
 		void MakeMenu()

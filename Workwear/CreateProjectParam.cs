@@ -193,6 +193,7 @@ namespace workwear
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateStaleObjectStateException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
+			containerBuilder.RegisterType<GrpcConnectionIsLost>().As<IErrorHandler>();
 			#endregion
 			
 			#region Обновления и версии
@@ -300,6 +301,7 @@ namespace workwear
 			#region Размеры
 			builder.RegisterType<SizeService>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<SizeTypeReplaceModel>().AsSelf();
+			builder.RegisterType<StockPositionSizeReplaceModel>().AsSelf();
 			#endregion
 
 			#region Старые общие диалоги

@@ -28,6 +28,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Company;
+using Workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
@@ -206,12 +207,17 @@ namespace Workwear.ViewModels.Stock {
 				NavigationManager.OpenViewModel<DutyNormBalanceJournalViewModel, DutyNorm>(
 					this,
 					DutyNorm,
-					OpenPageOptions.AsSlave
+					OpenPageOptions.AsSlave,
+					addingRegistrations: builder => {
+						builder.RegisterInstance<Action<DutyNormBalanceFilterViewModel>>(
+							filter => {
+								filter.DateSensitive = false;
+								filter.SubdivisionSensitive =  DutyNorm == null;
+								filter.DutyNormSensitive = DutyNorm == null;
+								filter.Date = Entity.Date;
+							});
+					}
 				);
-			selectJournal.ViewModel.Filter.DateSensitive = false;
-			selectJournal.ViewModel.Filter.SubdivisionSensitive =  DutyNorm == null;
-			selectJournal.ViewModel.Filter.DutyNormSensitive = DutyNorm == null;
-			selectJournal.ViewModel.Filter.Date = Entity.Date;
 			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromDictionaryDutyNorm(
 				e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(
 					k => k.Id,

@@ -23,7 +23,14 @@ namespace Workwear.Domain.ClothingService {
 			set => SetField(ref name, value);
 		}
 
-		private decimal cost = 0;
+		private string alternativeName;
+		[Display(Name = "Альтернативное имя")]
+		public virtual string AlternativeName {
+			get => alternativeName;
+			set => SetField(ref alternativeName, value);
+		}
+
+		private decimal cost;
 		[Display(Name = "Стоимость")]
 		public virtual decimal Cost {
 			get => cost;
@@ -35,6 +42,13 @@ namespace Workwear.Domain.ClothingService {
 		public virtual string Code {
 			get => code;
 			set => SetField(ref code, value);
+		}
+		
+		private ClaimState? withState = ClaimState.InTransit;
+		[Display (Name = "Статус подразумивающий услугу")]
+		public virtual ClaimState? WithState {
+			get => withState;
+			set => SetField(ref withState, value);
 		}
 
 		private string comment;

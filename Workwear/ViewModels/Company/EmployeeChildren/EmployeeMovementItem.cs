@@ -17,16 +17,16 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public DateTime Date => Operation.OperationTime;
 		public string NomenclatureName => Operation.Nomenclature?.Name ?? String.Empty;
-		public string UnitsName => Operation.Nomenclature?.Type.Units.Name ?? Operation.ProtectionTools.Type.Units.Name;
+		public string UnitsName => Operation.Nomenclature?.Type.Units?.Name ?? Operation.ProtectionTools?.Type.Units?.Name;
 		public decimal? WearPercent => Operation.WearPercent;
 		public decimal? Cost => Operation.WarehouseOperation?.Cost;
 
 		public int AmountReceived => Operation.Issued;
 		public int AmountReturned => Operation.Returned;
 
-		public string AmountReceivedText => AmountReceived > 0 ? String.Format("{0} {1}", AmountReceived, UnitsName) : String.Empty;
+		public string AmountReceivedText => AmountReceived > 0 ? $"{AmountReceived} {UnitsName}" : String.Empty;
 
-		public string AmountReturnedText => AmountReturned > 0 ? String.Format("{0} {1}", AmountReturned, UnitsName) : String.Empty;
+		public string AmountReturnedText => AmountReturned > 0 ? $"{AmountReturned} {UnitsName}" : String.Empty;
 
 		public string CostText => Cost.HasValue ? CurrencyWorks.GetShortCurrencyString(Cost.Value) : String.Empty;
 
@@ -36,9 +36,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		[PropertyChangedAlso(nameof(AutoWriteOffDateTextColored))]
 		public bool UseAutoWriteOff {
-			get {
-				return Operation.UseAutoWriteoff;
-			}
+			get => Operation.UseAutoWriteoff;
 			set {
 				Operation.UseAutoWriteoff = value;
 				OnPropertyChanged();
@@ -67,7 +65,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public string  DocumentTitle {
 			get {
 				if(EmployeeIssueReference?.DocumentType != null)
-					return EmployeeIssueReference.DocumentTitle;//$"{EmployeeIssueReference.DocumentType.GetEnumTitle()} №{EmployeeIssueReference.DocumentId}";
+					return EmployeeIssueReference.DocumentTitle;
 				if(Operation.ManualOperation)
 					return "Ручная операция";
 				return String.Empty;
@@ -82,10 +80,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			}
 		}
 
-		public string ProtectionTools {
-			get {
-				return Operation?.ProtectionTools?.Name ?? String.Empty;
-			}
-		}
+		public string ProtectionTools => Operation?.ProtectionTools?.Name ?? String.Empty;
 	}
 }

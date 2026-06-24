@@ -2,8 +2,8 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
-  <PageHeight>17in</PageHeight>
-  <PageWidth>11in</PageWidth>
+  <PageHeight>11.7in</PageHeight>
+  <PageWidth>8.3in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>.25in</LeftMargin>
@@ -20,8 +20,8 @@
         <Value>= "Отчет о количестве работников получивших спецодежду 
 за период c " + Format({?dateStart}, "dd/MM/yyyy")  + " г. по " +  Format({?dateEnd}, "dd/MM/yyyy") + " г. "</Value>
         <ZIndex>1</ZIndex>
-        <Left>181.80pt</Left>
-        <Top>8.26pt</Top>
+        <Left>66.9pt</Left>
+        <Top>3.1pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -50,22 +50,22 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>48.6pt</Width>
+            <Width>47.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>508.9pt</Width>
+            <Width>347.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>85.9pt</Width>
+            <Width>77.9pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>103.9pt</Width>
+            <Width>75.8pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
             <TableRow>
-              <Height>27.2pt</Height>
+              <Height>36.5pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>

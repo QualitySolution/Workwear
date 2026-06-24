@@ -33,6 +33,7 @@ namespace Workwear.ViewModels.Visits {
 		private readonly EmployeeRepository employeeRepository;
 		private readonly FeaturesService featuresService;
 		private readonly IEntityChangeWatcher changeWatcher;
+		private bool isDisposed;
 		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -142,6 +143,7 @@ namespace Workwear.ViewModels.Visits {
 			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.Filter.ShowOnlyWork = true;
+			selectJournal.ViewModel.Filter.Date = Entity.ReceiptDate;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
 
@@ -269,6 +271,9 @@ namespace Workwear.ViewModels.Visits {
 			return collectiveExpenses;
 		}
 		private void IssuanceRequestChangeEvent(EntityChangeEvent[] changeevents) {
+			if(isDisposed || !UoW.IsAlive)
+				return;
+
 			Entity.CollectiveExpenses.Clear();
 			foreach(var doc in  LoadCollectiveExpenses())
 				Entity.CollectiveExpenses.Add(doc);
@@ -310,6 +315,11 @@ namespace Workwear.ViewModels.Visits {
 			UoW.Save();
 			logger.Info("Заявка сохранена");
 			return true;
+		}
+
+		public override void Dispose() {
+			isDisposed = true;
+			base.Dispose();
 		}
 		#endregion
 	}

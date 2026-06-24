@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.ViewModels.Control;
@@ -52,12 +53,14 @@ namespace Workwear.Views.ClothingService {
 				.AddBinding(ViewModel, v => v.Comment, w => w.Buffer.Text).InitializeFromSource();
 			buttonAccept.Binding
 				.AddBinding(ViewModel, v => v.SensitiveAccept, w => w.Sensitive).InitializeFromSource();
-			treeServices.CreateFluentColumnsConfig<SelectableEntity<Service>>()			
+			treeServices.CreateFluentColumnsConfig<SelectableEntity<ProvidedService>>()			
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Услуга").AddReadOnlyTextRenderer(x => x.Label)
+				.AddColumn("Стоимость").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.Cost.ToString(CultureInfo.InvariantCulture) : String.Empty)
+				.AddColumn("Дата оказания").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.ServiceDate.ToShortDateString().ToString(CultureInfo.InvariantCulture) : String.Empty)
 				.Finish();
 			treeServices.Binding.AddSource(ViewModel)
-				.AddBinding(v => v.Services, w => w.ItemsDataSource).InitializeFromSource();
+				.AddBinding(v => v.ServicesList, w => w.ItemsDataSource).InitializeFromSource();
 		}
 
 		protected void OnButtonAcceptClicked(object sender, EventArgs e) =>

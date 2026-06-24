@@ -10,6 +10,9 @@ using workwear.Representations.Organization;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
+	/// <summary>
+	/// Вкладка "Отпуска"
+	/// </summary>
 	public class EmployeeVacationsViewModel : ViewModelBase
 	{
 		private readonly IDeleteEntityService deleteService;

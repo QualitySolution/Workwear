@@ -72,12 +72,16 @@ namespace Workwear.Views.Analytics {
 
 		void RecreateColumns() {
 			var conf = treeItems.CreateFluentColumnsConfig<WarehouseForecastingItem>()
-				.AddColumn(ViewModel.NomenclatureType.GetEnumTitle()).HeaderAlignment(0.5f)
+				.AddColumn(ViewModel.NomenclatureType.GetEnumTitle()).HeaderAlignment(0.5f).Resizable()
 					.ToolTipText(n => n.NomenclaturesText)
-					.AddReadOnlyTextRenderer(x => x.Name).WrapWidth(500)
+					.AddReadOnlyTextRenderer(x => x.Name).WrapWidth(600)
 						.AddSetter((c,n) => c.Foreground = n.NameColor)
 				.AddColumn("Пол").HeaderAlignment(0.5f).AddReadOnlyTextRenderer(x => x.Sex.GetEnumShortTitle()).XAlign(0.5f)
-				.AddColumn("Размер/Рост").HeaderAlignment(0.5f).AddReadOnlyTextRenderer(x => x.SizeText).XAlign(0.5f)
+				.AddColumn("Размер/Рост").HeaderAlignment(0.5f)
+					.ToolTipText(x => x.SizeMatchStatus != SizeMatchStatus.Green ? GetSizeStatusTooltip(x.SizeMatchStatus) : null)
+					.AddReadOnlyTextRenderer(x => x.SizeText)
+						.AddSetter((c, n) => c.Foreground = n.SizeStatusColor)
+					.XAlign(0.5f)
 				.AddColumn("На\nскладе").HeaderAlignment(0.5f)
 					.ToolTipText(x => x.StockText)
 					.AddReadOnlyTextRenderer(x => x.InStock > 0 ? $"{x.InStock}" : "").XAlign(0.5f)
@@ -123,8 +127,8 @@ namespace Workwear.Views.Analytics {
 			if(issues == null || issues.Count == 0)
 				return "";
 			return headerText + string.Join("", issues
-				.OrderBy(x => x.Employee.ShortName)
-				.Select(x => $"\n{x.Employee.ShortName} — {x.Amount} шт. ({(x.DelayIssueDate ?? x.OperationDate):dd.MM.yyyy})"));
+				.OrderBy(x => x.Employee?.ShortName)
+				.Select(x => $"\n{x.Employee?.ShortName ?? "Дежурное"} — {x.Amount} шт. ({(x.DelayIssueDate ?? x.OperationDate):dd.MM.yyyy})"));
 		}
 
 		protected void OnButtonFillClicked(object sender, EventArgs e) =>
@@ -139,8 +143,20 @@ namespace Workwear.Views.Analytics {
 				"<b>Колонки с прогнозом выдач:</b>\n" +
 				"<span color='green'>●</span> — склад полностью обеспечивает потребность (планируемые + просрочка)\n" +
 				"<span color='orange'>●</span> — на складе достаточное количество для планируемых выдач, без просрочки\n" +
-				"<span color='red'>●</span> — недостаточное количество для планируемых выдач"
+				"<span color='red'>●</span> — недостаточное количество для планируемых выдач\n\n" +
+				"<b>Колонка «Размер/Рост»:</b>\n" +
+				"<span color='darkgreen'>●</span> — размер подобран: найден в вариантах номенклатуры или среди стандартных размеров\n" +
+				"<span color='orange'>●</span> — найден стандартный размер номенклатуры, но комбинация не добавлена в конкретную номенклатуру\n" +
+				"<span color='red'>●</span> — подходящий размер номенклатуры не найден, используется размер сотрудника"
 			);
+		}
+
+		private static string GetSizeStatusTooltip(SizeMatchStatus status) {
+			if(status == SizeMatchStatus.Orange)
+				return "Найден стандартный размер номенклатуры, но комбинация не зарегистрирована в вариантах данной номенклатуры";
+			if(status == SizeMatchStatus.Red)
+				return "Подходящий размер номенклатуры не найден — используется размер сотрудника";
+			return null;
 		}
 	}
 }

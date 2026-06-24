@@ -805,7 +805,7 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    IFNULL(nomenclature.name, protection_tools.name) AS name_siz,
+    IF(@isGenericName, protection_tools.name, IFNULL(nomenclature.name, protection_tools.name)) AS name_siz,
     (
     SELECT
         stock_income_items.certificate
@@ -903,6 +903,9 @@ CONCAT_WS(
           <QueryParameter Name="startDateOfOperations">
             <Value>={?startDateOfOperations}</Value>
           </QueryParameter>
+          <QueryParameter Name="isGenericName">
+            <Value>={?isGenericName}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields>
@@ -989,6 +992,13 @@ CONCAT_WS(
       <AllowBlank>true</AllowBlank>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="isGenericName">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt />
     </ReportParameter>
   </ReportParameters>
   <DataSources >
