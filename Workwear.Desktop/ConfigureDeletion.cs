@@ -225,13 +225,6 @@ namespace Workwear
 			
 			DeleteConfig.AddHibernateDeleteInfo<ProtectionToolsNomenclature>();
 			
-			DeleteConfig.AddHibernateDeleteInfo<RegulationDoc>()
-			            .AddDeleteDependence<Norm>(x => x.Document)
-						.AddDeleteDependence<RegulationDocAnnex>(x => x.Document);
-
-			DeleteConfig.AddHibernateDeleteInfo<RegulationDocAnnex>()
-				.AddClearDependence<Norm>(x => x.Annex);
-
 			#endregion
 			#region Размеры
 			DeleteConfig.AddHibernateDeleteInfo<Size>()

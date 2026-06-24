@@ -749,13 +749,6 @@ public partial class MainWindow : Gtk.Window {
 		OpenHelper.OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
-	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("RegulationDoc");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<RegulationDoc>(),
-						() => new OrmReference(typeof(RegulationDoc))
-			   );
-	}
-
 	protected void OnActionBaseSettingsActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("DataBaseSettings");
 		NavigationManager.OpenViewModel<DataBaseSettingsViewModel>(null);

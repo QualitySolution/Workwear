@@ -93,8 +93,6 @@ public partial class MainWindow
 
 	private global::Gtk.Action ActionSite;
 
-	private global::Gtk.Action ActionRegulationDoc;
-
 	private global::Gtk.Action ActionBaseSettings;
 
 	private global::Gtk.Action ActionVacationTypes;
@@ -425,9 +423,6 @@ public partial class MainWindow
 		this.ActionSite = new global::Gtk.Action("ActionSite", global::Mono.Unix.Catalog.GetString("Сайт программы"), null, "www");
 		this.ActionSite.ShortLabel = global::Mono.Unix.Catalog.GetString("Сайт программы");
 		w1.Add(this.ActionSite, null);
-		this.ActionRegulationDoc = new global::Gtk.Action("ActionRegulationDoc", global::Mono.Unix.Catalog.GetString("Нормативные документы"), null, null);
-		this.ActionRegulationDoc.ShortLabel = global::Mono.Unix.Catalog.GetString("Нормативные документы");
-		w1.Add(this.ActionRegulationDoc, null);
 		this.ActionBaseSettings = new global::Gtk.Action("ActionBaseSettings", global::Mono.Unix.Catalog.GetString("Настройки учета"), null, "gtk-properties");
 		this.ActionBaseSettings.ShortLabel = global::Mono.Unix.Catalog.GetString("Настройки учета");
 		w1.Add(this.ActionBaseSettings, null);
@@ -714,8 +709,8 @@ public partial class MainWindow
 				"ts\' action=\'ActionObjects\'/><menuitem name=\'ActionDepartment\' action=\'ActionDepa" +
 				"rtment\'/><menuitem name=\'ActionEmployeeGroup\' action=\'ActionEmployeeGroup\'/><men" +
 				"uitem name=\'ActionEmployees\' action=\'ActionEmployees\'/><separator/><menuitem nam" +
-				"e=\'ActionRegulationDoc\' action=\'ActionRegulationDoc\'/><menuitem name=\'ActionProt" +
-				"ectionTools\' action=\'ActionProtectionTools\'/><menuitem name=\'ActionNorms\' action" +
+				"e=\'ActionProtectionTools\' action=\'ActionProtectionTools\'/><menuitem name=\'Action" +
+				"Norms\' action" +
 				"=\'ActionNorms\'/><menuitem name=\'ActionConditionNorm\' action=\'ActionConditionNorm" +
 				"\'/><menuitem name=\'ActionDutyNorm\' action=\'ActionDutyNorm\'/><menuitem name=\'Acti" +
 				"onCausesWriteOff\' action=\'ActionCausesWriteOff\'/><menuitem name=\'ActionCausesIss" +
@@ -942,7 +937,6 @@ public partial class MainWindow
 		this.ActionIconsMiddle.Toggled += new global::System.EventHandler(this.OnActionIconsMiddleToggled);
 		this.ActionIconsLarge.Toggled += new global::System.EventHandler(this.OnActionIconsLargeToggled);
 		this.ActionSite.Activated += new global::System.EventHandler(this.OnActionSiteActivated);
-		this.ActionRegulationDoc.Activated += new global::System.EventHandler(this.OnActionRegulationDocActivated);
 		this.ActionBaseSettings.Activated += new global::System.EventHandler(this.OnActionBaseSettingsActivated);
 		this.ActionVacationTypes.Activated += new global::System.EventHandler(this.OnActionVacationTypesActivated);
 		this.ActionOrganizations.Activated += new global::System.EventHandler(this.OnActionOrganizationsActivated);

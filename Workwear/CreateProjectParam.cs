@@ -63,9 +63,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using Workwear.Sql;
 using Workwear.Tools;
-using workwear.Dialogs.Regulations;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using workwear.Journal;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -140,8 +138,6 @@ namespace workwear
 			progress.CheckPoint("Антикварные объекты");
 			//Настраиваем классы сущностей
 			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
-			//Спецодежда
-			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
 			//Общее
 			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 
