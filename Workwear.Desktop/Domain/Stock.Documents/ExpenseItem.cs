@@ -160,7 +160,7 @@ namespace Workwear.Domain.Stock.Documents
 				var willTake = actualOperations.Count() > 3 ? 2 : 3;
 				var text = String.Join("\n", actualOperations.Take(willTake).Select(x => 
 					$"{x.Barcode.Title} ({x.KitNumber})"));
-				if(actualOperations.Count > 4) {
+				if(actualOperations.Count > 3) {
 					text += $"\nещё {actualOperations.Count - 2}";
 				}
 				return text;

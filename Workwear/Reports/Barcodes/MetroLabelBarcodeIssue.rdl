@@ -95,18 +95,18 @@
             </Style>
             <ReportItems>
               <Textbox Name="Textbox4" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                <Height>22.52pt</Height>
-                <Width>79.12pt</Width>
+                <Height>21.03pt</Height>
+                <Width>96.39pt</Width>
                 <Value>={personnel_number}</Value>
                 <ZIndex>0</ZIndex>
-                <Left>0.00pt</Left>
-                <Top>16.60pt</Top>
+                <Left>0.0pt</Left>
+                <Top>17.1pt</Top>
                 <Style>
                   <BorderStyle />
                   <BorderColor />
                   <BorderWidth />
                   <TextAlign>Center</TextAlign>
-                  <FontSize>18pt</FontSize>
+                  <FontSize>16pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                 </Style>
               </Textbox>
@@ -139,21 +139,41 @@
                     <Left>2pt</Left>
                   </BorderWidth>
                 </Style>
+                <ReportItems >
+                  <Textbox Name="Textbox7">
+                    <Height>54.83pt</Height>
+                    <Width>18.92pt</Width>
+                    <Value>={kit_number}</Value>
+                    <ZIndex>1</ZIndex>
+                    <Left>0.00pt</Left>
+                    <Top>0.00pt</Top>
+                    <Style>
+                      <BorderStyle />
+                      <BorderColor />
+                      <BorderWidth />
+                      <FontWeight>Bold</FontWeight>
+                      <FontSize>26pt</FontSize>
+                      <TextAlign>Center</TextAlign>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <FontFamily>Arial</FontFamily>
+                    </Style>
+                  </Textbox>
+                </ReportItems>
               </Rectangle>
               <CustomReportItem Name="CustomReportItem1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                 <Type>BarCode EAN-13</Type>
                 <Height>52.08pt</Height>
                 <Width>62.59pt</Width>
                 <CustomProperties>
-                  <CustomProperty >
+                  <CustomProperty>
                     <Name>NumberSystem</Name>
                     <Value>={number_system}</Value>
                   </CustomProperty>
-                  <CustomProperty >
+                  <CustomProperty>
                     <Name>ManufacturerCode</Name>
                     <Value>={manufacture_code}</Value>
                   </CustomProperty>
-                  <CustomProperty >
+                  <CustomProperty>
                     <Name>ProductCode</Name>
                     <Value>={product_code}</Value>
                   </CustomProperty>
@@ -167,38 +187,6 @@
                 </Style>
                 <ZIndex>0</ZIndex>
               </CustomReportItem>
-              <Textbox Name="Textbox2" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                <Value>="ID "</Value>
-                <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                  <BorderStyle>
-                    <Default>None</Default>
-                    <Left>None</Left>
-                    <Bottom>None</Bottom>
-                    <Right>None</Right>
-                    <Top>None</Top>
-                  </BorderStyle>
-                  <PaddingRight>0pt</PaddingRight>
-                  <TextAlign>Left</TextAlign>
-                  <BorderColor>
-                    <Default>Bisque</Default>
-                    <Left>Bisque</Left>
-                    <Right>Bisque</Right>
-                    <Top>Bisque</Top>
-                    <Bottom>Bisque</Bottom>
-                  </BorderColor>
-                  <BorderWidth />
-                  <FontSize>=Iif(Len({nomenclature}) &gt; 100, "6pt", "7pt")</FontSize>
-                  <BackgroundColor>White</BackgroundColor>
-                  <PaddingBottom>4pt</PaddingBottom>
-                  <VerticalAlign>Bottom</VerticalAlign>
-                </Style>
-                <Left>81.5pt</Left>
-                <Top>35.8pt</Top>
-                <Height>15.62pt</Height>
-                <Width>18.12pt</Width>
-                <ZIndex>10</ZIndex>
-                <CanGrow>true</CanGrow>
-              </Textbox>
             </ReportItems>
           </Rectangle>
           <Textbox Name="Textbox3" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -273,7 +261,8 @@
     IF(employees.sex = 'M', 'М', 'Ж') AS sex,
     nomenclature.name AS nomenclature,
     wear_size.name as wear_size,
-    wear_height.name as wear_height
+    wear_height.name as wear_height,
+    operation_barcodes.kit_number
 FROM operation_issued_by_employee
          JOIN operation_barcodes ON operation_barcodes.employee_issue_operation_id = operation_issued_by_employee.id
          JOIN barcodes ON barcodes.id = operation_barcodes.barcode_id
@@ -335,6 +324,10 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
         <Field Name="wear_height">
           <DataField>wear_height</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="kit_number">
+          <DataField>kit_number</DataField>
+          <TypeName>System.Int32</TypeName>
         </Field>
       </Fields>
     </DataSet>
