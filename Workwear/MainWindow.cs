@@ -9,7 +9,7 @@ using Autofac;
 using Gtk;
 using MySqlConnector;
 using NLog;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Journal.ViewModels;
 using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -38,13 +38,11 @@ using QS.Utilities;
 using QS.Utilities.Processes;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
-using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
 using workwear;
 using Workwear;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -485,10 +483,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnAction7Activated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("MeasurementUnits");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<MeasurementUnits>(),
-						() => new OrmReference(typeof(MeasurementUnits))
-					   );
+		NavigationManager.OpenViewModel<MeasurementUnitJournalViewModel>(null);
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e) {

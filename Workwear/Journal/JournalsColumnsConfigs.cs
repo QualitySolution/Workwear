@@ -6,6 +6,7 @@ using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Cloud.WearLk.Manage;
 using QS.Journal.GtkUI;
+using QS.Measurement.Journal;
 using QS.Utilities;
 using QS.Utilities.Numeric;
 using Workwear.Journal.ViewModels.Analytics;
@@ -28,6 +29,8 @@ namespace workwear.Journal
 	{
 		public static void RegisterColumns()
 		{
+			MeasurementJournalColumnsConfigs.RegisterColumns();
+
 			#region Analytics
 
 			TreeViewColumnsConfigFactory.Register<ProtectionToolsCategoryJournalViewModel>(

@@ -1,4 +1,4 @@
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
 using Workwear.Domain.Analytics;
@@ -301,7 +301,7 @@ namespace Workwear
 				.AddDeleteDependence<Completion>(x => x.ResultWarehouse)
 				.AddDeleteDependence<Completion>(x => x.SourceWarehouse);
 
-			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits>()
+			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnit>()
 				.AddClearDependence<ItemsType>(x => x.Units);
 
 			DeleteConfig.AddHibernateDeleteInfo<Nomenclature> ()
