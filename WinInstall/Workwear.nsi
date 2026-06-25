@@ -8,7 +8,7 @@ Unicode true
 !define MENU_DIR_NAME "Спецодежда и имущество"
 !define APP_DIR_NAME "Спецодежда и имущество"
 !define UNINSTAL_KEY "workwear"
-!define SETUP_POSTFIX ""
+!define SETUP_POSTFIX "reester"
 
 !ifdef BETA
 	!define /redef PRODUCT_NAME "QS: Спецодежда и имущество БЕТА"

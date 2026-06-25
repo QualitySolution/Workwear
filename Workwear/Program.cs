@@ -68,18 +68,11 @@ namespace workwear
 			Login.MakeDefaultConnections = () => new Connection[] {
 				new Connection(
 					ConnectionType.SaaS,
-					"Демонстрационная(текущая)",
-					"current",
+					"Демонстрационная",
+					"reester",
 					user: "demo",
 					account: "demo"
 				),
-				new Connection(
-					ConnectionType.SaaS,
-					"Демонстрационная(стабильная)",
-					"stable",
-					user: "demo",
-					account: "demo"
-				)
 			};
 
 			LoginDialog.UpdateFromGConf ();
