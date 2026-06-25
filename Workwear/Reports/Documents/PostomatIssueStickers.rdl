@@ -5,7 +5,7 @@
   <PageHeight>56mm</PageHeight>
   <PageWidth>56mm</PageWidth>
   <Width>7.5in</Width>
-  <TopMargin>1mm</TopMargin>
+  <TopMargin>5 mm</TopMargin>
   <LeftMargin>5 mm</LeftMargin>
   <RightMargin>5 mm</RightMargin>
   <BottomMargin>1mm</BottomMargin>
@@ -36,8 +36,8 @@
             <Width>29.0pt</Width>
           </TableColumn>
         </TableColumns>
-        <Left>0.0pt</Left>
-        <Top>5.6pt</Top>
+        <Left>0.7pt</Left>
+        <Top>3.2pt</Top>
         <Details>
           <TableRows>
             <TableRow>
@@ -61,7 +61,7 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>.2in</Height>
+              <Height>12.1pt</Height>
               <TableCells>
                 <TableCell>
                   <ColSpan>2</ColSpan>
@@ -73,7 +73,7 @@
                         <BorderStyle />
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize>16pt</FontSize>
+                        <FontSize>14pt</FontSize>
                         <FontWeight>Normal</FontWeight>
                       </Style>
                     </Textbox>
@@ -104,7 +104,7 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>18.4pt</Height>
+              <Height>32.4pt</Height>
               <TableCells>
                 <TableCell>
                   <ColSpan>2</ColSpan>
@@ -117,17 +117,17 @@
                         <BorderColor />
                         <BorderWidth />
                         <FontWeight>Normal</FontWeight>
-                        <FontSize>10pt</FontSize>
+                        <FontSize>9pt</FontSize>
                         <VerticalAlign>Top</VerticalAlign>
                       </Style>
-                      <CanGrow>true</CanGrow>
+                      <CanGrow>false</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>20.0pt</Height>
+              <Height>28.5pt</Height>
               <TableCells>
                 <TableCell>
                   <ColSpan>2</ColSpan>
@@ -140,18 +140,18 @@
                         <BorderColor />
                         <BorderWidth />
                         <FontWeight>Normal</FontWeight>
-                        <FontSize>16pt</FontSize>
+                        <FontSize>14pt</FontSize>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BackgroundColor>White</BackgroundColor>
                       </Style>
-                      <CanGrow>true</CanGrow>
+                      <CanGrow>false</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>33.7pt</Height>
+              <Height>32.1pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
