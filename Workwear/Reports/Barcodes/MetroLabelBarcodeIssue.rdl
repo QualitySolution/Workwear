@@ -3,7 +3,7 @@
   <Description>Штрихкоды</Description>
   <Author></Author>
   <PageHeight>35mm</PageHeight>
-  <PageWidth>70mm</PageWidth>
+  <PageWidth>60mm</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>1mm</TopMargin>
   <LeftMargin>2mm</LeftMargin>
@@ -18,18 +18,18 @@
     <Height>123.9pt</Height>
     <ReportItems>
       <List Name="List1">
-        <Height>93.54pt</Height>
-        <Width>187.78pt</Width>
+        <Height>33mm</Height>
+        <Width>56mm</Width>
         <Left>0.00pt</Left>
         <Top>0.00pt</Top>
         <ReportItems>
           <Textbox Name="Textbox1">
-            <Height>15.02pt</Height>
-            <Width>180.00pt</Width>
+            <Height>12.81pt</Height>
+            <Width>157.43pt</Width>
             <Value>={employee}</Value>
             <ZIndex>0</ZIndex>
-            <Left>2.4pt</Left>
-            <Top>0.8pt</Top>
+            <Left>0.00pt</Left>
+            <Top>0.00pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
@@ -64,17 +64,17 @@
               <BackgroundColor>White</BackgroundColor>
               <PaddingBottom>4pt</PaddingBottom>
             </Style>
-            <Left>47.78pt</Left>
-            <Top>72.40pt</Top>
-            <Height>17.13pt</Height>
-            <Width>137.97pt</Width>
+            <Left>53.4pt</Left>
+            <Top>72.4pt</Top>
+            <Height>18.63pt</Height>
+            <Width>101.84pt</Width>
             <ZIndex>10</ZIndex>
             <CanGrow>true</CanGrow>
           </Textbox>
           <Rectangle Name="Rectangle1">
-            <Height>55.69pt</Height>
-            <Width>181.41pt</Width>
-            <Left>2.70pt</Left>
+            <Height>57.21pt</Height>
+            <Width>54mm</Width>
+            <Left>1mm</Left>
             <Top>13.90pt</Top>
             <Style>
               <BorderStyle>
@@ -95,41 +95,41 @@
             </Style>
             <ReportItems>
               <Textbox Name="Textbox4" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                <Height>21.03pt</Height>
-                <Width>96.39pt</Width>
+                <Height>30.04pt</Height>
+                <Width>68.61pt</Width>
                 <Value>={personnel_number}</Value>
                 <ZIndex>0</ZIndex>
-                <Left>0.0pt</Left>
-                <Top>17.1pt</Top>
+                <Left>0.00pt</Left>
+                <Top>23.80pt</Top>
                 <Style>
                   <BorderStyle />
                   <BorderColor />
                   <BorderWidth />
                   <TextAlign>Center</TextAlign>
-                  <FontSize>16pt</FontSize>
+                  <FontSize>14pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                 </Style>
               </Textbox>
               <Textbox Name="Textbox6" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                <Height>13.50pt</Height>
-                <Width>79.12pt</Width>
+                <Height>15.00pt</Height>
+                <Width>65.61pt</Width>
                 <Value>={subdivision_code}</Value>
                 <ZIndex>0</ZIndex>
                 <Left>0.00pt</Left>
-                <Top>1.60pt</Top>
+                <Top>7.90pt</Top>
                 <Style>
                   <BorderStyle />
                   <BorderColor />
                   <BorderWidth />
                   <TextAlign>Center</TextAlign>
-                  <FontSize>12pt</FontSize>
+                  <FontSize>11pt</FontSize>
                 </Style>
               </Textbox>
               <Rectangle Name="Rectangle2">
-                <Height>54.95pt</Height>
-                <Width>19.66pt</Width>
-                <Left>161.09pt</Left>
-                <Top>0.10pt</Top>
+                <Height>55.68pt</Height>
+                <Width>19.65pt</Width>
+                <Left>134.4pt</Left>
+                <Top>0.1pt</Top>
                 <Style>
                   <BorderStyle>
                     <Left>Solid</Left>
@@ -145,8 +145,8 @@
                     <Width>18.92pt</Width>
                     <Value>={kit_number}</Value>
                     <ZIndex>1</ZIndex>
-                    <Left>0.00pt</Left>
-                    <Top>0.00pt</Top>
+                    <Left>0.8pt</Left>
+                    <Top>0.8pt</Top>
                     <Style>
                       <BorderStyle />
                       <BorderColor />
@@ -178,7 +178,7 @@
                     <Value>={product_code}</Value>
                   </CustomProperty>
                 </CustomProperties>
-                <Left>98.8pt</Left>
+                <Left>69.6pt</Left>
                 <Top>1.6pt</Top>
                 <Style>
                   <BorderStyle />
@@ -214,7 +214,7 @@
               <PaddingBottom>4pt</PaddingBottom>
             </Style>
             <Left>0.8pt</Left>
-            <Top>71.6pt</Top>
+            <Top>73.2pt</Top>
             <Height>16.38pt</Height>
             <Width>45.38pt</Width>
             <ZIndex>10</ZIndex>
@@ -332,7 +332,16 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
       </Fields>
     </DataSet>
   </DataSets>
-  <ReportParameters>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=atlas.srv.qsolution.ru;user=SpMob;database=specposhiv_kos;port=3306;password=QlZEal1FlwZuKFc5</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters >
     <ReportParameter Name="barcodes">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -346,13 +355,4 @@ ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
-  <DataSources>
-    <DataSource Name="DS1">
-      <ConnectionProperties>
-        <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=atlas.srv.qsolution.ru;user=SpMob;database=specposhiv_kos;port=3306;password=QlZEal1FlwZuKFc5</ConnectString>
-        <IntegratedSecurity>false</IntegratedSecurity>
-      </ConnectionProperties>
-    </DataSource>
-  </DataSources>
 </Report>
