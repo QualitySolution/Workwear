@@ -16,6 +16,7 @@ namespace Workwear.Tools.Barcodes
 	public class BarcodeService 
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private static Random random = new Random();
 		private EmployeeIssueRepository employeeIssueRepository;
 
 		public BarcodeService(BaseParameters baseParameters, EmployeeIssueRepository employeeIssueRepository) {
@@ -80,7 +81,7 @@ namespace Workwear.Tools.Barcodes
 				newBarCode.Nomenclature = nomenclature;
 				newBarCode.Size = size;
 				newBarCode.Height = height;
-				newBarCode.Title = "generated" + new Random().Next(); //т.к. в базе not null, а далее уже нужен id
+				newBarCode.Title = "generated" + random.Next(); //т.к. в базе not null, а далее уже нужен id
 				unitOfWork.Save(newBarCode);
 				//Перезаписываем Title так как он формируется на основании полученного Id
 				newBarCode.Title = $"{BaseCode}{newBarCode.Id:D8}{CheckSum($"{BaseCode}{newBarCode.Id:D8}")}";
