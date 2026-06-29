@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using Autofac;
+using FluentNHibernate.Conventions;
+using Microsoft.Extensions.DependencyInjection;
 using NHibernate.Driver.MySqlConnector;
 using QS.BaseParameters;
 using QS.Measurement.Domain;
@@ -32,6 +34,7 @@ using QS.Journal.GtkUI;
 using QS.Navigation;
 using QS.NewsFeed;
 using QS.Permissions;
+using QS.Project.Core;
 using QS.Project.DB;
 using QS.Project.Dialogs.GtkUI.ServiceDlg;
 using QS.Project.Domain;
@@ -99,7 +102,7 @@ namespace workwear
 {
 	static partial class MainClass
 	{
-			public static void CreateBaseConfig (ProgressPerformanceHelper progress)
+			public static void CreateBaseConfig (ProgressPerformanceHelper progress, IDatabaseConnectionSettings connectionSettings)
 			{
 				logger.Info ("Настройка параметров базы...");
 
@@ -108,10 +111,21 @@ namespace workwear
 
 				// Настройка ORM
 				progress.CheckPoint("Настройка подключения к базе");
+				var connectionStringBuilder = new MySqlConnectionStringBuilder {
+					Server = connectionSettings.ServerName,
+					Port = connectionSettings.Port,
+					Database = connectionSettings.DatabaseName,
+					UserID = connectionSettings.UserName,
+					Password = connectionSettings.Password,
+					SslMode = connectionSettings.MySqlSslMode
+				};
+				if(connectionSettings.DefaultCommandTimeout.HasValue) {
+					connectionStringBuilder.DefaultCommandTimeout = connectionSettings.DefaultCommandTimeout.Value;
+				}
 				var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
 				.Driver<MySqlConnectorDriver>()
-				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
+				.ConnectionString(connectionStringBuilder.ConnectionString)
 				.AdoNetBatchSize(100)
 				.ShowSql ()
 				.FormatSql ();
@@ -133,7 +147,6 @@ namespace workwear
 				"Пользователь может изменять настройки учета"));
 			QSMain.ProjectPermission.Add ("can_change_document_date", new UserPermission ("can_change_document_date", "Изменение даты документов",
             				"Пользователь может изменить дату документов на произвольную"));
-			QSMain.User.LoadUserInfo();
 
 			#if DEBUG
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
@@ -147,6 +160,36 @@ namespace workwear
 		
 		public static ILifetimeScope AppDIContainer;
 		public static IContainer StartupContainer;
+
+		public static IServiceCollection AddDatabaseSettings(this IServiceCollection services, IDatabaseConnectionSettings settings)
+		{
+			return services
+				.AddMappingAssemblies(new System.Reflection.Assembly[] {
+					System.Reflection.Assembly.GetAssembly(typeof(EmployeeCard)),
+					System.Reflection.Assembly.GetAssembly(typeof(MeasurementUnit)),
+					System.Reflection.Assembly.GetAssembly(typeof(UserBase)),
+					System.Reflection.Assembly.GetAssembly(typeof(HistoryMain)),
+				})
+				.AddDatabaseConnection()
+				.AddSingleton(settings)
+				.AddDatabaseConnectionString()
+				.AddSqlConfiguration()
+				.AddDatabaseInfo()
+				.AddSingleton<IConvention, ObservableListConvention>()
+				.AddNHibernateConfiguration();
+		}
+
+		public static IServiceCollection AddClassConfig(this IServiceCollection services, string login, string sessionId)
+		{
+			return services
+				.AddSessionFactory()
+				.AddSingleton<ISessionProvider, DefaultSessionProvider>()
+				.AddSingleton<IOrmConfig, DefaultOrmConfig>()
+				.AddGuiTrackedUoW()
+				.AddEntityChangeWatcher()
+				.AddUserService(login)
+				.AddSingleton<ISessionInfoProvider>(new SessionInfoProvider(sessionId));
+		}
 		
 		static void AutofacStartupConfig(ContainerBuilder containerBuilder)
 		{
@@ -210,33 +253,18 @@ namespace workwear
 			#endregion
 		}
 		
-		public static void AutofacClassConfig(ContainerBuilder builder, bool isDemo)
+		public static void AutofacClassConfig(ContainerBuilder builder)
 		{
 			#region База
-			builder.RegisterType<DefaultUnitOfWorkFactory>().As<IUnitOfWorkFactory>();
 			builder.RegisterType<ProgressInterceptor>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
-			builder.RegisterType<ProgresSessionProvider>().As<ISessionProvider>();
-			builder.Register(c => new MySqlConnectionFactory(Connection.ConnectionString)).As<IConnectionFactory>();
-			builder.Register<DbConnection>(c => c.Resolve<IConnectionFactory>().OpenConnection()).AsSelf();
 			builder.RegisterType<BaseParameters>().As<ParametersService>().AsSelf().SingleInstance();
-			builder.Register(c => QSMain.ConnectionStringBuilder).AsSelf().ExternallyOwned();
-			builder.Register(c => new NhDataBaseInfo(c.Resolve<ParametersService>(), isDemo)).As<IDataBaseInfo>();
 			builder.RegisterType<MySQLProvider>().As<IMySQLProvider>();
 			#endregion
 
 			#region Пользователь
-			using (var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
-				var user = uow.GetById<UserBase>(QSMain.User.Id);
-				if(user != null) {
-					builder.Register(c => user).As<IUserInfo>();
-					builder.Register(c => new UserService(user)).As<IUserService>();
-					//FIXME Временно для старых диалогов
-					ServicesConfig.UserService = new UserService(user);
-				}
-			}
 			builder.RegisterType<CurrentUserSettings>().AsSelf().SingleInstance();
-			builder.RegisterType<PermissionsService>().As<ICurrentPermissionService>().SingleInstance();
+			builder.RegisterType<PermissionsService>().As<ICurrentPermissionService>().InstancePerLifetimeScope();
 			#endregion
 			
 			#region Сервисы
@@ -249,7 +277,6 @@ namespace workwear
 			builder.Register(x => DeleteConfig.Main).AsSelf().ExternallyOwned();
 			builder.RegisterType<ReplaceEntity>().AsSelf();
  			#endregion
-			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterType<FileDialogService>().As<IFileDialogService>();
@@ -363,7 +390,6 @@ namespace workwear
 			
 			#region Облачные сервисы
 
-			builder.Register(c => new SessionInfoProvider(QSSaaS.Session.SessionId)).As<ISessionInfoProvider>().SingleInstance();
 			builder.RegisterType<CloudClientService>().AsSelf().SingleInstance();
 			builder.RegisterType<LkUserManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<MessagesService>().AsSelf().SingleInstance();

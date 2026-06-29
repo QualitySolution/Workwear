@@ -743,9 +743,21 @@
       <Project>{390CE39B-B071-424E-9763-645E7624D9E3}</Project>
       <Name>QS.Cloud.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QSProjects\QS.Launcher.Gtk\QS.Launcher.Gtk.csproj">
+      <Project>{A54C2769-77C5-41B8-BA3F-00F87733AC51}</Project>
+      <Name>QS.Launcher.Gtk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QSProjects\QS.Launcher\QS.Launcher.csproj">
+      <Project>{533D2F8B-7EDF-4E91-BE31-DC92CA6F8B93}</Project>
+      <Name>QS.Launcher</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QSProjects\QS.Project.Core\QS.Project.Core.csproj">
       <Project>{C01AE5A4-3CFF-4C7B-884D-45B07ACDE761}</Project>
       <Name>QS.Project.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workwear.Startup.Core\Workwear.Startup.Core.csproj">
+      <Project>{DFC61DC6-7DA0-4DD7-9A39-E0FC0258E5CA}</Project>
+      <Name>Workwear.Startup.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
       <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
@@ -924,6 +936,7 @@
   <ItemGroup>
     <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
     <PackageReference Include="Autofac" Version="7.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="BouncyCastle" Version="1.8.9" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Dapper" Version="2.1.35" />

@@ -6,7 +6,9 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Gtk;
+using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
 using NLog;
 using QS.Measurement.Journal.ViewModels;
@@ -21,6 +23,7 @@ using QS.Navigation;
 using QS.NewsFeed;
 using QS.NewsFeed.Views;
 using QS.Project.DB;
+using QS.Project.Core;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Project.Versioning;
@@ -99,8 +102,17 @@ public partial class MainWindow : Gtk.Window {
 	private string subscriptionStatusTitle = string.Empty;
 	private string subscriptionStatusMessage = string.Empty;
 
-	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
+	public MainWindow() : base(Gtk.WindowType.Toplevel) {
 		Build();
+	}
+
+	public void StartApplication(
+		UnhandledExceptionHandler unhandledExceptionHandler,
+		IDatabaseConnectionSettings connectionSettings,
+		string login,
+		string sessionId,
+		string baseTitle)
+	{
 		toolbarMain.Sensitive = false;
 		menubar1.Sensitive = false;
 		entitySearchEmployee.Sensitive = false;
@@ -111,13 +123,19 @@ public partial class MainWindow : Gtk.Window {
 		QSMain.MakeNewStatusTargetForNlog();
 
 		progress.StartGroup("Настройка базы");
-		MainClass.CreateBaseConfig(progress);
+		MainClass.CreateBaseConfig(progress, connectionSettings);
 		progress.EndGroup();
 		progress.CheckPoint("Конфигурация классов приложения");
-		MainClass.AppDIContainer = MainClass.StartupContainer.BeginLifetimeScope(c => MainClass.AutofacClassConfig(c, isDemo));
+		var services = new ServiceCollection();
+		services.AddDatabaseSettings(connectionSettings);
+		services.AddClassConfig(login, sessionId);
+		MainClass.AppDIContainer = MainClass.StartupContainer.BeginLifetimeScope(c => {
+			c.Populate(services);
+			MainClass.AutofacClassConfig(c);
+		});
 		progress.CheckPoint("DI главного окна");
 		AutofacScope = MainClass.AppDIContainer.BeginLifetimeScope();
-		this.Title = AutofacScope.Resolve<IApplicationInfo>().ProductTitle;
+		this.Title = $"{AutofacScope.Resolve<IApplicationInfo>().ProductTitle} (БД: {baseTitle ?? connectionSettings.DatabaseName})";
 		progress.StartGroup("Донастройка обработчика ошибок");
 		unhandledExceptionHandler.UpdateDependencies(MainClass.AppDIContainer, progress);
 		progress.EndGroup();
@@ -321,8 +339,6 @@ public partial class MainWindow : Gtk.Window {
 		if(!MainTelemetry.DoNotTrack)
 			Task.Run(FillTelemetry);
 
-		progress.CheckPoint("Запуск QS: Облако");
-		QSSaaS.Session.StartSessionRefresh();
 		toolbarMain.Sensitive = true;
 		menubar1.Sensitive = true;
 		entitySearchEmployee.Sensitive = true;

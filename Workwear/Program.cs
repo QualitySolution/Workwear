@@ -1,14 +1,18 @@
 using System;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Gtk;
+using Microsoft.Extensions.DependencyInjection;
+using MySqlConnector;
 using NLog;
-using QS.Configuration;
-using QS.DBScripts.Controllers;
 using QS.Dialog;
 using QS.ErrorReporting;
-using QS.Project.Versioning;
+using QS.Launcher;
+using QS.Launcher.AppRunner;
+using QS.Project.DB;
 using QSProjectsLib;
 using QSTelemetry;
+using Workwear.Startup;
 
 namespace workwear
 {
@@ -20,6 +24,18 @@ namespace workwear
 		[STAThread]
 		public static void Main (string[] args)
 		{
+			string connectionString = Environment.GetEnvironmentVariable("QS_CONNECTION_STRING");
+			string login = Environment.GetEnvironmentVariable("QS_LOGIN");
+			string sessionId = Environment.GetEnvironmentVariable("QS_SessionId");
+			string baseTitle = Environment.GetEnvironmentVariable("QS_BaseTitle");
+
+			// Clear env vars after using for a little bit of security.
+			// Process-level vars can't be cleared for the parent from here anyway.
+			Environment.SetEnvironmentVariable("QS_CONNECTION_STRING", null, EnvironmentVariableTarget.Process);
+			Environment.SetEnvironmentVariable("QS_LOGIN", null, EnvironmentVariableTarget.Process);
+			Environment.SetEnvironmentVariable("QS_SessionId", null, EnvironmentVariableTarget.Process);
+			Environment.SetEnvironmentVariable("QS_BaseTitle", null, EnvironmentVariableTarget.Process);
+
 			UnhandledExceptionHandler unhandledExceptionHandler = new UnhandledExceptionHandler();
 			
 			try
@@ -28,13 +44,56 @@ namespace workwear
 				Application.Init();
 				QSMain.GuiThread = System.Threading.Thread.CurrentThread;
 				GtkGuiDispatcher.GuiThread = System.Threading.Thread.CurrentThread;
-				
+
+				bool startLauncher = String.IsNullOrEmpty(connectionString);
 				var builder = new ContainerBuilder();
 				AutofacStartupConfig(builder);
+				if(startLauncher) {
+					logger.Info("Параметры подключения не переданы. Настраиваем GTK лаунчер.");
+					builder.UseInProcessRunner();
+					var launcherServices = new ServiceCollection();
+					launcherServices
+						.AddWorkwearLauncherConfiguration(options => {
+							// В InProcess режиме лаунчер не является standalone приложением.
+							options.IsStandalone = false;
+						})
+						.AddLauncherDependencies()
+						.AddLauncherViewModels()
+						.AddLauncherViews();
+					builder.Populate(launcherServices);
+				}
+
 				StartupContainer = builder.Build();
 				unhandledExceptionHandler.UpdateDependencies(StartupContainer);
 				unhandledExceptionHandler.SubscribeToUnhandledExceptions();
 
+				if(startLauncher) {
+					logger.Info("Запуск GTK лаунчера.");
+					using(var launcherScope = StartupContainer.BeginLifetimeScope()) {
+						var runner = launcherScope.Resolve<InProcessRunner>();
+						runner.OnLogin = response => {
+							login = response.Login;
+							sessionId = response.Parameters.ContainsKey("SessionId")
+								? response.Parameters["SessionId"]
+								: null;
+							baseTitle = response.Parameters.ContainsKey("BaseTitle")
+								? response.Parameters["BaseTitle"]
+								: null;
+							connectionString = response.ConnectionString;
+							//Строка соединения обязательно заполняется последней так как по ее заполненности проверяем нужно ли выходить из ожидания.
+						};
+
+						var loginView = launcherScope.Resolve<QS.Launcher.Views.MainWindow>();
+						loginView.DeleteEvent += (o, a) => {
+							Environment.Exit(0);
+						};
+						loginView.Show();
+
+						var gui = launcherScope.Resolve<IGuiDispatcher>();
+						gui.WaitInMainLoop(() => !String.IsNullOrEmpty(connectionString));
+						loginView.Destroy();
+					}
+				}
 			} catch(MissingMethodException ex) when (ex.Message.Contains("System.String System.String.Format")) {
 				WindowStartupFix.DisplayWindowsOkMessage("Версия .Net Framework должна быть не ниже 4.6.1. Установите более новую платформу.", "Старая версия .Net");
 				return;
@@ -48,60 +107,19 @@ namespace workwear
 				logger.Fatal(fallEx);
 				return;
 			}
-			
-			ILifetimeScope scopeLoginTime = StartupContainer.BeginLifetimeScope();
-			var configuration = scopeLoginTime.Resolve<IChangeableConfiguration>();
-			// Создаем окно входа
-			Login LoginDialog = new Login (configuration);
-			LoginDialog.Logo = Gdk.Pixbuf.LoadFromResource ("Workwear.icon.logo.png");
-			Login.ApplicationDemoServer = "demo.qsolution.ru";
-			Login.ApplicationDemoAccount = "demo";
-			LoginDialog.DemoMessage = "Для входа в демонстрационную базу используйте следующие данные:\n" +
-			"\n" +
-			"<b>Пользователь:</b> demo\n" +
-			"<b>Пароль:</b> demo\n" +
-			"\n" +
-			"Для установки собственного сервера обратитесь к документации.";
-			Login.CreateDBHelpTooltip = "Инструкция по установке сервера MySQL";
-			Login.CreateDBHelpUrl = "https://doc.qsolution.ru/workwear/" + new ApplicationVersionInfo().Version.ToString(2) +"/install.html#InstallDBServer";
-			LoginDialog.GetDBCreator = scopeLoginTime.Resolve<IDBCreator>;
-			Login.MakeDefaultConnections = () => new Connection[] {
-				new Connection(
-					ConnectionType.SaaS,
-					"Демонстрационная(текущая)",
-					"current",
-					user: "demo",
-					account: "demo"
-				),
-				new Connection(
-					ConnectionType.SaaS,
-					"Демонстрационная(стабильная)",
-					"stable",
-					user: "demo",
-					account: "demo"
-				)
-			};
 
-			LoginDialog.UpdateFromGConf ();
-
-			ResponseType LoginResult;
-			LoginResult = (ResponseType)LoginDialog.Run ();
-			if (LoginResult == ResponseType.DeleteEvent || LoginResult == ResponseType.Cancel)
+			if(String.IsNullOrEmpty(connectionString))
 				return;
 
-			bool isDemo = LoginDialog.ConnectedTo.IsDemo;
-			string baseName = LoginDialog.SelectedConnection;
-			LoginDialog.Destroy ();
-			scopeLoginTime.Dispose();
+			MySqlConnectionStringBuilder connectionStringBuilder = new MySqlConnectionStringBuilder(connectionString);
+			IDatabaseConnectionSettings databaseConnectionSettings = new DatabaseConnectionSettings(connectionStringBuilder);
 
 			//Запускаем программу
 			Application.Invoke(delegate 
 			{
-				MainWin = new MainWindow (unhandledExceptionHandler, isDemo);
-				MainWin.Title += $" (БД: {baseName})";
-				if (QSMain.User.Login == "root")
-					return;
+				MainWin = new MainWindow();
 				MainWin.Show ();
+				MainWin.StartApplication(unhandledExceptionHandler, databaseConnectionSettings, login, sessionId, baseTitle);
 			});
 			Application.Run ();
 			
@@ -110,7 +128,6 @@ namespace workwear
 				MainTelemetry.SendTimeout = TimeSpan.FromSeconds(2);
 				MainTelemetry.SendTelemetry();
 			}
-			QSSaaS.Session.StopSessionRefresh ();
 			AppDIContainer.Dispose();
 			StartupContainer.Dispose();
 		}
