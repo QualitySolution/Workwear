@@ -176,8 +176,6 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="CreateProjectParam.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.WriteOffView.cs" />
-    <Compile Include="Dialogs\Regulations\RegulationDocDlg.cs" />
-    <Compile Include="gtk-gui\workwear.Dialogs.Regulations.RegulationDocDlg.cs" />
     <Compile Include="Representations\Organization\EmployeeVacationsVM.cs" />
     <Compile Include="Representations\Organization\EmployeeBalanceVM.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
@@ -681,10 +679,6 @@
       <Project>{00D32969-612C-417E-9565-BEC6A7719F80}</Project>
       <Name>QSOrmProject</Name>
     </ProjectReference>
-    <ProjectReference Include="..\QSProjects\Modules\QSBusinessCommon\QSBusinessCommon.csproj">
-      <Project>{AD329D59-938D-42AC-ABE2-B0F14FDBB7C6}</Project>
-      <Name>QSBusinessCommon</Name>
-    </ProjectReference>
     <ProjectReference Include="..\QSProjects\QSTelemetry\QSTelemetry.csproj">
       <Project>{EB4F19F8-2CC9-4712-9949-760A441A56FE}</Project>
       <Name>QSTelemetry</Name>
@@ -709,9 +703,13 @@
       <Project>{3C0F3944-CBD5-4BD6-83D4-CF33AD6FC68C}</Project>
       <Name>QS.Project.Gtk</Name>
     </ProjectReference>
-    <ProjectReference Include="..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
+    <ProjectReference Include="..\QSProjects\Modules\QS.Measurement\QS.Measurement.csproj">
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
-      <Name>QS.BusinessCommon</Name>
+      <Name>QS.Measurement</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QSProjects\Modules\QS.Measurement.Gtk\QS.Measurement.Gtk.csproj">
+      <Project>{AF3521E6-7B25-4F10-BD94-78B587C843B0}</Project>
+      <Name>QS.Measurement.Gtk</Name>
     </ProjectReference>
     <ProjectReference Include="..\QSProjects\QS.Report.Gtk\QS.Report.Gtk.csproj">
       <Project>{42708CEE-08D8-43D5-AFE0-9992EB46E9F9}</Project>
@@ -772,9 +770,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReportsDlg\" />
-    <Folder Include="Dialogs\" />
     <Folder Include="Representations\" />
-    <Folder Include="Dialogs\Regulations\" />
     <Folder Include="Representations\Organization\" />
     <Folder Include="Views\" />
     <Folder Include="ViewModels\Company\" />

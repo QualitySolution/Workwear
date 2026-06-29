@@ -384,7 +384,8 @@ namespace Workwear.ViewModels.Supply {
 			
 			if(Entity.Id == 0) 
 				Entity.CreationDate = DateTime.Today;
-			UoWGeneric.Save ();
+			UoW.Save(Entity);
+			UoW.Commit();
 			logger.Info ("Документ сохранён.");
 			return true;
 		}

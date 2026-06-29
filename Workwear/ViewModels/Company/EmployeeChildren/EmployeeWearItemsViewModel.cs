@@ -234,7 +234,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			Entity.UpdateNextIssue(protectionTools);
-			UoW.Save();
+			UoW.Save(Entity);
+			UoW.Commit();
 		}
 
 		public void SetIssueDateManual() {

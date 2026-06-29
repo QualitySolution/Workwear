@@ -642,7 +642,7 @@ namespace Workwear.ViewModels.Company
 
 		public void Print(PersonalCardPrint doc)
 		{
-			if(UoWGeneric.HasChanges && messages.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
+			if(UoW.HasChanges && messages.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
 				Save();
 
 			var reportInfo = new ReportInfo {

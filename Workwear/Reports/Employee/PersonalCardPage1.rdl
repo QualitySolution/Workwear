@@ -25,21 +25,7 @@
     posts.name AS post,
     "" AS leader,
     subdivisions.name AS subdivision,
-    (SELECT
-         GROUP_CONCAT(DISTINCT CONCAT_WS(' ',
-                                         regulations.name,
-                                         CONCAT('от ',
-                                                DATE_FORMAT(regulations.doc_date, '%d.%m.%Y')),
-                                         CONCAT('№ ', regulations.number))
-                      SEPARATOR ', ')
-     FROM
-         employees_norms
-             LEFT JOIN
-         norms ON norms.id = employees_norms.norm_id
-             LEFT JOIN
-         regulations ON regulations.id = norms.regulations_id
-     WHERE
-             employees_norms.employee_id = employees.id) AS regulations
+    '' AS regulations
 FROM
     employees
         LEFT JOIN
@@ -110,7 +96,7 @@ WHERE
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS type_name,
-    IFNULL(norms_item.norm_paragraph, norms.ton_paragraph) AS ton_paragraph,
+    norms_item.norm_paragraph AS ton_paragraph,
     measurement_units.name AS unit,
     CASE
         WHEN norms_item.period_type = 'Wearout' THEN CONCAT_WS(' ', norms_item.amount, 'до износа')

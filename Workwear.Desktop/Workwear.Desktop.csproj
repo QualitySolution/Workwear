@@ -9,7 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\QS.Cloud.Postomat.Client\QS.Cloud.Postomat.Client.csproj" />
-      <ProjectReference Include="..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj" />
+      <ProjectReference Include="..\QSProjects\Modules\QS.Measurement\QS.Measurement.csproj" />
       <ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj" />
       <ProjectReference Include="..\QSProjects\QS.Extensions.Observable\QS.Extensions.Observable.csproj" />
       <ProjectReference Include="..\QSProjects\QS.Features\QS.Features.csproj" />

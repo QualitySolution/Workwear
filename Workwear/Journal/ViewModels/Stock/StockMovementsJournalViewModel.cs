@@ -6,7 +6,7 @@ using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -94,7 +94,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemTypesAlias = null;
-			MeasurementUnits unitsAlias = null;
+			MeasurementUnit unitsAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			Owner ownerAlias = null;

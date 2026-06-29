@@ -88,7 +88,7 @@ namespace Workwear.ViewModels.Statements
 			if (Entity.Id == 0 )
 				GetDefualtSetting();
 
-			if(!UoW.IsNew)
+			if(Entity.Id != 0)
 				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			
 			Entity.Items.ContentChanged += (sender, args) => OnPropertyChanged(nameof(Sum));

@@ -30,7 +30,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public void SavePhoto(string fileName)
 		{
 			using(FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write)) {
-				fs.Write(employeeViewModel.UoWGeneric.Root.Photo, 0, employeeViewModel.UoWGeneric.Root.Photo.Length);
+				fs.Write(Entity.Photo, 0, Entity.Photo.Length);
 			}
 		}
 
@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			string filePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "temp_img.jpg");
 			using(FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write)) {
-				fs.Write(employeeViewModel.UoWGeneric.Root.Photo, 0, employeeViewModel.UoWGeneric.Root.Photo.Length);
+				fs.Write(Entity.Photo, 0, Entity.Photo.Length);
 			}
 			System.Diagnostics.Process.Start(filePath);
 		}

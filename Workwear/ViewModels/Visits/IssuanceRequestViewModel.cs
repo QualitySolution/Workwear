@@ -312,7 +312,8 @@ namespace Workwear.ViewModels.Visits {
 				logger.Info("Валидация пройдена.");
 			if(Entity.Id == 0) 
 				Entity.CreationDate = DateTime.Today;
-			UoW.Save();
+			UoW.Save(Entity);
+			UoW.Commit();
 			logger.Info("Заявка сохранена");
 			return true;
 		}

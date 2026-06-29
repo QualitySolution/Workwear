@@ -100,7 +100,7 @@ namespace Workwear.ViewModels.Stock {
 			this.sizeService.RefreshSizes(UoW); //Загружаем размеры
 			performance.CheckPoint("Предварительная загрузка документа");
 			var entryBuilder = new CommonEEVMBuilderFactory<Expense>(this, Entity, UoW, navigation, autofacScope);
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
 			else {
@@ -162,7 +162,7 @@ namespace Workwear.ViewModels.Stock {
 			EmployeeItemsViewModel = this.autofacScope.Resolve<ExpenseEmployeeItemsViewModel>(parameter, parameter2);
 			Entity.PropertyChanged += EntityChange;
 			
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание нового документа выдачи");
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
@@ -350,7 +350,7 @@ namespace Workwear.ViewModels.Stock {
 			}
 			performance.CheckPoint("Запись документа выдачи...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
-			UoWGeneric.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
+			UoW.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
 			
 			performance.CheckPoint("Запись ведомости...");
 			Entity.UpdateIssuanceSheet();
@@ -360,7 +360,7 @@ namespace Workwear.ViewModels.Stock {
 			performance.CheckPoint("Обновляем записи в карточке сотрудника...");
 			Entity.UpdateEmployeeWearItems();
 			performance.CheckPoint("Завершение транзакции...");
-			UoWGeneric.Commit();
+			UoW.Commit();
 			performance.End();
 			logger.Info($"Документ сохранен за {performance.TotalTime.TotalSeconds} сек.");
 			return true;
