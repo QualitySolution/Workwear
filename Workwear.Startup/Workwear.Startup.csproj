@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Company>Quality Solution</Company>
+		<ApplicationIcon>Icons\logo128.ico</ApplicationIcon>
+		<NeutralLanguage>ru</NeutralLanguage>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Avalonia">
+		<AvaloniaUseCompiledBindingsByDefault>True</AvaloniaUseCompiledBindingsByDefault>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="8.4.0" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj" />
+		<ProjectReference Include="..\QSProjects\QS.DbManagement\QS.DbManagement.csproj" />
+		<ProjectReference Include="..\QSProjects\QS.Launcher.Avalonia\QS.Launcher.Avalonia.csproj" />
+		<ProjectReference Include="..\QSProjects\QS.Launcher\QS.Launcher.csproj" />
+		<ProjectReference Include="..\Workwear.Startup.Core\Workwear.Startup.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Icons\logo.png" />
+		<EmbeddedResource Include="Icons\logo128.ico" />
+	</ItemGroup>
+
+</Project>

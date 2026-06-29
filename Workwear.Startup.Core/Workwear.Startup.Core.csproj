@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<RootNamespace>Workwear.Startup</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj" />
+		<ProjectReference Include="..\QSProjects\QS.Launcher\QS.Launcher.csproj" />
+		<ProjectReference Include="..\QSProjects\QS.Project.Abstract\QS.Project.Abstract.csproj" />
+		<ProjectReference Include="..\QSProjects\QS.Project.Desktop\QS.Project.Desktop.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Icons\logo.png" />
+		<EmbeddedResource Include="Icons\logo128.ico" />
+	</ItemGroup>
+
+</Project>
