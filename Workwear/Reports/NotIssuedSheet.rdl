@@ -928,11 +928,11 @@ FROM employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
         LEFT JOIN (
-            SELECT DISTINCT protection_tools_nomenclature.protection_tools_id, nomenclature.type_id, item_types.units_id,
+            SELECT DISTINCT protection_tools_nomenclature.protection_tools_id, protection_tools.item_types_id as type_id, item_types.units_id,
                             item_types.size_type_id, item_types.height_type_id, item_types.issue_type
             FROM protection_tools_nomenclature
-                LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
-                LEFT JOIN item_types ON item_types.id = nomenclature.type_id
+                LEFT JOIN protection_tools ON protection_tools.id = protection_tools_nomenclature.protection_tools_id
+                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
             )as nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
         LEFT JOIN measurement_units ON nomenclatureTypes.units_id = measurement_units.id
         JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id

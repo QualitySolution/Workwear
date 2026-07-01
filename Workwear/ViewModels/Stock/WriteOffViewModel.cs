@@ -120,7 +120,7 @@ namespace Workwear.ViewModels.Stock
             if(Entity.Id == 0)
 	            Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 
-            if(UoW.IsNew) {
+            if(Entity.Id == 0) {
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
 	            logger.Info($"Создание Нового документа Списания");
             } else 
