@@ -137,6 +137,7 @@ namespace Workwear.Journal.ViewModels.Stock
 					.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
+					.Select(() => barcodeOperationAlias.KitNumber).WithAlias(() => resultAlias.KitNumber)
 				).OrderBy(x => x.Id).Desc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
 			
@@ -206,7 +207,7 @@ namespace Workwear.Journal.ViewModels.Stock
 		}
 	}
 
-	public class BarcodeJournalNode 
+	public class BarcodeJournalNode
 	{
 		public int Id { get; set; }
 		public BarcodeTypes Type { get; set; }
@@ -220,6 +221,8 @@ namespace Workwear.Journal.ViewModels.Stock
 		public string LastName { get; set; }
 		public string FirstName { get; set; }
 		public string Patronymic { get; set; }
+		public int? KitNumber { get; set; }
+		public string KitNumberText => KitNumber.HasValue && KitNumber > 0 ? KitNumber.ToString() : String.Empty;
 		public string FullName => PersonHelper.PersonFullName(LastName, FirstName, Patronymic);
 	}
 }

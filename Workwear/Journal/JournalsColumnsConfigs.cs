@@ -511,6 +511,7 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<BarcodeJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString())
 					.AddColumn("Значение").AddTextRenderer(node => node.Value).SearchHighlight()
+					.AddColumn("Номер").AddTextRenderer(node => node.KitNumberText).XAlign(0.5f)
 					.AddColumn("Создан").AddReadOnlyTextRenderer(x => x.CreateDate.ToShortDateString())
 					.AddColumn("Номенклатура").AddTextRenderer(node => node.Nomenclature).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(node => node.Size)

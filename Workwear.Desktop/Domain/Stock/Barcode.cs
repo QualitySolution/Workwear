@@ -93,6 +93,10 @@ namespace Workwear.Domain.Stock {
 		public virtual IList<BarcodeOperation> SortedOperations => BarcodeOperations.OrderBy(x => x.OperationDate).ToList();
 		public virtual BarcodeOperation LastOperation => SortedOperations.Last();
 		public virtual DateTime LastOperationTime => BarcodeOperations.Max(x => x.OperationDate);
+		public virtual string GetKitNumberText(WarehouseOperation warehouseOperation) {
+			var kitNumber = BarcodeOperations.FirstOrDefault(x => x.WarehouseOperation?.Id == warehouseOperation?.Id)?.KitNumber;
+			return kitNumber > 0 ? kitNumber.ToString() : "";
+		}
 
 		#endregion
 	}

@@ -64,6 +64,10 @@ namespace Workwear.Views.Stock {
 				.AddColumn ("Штрихкоды")
 					.AddTextRenderer (e => e.Barcodes.Select(b => b.Title)
 						.Aggregate((a, b) => (a+'\n'+b)))
+				.AddColumn ("Номер")
+					.AddTextRenderer (e => e.Barcodes.Select(b => b.GetKitNumberText(e.OperationReceipt))
+						.Aggregate((a, b) => (a+'\n'+b))).XAlign(0.5f)
+				.AddColumn("") //Затычка, чтобы хвост не растягивался 
 				.Finish();
 			ytreeItems.Binding
 				.AddBinding(Entity, vm => vm.Items, w => w.ItemsDataSource)
