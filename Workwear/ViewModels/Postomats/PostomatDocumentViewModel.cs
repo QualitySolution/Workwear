@@ -117,6 +117,8 @@ namespace Workwear.ViewModels.Postomats {
 		public bool CanChangePostomat => Entity.Items.Count == 0;
 		public bool CanUseBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 
+		public string TotalText => $"Позиций в документе: {Entity.Items.Count}";
+
 		#endregion
 
 		#region Команды View
@@ -131,6 +133,7 @@ namespace Workwear.ViewModels.Postomats {
 				.List();
 			foreach(var i in items) 
 				Entity.AddItem(i, AvailableCells().FirstOrDefault(), userService.GetCurrentUser());
+			OnPropertyChanged(nameof(TotalText));
 		}
 
 		public void ReturnFromService() {
@@ -179,6 +182,7 @@ namespace Workwear.ViewModels.Postomats {
 				UoW.Save(Entity);
 				UoW.Commit();
 			}
+			OnPropertyChanged(nameof(TotalText));
 		}
 		#endregion
 
