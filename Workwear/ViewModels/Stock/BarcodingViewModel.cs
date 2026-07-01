@@ -181,6 +181,16 @@ namespace Workwear.ViewModels.Stock {
 					ExpenseWarehouse = warehouse,
 					OperationTime = Entity.Date
 				};
+				
+				BarcodeOperation barcodeOperationAlias = null;
+				WarehouseOperation warehouseOperationAlias = null;
+				var lastKitNumber = UoW.Session.QueryOver(() => barcodeOperationAlias)
+					.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+					.Where(() => warehouseOperationAlias.Nomenclature.Id == stockPosition.Nomenclature.Id)
+					.Where(() => warehouseOperationAlias.ReceiptWarehouse.Id == warehouse.Id)
+					.SelectList(list => list.SelectMax(() => barcodeOperationAlias.KitNumber))
+					.SingleOrDefault<int?>() ?? 0;
+				
 				var operationReceipt = new WarehouseOperation() {
 					StockPosition = stockPosition,
 					ReceiptWarehouse = warehouse,
@@ -195,13 +205,17 @@ namespace Workwear.ViewModels.Stock {
 					stockPosition.Height,
 					widgetVm.Label
 					);
-
+				
+				var barcodeOperations = new List<BarcodeOperation>();
 				foreach(Barcode barcode in barcodes) {
 					barcode.Label = widgetVm.Label;
 					BarcodeOperation barcodeOperation = new BarcodeOperation() {
 						Barcode = barcode,
-						WarehouseOperation = operationReceipt
+						WarehouseOperation = operationReceipt,
+						//Нумерация по порядку в рамках склада и номенклатуры
+						KitNumber = ++lastKitNumber 
 					};
+					barcodeOperations.Add(barcodeOperation);
 					UoW.Save(barcodeOperation, false);
 				}
 				Entity.AddItem(operationExpance, operationReceipt, barcodes);

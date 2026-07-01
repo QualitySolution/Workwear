@@ -33,8 +33,10 @@ namespace Workwear.Tools.Barcodes
 
 		#region Create
 
+		/// <summary>
+		/// Генерирует штрихкоды для выданного сотруднику
+		/// </summary>
 		public void CreateBarcodeEAN13(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
-			
 			var usedNumbers = employeeIssueRepository
 				.GetBarcodeNumbersForEmployee(
 					employeeIssueOperations.Select(x => x.Employee).ToList(),
