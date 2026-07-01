@@ -964,11 +964,6 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Reports\Barcodes\BarcodeFromEmployeeIssue.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Reports\DutyNorms\DutyNormPage1.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -978,8 +973,8 @@
     <EmbeddedResource Include="icon\buttons\speccoin.png" />
     <EmbeddedResource Include="icon\rows\star_empty.png" />
     <EmbeddedResource Include="icon\rows\star_full.png" />
-    <None Include="Reports\Barcodes\BarcodeOnWarehouse.rdl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="Reports\Barcodes\Barcode.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\ClothingService\ClothingMoveSticker.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

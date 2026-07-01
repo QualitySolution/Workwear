@@ -65,6 +65,7 @@ namespace Workwear.Journal.ViewModels.Stock
 			BarcodeOperation barcodeOperationAlias = null;
 			EmployeeIssueOperation employeeIssueOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
+			Warehouse warehouseAlias = null;
 			OverNormOperation overNormOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
@@ -123,6 +124,7 @@ namespace Workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => barcodeOperationAlias.EmployeeIssueOperation, () => employeeIssueOperationAlias)
 				.Left.JoinAlias(() => employeeIssueOperationAlias.Employee, () => employeeAlias)
 				.Left.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+				.Left.JoinAlias(() => warehouseOperationAlias.ReceiptWarehouse, () => warehouseAlias)
 				.Left.JoinAlias(() => barcodeOperationAlias.OverNormOperation, () => overNormOperationAlias)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
@@ -137,6 +139,7 @@ namespace Workwear.Journal.ViewModels.Stock
 					.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.LastName)
 					.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.FirstName)
 					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
+					.Select(() => warehouseAlias.Name).WithAlias(() => resultAlias.WarehouseName)
 					.Select(() => barcodeOperationAlias.KitNumber).WithAlias(() => resultAlias.KitNumber)
 				).OrderBy(x => x.Id).Desc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
@@ -197,7 +200,7 @@ namespace Workwear.Journal.ViewModels.Stock
 			
 			var reportInfo = new ReportInfo {
 				Title = "Штрихкод",
-				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Identifier = "Barcodes.Barcode",
 				Parameters = new Dictionary<string, object> {
 					{"barcodes", nodes.Cast<BarcodeJournalNode>().Select(x => x.Id).ToList()}
 				}
@@ -221,8 +224,11 @@ namespace Workwear.Journal.ViewModels.Stock
 		public string LastName { get; set; }
 		public string FirstName { get; set; }
 		public string Patronymic { get; set; }
+		public string WarehouseName { get; set; }
 		public int? KitNumber { get; set; }
 		public string KitNumberText => KitNumber.HasValue && KitNumber > 0 ? KitNumber.ToString() : String.Empty;
-		public string FullName => PersonHelper.PersonFullName(LastName, FirstName, Patronymic);
+		public string NameText => String.IsNullOrEmpty(WarehouseName) ?
+			PersonHelper.PersonFullName(LastName, FirstName, Patronymic) :
+			WarehouseName;
 	}
 }

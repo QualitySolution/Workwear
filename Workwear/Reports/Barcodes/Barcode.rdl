@@ -26,15 +26,23 @@
           <Textbox Name="Textbox1">
             <Height>16.52pt</Height>
             <Width>214.14pt</Width>
-            <Value>=Iif(Fields!stock.IsMissing, "", {stock})</Value>
+            <Value>= Iif(Fields!warehouse.IsMissing,
+
+Iif(Fields!employee.IsMissing, "", {employee}), 
+
+{warehouse}
+)
+
+
+</Value>
             <ZIndex>0</ZIndex>
-            <Left>2.3pt</Left>
-            <Top>62.8pt</Top>
+            <Left>0.80pt</Left>
+            <Top>62.00pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
               <BorderWidth />
-              <FontSize>10pt</FontSize>
+              <FontSize>8pt</FontSize>
               <TextAlign>Center</TextAlign>
               <BackgroundColor>White</BackgroundColor>
               <VerticalAlign>Middle</VerticalAlign>
@@ -73,18 +81,23 @@
             <CanGrow>true</CanGrow>
           </Textbox>
           <Textbox Name="Textbox8">
-            <Height>12.78pt</Height>
-            <Width>122.20pt</Width>
-            <Value>="Промаркировано: " + Format({operation_time}, "d")</Value>
+            <Height>10.50pt</Height>
+            <Width>100pt</Width>
+            <Value>= Iif(Fields!warehouse.IsMissing,
+
+Format({operation_time}, "d") + Iif(Fields!personnel_number.IsMissing, "", "   " + {personnel_number}), 
+
+"Промаркировано: " + Format({operation_time}, "d")
+)</Value>
             <ZIndex>0</ZIndex>
-            <Left>3.90pt</Left>
-            <Top>51.20pt</Top>
+            <Left>3.9pt</Left>
+            <Top>51.2pt</Top>
             <Style>
               <BorderStyle />
               <BorderColor />
               <BorderWidth />
               <TextAlign>Center</TextAlign>
-              <FontSize>8pt</FontSize>
+              <FontSize>7pt</FontSize>
             </Style>
             <CanGrow>false</CanGrow>
           </Textbox>
@@ -118,7 +131,7 @@
           <Textbox Name="Textbox2">
             <Height>36.01pt</Height>
             <Width>134.71pt</Width>
-            <Value>={label}</Value>
+            <Value>=Iif(Fields!subdivision.IsMissing, {label}, {subdivision})</Value>
             <ZIndex>0</ZIndex>
             <Left>0.00pt</Left>
             <Top>18.00pt</Top>
@@ -126,9 +139,25 @@
               <BorderStyle />
               <BorderColor />
               <BorderWidth />
-              <FontSize>10pt</FontSize>
+              <FontSize>=Iif(Len({subdivision}) &gt; 100, "6pt", "7pt")</FontSize>
               <TextAlign>Center</TextAlign>
               <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox3" >
+            <Height>12.74pt</Height>
+            <Width>24.86pt</Width>
+            <Value>= IIf(Fields!kit_number.IsMissing OR Fields!kit_number.Value = 0, "", 
+      "(" &amp; Fields!kit_number.Value &amp; ")")</Value>
+            <ZIndex>1</ZIndex>
+            <Left>105.50pt</Left>
+            <Top>48.40pt</Top>
+            <Style>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+              <FontWeight>Bold</FontWeight>
+              <FontSize>9pt</FontSize>
             </Style>
           </Textbox>
         </ReportItems>
@@ -159,25 +188,32 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    ifnull(operation_warehouse.operation_time, barcodes.creation_date) as operation_time,
+    ifnull(operation_issued_by_employee.operation_time, barcodes.creation_date) as operation_time,
     LEFT(barcodes.title, 2) AS number_system,
     SUBSTRING(barcodes.title, 3, 5) AS manufacture_code,
     SUBSTRING(barcodes.title, 8, 5) AS product_code,
-    warehouse.name AS stock,
+    subdivisions.name AS subdivision,
     barcodes.label,
+    CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) AS employee,
+    employees.personnel_number,
+    warehouse.name as warehouse,
+    kit_number,
     nomenclature.name AS nomenclature,
     wear_size.name as wear_size,
     wear_height.name as wear_height
-FROM operation_warehouse
-         RIGHT JOIN operation_barcodes ON operation_warehouse.id = operation_barcodes.warehouse_operation_id
-         LEFT JOIN warehouse ON operation_warehouse.warehouse_receipt_id = warehouse.id
+FROM operation_barcodes
          JOIN barcodes ON barcodes.id = operation_barcodes.barcode_id
+         LEFT JOIN operation_issued_by_employee ON operation_barcodes.employee_issue_operation_id = operation_issued_by_employee.id
+         LEFT JOIN operation_warehouse ON operation_barcodes.warehouse_operation_id = operation_warehouse.id
+         LEFT JOIN employees ON employees.id = operation_issued_by_employee.employee_id
+         LEFT JOIN warehouse ON operation_warehouse.warehouse_receipt_id = warehouse.id
+         LEFT JOIN subdivisions ON subdivisions.id = employees.subdivision_id
          LEFT JOIN sizes as wear_size ON wear_size.id = barcodes.size_id
          LEFT JOIN sizes as wear_height ON wear_height.id = barcodes.height_id
          LEFT JOIN nomenclature ON nomenclature.id = barcodes.nomenclature_id
 WHERE operation_barcodes.barcode_id IN (@barcodes)
 GROUP BY operation_barcodes.barcode_id
-ORDER BY operation_warehouse.operation_time DESC</CommandText>
+ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
         <QueryParameters>
           <QueryParameter Name="barcodes">
             <Value>={?barcodes}</Value>
@@ -193,8 +229,12 @@ ORDER BY operation_warehouse.operation_time DESC</CommandText>
           <DataField>operation_time</DataField>
           <TypeName>System.DateTime</TypeName>
         </Field>
-        <Field Name="stock">
-          <DataField>stock</DataField>
+        <Field Name="subdivision">
+          <DataField>subdivision</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="employee">
+          <DataField>employee</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="nomenclature">
@@ -217,9 +257,21 @@ ORDER BY operation_warehouse.operation_time DESC</CommandText>
           <DataField>wear_height</DataField>
           <TypeName>System.String</TypeName>
         </Field>
+        <Field Name="personnel_number">
+          <DataField>personnel_number</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
         <Field Name="label">
           <DataField>label</DataField>
           <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="warehouse">
+          <DataField>warehouse</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="kit_number">
+          <DataField>kit_number</DataField>
+          <TypeName>System.Int32</TypeName>
         </Field>
       </Fields>
     </DataSet>

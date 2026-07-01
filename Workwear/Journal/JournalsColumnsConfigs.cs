@@ -516,7 +516,7 @@ namespace workwear.Journal
 					.AddColumn("Номенклатура").AddTextRenderer(node => node.Nomenclature).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(node => node.Size)
 					.AddColumn("Рост").AddTextRenderer(node => node.Height)
-					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FullName).SearchHighlight()
+					.AddColumn("Привязан").AddReadOnlyTextRenderer(x => x.NameText).SearchHighlight()
 					.AddColumn("Название").AddReadOnlyTextRenderer(node => node.Label).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.Finish()

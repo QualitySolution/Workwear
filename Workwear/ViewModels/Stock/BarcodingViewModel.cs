@@ -230,7 +230,7 @@ namespace Workwear.ViewModels.Stock {
 		private void PrintBarcodes(IList<Barcode> barcodes) {
 			ReportInfo reportInfo = new ReportInfo() {
 				Title = "Штрихкод",
-				Identifier = "Barcodes.BarcodeOnWarehouse",
+				Identifier = "Barcodes.Barcode",
 				Parameters = new Dictionary<string, object> {
 					{ "barcodes", barcodes.Select(x => x.Id).ToList() }
 				}
