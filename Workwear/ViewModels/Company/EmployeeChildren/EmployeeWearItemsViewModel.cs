@@ -52,6 +52,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			INavigationManager navigation,
 			OpenStockDocumentsModel stockDocumentsModel,
 			FeaturesService featuresService,
+			IEntityChangeWatcher changeWatcher,
 			IProgressBarDisplayable progress)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
@@ -64,8 +65,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
 			
-			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem, EmployeeIssueOperation>(HandleEntityChangeEvent);
+			changeWatcher.BatchSubscribe(HandleEntityChangeEvent)
+				.ExcludeUow(UoW)
+				.IfEntity<EmployeeCardItem>()
+				.Or.IfEntity<EmployeeIssueOperation>();
 		}
 
 		#region Хелперы
@@ -124,9 +129,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!IsConfigured)
 				return;
-			bool isMySession = changeEvents.First().Session == UoW.Session;
-			//Ничего не делаем если это наше собственное изменение.
-			if(!isMySession && changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
+
+			if(!UoW.IsAlive)
+				return;
+
+			if(changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
 				.Select(e => e.Entity).OfType<EmployeeCardItem>()
 				.Any(x => x.EmployeeCard.IsSame(Entity))) {
 				//Если сделано удаление строк, просто закрываем диалог,
@@ -146,10 +153,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				        .Where(x => x.Employee.IsSame(Entity))) {
 				
 				var myOP = UoW.Session.Get<EmployeeIssueOperation>(op.Id);
-				UoW.Session.Refresh(myOP);
+				if(myOP != null)
+					UoW.Session.Refresh(myOP);
 			}
 
-			if(!isMySession && changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
+			if(changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
 				RefreshWorkItems();
 			}
 		}
@@ -226,7 +234,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
 			Entity.UpdateNextIssue(protectionTools);
-			UoW.Save();
+			UoW.Save(Entity);
+			UoW.Commit();
 		}
 
 		public void SetIssueDateManual() {
@@ -306,7 +315,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#endregion
 		protected void RefreshWorkItems()
 		{
-			if(!NHibernateUtil.IsInitialized(Entity.WorkwearItems))
+			if(!UoW.IsAlive || !NHibernateUtil.IsInitialized(Entity.WorkwearItems))
 				return;
 
 			foreach(var item in Entity.WorkwearItems) {
@@ -317,7 +326,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void Dispose()
 		{
-			NotifyConfiguration.Instance.UnsubscribeAll(this);
+			if(IsConfigured)
+				Entity.PropertyChanged -= EntityOnPropertyChanged;
 		}
 	}
 }

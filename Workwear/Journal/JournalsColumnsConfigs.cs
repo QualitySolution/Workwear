@@ -6,6 +6,7 @@ using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Cloud.WearLk.Manage;
 using QS.Journal.GtkUI;
+using QS.Measurement.Journal;
 using QS.Utilities;
 using QS.Utilities.Numeric;
 using Workwear.Journal.ViewModels.Analytics;
@@ -29,6 +30,8 @@ namespace workwear.Journal
 	{
 		public static void RegisterColumns()
 		{
+			MeasurementJournalColumnsConfigs.RegisterColumns();
+
 			#region Analytics
 
 			TreeViewColumnsConfigFactory.Register<ProtectionToolsCategoryJournalViewModel>(
@@ -291,9 +294,6 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<NormJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
-					.AddColumn("№ ТОН").Resizable().AddTextRenderer(node => node.TonNumber)
-					.AddColumn("№ Приложения").Resizable().AddTextRenderer(node => node.TonAttachment)
-					.AddColumn("№ Пункта").Resizable().AddTextRenderer(node => node.TonParagraph).SearchHighlight()
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
 					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")

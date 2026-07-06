@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
@@ -53,7 +53,7 @@ namespace Workwear.Domain.Stock.Documents {
 		}
 		
 		[Display(Name = "Единица измерения")]
-		public virtual MeasurementUnits Units {
+		public virtual MeasurementUnit Units {
 			get => nomenclature?.Type.Units ?? IssuedEmployeeOnOperation?.ProtectionTools?.Type.Units;
 		}
 		private int amount;

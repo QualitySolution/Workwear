@@ -42,18 +42,15 @@ namespace Workwear.Tools.Barcodes
 					employeeIssueOperations.Select(x => x.Employee).ToList(),
 //// Спорно, может лучше DateTime.Now. По идее должны быть во всех операциях одинаково
 					employeeIssueOperations.Max(x=> x.OperationTime),
-					unitOfWork);
+					unitOfWork)
+				.ToList();
 			foreach(var operation in employeeIssueOperations) {
 				int bcount = operation.BarcodeOperations.Count;
 
 				if(operation.Issued > bcount) {
 					var barcodes = Create(unitOfWork, operation.Issued - bcount, operation.Nomenclature, operation.WearSize, operation.Height);
 					foreach(var barcode in barcodes) {
-						var kitNumper = Enumerable.Range(1, int.MaxValue - 1)
-							.First(n => !usedNumbers
-								.Where(x => x.employeeId == operation.Employee.Id && x.nomenclatureId == operation.Nomenclature.Id)
-								.Select(x => x.kit_number)
-								.Contains(n));
+						var kitNumper = GetNextKitNumber(usedNumbers, operation);
 						var barcodeOperation = new BarcodeOperation {
 							Barcode = barcode,
 							EmployeeIssueOperation = operation,
@@ -61,11 +58,44 @@ namespace Workwear.Tools.Barcodes
 						};
 						operation.BarcodeOperations.Add(barcodeOperation);
 						unitOfWork.Save(barcodeOperation);
-						usedNumbers.Add((operation.Employee.Id,operation.Nomenclature.Id,kitNumper));
+						usedNumbers.Add(new BarcodeNumberInfo {
+							EmployeeId = operation.Employee.Id,
+							ProtectionToolsId = GetProtectionToolsId(operation),
+							KitNumber = kitNumper
+						});
 					}
 				}
 			}
 		}
+
+		public int GetNextKitNumber(IUnitOfWork unitOfWork, EmployeeIssueOperation operation) {
+			var usedNumbers = employeeIssueRepository
+				.GetBarcodeNumbersForEmployee(new[] { operation.Employee }, operation.OperationTime, unitOfWork)
+				.ToList();
+			usedNumbers.AddRange(operation.BarcodeOperations
+				.Where(x => x.KitNumber > 0)
+				.Select(x => new BarcodeNumberInfo {
+					EmployeeId = operation.Employee.Id,
+					ProtectionToolsId = GetProtectionToolsId(operation),
+					KitNumber = x.KitNumber
+				}));
+			return GetNextKitNumber(usedNumbers, operation);
+		}
+
+		private static int GetNextKitNumber(
+			IEnumerable<BarcodeNumberInfo> usedNumbers,
+			EmployeeIssueOperation operation)
+		{
+			var protectionToolsId = GetProtectionToolsId(operation);
+			return Enumerable.Range(1, int.MaxValue - 1)
+				.First(n => !usedNumbers
+					.Where(x => x.EmployeeId == operation.Employee.Id && x.ProtectionToolsId == protectionToolsId)
+					.Select(x => x.KitNumber.Value)
+					.Contains(n));
+		}
+
+		private static int GetProtectionToolsId(EmployeeIssueOperation operation) =>
+			operation.ProtectionTools?.Id ?? operation.NormItem?.ProtectionTools?.Id ?? 0;
 		
 		/// <summary>
 		/// Сгенерировать набор штрихкодов

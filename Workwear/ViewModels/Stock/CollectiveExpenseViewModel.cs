@@ -87,7 +87,7 @@ namespace Workwear.ViewModels.Stock
 
 			var performance = new ProgressPerformanceHelper(globalProgress, 12, "Предзагрузка данных документа", logger);
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
-			if (UoW.IsNew) {
+			if (Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
 			else {
@@ -126,7 +126,7 @@ namespace Workwear.ViewModels.Stock
 				CollectiveExpenseItemsViewModel.AddEmployeesList(issuanceRequest.Employees, performance);
 			}
 
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info($"Создание Нового документа Коллективной выдачи выдачи.");
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
@@ -190,13 +190,13 @@ namespace Workwear.ViewModels.Stock
 			var performance = new ProgressPerformanceHelper(progressCreator, 6, "Подготовка документа...", logger, showProgressText: true);
 			Entity.CleanupItems();
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
+			performance.CheckPoint("Сохранение документа...");
+			UoW.Session.SaveOrUpdate(Entity);
 			performance.CheckPoint("Обновление ведомости...");
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
-
-			performance.CheckPoint("Сохранение...");
-			UoWGeneric.Save();
+			performance.CheckPoint("Завершение транзакции...");
 			UoW.Commit();
 			performance.CheckPoint("Обновление карточек сотрудников...");
 			if(changedOperations.Any()) {
@@ -205,7 +205,6 @@ namespace Workwear.ViewModels.Stock
 			}
 			
 			performance.CheckPoint("Завершение...");
-			UoWGeneric.Commit();
 			performance.End();
 			logger.Info("Ok");
 			return true;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.SqlCommand;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
@@ -219,6 +220,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			logger.Info("Обновляем историю выдачи...");
 			var performance = new PerformanceHelper(logger: logger);
 			var prepareMovements = new List<EmployeeMovementItem>();
+			BarcodeOperation barcodeOperationAlias = null;
 
 			var list = employeeIssueRepository.AllOperationsForEmployee(Entity, query => query
 				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
@@ -226,7 +228,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
 				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias, JoinType.LeftOuterJoin)
 				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
+				.Fetch(SelectMode.Fetch, () => barcodeOperationAlias.Barcode)
 			).Distinct();
 			performance.CheckPoint("Получение операций");
 			var docs = employeeIssueRepository.GetReferencedDocuments(list.Select(x => x.Id).ToArray());

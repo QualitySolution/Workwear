@@ -28,7 +28,7 @@ namespace Workwear.ViewModels.Company {
 		) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			if(!UoW.IsNew) {
+			if(Entity.Id != 0) {
 				var employeeIds = Entity.Items.Select(x => x.Employee.Id);
 				UoW.GetById<EmployeeCard>(employeeIds);
 			}

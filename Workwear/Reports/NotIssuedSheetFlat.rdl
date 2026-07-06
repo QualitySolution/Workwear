@@ -1090,13 +1090,13 @@ FROM
         JOIN employees ON employees.id = employee_cards_item.employee_id
         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
         LEFT JOIN (
-            SELECT protection_tools_nomenclature.protection_tools_id, nomenclature.type_id, item_types.units_id,
+            SELECT protection_tools_nomenclature.protection_tools_id, protection_tools.item_types_id as type_id, item_types.units_id,
                             item_types.size_type_id, item_types.height_type_id, item_types.issue_type,
                             GROUP_CONCAT(DISTINCT NULLIF(diff.diff_causes, '') SEPARATOR ', ') AS diff_causes,
                             GROUP_CONCAT(
                                 DISTINCT
                                 IFNULL(period,
-                                    IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,  
+                                    IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,
                                     CONCAT(
                                         CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%Y'),
                                            NULLIF(
@@ -1109,14 +1109,15 @@ FROM
                                 SEPARATOR ', '
                             ) AS shipment_periods
             FROM protection_tools_nomenclature
+                LEFT JOIN protection_tools ON protection_tools.id = protection_tools_nomenclature.protection_tools_id
+                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                 LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
-                LEFT JOIN item_types ON item_types.id = nomenclature.type_id
                 LEFT JOIN (SELECT nomenclature.id AS nom_id,
                                    shipment.id as shipment_id,
                                    shipment.start_period,
                                    shipment.end_period,
                                    GROUP_CONCAT(DISTINCT NULLIF(shipment_items.diff_cause, '') SEPARATOR ', ') AS diff_causes,
-                                   IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL, 
+                                   IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL,
                                    CONCAT(
                                       CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y'),
                                                 NULLIF(
@@ -1131,7 +1132,7 @@ FROM
                             WHERE shipment.status NOT LIKE 'Received'
                             GROUP BY nomenclature.id, shipment.id) AS diff
         ON diff.nom_id = nomenclature.id
-        GROUP BY protection_tools_id, item_types.id
+        GROUP BY protection_tools_id
         ) AS nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
         LEFT JOIN measurement_units ON nomenclatureTypes.units_id = measurement_units.id
         JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id

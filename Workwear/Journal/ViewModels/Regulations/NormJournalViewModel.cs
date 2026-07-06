@@ -68,8 +68,6 @@ namespace workwear.Journal.ViewModels.Regulations
 			Department departmentAlias = null;
 			Norm normAlias = null;
 			NormItem normItemAlias = null;
-			RegulationDoc regulationDocAlias = null;
-			RegulationDocAnnex docAnnexAlias = null;
 			EmployeeCard employeeAlias = null;
 			Norm usedNormAlias = null;
 
@@ -86,8 +84,6 @@ namespace workwear.Journal.ViewModels.Regulations
 
 
 			var norms = uow.Session.QueryOver<Norm>(() => normAlias)
-				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => normAlias.Posts, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => postAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => postAlias.Department, () => departmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -117,9 +113,6 @@ namespace workwear.Journal.ViewModels.Regulations
 			return norms
 				.SelectList(list => list
 				   .SelectGroup(() => normAlias.Id).WithAlias(() => resultAlias.Id)
-				   .Select(() => regulationDocAlias.Number).WithAlias(() => resultAlias.TonNumber)
-				   .Select(() => docAnnexAlias.Number).WithAlias(() => resultAlias.AnnexNumber)
-				   .Select(() => normAlias.TONParagraph).WithAlias(() => resultAlias.TonParagraph)
 				   .Select(() => normAlias.Name).WithAlias(() => resultAlias.Name)
 				   .Select(() => normAlias.Archival).WithAlias(() => resultAlias.Archival)
 				   .SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Usages)
@@ -217,10 +210,6 @@ namespace workwear.Journal.ViewModels.Regulations
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string TonNumber { get; set; }
-		public int? AnnexNumber { get; set; }
-		public string TonAttachment => AnnexNumber?.ToString();
-		public string TonParagraph { get; set; }
 		public string Posts { get; set; }
 		public int Usages { get; set; }
 		public int UsagesWorked { get; set; }

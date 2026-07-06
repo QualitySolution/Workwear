@@ -44,7 +44,7 @@ namespace Workwear.ViewModels.Stock {
 			this.interactive = interactive;
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			SetDocumentDateProperty(e => e.Date);
-			if(UoW.IsNew)
+			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			Employee = UoW.GetInSession(employee);
 			var entryBuilder = new CommonEEVMBuilderFactory<Inspection>(this, Entity, UoW, navigation) {
@@ -66,7 +66,7 @@ namespace Workwear.ViewModels.Stock {
 				.Finish();
 			ResponsibleOrganizationEntryViewModel.IsEditable = CanEdit;
 			
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info($"Создание Нового документа Списания");

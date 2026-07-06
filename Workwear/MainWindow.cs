@@ -9,7 +9,7 @@ using Autofac;
 using Gtk;
 using MySqlConnector;
 using NLog;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Journal.ViewModels;
 using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -38,13 +38,11 @@ using QS.Utilities;
 using QS.Utilities.Processes;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
-using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
 using workwear;
 using Workwear;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -104,14 +102,14 @@ public partial class MainWindow : Gtk.Window {
 
 	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
+		toolbarMain.Sensitive = false;
+		menubar1.Sensitive = false;
+		entitySearchEmployee.Sensitive = false;
 		ProgressBar = progresswidget1;
 		var progress = new ProgressPerformanceHelper(ProgressBar, 34, "Подготовка статусной строк", logger, showProgressText: true);
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
-		toolbarMain.Sensitive = false;
-		menubar1.Sensitive = false;
-		entitySearchEmployee.Sensitive = false;
 
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig(progress);
@@ -486,10 +484,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnAction7Activated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("MeasurementUnits");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<MeasurementUnits>(),
-						() => new OrmReference(typeof(MeasurementUnits))
-					   );
+		NavigationManager.OpenViewModel<MeasurementUnitJournalViewModel>(null);
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e) {
@@ -748,13 +743,6 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionSiteActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenSite");
 		OpenHelper.OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
-	}
-
-	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("RegulationDoc");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<RegulationDoc>(),
-						() => new OrmReference(typeof(RegulationDoc))
-			   );
 	}
 
 	protected void OnActionBaseSettingsActivated(object sender, EventArgs e) {

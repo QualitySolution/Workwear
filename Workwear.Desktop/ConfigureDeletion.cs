@@ -1,4 +1,4 @@
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.Deletion;
 using QS.Project.Domain;
 using Workwear.Domain.Analytics;
@@ -233,13 +233,6 @@ namespace Workwear
 			
 			DeleteConfig.AddHibernateDeleteInfo<ProtectionToolsNomenclature>();
 			
-			DeleteConfig.AddHibernateDeleteInfo<RegulationDoc>()
-			            .AddDeleteDependence<Norm>(x => x.Document)
-						.AddDeleteDependence<RegulationDocAnnex>(x => x.Document);
-
-			DeleteConfig.AddHibernateDeleteInfo<RegulationDocAnnex>()
-				.AddClearDependence<Norm>(x => x.Annex);
-
 			#endregion
 			#region Размеры
 			DeleteConfig.AddHibernateDeleteInfo<Size>()
@@ -317,7 +310,7 @@ namespace Workwear
 				.AddDeleteDependence<Completion>(x => x.SourceWarehouse)
 				.AddDeleteDependence<OverNorm>(x => x.Warehouse);
 
-			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnits>()
+			DeleteConfig.AddHibernateDeleteInfo<MeasurementUnit>()
 				.AddClearDependence<ItemsType>(x => x.Units);
 
 			DeleteConfig.AddHibernateDeleteInfo<Nomenclature> ()
