@@ -19,7 +19,7 @@ namespace Workwear.Domain.Stock.Documents
 	[HistoryTrace]
 	public class OverNorm : StockDocument, IValidatableObject
 	{
-		#region Propertires
+		#region Maped Propertires
 		private IObservableList<OverNormItem> items = new ObservableList<OverNormItem>();
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<OverNormItem>Items {
@@ -42,8 +42,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		#region Not Mapped Propertis
-		public virtual string Title => $"Выдача вне нормы ({Type.GetAttribute<DisplayAttribute>().Name}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetAttribute<DisplayAttribute>().Name}) от {Date:d}";
+		public virtual string Title => $"Выдача вне нормы ({Type.GetEnumTitle()}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetEnumTitle()}) от {Date:d}";
 		
 		public virtual void AddItem(OverNormOperation operation, OverNormParam param = null)
 		{
@@ -51,7 +50,7 @@ namespace Workwear.Domain.Stock.Documents
 				throw new ArgumentNullException(nameof(operation));
 			Items.Add(new OverNormItem(this, operation) { Param = param });
 		}
-		#endregion
+
 
 		public virtual void DeleteItem(OverNormItem item) 
 		{

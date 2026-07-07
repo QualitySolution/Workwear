@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
@@ -56,11 +56,11 @@ namespace Workwear.Domain.Stock.Documents {
 		[Display(Name = "Рост одежды")] public virtual Size Height  => OperationExpence?.Height;
 		[Display(Name = "Собственник имущества")] public virtual Owner Owner => OperationExpence?.Owner;
 		[Display(Name = "Количество")] public virtual decimal WearPercent => OperationExpence?.WearPercent ?? 0;
-		[Display(Name = "Единица измерения")] public virtual MeasurementUnits Units => Nomenclature?.Type.Units;
+		[Display(Name = "Единица измерения")] public virtual MeasurementUnit Unit => Nomenclature?.Type.Units;
 		public virtual string SizeName => Size?.Name ?? String.Empty;
 		public virtual string HeightName  => Height?.Name ?? String.Empty;
 		public virtual string OwnerName => Owner?.Name ?? String.Empty;
-		public virtual string UnitsName => Units?.Name ?? String.Empty;
+		public virtual string UnitsName => Unit?.Name ?? String.Empty;
 		[Display(Name = "Складская позиция")] public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, Size, Height, Owner);
 		[Display(Name = "Штрихкоды")] public virtual IList<Barcode> Barcodes  { get; set; }
 		#endregion

@@ -3,7 +3,7 @@ using System.Linq;
 using NHibernate;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
@@ -38,7 +38,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 			WarehouseOperation warehouseOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			ItemsType nomenclatureItemTypesAlias = null;
-			MeasurementUnits nomenclatureUnitsAlias = null;
+			MeasurementUnit nomenclatureUnitAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			
@@ -53,12 +53,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 				.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
-				.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitsAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitAlias, JoinType.LeftOuterJoin)
 				.SelectList (list => list
 					.Select(() => overNormOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select(() => overNormDocAlias.Type).WithAlias (() => resultAlias.DocType)
 					.Select(() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
-					.Select(() => nomenclatureUnitsAlias.Name).WithAlias (() => resultAlias.NomenclatureUnitsName)
+					.Select(() => nomenclatureUnitAlias.Name).WithAlias (() => resultAlias.NomenclatureUnitsName)
 					.Select(() => sizeAlias.Name).WithAlias (() => resultAlias.WearSize)
 					.Select(() => heightAlias.Name).WithAlias (() => resultAlias.Height)
 					.Select(() => warehouseOperationAlias.Cost).WithAlias (() => resultAlias.AvgCost)

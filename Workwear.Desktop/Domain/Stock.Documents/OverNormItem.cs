@@ -30,7 +30,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		
 		private OverNormOperation overNormOperation;
-		[Display(Name = "Оперерация")]
+		[Display(Name = "Операция")]
 		public virtual OverNormOperation OverNormOperation {
 			get => overNormOperation;
 			set => SetField(ref overNormOperation, value);
