@@ -335,7 +335,7 @@ namespace Workwear.Views.Stock
 			this.ylabelDirector = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelDirector.Name = "ylabelDirector";
 			this.ylabelDirector.Xalign = 1F;
-			this.ylabelDirector.LabelProp = global::Mono.Unix.Catalog.GetString("Постанавляющее лицо:");
+			this.ylabelDirector.LabelProp = global::Mono.Unix.Catalog.GetString("Постановляющее лицо:");
 			this.table2.Add(this.ylabelDirector);
 			global::Gtk.Table.TableChild w25 = ((global::Gtk.Table.TableChild)(this.table2[this.ylabelDirector]));
 			w25.TopAttach = ((uint)(1));

@@ -65,7 +65,7 @@ namespace Workwear.Models.Operations {
 		public IEnumerable<WarehouseOperation> ExcludeOperations { get; set; }
 		#endregion
 
-		#region Номеклатура
+		#region Номенклатура
 		public HashSet<Nomenclature> Nomenclatures { get; } = new HashSet<Nomenclature>();
 		
 		public void AddNomenclatures(IEnumerable<Nomenclature> nomenclatures) {

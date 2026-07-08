@@ -446,7 +446,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox28">
-                      <Value>Номеклатура нормы</Value>
+                      <Value>Номенклатура нормы</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>

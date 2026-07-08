@@ -171,7 +171,7 @@ namespace Workwear.Domain.Stock {
 		public virtual void AddProtectionTools(ProtectionTools protectionTools)
 		{
 			if(ProtectionTools.Any(p => DomainHelper.EqualDomainObjects(p, protectionTools))) {
-				logger.Warn("Номеклатура нормы уже добавлена. Пропускаем...");
+				logger.Warn("Номенклатура нормы уже добавлена. Пропускаем...");
 				return;
 			}
 			ProtectionTools.Add(protectionTools);

@@ -116,7 +116,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get {
 				List<Owner> owners = new List<Owner>() {
 					new Owner() { Id = -1, Name = "Все" }, 
-					new Owner() { Id = 0, Name = "Без собственика" }
+					new Owner() { Id = 0, Name = "Без собственника" }
 				}; 
 				owners.AddRange(UoW.GetAll<Owner>());
 				return owners;
