@@ -658,6 +658,7 @@ namespace workwear.Journal.ViewModels.Stock
 					case StockDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
 					case StockDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
 					case StockDocumentType.ExpenseDutyNormDoc when !FeaturesService.Available(WorkwearFeature.DutyNorms):
+					case StockDocumentType.OverNormDoc when !FeaturesService.Available(WorkwearFeature.OverNorm):
 					case StockDocumentType.BarcodingDoc when !FeaturesService.Available(WorkwearFeature.Barcodes):
 						continue;
 					default:

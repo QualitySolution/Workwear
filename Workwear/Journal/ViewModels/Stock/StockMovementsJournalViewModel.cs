@@ -91,9 +91,10 @@ namespace workwear.Journal.ViewModels.Stock
 			CompletionSourceItem completionSourceItemAlias = null;
 			IssuanceSheet issuanceSheetAlias = null;
 			IssuanceSheetItem issuanceSheetItem = null;
-///1289
-//TODO  Нужно ли отображать маркировку в движениях?
-
+			BarcodingItem barcodingItemAlias = null;
+			OverNormItem overNormItemAlias = null;
+			OverNormOperation overNormOperationAlias = null;
+			OverNorm overNormAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			ItemsType itemTypesAlias = null;
 			MeasurementUnit unitsAlias = null;
@@ -217,6 +218,11 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => completionResultItemAlias.Completion, () => completionResultAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => completionSourceItemAlias, () => completionSourceItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => completionSourceItemAlias.Completion, () => completionSourceAlias, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => barcodingItemAlias, () => barcodingItemAlias.OperationExpence.Id == warehouseOperationAlias.Id || barcodingItemAlias.OperationReceipt.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => overNormOperationAlias, () => overNormOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => overNormItemAlias, () => overNormItemAlias.OverNormOperation.Id == overNormOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinAlias(() => overNormItemAlias.Document, () => overNormAlias, JoinType.LeftOuterJoin)
+				.Where(() => barcodingItemAlias.Id == null) //Исключаем маркировку, т.к. она не производит изменений количества
 				.Where(GetSearchCriterion(
 					() => employeeCardAlias.FirstName,
 					() => employeeCardAlias.LastName,
@@ -258,7 +264,10 @@ namespace workwear.Journal.ViewModels.Stock
 					.SelectGroup(() => completionResultAlias.DocNumber).WithAlias(() => resultAlias.CompletionFromResultDocNumber)
 					.SelectGroup(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
 					.SelectGroup(() => completionSourceAlias.DocNumber).WithAlias(() => resultAlias.CompletionFromSourceDocNumber)
-					
+					.SelectGroup(() => overNormItemAlias.Id).WithAlias(() => resultAlias.OverNormItemId)
+					.SelectGroup(() => overNormItemAlias.Document.Id).WithAlias(() => resultAlias.OverNormId)
+					.SelectGroup(() => overNormAlias.DocNumber).WithAlias(() => resultAlias.OverNormDocNumber)
+
 					.SelectGroup(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSizeName)
 					.SelectGroup(() => heightAlias.Name).WithAlias(() => resultAlias.HeightName)
 					.SelectGroup(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
@@ -312,6 +321,9 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(() => completionSourceItemAlias.Id).WithAlias(() => resultAlias.CompletionSourceItemId)
 					.Select(() => completionSourceItemAlias.Completion.Id).WithAlias(() => resultAlias.CompletionFromSourceId)
 					.Select(() => completionSourceAlias.DocNumber).WithAlias(() => resultAlias.CompletionFromSourceDocNumber)
+					.Select(() => overNormItemAlias.Id).WithAlias(() => resultAlias.OverNormItemId)
+					.Select(() => overNormItemAlias.Document.Id).WithAlias(() => resultAlias.OverNormId)
+					.Select(() => overNormAlias.DocNumber).WithAlias(() => resultAlias.OverNormDocNumber)
 				);
 			}
 

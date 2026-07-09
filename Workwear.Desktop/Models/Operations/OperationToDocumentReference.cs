@@ -27,8 +27,8 @@ namespace Workwear.Models.Operations
 		public int? CompletionFromResultId;
 		public int? CompletionSourceItemId;
 		public int? CompletionResultItemId;
-		public int? BarcodingId;
-		public int? BarcodingItemId;
+		public int? OverNormId;
+		public int? OverNormItemId;
 		public int? CompletionId => CompletionFromSourceId ?? CompletionFromResultId;
 
 		public string ExpenseDocNumber;
@@ -41,7 +41,7 @@ namespace Workwear.Models.Operations
 		public string InspectionDocNumber;
 		public string CompletionFromResultDocNumber;
 		public string CompletionFromSourceDocNumber;
-		public string BarcodingDocNumber;
+		public string OverNormDocNumber;
 		public string CompletionDocNumber => CompletionFromResultDocNumber ?? CompletionFromSourceDocNumber;
 		
 		public StockDocumentType? DocumentType {
@@ -64,8 +64,8 @@ namespace Workwear.Models.Operations
 					return StockDocumentType.Completion;
 				if(InspectionId.HasValue)
 					return StockDocumentType.InspectionDoc;
-				if(BarcodingId.HasValue)
-					return StockDocumentType.BarcodingDoc;
+				if(OverNormId.HasValue)
+					return StockDocumentType.OverNormDoc;
 
 				return null;
 			}
@@ -74,13 +74,13 @@ namespace Workwear.Models.Operations
 		//Так как в случае ошибочной связи операции с двумя документами возьмется первый найденный в обоих случаях, иначе будет тип одного, а id от другого.
 		public int? DocumentId =>
 			ExpenseId ?? ExpenseDutyNormId ?? CollectiveExpenseId ?? IncomeId ?? ReturnId ?? TransferId ??
-			WriteoffId ?? InspectionId ?? BarcodingId ?? CompletionId;
+			WriteoffId ?? InspectionId ?? OverNormId ?? CompletionId;
 		public int? ItemId =>
-			ExpenseItemId ?? ExpenseDutyNormItemId ?? CollectiveExpenseItemId ?? IncomeItemId ?? ReturnItemId ?? TransferItemId ?? 
-			WriteoffItemId ?? InspectionItemId ?? BarcodingItemId ?? CompletionSourceItemId ?? CompletionResultItemId;
+			ExpenseItemId ?? ExpenseDutyNormItemId ?? CollectiveExpenseItemId ?? IncomeItemId ?? ReturnItemId ?? TransferItemId ??
+			WriteoffItemId ?? InspectionItemId ?? OverNormItemId ?? CompletionSourceItemId ?? CompletionResultItemId;
 		public string DocumentNumber =>
 			ExpenseDocNumber ?? ExpenseDutyNormDocNumber ?? CollectiveExpenseDocNumber ?? IncomeDocNumber ?? ReturnDocNumber ?? TransferDocNumber ??
-			WriteoffDocNumber ?? InspectionDocNumber ?? BarcodingDocNumber ?? CompletionDocNumber;
+			WriteoffDocNumber ?? InspectionDocNumber ?? OverNormDocNumber ?? CompletionDocNumber;
 		public string DocumentTitle => $"{DocumentType?.GetEnumTitle()} №{(String.IsNullOrWhiteSpace(DocumentNumber) ? DocumentId.ToString() : DocumentNumber)}";
 	}
 }

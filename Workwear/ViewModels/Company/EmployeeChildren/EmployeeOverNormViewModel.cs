@@ -14,6 +14,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren {
 	public class EmployeeOverNormViewModel : ViewModelBase{
@@ -57,6 +58,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 				.SelectList (list => list
 					.Select(() => overNormOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select(() => overNormDocAlias.Type).WithAlias (() => resultAlias.DocType)
+					.Select(() => overNormDocItemAlias.Id).WithAlias (() => resultAlias.OverNormItemId)
+					.Select(() => overNormDocAlias.Id).WithAlias (() => resultAlias.OverNormId)
+					.Select(() => overNormDocAlias.DocNumber).WithAlias (() => resultAlias.OverNormDocNumber)
 					.Select(() => nomenclatureAlias.Name).WithAlias (() => resultAlias.NomenclatureName)
 					.Select(() => nomenclatureUnitAlias.Name).WithAlias (() => resultAlias.NomenclatureUnitsName)
 					.Select(() => sizeAlias.Name).WithAlias (() => resultAlias.WearSize)
@@ -97,8 +101,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		#endregion
 	}
 	
-	public class EmployeeOverNormNode {
+	public class EmployeeOverNormNode : OperationToDocumentReference {
 		public int Id { get; set; }
+		public int? OverNormId { get; set; }
+		public int? OverNormItemId { get; set; }
+		public string OverNormDocNumber { get; set; }
 		public OverNormType DocType   { get; set;}
 		public string NomenclatureName { get; set;}
 		public string NomenclatureUnitsName { get; set;}
@@ -106,7 +113,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		public string Height { get; set; }
 		public decimal AvgCost { get; set;}
 		public decimal WearPercent { get; set;}
-		public string WearPercentString => (WearPercent * 0.01m).ToString("P0"); 
+		public string WearPercentString => (WearPercent * 0.01m).ToString("P0");
 		public DateTime Date { get; set;}
 		public string DateString => Date.ToShortDateString();
 		public int Added { get; set;}

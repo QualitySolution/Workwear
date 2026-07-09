@@ -22,7 +22,7 @@ namespace Workwear.Domain.Stock.Documents
 		#region Maped Propertires
 		private IObservableList<OverNormItem> items = new ObservableList<OverNormItem>();
 		[Display (Name = "Строки документа")]
-		public virtual IObservableList<OverNormItem>Items {
+		public virtual IObservableList<OverNormItem> Items {
 			get => items;
 			set => SetField (ref items, value);
 		}
