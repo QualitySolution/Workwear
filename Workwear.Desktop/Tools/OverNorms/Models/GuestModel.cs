@@ -22,8 +22,6 @@ namespace Workwear.Tools.OverNorms.Models
 			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
 
-		//public override bool Editable { get; }
-
 		public override bool CanUseWithBarcodes => true;
 		public override bool CanUseWithoutBarcodes => false;
 		public override bool RequiresEmployeeIssueOperation => false;
@@ -91,9 +89,7 @@ namespace Workwear.Tools.OverNorms.Models
 			if(param.Amount > 0 && item.OverNormOperation.WarehouseOperation == null) 
 				item.OverNormOperation.WarehouseOperation = new WarehouseOperation() { ExpenseWarehouse = item.Document.Warehouse };
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
-			item.OverNormOperation.WarehouseOperation.Nomenclature = param.Nomenclature;
-			item.OverNormOperation.WarehouseOperation.WearSize = param.Size;
-			item.OverNormOperation.WarehouseOperation.Height = param.Height;
+			item.OverNormOperation.WarehouseOperation.StockPosition = param.StockPosition;
 			List<int> currentBarcodeIds = item.OverNormOperation.BarcodeOperations.Select(bo => bo.Barcode.Id).ToList();
 			if (!UseBarcodes) 
 				item.OverNormOperation.BarcodeOperations.Clear();
@@ -121,10 +117,7 @@ namespace Workwear.Tools.OverNorms.Models
 			WarehouseOperation newWarehouseOp = new WarehouseOperation {
 				ExpenseWarehouse = expenseWarehouse,
 				Amount = param.Amount,
-				Nomenclature = param.Nomenclature,
-				WearSize = param.Size,
-				Height = param.Height
-				//TODO: owner
+				StockPosition = param.StockPosition
 			};
 
 			OverNormOperation newOverNormOp;

@@ -16,12 +16,9 @@ namespace Workwear.Tools.OverNorms.Models
 	{
 		private readonly IUnitOfWork uow;
 
-		public SimpleModel(IUnitOfWork uow)
-		{
+		public SimpleModel(IUnitOfWork uow) {
 			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
-
-//public override bool Editable { get; }
 
 		public override bool CanUseWithBarcodes => true;
 		
@@ -51,8 +48,7 @@ namespace Workwear.Tools.OverNorms.Models
 			return document;
 		}
 
-		public override void WriteOffOperation(OverNormOperation operation, Warehouse receiptWarehouse, UserBase createdByUser = null, string docNumber = null, string comment = null) 
-		{
+		public override void WriteOffOperation(OverNormOperation operation, Warehouse receiptWarehouse, UserBase createdByUser = null, string docNumber = null, string comment = null) {
 ////1289			
 			throw new InvalidOperationException("Разовые операции не списываются");
 		}
@@ -67,10 +63,7 @@ namespace Workwear.Tools.OverNorms.Models
 			WarehouseOperation newWarehouseOp = new WarehouseOperation {
 				ExpenseWarehouse = expenseWarehouse,
 				Amount = param.Amount,
-				Nomenclature = param.Nomenclature,
-				WearSize = param.Size,
-				Height = param.Height,
-				Owner = param.Owner
+				StockPosition = param.StockPosition
 			};
 			
 			OverNormOperation overNormOp = new OverNormOperation() {
@@ -101,11 +94,7 @@ namespace Workwear.Tools.OverNorms.Models
 			item.OverNormOperation.BarcodeOperations = param.Barcodes.SelectMany(b => b.BarcodeOperations) as IList<BarcodeOperation>;
 			
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
-			item.OverNormOperation.WarehouseOperation.Nomenclature = param.Nomenclature;
-			item.OverNormOperation.WarehouseOperation.WearSize = param.Size;
-			item.OverNormOperation.WarehouseOperation.Height = param.Height;
-			item.OverNormOperation.WarehouseOperation.WearPercent = param.WearPercent;
-			item.OverNormOperation.WarehouseOperation.Owner = param.Owner;
+			item.OverNormOperation.WarehouseOperation.StockPosition = param.StockPosition;
 		}
 		
 		private void AddItems(OverNorm document, OverNormParam param, Warehouse expenseWarehouse)
@@ -114,11 +103,7 @@ namespace Workwear.Tools.OverNorms.Models
 			{
 				ExpenseWarehouse = expenseWarehouse,
 				Amount = param.Amount,
-				Nomenclature = param.Nomenclature,
-				WearSize = param.Size,
-				Height = param.Height,
-				Owner = param.Owner,
-				WearPercent = param.WearPercent
+				StockPosition = param.StockPosition
 			};
 
 			OverNormOperation newOverNormOp = new OverNormOperation() 

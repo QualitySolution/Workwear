@@ -147,9 +147,7 @@ namespace Workwear
 				.AddDeleteDependence<ReturnItem>(x => x.ReturnFromEmployeeOperation)
 				.AddDeleteDependence<WriteoffItem>(x => x.EmployeeWriteoffOperation)
 				.AddDeleteDependence<BarcodeOperation>(x => x.EmployeeIssueOperation)
-				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation)
-				.AddDeleteDependence<InspectionItem>(x => x.OperationIssue)
-				.AddDeleteDependence<InspectionItem>(x => x.NewOperationIssue);
+				.AddClearDependence<IssuanceSheetItem>(x => x.IssueOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<DutyNormIssueOperation>()
 				.RequiredCascadeDeletion()
@@ -176,7 +174,6 @@ namespace Workwear
 				.AddDeleteDependence<CompletionSourceItem>(x => x.WarehouseOperation)
 				.AddDeleteDependence<BarcodeOperation>(x => x.WarehouseOperation)
 				.AddDeleteDependence<OverNormOperation>(x => x.WarehouseOperation);
-				//.AddDeleteDependence<OverNormItem>(x => x.OverNormOperation.WarehouseOperation);
 
 			DeleteConfig.AddHibernateDeleteInfo<OverNormOperation>()
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation)

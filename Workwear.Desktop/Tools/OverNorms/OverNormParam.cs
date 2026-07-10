@@ -33,10 +33,9 @@ namespace Workwear.Tools.OverNorms
 		private OverNormParam() {
 			Barcodes = new List<Barcode>();
 		}
-		public OverNormParam(EmployeeCard employee) : this() {
-			Employee = employee ?? throw new ArgumentNullException(nameof(employee));
-		}
-		
+
+		public StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, Size, Height, Owner);
+			
 		/// <param name="employee">Сотрудник, для которого определяется операция выдачи вне нормы</param>
 		/// <param name="amount">Количетсво выдаваемой номенклатуры</param>
 		/// <param name="employeeIssueOperation">Операция выдачи сотруднику для сопосталвения подменной вещи и заменяемой</param>

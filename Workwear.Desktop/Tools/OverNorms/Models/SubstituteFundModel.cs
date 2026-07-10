@@ -22,8 +22,6 @@ namespace Workwear.Tools.OverNorms.Models
 			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
 		}
 
-		//public override bool Editable { get; }
-
 		public override bool CanUseWithBarcodes => true;
 
 		public override bool CanUseWithoutBarcodes => false;
@@ -62,11 +60,9 @@ namespace Workwear.Tools.OverNorms.Models
 
 			WarehouseOperation newWarehouseOp = new WarehouseOperation() 
 			{
+				StockPosition = operation.WarehouseOperation.StockPosition,
 				ReceiptWarehouse = receiptWarehouse,
 				Amount = operation.WarehouseOperation.Amount,
-				Nomenclature = operation.WarehouseOperation.Nomenclature,
-				WearSize = operation.WarehouseOperation.WearSize,
-				Height = operation.WarehouseOperation.Height
 			};
 
 			OverNormOperation writeOff = CreateOperationWithBarcodes(newWarehouseOp, operation.Employee, operation.SubstitutedIssueOperation, operation.BarcodeOperations.Select(x => x.Barcode));
@@ -95,9 +91,7 @@ namespace Workwear.Tools.OverNorms.Models
 
 			item.OverNormOperation.WarehouseOperation.OperationTime = DateTime.Now;
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
-			item.OverNormOperation.WarehouseOperation.Nomenclature = param.Nomenclature;
-			item.OverNormOperation.WarehouseOperation.WearSize = param.Size;
-			item.OverNormOperation.WarehouseOperation.Height = param.Height;
+			item.OverNormOperation.WarehouseOperation.StockPosition = param.StockPosition;
 
 			List<int> currentBarcodeIds = item.OverNormOperation.BarcodeOperations.Select(bo => bo.Barcode.Id).ToList();
 			if (!UseBarcodes) 
@@ -135,14 +129,9 @@ namespace Workwear.Tools.OverNorms.Models
 
 		private void AddItem(OverNorm document, OverNormParam param, Warehouse expenseWarehouse) 
 		{
-			WarehouseOperation newWarehouseOp = new WarehouseOperation 
-			{
-				ExpenseWarehouse = expenseWarehouse,
-				Amount = param.Amount,
-				Nomenclature = param.Nomenclature,
-				WearSize = param.Size,
-				Height = param.Height
-				//TODO: owner
+			WarehouseOperation newWarehouseOp = new WarehouseOperation {
+				StockPosition = param.StockPosition,
+				ExpenseWarehouse = expenseWarehouse
 			};
 
 			OverNormOperation newOverNormOp =
