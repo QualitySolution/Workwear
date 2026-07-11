@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workwear", "Workwear\Workwear.csproj", "{63B06122-016A-42D4-B621-8E0F9FA8E738}"
@@ -124,8 +124,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QSProjects", "QSProjects", "{BFE159EC-D257-4CE5-968D-344E123A6C18}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{82AEB0FB-2B50-414B-BDD8-5F9B9B2827D0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Measurement.Gtk", "QSProjects\Modules\QS.Measurement.Gtk\QS.Measurement.Gtk.csproj", "{AF3521E6-7B25-4F10-BD94-78B587C843B0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QS.Measurement.Gtk", "QSProjects\Modules\QS.Measurement.Gtk\QS.Measurement.Gtk.csproj", "{AF3521E6-7B25-4F10-BD94-78B587C843B0}"
 EndProject
