@@ -12,9 +12,9 @@
     <widget-library name="../../QSProjects/QSProjectsLib/bin/Debug/QSProjectsLib.dll" />
     <widget-library name="../../QSProjects/QSWidgetLib/bin/Debug/QSWidgetLib.dll" />
     <widget-library name="../../QSProjects/QSOrmProject/bin/Debug/QSOrmProject.dll" />
-    <widget-library name="../../QSProjects/Modules/QSBusinessCommon/bin/Debug/QSBusinessCommon.dll" />
     <widget-library name="../../QSProjects/QSReport/bin/Debug/QSReport.dll" />
     <widget-library name="../../QSProjects/QS.Project.Gtk/bin/Debug/QS.Project.Gtk.dll" />
+    <widget-library name="../../QSProjects/Modules/QS.Measurement.Gtk/bin/Debug/QS.Measurement.Gtk.dll" />
     <widget-library name="../../QSProjects/QS.Report.Gtk/bin/Debug/QS.Report.Gtk.dll" />
     <widget-library name="../../QSProjects/QS.NewsFeed.Gtk/bin/Debug/QS.NewsFeed.Gtk.dll" />
     <widget-library name="../../QSProjects/QS.Features.Gtk/bin/Debug/QS.Features.Gtk.dll" />
@@ -33350,6 +33350,22 @@
           </packing>
         </child>
         <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowBarcodes">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Показать маркировку</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gamma.GtkWidgets.yButton" id="buttonRun">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
@@ -33360,7 +33376,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
