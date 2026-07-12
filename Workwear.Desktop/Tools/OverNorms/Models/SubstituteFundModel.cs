@@ -146,7 +146,8 @@ namespace Workwear.Tools.OverNorms.Models
 				SubstitutedIssueOperation = employeeIssueOperation,
 				WarehouseOperation = newWarehouseOp,
 				Type = OverNormType.Substitute,
-				Employee = employee
+				Employee = employee,
+				Nomenclature = newWarehouseOp.Nomenclature,
 			};
 
 			FillOverNormOperation(newOverNormOp, barcodes);

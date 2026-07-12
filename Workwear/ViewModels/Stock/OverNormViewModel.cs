@@ -230,10 +230,6 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		public void AddNomenclature(object sender, JournalSelectedEventArgs e) {
 			StockBalanceJournalNode node = e.GetSelectedObjects<StockBalanceJournalNode>().First();
 			StockPosition stockPosition = node.GetStockPosition(UoW);
-////1289			
-//var size = UoW.GetById<Size>(node.SizeIdn);
-//var height = UoW.GetById<Size>(node.HeightIdn);
-
 			Barcode barcode = null;
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
@@ -254,11 +250,13 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 
 					);
 				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-				barcodeJournal.ViewModel.OnSelectResult += (o, args) => {
-					IList<BarcodeJournalNode> barcodeNodes = args.GetSelectedObjects<BarcodeJournalNode>();
+				barcodeJournal.ViewModel.OnSelectResult += (s, args) => AddWithBarcode(s, args, item);
+			}
+		}
+
+		private void AddWithBarcode(object sender, JournalSelectedEventArgs e, OverNormItem item) {
+					IList<BarcodeJournalNode> barcodeNodes = e.GetSelectedObjects<BarcodeJournalNode>();
 					IList<Barcode> barcodes = UoW.GetById<Barcode>(barcodeNodes.Select(x => x.Id));
-// зачем?
-//Entity.DeleteItem(item);
 					var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height }).ToList();
 					OverNormParam addedParam;
 					if(addedItems.Count == 1) {
@@ -269,7 +267,7 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 							addedItem.Count(),
 							addedItem.Key.Size,
 							addedItem.Key.Height,
-							null,
+							item.OverNormOperation?.SubstitutedIssueOperation,
 							addedItem.ToList());
 						item.Param = addedParam;
 					}
@@ -277,10 +275,8 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 						throw new NotImplementedException("Выбраны несколько разных складских позиций. Нужно добавлять строки, пока это реализовано.");
 					
 					AddOrUpdateItem(item);
-				};
-			}
-		}
-
+				}
+		
 		public void DeleteItem(OverNormItem item) {
 			Entity.DeleteItem(item);
 		}
@@ -297,12 +293,10 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		} 
 		
 		private void AddOrUpdateItem(OverNormItem item) {
-////Пока не уверен, что это не нужно.
-/*			
 			if (item.Id < 1) {
 				Entity.DeleteItem(item);
 				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
-			} else */
+			} else 
 				OverNormModel.UpdateOperation(item, item.Param);
 		}
 		#endregion
