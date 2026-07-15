@@ -43,7 +43,7 @@ namespace Workwear.Tools.OverNorms.Models
 			};
 			
 			foreach (OverNormParam param in @params) 
-				AddItems(document, param, expenseWarehouse);
+				AddOperation(document, param, expenseWarehouse);
 			
 			return document;
 		}
@@ -97,23 +97,5 @@ namespace Workwear.Tools.OverNorms.Models
 			item.OverNormOperation.WarehouseOperation.StockPosition = param.StockPosition;
 		}
 		
-		private void AddItems(OverNorm document, OverNormParam param, Warehouse expenseWarehouse)
-		{
-			WarehouseOperation newWarehouseOp = new WarehouseOperation 
-			{
-				ExpenseWarehouse = expenseWarehouse,
-				Amount = param.Amount,
-				StockPosition = param.StockPosition
-			};
-
-			OverNormOperation newOverNormOp = new OverNormOperation() 
-			{
-				WarehouseOperation = newWarehouseOp,
-				Type = OverNormType.Simple,
-				Employee = param.Employee
-			};
-			
-			document.AddItem(newOverNormOp);
-		}
 	}
 }

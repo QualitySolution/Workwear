@@ -110,12 +110,19 @@ namespace Workwear.ViewModels.Stock {
 		public void DeleteFromItem(BarcodingItem item, Barcode barcode = null) {
 			if(item.Id > 0) {
 ////1289 Пока не придумал, как задать через мапинг, возможно сделать через удалялку
-				foreach(var operationBarcode in
-				        item.Barcodes.SelectMany(b => b.BarcodeOperations
+				var deletedBarcodeOperations = item.Barcodes.SelectMany(b => b.BarcodeOperations
 					        .Where(o => o.WarehouseOperation.Id == item.OperationReceipt.Id)
-					        .Where(o => barcode == null || o.Barcode.Id == barcode.Id))) {
+					        .Where(o => barcode == null || o.Barcode.Id == barcode.Id))
+					.ToList();
+				foreach(var operationBarcode in deletedBarcodeOperations)
 					UoW.Delete(operationBarcode);
-					item.OperationExpense.Amount--;
+				if(deletedBarcodeOperations.Any()) {
+					item.OperationExpense.Amount -= deletedBarcodeOperations.Count;
+					item.OperationReceipt.Amount -= deletedBarcodeOperations.Count;
+					if(barcode == null)
+						item.Barcodes.Clear();
+					else
+						item.Barcodes.Remove(barcode);
 				}
 				if(item.OperationExpense.Amount == 0)
 					UoW.Delete(item);
