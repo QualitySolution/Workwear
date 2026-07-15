@@ -76,6 +76,7 @@ namespace Workwear.Test.Models.Sizes {
 			typeof(IssuanceSheetItem),
 			typeof(WriteoffItem),
 			typeof(DutyNormIssueOperation),
+			typeof(OverNormOperation),
 			typeof(ReturnItem),
 			typeof(ShipmentItem),
 		};
@@ -134,4 +135,3 @@ namespace Workwear.Test.Models.Sizes {
 		}
 	}
 }
-
