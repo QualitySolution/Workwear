@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
@@ -128,7 +128,7 @@ namespace Workwear.Domain.Operations {
 		#endregion
 
 		#region Not Mapped Propertis
-		public virtual string Title => $"Операция выдачи выдачи вне нормы ({Type.GetAttribute<DisplayAttribute>().Name}) {WarehouseOperation.Nomenclature.Name} в количестве {WarehouseOperation.Amount}";
+		public virtual string Title => $"Операция выдачи выдачи вне нормы ({Type.GetEnumTitle()}) {WarehouseOperation.Nomenclature.Name} в количестве {WarehouseOperation.Amount}";
 		#endregion
 	}
 	

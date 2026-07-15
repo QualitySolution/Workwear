@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
@@ -14,10 +14,7 @@ namespace Workwear.Tools.OverNorms.Models
 	/// </summary>
 	public class SimpleModel : OverNormModelBase
 	{
-		private readonly IUnitOfWork uow;
-
-		public SimpleModel(IUnitOfWork uow) {
-			this.uow = uow ?? throw new ArgumentNullException(nameof(uow));
+		public SimpleModel() {
 		}
 
 		public override bool CanUseWithBarcodes => true;

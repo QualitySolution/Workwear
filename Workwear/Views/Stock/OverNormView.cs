@@ -49,7 +49,7 @@ namespace Workwear.Views.Stock
 				.AddBinding(ViewModel, wm => wm.CanRemoveActiveItem, w => w.Sensitive)
 				.InitializeFromSource();
 			buttonAddNomenclature.Binding
-				.AddBinding(ViewModel, wm => wm.CanChoiseForActiveItem, w => w.Sensitive)
+				.AddBinding(ViewModel, wm => wm.CanChoiceForActiveItem, w => w.Sensitive)
 				.InitializeFromSource();
 			
 			enumTypesComboBox.ItemsEnum = typeof(OverNormType);

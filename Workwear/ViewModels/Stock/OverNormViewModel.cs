@@ -28,7 +28,6 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
-using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.Tools.OverNorms;
 using Workwear.Tools.OverNorms.Models;
@@ -38,7 +37,6 @@ namespace Workwear.ViewModels.Stock
 	public sealed class OverNormViewModel : PermittingEntityDialogViewModelBase<OverNorm>, IDialogDocumentation
 	{
 		private readonly IOverNormFactory overNormFactory;
-		private readonly BarcodeService barcodeService;
 		private readonly FeaturesService featuresService;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		
@@ -58,7 +56,6 @@ namespace Workwear.ViewModels.Stock
 			ILifetimeScope autofacScope, IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation, IUserService userService,
 			IOverNormFactory overNormFactory,
-			BarcodeService barcodeService,
 			StockRepository stockRepository,
 			FeaturesService featuresService,
 			ICurrentPermissionService permissionService,
@@ -71,7 +68,6 @@ namespace Workwear.ViewModels.Stock
 			
 			if (autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
 			this.overNormFactory = overNormFactory ?? throw new ArgumentNullException(nameof(overNormFactory));
-			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
 			SetDocumentDateProperty(e => e.Date);
@@ -115,7 +111,7 @@ namespace Workwear.ViewModels.Stock
 		#region View Properties
 		public bool CanAddItems => CanEdit && Entity.Warehouse != null && OverNormModel.Editable;
 		public bool CanRemoveActiveItem => CanEdit && SelectedItem != null;
-		public bool CanChoiseForActiveItem => CanEdit && SelectedItem != null;
+		public bool CanChoiceForActiveItem => CanEdit && SelectedItem != null;
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public IEnumerable<OverNormType> AvailableOverNormTypes =>
@@ -158,7 +154,7 @@ namespace Workwear.ViewModels.Stock
 		
 		private OverNormItem selectedItem;
 		[PropertyChangedAlso(nameof(CanRemoveActiveItem))]
-		[PropertyChangedAlso(nameof(CanChoiseForActiveItem))]
+		[PropertyChangedAlso(nameof(CanChoiceForActiveItem))]
 		public OverNormItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
@@ -242,10 +238,8 @@ namespace Workwear.ViewModels.Stock
 		public void AddNomenclature(object sender, JournalSelectedEventArgs e) {
 			StockBalanceJournalNode node = e.GetSelectedObjects<StockBalanceJournalNode>().First();
 			StockPosition stockPosition = node.GetStockPosition(UoW);
-			Barcode barcode = null;
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
-			var employee = item.Employee;
 
 			if(stockPosition.Nomenclature.UseBarcode) {
 				IPage<BarcodeJournalViewModel> barcodeJournal =
@@ -277,10 +271,9 @@ namespace Workwear.ViewModels.Stock
 				.Distinct()
 				.ToList();
 			var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height }).ToList();
-			OverNormParam addedParam;
 			if(addedItems.Count == 1) {
 				var addedItem = addedItems.First();
-				addedParam = new OverNormParam(
+				var addedParam = new OverNormParam(
 					item.Employee,
 					addedItem.Key.Nomenclature,
 					addedItem.Count(),
@@ -345,7 +338,7 @@ namespace Workwear.ViewModels.Stock
 			
 			bool result = base.Save();
 			if(result)
-				logger.Info("Документ  вдачи вне нормы.");
+				logger.Info("Документ вдачи вне нормы.");
 			else
 				logger.Warn("Ошибка при сохранении документа.");
 			return result;

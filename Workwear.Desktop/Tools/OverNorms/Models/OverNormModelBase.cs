@@ -12,12 +12,12 @@ namespace Workwear.Tools.OverNorms.Models
 		public virtual bool Editable => true;
 		
 		/// <summary>
-		/// Указвает может ли эта модель использоваться со штрихкодами
+		/// Указывает можно ли модель использовать со штрихкодами
 		/// </summary>
 		public abstract bool CanUseWithBarcodes { get; }
 		
 		/// <summary>
-		/// Указвает может ли эта модель использоваться без штрихкодов
+		/// Указывает можно ли модель использовать без штрихкодов
 		/// </summary>
 		public abstract bool CanUseWithoutBarcodes { get; }
 
