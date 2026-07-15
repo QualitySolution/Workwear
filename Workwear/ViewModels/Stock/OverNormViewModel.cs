@@ -217,9 +217,8 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 						filter => {
 							filter.ShowNegativeBalance = false;
-////1289 Выдача без штрихкода отдельно
-							filter.ShowWithBarcodes = true; //OverNormModel.UseBarcodes;
-							filter.CanChangeShowWithBarcodes = false; //OverNormModel.CanChangeUseBarcodes;
+							filter.ShowWithBarcodes = true;
+							filter.CanChangeShowWithBarcodes = false;
 							filter.Warehouse = Entity.Warehouse;
 							filter.SensetiveWarehouse = false;
 						});

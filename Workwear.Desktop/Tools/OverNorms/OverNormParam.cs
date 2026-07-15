@@ -37,8 +37,8 @@ namespace Workwear.Tools.OverNorms
 		public StockPosition StockPosition => new StockPosition(Nomenclature, WearPercent, Size, Height, Owner);
 			
 		/// <param name="employee">Сотрудник, для которого определяется операция выдачи вне нормы</param>
-		/// <param name="amount">Количетсво выдаваемой номенклатуры</param>
-		/// <param name="employeeIssueOperation">Операция выдачи сотруднику для сопосталвения подменной вещи и заменяемой</param>
+		/// <param name="amount">Количество выдаваемой номенклатуры</param>
+		/// <param name="employeeIssueOperation">Операция выдачи сотруднику для сопоставления подменной вещи и заменяемой</param>
 		/// <param name="barcodes">Список штрихкодов выдаваемых вещей</param>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="ArgumentOutOfRangeException">Количество выдаваемой номенклатуры не соответствует количеству переданных штрихкодов, если коллекция не пустая</exception>
@@ -58,7 +58,7 @@ namespace Workwear.Tools.OverNorms
 			if (Barcodes.Any()) {
 				if (amount != Barcodes.Count) throw new InvalidOperationException("Количество штрихкодов должно соответствовать указанному количеству");
 				if (employeeIssueOperation != null && !ItemsTypeMatch(employeeIssueOperation, Barcodes)) throw new InvalidOperationException("Группа номенклатур подменных вещей не соответсвует заменяемой у сотрудника");
-				if (!NomeclatureMatch(nomenclature, size, height, Barcodes)) throw new InvalidOperationException("Номенклатура штрихкодов должна соответствовать указанным");
+				if (!NomenclatureMatch(nomenclature, size, height, Barcodes)) throw new InvalidOperationException("Номенклатура штрихкодов должна соответствовать указанным");
 			}
 		}
 		
@@ -67,7 +67,7 @@ namespace Workwear.Tools.OverNorms
 			return substituteBarcodes.All(x => x.Nomenclature.Type.Id == employeeIssueOperation.Nomenclature.Type.Id);
 		}
 
-		private bool NomeclatureMatch(Nomenclature nomenclature, Size size, Size height, IList<Barcode> barcodes) 
+		private bool NomenclatureMatch(Nomenclature nomenclature, Size size, Size height, IList<Barcode> barcodes)
 		{
 			return barcodes.All(x => x.Nomenclature.Id == nomenclature?.Id && x.Size?.Id == size?.Id && x.Height?.Id == height?.Id);
 		}
