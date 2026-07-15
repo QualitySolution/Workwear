@@ -40,8 +40,10 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 					yield return Workwear.Domain.Stock.Documents.StockDocumentType.Completion;
 				if(!FeaturesService.Available(WorkwearFeature.Warehouses))
 					yield return Workwear.Domain.Stock.Documents.StockDocumentType.TransferDoc;
-				if(!FeaturesService.Available(WorkwearFeature.Completion))
-					yield return Workwear.Domain.Stock.Documents.StockDocumentType.Completion;
+				if(!FeaturesService.Available(WorkwearFeature.OverNorm))
+					yield return Workwear.Domain.Stock.Documents.StockDocumentType.OverNormDoc;
+				if(!FeaturesService.Available(WorkwearFeature.Barcodes))
+					yield return Workwear.Domain.Stock.Documents.StockDocumentType.BarcodingDoc;
 			}
 		}
 

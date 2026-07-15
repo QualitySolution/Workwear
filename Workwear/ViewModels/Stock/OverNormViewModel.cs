@@ -39,6 +39,7 @@ namespace Workwear.ViewModels.Stock
 	{
 		private readonly IOverNormFactory overNormFactory;
 		private readonly BarcodeService barcodeService;
+		private readonly FeaturesService featuresService;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		
 		public EntityEntryViewModel<Warehouse> EntryWarehouseViewModel { get; }
@@ -72,7 +73,7 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 			if (autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
 			this.overNormFactory = overNormFactory ?? throw new ArgumentNullException(nameof(overNormFactory));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
-			if(featuresService == null) throw new ArgumentNullException(nameof(featuresService));
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
 			SetDocumentDateProperty(e => e.Date);
 			
@@ -92,9 +93,8 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 			EntryWarehouseViewModel.Changed += (sender, args) => 
 				OnPropertyChanged(nameof(CanAddItems));
 			
-			OverNormModel = overNormFactory.CreateModel(UoW, Entity.Type);
-			
 			if (Entity.Id < 1) {
+				Entity.Type = AvailableOverNormTypes.FirstOrDefault();
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание нового документа ");
 			}
@@ -102,6 +102,8 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 				logger.Info($"Открытие документа вдачи вне нормы ID:{Entity.Id}");
 			}
+
+			OverNormModel = overNormFactory.CreateModel(UoW, Entity.Type);
 			
 			if(Entity.Warehouse == null)
 				Entity.Warehouse =
@@ -117,11 +119,22 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		public bool CanChoiseForActiveItem => CanEdit && SelectedItem != null;
 		public bool SensitiveDocNumber => !AutoDocNumber;
 		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
+		public IEnumerable<OverNormType> AvailableOverNormTypes =>
+			Enum.GetValues(typeof(OverNormType))
+				.Cast<OverNormType>()
+				.Where(featuresService.AvailableOverNorm);
+		public IEnumerable<object> HiddenOverNormTypes =>
+			Enum.GetValues(typeof(OverNormType))
+				.Cast<OverNormType>()
+				.Where(type => !featuresService.AvailableOverNorm(type))
+				.Cast<object>();
 		
 		public OverNormType DocType {
 			get => Entity.Type;
 			set {
 				if (Entity.Type == value) 
+					return;
+				if(!featuresService.AvailableOverNorm(value))
 					return;
 				Entity.Type = value;
 				Entity.Items.Clear();

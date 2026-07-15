@@ -10,6 +10,7 @@ using QS.ErrorReporting;
 using QS.Project.DB;
 using QS.Project.Versioning.Product;
 using QS.Serial.Encoding;
+using Workwear.Domain.Operations;
 
 namespace Workwear.Tools.Features
 {
@@ -203,7 +204,6 @@ namespace Workwear.Tools.Features
 				//Предприятие + СпецАутсорсинг + Корпорация
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.CostCenter:
-				case WorkwearFeature.OverNorm:
 				case WorkwearFeature.EmployeeGroups:
 				case WorkwearFeature.Exchange1C:
 				case WorkwearFeature.ExportExcel:
@@ -238,9 +238,27 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.StatementJournal:
 				case WorkwearFeature.Vacation:
 					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
+				case WorkwearFeature.OverNorm:
+					return Enum.GetValues(typeof(OverNormType))
+						.Cast<OverNormType>()
+						.Any(AvailableOverNorm);
 				// Профессиональная + Предприятие + Корпорация
 				case WorkwearFeature.Inspection:
 					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 5;
+				default:
+					return false;
+			}
+		}
+
+		public virtual bool AvailableOverNorm(OverNormType type)
+		{
+			switch(type) {
+				case OverNormType.Simple:
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
+				case OverNormType.Guest:
+					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
+				case OverNormType.Substitute:
+					return ProductEdition == 0 || ProductEdition == 4 || ProductEdition == 5;
 				default:
 					return false;
 			}

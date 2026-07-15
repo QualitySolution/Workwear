@@ -53,6 +53,7 @@ namespace Workwear.Views.Stock
 				.InitializeFromSource();
 			
 			enumTypesComboBox.ItemsEnum = typeof(OverNormType);
+			enumTypesComboBox.AddEnumToHideList(ViewModel.HiddenOverNormTypes.ToArray());
 			enumTypesComboBox.Binding.AddBinding(ViewModel, vm => vm.DocType, w => w.SelectedItem).InitializeFromSource();
 			enumTypesComboBox.EnumItemSelected += (sender, args) => {
 				buttonAddEmployee.Visible = !ViewModel.OverNormModel.RequiresEmployeeIssueOperation;

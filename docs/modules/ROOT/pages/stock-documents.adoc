@@ -159,6 +159,7 @@ image::stock-documents_duty-issue.png[]
 
 У документа есть три режима.
 
+[#over-norm-simple]
 ==== Простая выдача
 
 NOTE: Режим доступен начиная с редакции https://workwear.qsolution.ru/stoimost/[«Профессиональная»].
@@ -167,6 +168,7 @@ NOTE: Режим доступен начиная с редакции https://wor
 
 image::stock-documents_over-norm-simple.png[]
 
+[#over-norm-guest]
 ==== Гостевой фонд
 
 NOTE: Режим доступен начиная с редакции https://workwear.qsolution.ru/stoimost/[«Предприятие»].
@@ -175,6 +177,7 @@ NOTE: Режим доступен начиная с редакции https://wor
 
 image::stock-documents_over-norm-guest.png[]
 
+[#over-norm-substitute]
 ==== Подменный фонд
 
 NOTE: Режим доступен начиная с редакции https://workwear.qsolution.ru/stoimost/[«Корпорация»].

@@ -599,7 +599,6 @@ namespace workwear.Journal.ViewModels.Stock
 			return query;
 		}
 		
-///1289				
 		protected IQueryOver<Barcoding> QueryBarcoding(IUnitOfWork uow) {
 			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.BarcodingDoc)
 				return null;
