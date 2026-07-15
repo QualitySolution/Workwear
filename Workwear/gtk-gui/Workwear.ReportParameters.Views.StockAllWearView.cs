@@ -26,6 +26,8 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowSex;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowBarcodes;
+
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
 		protected virtual void Build()
@@ -161,17 +163,29 @@ namespace Workwear.ReportParameters.Views
 			w10.Expand = false;
 			w10.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.ycheckbuttonShowBarcodes = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonShowBarcodes.CanFocus = true;
+			this.ycheckbuttonShowBarcodes.Name = "ycheckbuttonShowBarcodes";
+			this.ycheckbuttonShowBarcodes.Label = global::Mono.Unix.Catalog.GetString("Показать маркировку");
+			this.ycheckbuttonShowBarcodes.DrawIndicator = true;
+			this.ycheckbuttonShowBarcodes.UseUnderline = true;
+			this.dialog1_VBox.Add(this.ycheckbuttonShowBarcodes);
+			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonShowBarcodes]));
+			w11.Position = 3;
+			w11.Expand = false;
+			w11.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w11.PackType = ((global::Gtk.PackType)(1));
-			w11.Position = 3;
-			w11.Expand = false;
-			w11.Fill = false;
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w12.PackType = ((global::Gtk.PackType)(1));
+			w12.Position = 4;
+			w12.Expand = false;
+			w12.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

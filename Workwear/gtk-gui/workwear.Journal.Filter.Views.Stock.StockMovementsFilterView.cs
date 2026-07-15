@@ -178,7 +178,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.labelOwner = new global::Gamma.GtkWidgets.yLabel();
 			this.labelOwner.Name = "labelOwner";
 			this.labelOwner.Xalign = 1F;
-			this.labelOwner.LabelProp = global::Mono.Unix.Catalog.GetString("Собственик:");
+			this.labelOwner.LabelProp = global::Mono.Unix.Catalog.GetString("Собственник:");
 			this.table1.Add(this.labelOwner);
 			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1[this.labelOwner]));
 			w12.TopAttach = ((uint)(3));

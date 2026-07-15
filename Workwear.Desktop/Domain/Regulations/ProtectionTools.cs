@@ -149,7 +149,7 @@ namespace Workwear.Domain.Regulations
 		public virtual void AddNomenclature(Nomenclature nomenclature) {
 			bool a = Nomenclatures.Any(x => x.Id != 0);
 			if(Nomenclatures.Any(p => DomainHelper.EqualDomainObjects(p, nomenclature))) {
-				logger.Warn("Номеклатура уже добавлена. Пропускаем...");
+				logger.Warn("Номенклатура уже добавлена. Пропускаем...");
 				return;
 			}
 			ProtectionToolsNomenclatures.Add(new ProtectionToolsNomenclature() {ProtectionTools = this, Nomenclature = nomenclature});
