@@ -2,7 +2,7 @@
 = Постаматы
 :experimental:
 
-NOTE: Функциональность доступна только в рамках проектов «Спецаутсорсинг»
+NOTE: Функциональность доступна в редакциях https://workwear.qsolution.ru/stoimost/[«Спецаутсорсинг»] и https://workwear.qsolution.ru/stoimost/[«Корпорация»]
 
 == Введение
 

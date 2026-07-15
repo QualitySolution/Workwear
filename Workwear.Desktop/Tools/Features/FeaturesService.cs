@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Autofac;
 using Gamma.Utilities;
 using QS.BaseParameters;
 using QS.Cloud.Client;
@@ -23,7 +22,8 @@ namespace Workwear.Tools.Features
 			new ProductEdition(1, "Однопользовательская"),
 			new ProductEdition(2, "Профессиональная"),
 			new ProductEdition(3, "Предприятие"),
-			new ProductEdition(4, "Спецаутсорсинг")
+			new ProductEdition(4, "Спецаутсорсинг"),
+			new ProductEdition(5, "Корпорация")
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
 		private readonly ParametersService parametersService;
@@ -124,7 +124,7 @@ namespace Workwear.Tools.Features
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
 				else if((serialNumberEncoder.CodeVersion == 2 || serialNumberEncoder.CodeVersion == 3)
 				        && serialNumberEncoder.EditionId >= 1
-				        && serialNumberEncoder.EditionId <= 4) {
+				        && serialNumberEncoder.EditionId <= 5) {
 					ProductEdition = serialNumberEncoder.EditionId;
 					ClientId = serialNumberEncoder.ClientId;
 					ExpiryDate = serialNumberEncoder.ExpiryDate;
@@ -161,19 +161,19 @@ namespace Workwear.Tools.Features
 							return false;
 						return AvailableCloudFeatures.Contains("wear_lk");
 					case WorkwearFeature.SpecCoinsLk:
-						if(ProductEdition != 4) 
+						if(ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("speccoin_lk");
 					case WorkwearFeature.Claims:
-						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4 && ProductEdition != 5)
 							return false;
 						return AvailableCloudFeatures.Contains("claims_lk");
 					case WorkwearFeature.Ratings:
-						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4 && ProductEdition != 5)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
 					case WorkwearFeature.Postomats:
-						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4 && ProductEdition != 5)
 							return false;
 						return AvailableCloudFeatures.Contains("postomats");
 					case WorkwearFeature.Catalog:
@@ -181,7 +181,7 @@ namespace Workwear.Tools.Features
 							return false;
 						return AvailableCloudFeatures.Contains("catalog");
 					case WorkwearFeature.EmployeeChoose:
-						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4 && ProductEdition != 5)
 							return false;
 						return AvailableCloudFeatures.Contains("choice_nomenclature_lk");
 				}
@@ -192,13 +192,15 @@ namespace Workwear.Tools.Features
 					return ProductEdition == 0 || ProductEdition == 1;
 				//Только СпецАутсорсинг
 				case WorkwearFeature.Selling:
+					return ProductEdition == 4;
+				//СпецАутсорсинг + Корпорация
 				case WorkwearFeature.Dashboard:
 				case WorkwearFeature.Shipment:
 				case WorkwearFeature.Visits:
 				case WorkwearFeature.IssuanceRequest:
 				case WorkwearFeature.ReportServiceServiced:
-					return ProductEdition == 4;
-				//Предприятие + СпецАутсорсинг
+					return ProductEdition == 4 || ProductEdition == 5;
+				//Предприятие + СпецАутсорсинг + Корпорация
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.CostCenter:
 				case WorkwearFeature.OverNorm:
@@ -212,15 +214,15 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.ReportSupply:
 				case WorkwearFeature.StockForecasting:
 				case WorkwearFeature.Warehouses:
-					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4;
+					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
 				// Платные функции предприятия
 				case WorkwearFeature.IdentityCards:
-					return ProductEdition == 0 || ProductEdition == 4 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.IdentityCards));
+					return ProductEdition == 0 || ProductEdition == 4 || ProductEdition == 5 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.IdentityCards));
 				case WorkwearFeature.ClothingService:
-					return ProductEdition == 0 || ProductEdition == 4 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.ClothingService));
+					return ProductEdition == 0 || ProductEdition == 4 || ProductEdition == 5 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.ClothingService));
 				case WorkwearFeature.Barcodes:
-					return ProductEdition == 0 || ProductEdition == 4 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.Barcodes));
-				// Профессиональная + Предприятие + СпецАутсорсинг
+					return ProductEdition == 0 || ProductEdition == 4 || ProductEdition == 5 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.Barcodes));
+				// Профессиональная + Предприятие + СпецАутсорсинг + Корпорация
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.Completion:
 				case WorkwearFeature.ConditionNorm:
@@ -235,10 +237,10 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.ReportWrittenOff:
 				case WorkwearFeature.StatementJournal:
 				case WorkwearFeature.Vacation:
-					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
-				// Профессиональная + Предприятие
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
+				// Профессиональная + Предприятие + Корпорация
 				case WorkwearFeature.Inspection:
-					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 5;
 				default:
 					return false;
 			}
