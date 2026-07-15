@@ -253,7 +253,9 @@ namespace Workwear.ViewModels.Stock {
 			
 			var barcodes = UoW.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Left.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias)
+				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
 				.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+				.Fetch(SelectMode.Fetch, () => barcodeOperationAlias.WarehouseOperation)
 				.JoinEntityAlias(() => barcodingItemAlias,
 					() => barcodingItemAlias.OperationReceipt.Id == warehouseOperationAlias.Id,
 					JoinType.LeftOuterJoin)

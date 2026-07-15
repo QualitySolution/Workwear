@@ -26,7 +26,7 @@ namespace Workwear.HibernateMapping.Stock
 			References(x => x.Height).Column ("height_id");
 			
 			HasMany<BarcodeOperation>(x => x.BarcodeOperations)
-				.KeyColumn("barcode_id").Inverse();
+				.KeyColumn("barcode_id").Inverse().LazyLoad();
 		}
 	}
 }

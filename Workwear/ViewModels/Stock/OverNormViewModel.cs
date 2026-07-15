@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using NHibernate;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -255,27 +256,34 @@ public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		}
 
 		private void AddWithBarcode(object sender, JournalSelectedEventArgs e, OverNormItem item) {
-					IList<BarcodeJournalNode> barcodeNodes = e.GetSelectedObjects<BarcodeJournalNode>();
-					IList<Barcode> barcodes = UoW.GetById<Barcode>(barcodeNodes.Select(x => x.Id));
-					var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height }).ToList();
-					OverNormParam addedParam;
-					if(addedItems.Count == 1) {
-						var addedItem = addedItems.First();
-						addedParam = new OverNormParam(
-							item.Employee,
-							addedItem.Key.Nomenclature,
-							addedItem.Count(),
-							addedItem.Key.Size,
-							addedItem.Key.Height,
-							item.OverNormOperation?.SubstitutedIssueOperation,
-							addedItem.ToList());
-						item.Param = addedParam;
-					}
-					else
-						throw new NotImplementedException("Выбраны несколько разных складских позиций. Нужно добавлять строки, пока это реализовано.");
-					
-					AddOrUpdateItem(item);
-				}
+			IList<BarcodeJournalNode> barcodeNodes = e.GetSelectedObjects<BarcodeJournalNode>();
+			BarcodeOperation barcodeOperationAlias = null;
+			IList<Barcode> barcodes = UoW.Session.QueryOver<Barcode>()
+				.WhereRestrictionOn(x => x.Id).IsIn(barcodeNodes.Select(x => x.Id).ToArray())
+				.Left.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias)
+				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
+				.List()
+				.Distinct()
+				.ToList();
+			var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height }).ToList();
+			OverNormParam addedParam;
+			if(addedItems.Count == 1) {
+				var addedItem = addedItems.First();
+				addedParam = new OverNormParam(
+					item.Employee,
+					addedItem.Key.Nomenclature,
+					addedItem.Count(),
+					addedItem.Key.Size,
+					addedItem.Key.Height,
+					item.OverNormOperation?.SubstitutedIssueOperation,
+					addedItem.ToList());
+				item.Param = addedParam;
+			}
+			else
+				throw new NotImplementedException("Выбраны несколько разных складских позиций. Нужно добавлять строки, пока это реализовано.");
+
+			AddOrUpdateItem(item);
+		}
 		
 		public void DeleteItem(OverNormItem item) {
 			Entity.DeleteItem(item);
