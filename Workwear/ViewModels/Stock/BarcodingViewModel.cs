@@ -25,12 +25,13 @@ using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.ViewModels.Stock {
-	public class BarcodingViewModel : EntityDialogViewModelBase<Barcoding> {
+	public class BarcodingViewModel : EntityDialogViewModelBase<Barcoding>, IDialogDocumentation {
 		public BarcodingViewModel(
 			IEntityUoWBuilder uowBuilder, 
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -76,6 +77,11 @@ namespace Workwear.ViewModels.Stock {
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		
 		public readonly EntityEntryViewModel<Warehouse> EntryWarehouseViewModel;
+
+		#region IDialogDocumentation
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#barcoding-document");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		#endregion
 		
 		#region Для View
 		public bool SensitiveDocNumber => !AutoDocNumber;

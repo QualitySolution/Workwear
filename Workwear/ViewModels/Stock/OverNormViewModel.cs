@@ -45,9 +45,8 @@ namespace Workwear.ViewModels.Stock
 		public EntityEntryViewModel<Warehouse> EntryWarehouseViewModel { get; }
 
 		#region IDialogDocumentation
-//// Сделать документацию	
-public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#overnorm");
-public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#over-norm-issue");
+		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 
 
