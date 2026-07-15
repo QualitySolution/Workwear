@@ -34,7 +34,7 @@ create table if not exists `operation_over_norm`
 	                                                                                                                       on update cascade
 	                                                                                                                       ON DELETE RESTRICT,
 	constraint `FK_over_norm_nomenclature`
-	foreign key (`employee_id`) references `nomenclature` (`id`)
+	foreign key (`nomenclature_id`) references `nomenclature` (`id`)
 	                                                                                                                       on update cascade
 	                                                                                                                       ON DELETE RESTRICT,
 	constraint `FK_over_norm_size`
