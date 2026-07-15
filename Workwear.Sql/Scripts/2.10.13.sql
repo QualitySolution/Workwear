@@ -7,7 +7,7 @@ ALTER TABLE stock_expense
 			ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- Операции выдачи вне нормы
-create table if not exists `operation_over_norm`
+create table `operation_over_norm`
 (
 	`id`                              int unsigned                           not null auto_increment primary key,
 	`operation_time`                  datetime                               not null,
@@ -65,7 +65,7 @@ alter table operation_barcodes
 ALTER TABLE `barcodes`
 	ADD COLUMN `label` varchar(50) null default null;
 
-create table if not exists `stock_over_norms`
+create table `stock_over_norms`
 (
 	`id`            int unsigned                           not null auto_increment primary key,
 	`doc_number`    varchar(16)                            null,
@@ -84,7 +84,7 @@ create table if not exists `stock_over_norms`
 	)
 	ENGINE = InnoDB;
 
-create table if not exists `stock_over_norm_items`
+create table `stock_over_norm_items`
 (
 	`id`           int unsigned not null auto_increment primary key,
 	`document_id`  int unsigned not null,
@@ -103,7 +103,7 @@ create table if not exists `stock_over_norm_items`
 -- -----------------------------------------------------
 -- Table `stock_barcoding`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stock_barcoding`
+CREATE TABLE `stock_barcoding`
 (
 	`id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`doc_number`    VARCHAR(16)  NULL DEFAULT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `stock_barcoding`
 -- -----------------------------------------------------
 -- Table `stock_barcoding_items`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stock_barcoding_items`
+CREATE TABLE `stock_barcoding_items`
 (
 	`id`                 		INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`stock_barcoding_id` 		INT UNSIGNED NOT NULL,
