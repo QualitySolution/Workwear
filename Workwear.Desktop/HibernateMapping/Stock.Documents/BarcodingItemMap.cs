@@ -13,7 +13,7 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			References (x => x.Document).Column ("stock_barcoding_id").Not.Nullable();
-			References(x => x.OperationExpence).Column("operation_expence_id").Cascade.All().Not.Nullable();
+			References(x => x.OperationExpense).Column("operation_expense_id").Cascade.All().Not.Nullable();
 			References(x => x.OperationReceipt).Column("operation_receipt_id").Cascade.All().Not.Nullable();
 
 			

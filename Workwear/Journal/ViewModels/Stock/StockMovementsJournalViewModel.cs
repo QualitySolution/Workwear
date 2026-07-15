@@ -218,7 +218,7 @@ namespace workwear.Journal.ViewModels.Stock
 				.JoinAlias(() => completionResultItemAlias.Completion, () => completionResultAlias, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => completionSourceItemAlias, () => completionSourceItemAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => completionSourceItemAlias.Completion, () => completionSourceAlias, JoinType.LeftOuterJoin)
-				.JoinEntityAlias(() => barcodingItemAlias, () => barcodingItemAlias.OperationExpence.Id == warehouseOperationAlias.Id || barcodingItemAlias.OperationReceipt.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
+				.JoinEntityAlias(() => barcodingItemAlias, () => barcodingItemAlias.OperationExpense.Id == warehouseOperationAlias.Id || barcodingItemAlias.OperationReceipt.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => overNormOperationAlias, () => overNormOperationAlias.WarehouseOperation.Id == warehouseOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinEntityAlias(() => overNormItemAlias, () => overNormItemAlias.OverNormOperation.Id == overNormOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => overNormItemAlias.Document, () => overNormAlias, JoinType.LeftOuterJoin)

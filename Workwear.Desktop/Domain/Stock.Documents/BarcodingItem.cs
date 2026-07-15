@@ -39,23 +39,23 @@ namespace Workwear.Domain.Stock.Documents {
 			set => SetField(ref operationReceipt, value);
 		}
 		
-		private WarehouseOperation operationExpence = new WarehouseOperation();
+		private WarehouseOperation operationExpense = new WarehouseOperation();
 		[Display(Name = "Операция списания со склада")]
 		[IgnoreHistoryTrace]
-		public virtual WarehouseOperation OperationExpence {
-			get => operationExpence;
-			set => SetField(ref operationExpence, value);
+		public virtual WarehouseOperation OperationExpense {
+			get => operationExpense;
+			set => SetField(ref operationExpense, value);
 		}
 		#endregion
 
 		#region Динамические свойства
 
-		[Display(Name = "Номенклатура")] public virtual Nomenclature Nomenclature => OperationExpence?.Nomenclature;
-		[Display(Name = "Количество")] public virtual int Amount => OperationExpence?.Amount ?? 0;
-		[Display(Name = "Рост одежды")] public virtual Size Size => OperationExpence?.WearSize;
-		[Display(Name = "Рост одежды")] public virtual Size Height  => OperationExpence?.Height;
-		[Display(Name = "Собственник имущества")] public virtual Owner Owner => OperationExpence?.Owner;
-		[Display(Name = "Количество")] public virtual decimal WearPercent => OperationExpence?.WearPercent ?? 0;
+		[Display(Name = "Номенклатура")] public virtual Nomenclature Nomenclature => OperationExpense?.Nomenclature;
+		[Display(Name = "Количество")] public virtual int Amount => OperationExpense?.Amount ?? 0;
+		[Display(Name = "Размер одежды")] public virtual Size Size => OperationExpense?.WearSize;
+		[Display(Name = "Рост одежды")] public virtual Size Height  => OperationExpense?.Height;
+		[Display(Name = "Собственник имущества")] public virtual Owner Owner => OperationExpense?.Owner;
+		[Display(Name = "Количество")] public virtual decimal WearPercent => OperationExpense?.WearPercent ?? 0;
 		[Display(Name = "Единица измерения")] public virtual MeasurementUnit Unit => Nomenclature?.Type.Units;
 		public virtual string SizeName => Size?.Name ?? String.Empty;
 		public virtual string HeightName  => Height?.Name ?? String.Empty;

@@ -115,12 +115,12 @@ namespace Workwear.ViewModels.Stock {
 					        .Where(o => o.WarehouseOperation.Id == item.OperationReceipt.Id)
 					        .Where(o => barcode == null || o.Barcode.Id == barcode.Id))) {
 					UoW.Delete(operationBarcode);
-					item.OperationExpence.Amount--;
+					item.OperationExpense.Amount--;
 				}
-				if(item.OperationExpence.Amount == 0)
+				if(item.OperationExpense.Amount == 0)
 					UoW.Delete(item);
 			}
-			if(item.OperationExpence.Amount == 0)
+			if(item.OperationExpense.Amount == 0)
 				Entity.RemoveItem(item);
 			OnPropertyChanged(nameof(SensitiveWarehouse));
 			CalculateTotal();
@@ -175,7 +175,7 @@ namespace Workwear.ViewModels.Stock {
 				);
 				
 				var warehouse = UoW.GetById<Warehouse>(widgetVm.balanceNode.WarehouseId);
-				var operationExpance = new WarehouseOperation() {
+				var operationExpanse = new WarehouseOperation() {
 					StockPosition = stockPosition,
 					Amount = widgetVm.SelectedAmount,
 					ExpenseWarehouse = warehouse,
@@ -218,7 +218,7 @@ namespace Workwear.ViewModels.Stock {
 					barcodeOperations.Add(barcodeOperation);
 					UoW.Save(barcodeOperation, false);
 				}
-				Entity.AddItem(operationExpance, operationReceipt, barcodes);
+				Entity.AddItem(operationExpanse, operationReceipt, barcodes);
 				Save();
 				OnPropertyChanged(nameof(SensitiveWarehouse));
 				
@@ -268,7 +268,7 @@ namespace Workwear.ViewModels.Stock {
 			
 			UoW.Save(Entity);
 			foreach(var item in Entity.Items) {
-				UoW.Save(item.OperationExpence);
+				UoW.Save(item.OperationExpense);
 				UoW.Save(item.OperationReceipt);
 				UoW.Save(item);
 			}

@@ -422,7 +422,7 @@ namespace Workwear
 				.AddDeleteDependence<BarcodingItem>(x => x.Document);
 
 			DeleteConfig.AddHibernateDeleteInfo<BarcodingItem>()
-				.AddDeleteCascadeDependence(x => x.OperationExpence)
+				.AddDeleteCascadeDependence(x => x.OperationExpense)
 				.AddDeleteCascadeDependence(x => x.OperationReceipt);
 			
 			#endregion

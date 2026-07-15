@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `stock_barcoding_items`
 (
 	`id`                 		INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`stock_barcoding_id` 		INT UNSIGNED NOT NULL,
-	`operation_expence_id`      int unsigned not null,
+	`operation_expense_id`      int unsigned not null,
 	`operation_receipt_id`      int unsigned not null,
 	PRIMARY KEY (`id`),
 	CONSTRAINT `stock_barcoding_items_fk_doc`
@@ -142,8 +142,8 @@ CREATE TABLE IF NOT EXISTS `stock_barcoding_items`
 	REFERENCES `stock_barcoding` (`id`)
 	ON DELETE CASCADE
 	ON UPDATE CASCADE,
-	CONSTRAINT `stock_barcoding_items_fk_op_expence`
-	FOREIGN KEY (`operation_expence_id`)
+	CONSTRAINT `stock_barcoding_items_fk_op_expense`
+	FOREIGN KEY (`operation_expense_id`)
 	REFERENCES `operation_warehouse` (`id`)
 	ON DELETE CASCADE
 	ON UPDATE CASCADE,

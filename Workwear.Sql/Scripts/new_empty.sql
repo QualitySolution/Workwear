@@ -2270,7 +2270,7 @@ CREATE TABLE IF NOT EXISTS `stock_barcoding_items`
 (
 	`id`                 		INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`stock_barcoding_id` 		INT UNSIGNED NOT NULL,
-	`operation_expence_id`      int unsigned not null,
+	`operation_expense_id`      int unsigned not null,
 	`operation_receipt_id`      int unsigned not null,
 	PRIMARY KEY (`id`),
 	CONSTRAINT `stock_barcoding_items_fk_doc`
@@ -2278,8 +2278,8 @@ CREATE TABLE IF NOT EXISTS `stock_barcoding_items`
 			REFERENCES `stock_barcoding` (`id`)
 			ON DELETE CASCADE
 			ON UPDATE CASCADE,
-	CONSTRAINT `stock_barcoding_items_fk_op_expence`
-		FOREIGN KEY (`operation_expence_id`)
+	CONSTRAINT `stock_barcoding_items_fk_op_expense`
+		FOREIGN KEY (`operation_expense_id`)
 			REFERENCES `operation_warehouse` (`id`)
 			ON DELETE CASCADE
 			ON UPDATE CASCADE,
@@ -2769,7 +2769,7 @@ create table visits_documents
 	writeof_id int unsigned null,
 	return_id  int unsigned null,
 	constraint visits_documents_stock_expense_id_fk
-		foreign key (expence_id) references stock_expense (id)
+		foreign key (expense_id) references stock_expense (id)
 			on update cascade on delete cascade,
 	constraint visits_documents_stock_return_id_fk
 		foreign key (return_id) references stock_return (id)

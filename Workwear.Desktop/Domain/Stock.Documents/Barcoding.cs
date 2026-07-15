@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
@@ -61,16 +61,15 @@ namespace Workwear.Domain.Stock.Documents {
 		
 		#endregion
 		
-		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) { 
+		public virtual BarcodingItem AddItem(WarehouseOperation operationExpense, WarehouseOperation operationReceipt, IList<Barcode> barcodes) {
 			if(false) //затычка
 				yield return new ValidationResult ("");
         
 		}
 
-		public virtual BarcodingItem AddItem(WarehouseOperation operationExpance, WarehouseOperation operationReceipt, IList<Barcode> barcodes) {
 			var item = (new BarcodingItem() {
 				Document = this,
-				OperationExpence = operationExpance,
+				OperationExpense = operationExpense,
 				OperationReceipt = operationReceipt,
 				Barcodes = barcodes
 			});
