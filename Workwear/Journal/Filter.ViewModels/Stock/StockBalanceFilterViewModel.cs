@@ -105,13 +105,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 		public readonly FeaturesService FeaturesService;
 
 		#region Visible and Sensetive
-		public virtual bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
-////1289		
-		public virtual bool SensetiveWarehouse { get; set; } = true;
-		public virtual bool VisibleOwners => FeaturesService.Available(WorkwearFeature.Owners) && owners.Any();
-		public virtual bool VisibleBarcodes => FeaturesService.Available(WorkwearFeature.Barcodes) && NomenclaturesWithBarcodes.Any();
+		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
+		public bool SensetiveWarehouse { get; set; } = true;
+		public bool VisibleOwners => FeaturesService.Available(WorkwearFeature.Owners) && owners.Any();
+		public bool VisibleBarcodes => FeaturesService.Available(WorkwearFeature.Barcodes) && NomenclaturesWithBarcodes.Any();
 		private bool canChooseAmount = false;
-		public virtual bool CanChooseAmount {
+		public bool CanChooseAmount {
 			get => canChooseAmount;
 			set => SetField(ref canChooseAmount, value);
 		}
