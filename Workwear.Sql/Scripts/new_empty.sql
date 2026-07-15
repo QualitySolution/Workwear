@@ -2116,7 +2116,6 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `warehouse_operation_id` INT UNSIGNED NULL,
   `kit_number` INT UNSIGNED NULL DEFAULT NULL,
   `over_norm_operation_id` int unsigned null,
-  `warehouse_id` INT UNSIGNED NULL,
 	PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
@@ -2143,11 +2142,6 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
 	REFERENCES `operation_issued_by_duty_norm` (`id`)
 	ON DELETE NO ACTION
     ON UPDATE CASCADE,
-  CONSTRAINT `FK_operation_barcodes_warehouse`
-	FOREIGN KEY (`warehouse_id`) 
-	REFERENCES `warehouse` (`id`)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE,
   constraint `FK_op_barcodes_op_over_norm_operation`
 	  foreign key (`over_norm_operation_id`) references `operation_over_norm` (`id`)
 		  on update cascade 

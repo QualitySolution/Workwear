@@ -57,11 +57,7 @@ alter table operation_barcodes
 	add column `over_norm_operation_id` int unsigned null,
 	add constraint `FK_op_barcodes_op_over_norm_operation`
 		foreign key (`over_norm_operation_id`) references `operation_over_norm` (`id`)
-			on update cascade on delete cascade,
-	ADD COLUMN `warehouse_id` INT UNSIGNED NULL,
-	ADD CONSTRAINT `FK_operation_barcodes_warehouse`
-	FOREIGN KEY (`warehouse_id`) REFERENCES `warehouse` (`id`)
-               ON DELETE CASCADE ON UPDATE CASCADE;
+			on update cascade on delete cascade;
 
 ALTER TABLE `barcodes`
 	ADD COLUMN `label` varchar(50) null default null;
