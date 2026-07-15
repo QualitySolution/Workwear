@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
@@ -13,12 +13,10 @@ namespace Workwear.Domain.Stock.Documents {
 		PrepositionalPlural = "документах маркировки"
 	)]
 	
-	public class Barcoding : StockDocument, IValidatableObject {
+	public class Barcoding : StockDocument {
 		
 		#region Свойства
-		public virtual string Title{
-			get{ return String.Format ("Документ маркировки №{0} от {1:d}", DocNumberText, Date);}
-		}
+		public virtual string Title => $"Документ маркировки №{DocNumberText} от {Date:d}";
 
 		private Warehouse warehouse;
 		[Display(Name = "Склад")]
@@ -31,7 +29,7 @@ namespace Workwear.Domain.Stock.Documents {
 		private IObservableList<BarcodingItem> items = new ObservableList<BarcodingItem>();
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<BarcodingItem> Items {
-			get { return items; }
+			get => items;
 			set { SetField (ref items, value, () => Items); }
 		}
 		
@@ -41,32 +39,9 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual void RemoveItem(BarcodingItem item) {
 			Items.Remove (item);
 		}
-		public virtual void AddItem(StockPosition stockPosition, Warehouse warehouse, int amount) {
-			var item = (new BarcodingItem() {
-				Document = this,
-				OperationExpence = new WarehouseOperation() {
-					OperationTime = Date,
-					ExpenseWarehouse = warehouse,
-					Amount = amount,
-					StockPosition = stockPosition },
-				OperationReceipt = new WarehouseOperation() {
-					OperationTime = Date,
-					ReceiptWarehouse = warehouse,
-					Amount = amount,
-					StockPosition = stockPosition },
-			});
-			Items.Add(item);
-			UoW.Save(item);
-		}
-		
 		#endregion
-		
-		public virtual BarcodingItem AddItem(WarehouseOperation operationExpense, WarehouseOperation operationReceipt, IList<Barcode> barcodes) {
-			if(false) //затычка
-				yield return new ValidationResult ("");
-        
-		}
 
+		public virtual BarcodingItem AddItem(WarehouseOperation operationExpense, WarehouseOperation operationReceipt, IList<Barcode> barcodes) {
 			var item = (new BarcodingItem() {
 				Document = this,
 				OperationExpense = operationExpense,
