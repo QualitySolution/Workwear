@@ -2135,7 +2135,6 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   CONSTRAINT `fk_operation_barcodes_duty_norm_issue_operation_id`
 	FOREIGN KEY (`duty_norm_issue_operation_id`)
 	REFERENCES `operation_issued_by_duty_norm` (`id`)
-	ON UPDATE CASCADE
 	ON DELETE NO ACTION
     ON UPDATE CASCADE,
   CONSTRAINT `FK_operation_barcodes_warehouse`
@@ -2769,7 +2768,7 @@ create table visits_documents
 	writeof_id int unsigned null,
 	return_id  int unsigned null,
 	constraint visits_documents_stock_expense_id_fk
-		foreign key (expense_id) references stock_expense (id)
+		foreign key (expence_id) references stock_expense (id)
 			on update cascade on delete cascade,
 	constraint visits_documents_stock_return_id_fk
 		foreign key (return_id) references stock_return (id)
@@ -3627,5 +3626,3 @@ INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (140, 103);
 INSERT INTO `size_suitable` (`size_id`, `size_suitable_id`) VALUES (140, 104);
 
 COMMIT;
-
-
