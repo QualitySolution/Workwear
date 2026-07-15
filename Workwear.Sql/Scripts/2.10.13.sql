@@ -50,7 +50,8 @@ create table `operation_over_norm`
 	                                                                                                                       on update cascade
 	                                                                                                                       on delete RESTRICT
 	)
-	ENGINE = InnoDB;
+	ENGINE = InnoDB
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 alter table operation_barcodes
 	add column `over_norm_operation_id` int unsigned null,
@@ -82,7 +83,8 @@ create table `stock_over_norms`
 	foreign key (`warehouse_id`) references `warehouse` (`id`)
 	                                                                                            on update cascade on delete no action
 	)
-	ENGINE = InnoDB;
+	ENGINE = InnoDB
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 create table `stock_over_norm_items`
 (
@@ -96,7 +98,8 @@ create table `stock_over_norm_items`
 	foreign key (`over_norm_operation_id`) references `operation_over_norm` (`id`)
 	on update cascade on delete cascade
 	)
-	ENGINE = InnoDB;
+	ENGINE = InnoDB
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Документ маркировки
 
@@ -125,7 +128,8 @@ CREATE TABLE `stock_barcoding`
 	ON DELETE NO ACTION
 	ON UPDATE cascade
 	)
-	ENGINE = InnoDB;
+	ENGINE = InnoDB
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -154,4 +158,5 @@ CREATE TABLE `stock_barcoding_items`
 	ON DELETE CASCADE
 	ON UPDATE CASCADE
 	)
-	ENGINE = InnoDB;
+	ENGINE = InnoDB
+	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

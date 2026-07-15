@@ -1153,6 +1153,7 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   INDEX `fk_stock_expense_employee_idx` (`employee_id` ASC),
   INDEX `fk_stock_expense_user_idx` (`user_id` ASC),
   INDEX `fk_stock_expense_1_idx` (`warehouse_id` ASC),
+  INDEX `fk_stock_expense_cause_issue_idx` (`cause_issue_id` ASC),
   INDEX `index_stock_expense_date` (`date` ASC),
   CONSTRAINT `fk_stock_expense_1`
     FOREIGN KEY (`warehouse_id`)
@@ -1167,6 +1168,11 @@ CREATE TABLE IF NOT EXISTS `stock_expense` (
   CONSTRAINT `fk_stock_expense_user`
     FOREIGN KEY (`user_id`)
     REFERENCES `users` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_stock_expense_cause_issue`
+    FOREIGN KEY (`cause_issue_id`)
+    REFERENCES `causes_issue` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE)
 ENGINE = InnoDB
@@ -2073,8 +2079,8 @@ CREATE TABLE IF NOT EXISTS `barcodes` (
   `nomenclature_id` INT UNSIGNED NOT NULL,
   `size_id` INT UNSIGNED NULL DEFAULT NULL,
   `height_id` INT UNSIGNED NULL DEFAULT NULL,
-  `label` varchar(50) null default null,	
   `comment` text null,
+  `label` varchar(50) null default null,
   PRIMARY KEY (`id`),
   INDEX `last_update` (`last_update` ASC),
   UNIQUE INDEX `value_UNIQUE` (type, title),
@@ -2109,8 +2115,8 @@ CREATE TABLE IF NOT EXISTS `operation_barcodes` (
   `duty_norm_issue_operation_id` INT UNSIGNED NULL DEFAULT NULL,
   `warehouse_operation_id` INT UNSIGNED NULL,
   `kit_number` INT UNSIGNED NULL DEFAULT NULL,
-  `warehouse_id` INT UNSIGNED NULL,
   `over_norm_operation_id` int unsigned null,
+  `warehouse_id` INT UNSIGNED NULL,
 	PRIMARY KEY (`id`),
   INDEX `fk_operation_barcodes_1_idx` (`barcode_id` ASC),
   INDEX `fk_operation_barcodes_2_idx` (`employee_issue_operation_id` ASC),
@@ -2194,7 +2200,8 @@ create table if not exists `operation_over_norm`
 			on update cascade
 			on delete RESTRICT
 )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_over_norms`
@@ -2216,7 +2223,8 @@ create table if not exists `stock_over_norms`
 		foreign key (`warehouse_id`) references `warehouse` (`id`)
 			on update cascade on delete no action
 )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_over_norm_items`
@@ -2233,7 +2241,8 @@ create table if not exists `stock_over_norm_items`
 		foreign key (`over_norm_operation_id`) references `operation_over_norm` (`id`)
 			on update cascade on delete cascade
 )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_barcoding`
@@ -2260,7 +2269,8 @@ CREATE TABLE IF NOT EXISTS `stock_barcoding`
 			ON DELETE NO ACTION
 			ON UPDATE cascade
 )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- -----------------------------------------------------
 -- Table `stock_barcoding_items`
@@ -2288,7 +2298,8 @@ CREATE TABLE IF NOT EXISTS `stock_barcoding_items`
 			ON DELETE CASCADE
 			ON UPDATE CASCADE
 )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 -- -----------------------------------------------------
 -- Table `stock_inspection`
 -- -----------------------------------------------------
