@@ -32,10 +32,6 @@ namespace Workwear.HibernateMapping.Stock
 				.Cascade.AllDeleteOrphan()
 				.LazyLoad();
 			
-			HasManyToMany<Barcode>(x => x.Barcodes)
-				.Table("operation_barcodes")
-				.ParentKeyColumn("over_norm_operation_id")
-				.ChildKeyColumn("barcode_id");
 		}
 	}
 }

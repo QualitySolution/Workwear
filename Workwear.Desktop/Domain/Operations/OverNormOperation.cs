@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
@@ -118,13 +118,6 @@ namespace Workwear.Domain.Operations {
 			set => SetField(ref barcodeOperations, value);
 		}
 		
-		private IList<Barcode> barcodes = new List<Barcode>();
-		[Display(Name = "Штрихкоды")]
-		public virtual IList<Barcode> Barcodes 
-		{
-			get => barcodes;
-			set => SetField(ref barcodes, value);
-		}
 		#endregion
 
 		#region Not Mapped Propertis

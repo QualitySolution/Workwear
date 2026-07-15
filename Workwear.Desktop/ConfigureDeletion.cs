@@ -292,7 +292,6 @@ namespace Workwear
 				.AddDeleteDependence<PostomatDocumentItem>(x => x.Barcode)
 				.AddDeleteDependence<PostomatDocumentWithdrawItem>(x => x.Barcode)
 				.AddDeleteDependence<ServiceClaim>(x => x.Barcode)
-				.AddRemoveFromDependence<OverNormOperation>(x => x.Barcodes)
 				;
 			
 			DeleteConfig.AddHibernateDeleteInfo<ItemsType>()

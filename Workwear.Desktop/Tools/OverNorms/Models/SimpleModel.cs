@@ -71,7 +71,6 @@ namespace Workwear.Tools.OverNorms.Models
 				WearSize = param.Size,
 				Height = param.Height,
 				WearPercent = param.WearPercent,
-				Barcodes = param.Barcodes,
 			};
 			
 			foreach(var barcode in param.Barcodes) 
@@ -87,7 +86,7 @@ namespace Workwear.Tools.OverNorms.Models
 
 			item.OverNormOperation.LastUpdate = DateTime.Now;
 			item.OverNormOperation.Employee = param.Employee;
-			item.OverNormOperation.Barcodes = param.Barcodes;
+			UpdateBarcodeOperations(item.OverNormOperation, param.Barcodes);
 			item.OverNormOperation.BarcodeOperations = param.Barcodes.SelectMany(b => b.BarcodeOperations) as IList<BarcodeOperation>;
 			
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
