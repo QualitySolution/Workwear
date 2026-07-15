@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -4135,7 +4135,7 @@
                   <widget class="Gtk.Label" id="label7">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Ответствеый за передачу СИЗ:</property>
+                    <property name="LabelProp" translatable="yes">Ответственный за передачу СИЗ:</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -4691,7 +4691,7 @@
                   <widget class="Gamma.GtkWidgets.yLabel" id="ylabelDirector">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Постанавляющее лицо:</property>
+                    <property name="LabelProp" translatable="yes">Постановляющее лицо:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">1</property>
@@ -5809,7 +5809,7 @@
       </action>
       <action id="ActionStockOperations">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Справка по складским операцииям</property>
+        <property name="Label" translatable="yes">Справка по складским операциям</property>
         <property name="ShortLabel" translatable="yes">Складские операции</property>
         <signal name="Activated" handler="OnActionWarehouseTransferReportActivated" />
       </action>
@@ -11383,7 +11383,7 @@
               <widget class="Gtk.Label" id="label7">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Ответствеый за передачу СИЗ:</property>
+                <property name="LabelProp" translatable="yes">Ответственный за передачу СИЗ:</property>
                 <property name="UseMarkup">True</property>
               </widget>
               <packing>
@@ -18913,7 +18913,7 @@
           <widget class="Gamma.GtkWidgets.yLabel" id="labelOwner">
             <property name="MemberName" />
             <property name="Xalign">1</property>
-            <property name="LabelProp" translatable="yes">Собственик:</property>
+            <property name="LabelProp" translatable="yes">Собственник:</property>
           </widget>
           <packing>
             <property name="TopAttach">3</property>
@@ -21587,7 +21587,7 @@
           <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckSortByParent">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Отобразить структуру поздразделений</property>
+            <property name="Label" translatable="yes">Отобразить структуру подразделений</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
@@ -25816,7 +25816,7 @@
                   <widget class="Gamma.GtkWidgets.yLabel" id="ylabelDirector">
                     <property name="MemberName" />
                     <property name="Xalign">1</property>
-                    <property name="LabelProp" translatable="yes">Постанавляющее лицо:</property>
+                    <property name="LabelProp" translatable="yes">Постановляющее лицо:</property>
                   </widget>
                   <packing>
                     <property name="TopAttach">1</property>
@@ -27755,7 +27755,7 @@
                 <property name="MemberName" />
                 <property name="Xpad">20</property>
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Отписание дефекта:</property>
+                <property name="LabelProp" translatable="yes">Описание дефекта:</property>
               </widget>
               <packing>
                 <property name="Position">1</property>
