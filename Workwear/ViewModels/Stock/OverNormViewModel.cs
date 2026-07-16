@@ -41,6 +41,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly FeaturesService featuresService;
 		private readonly IInteractiveService interactive;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+		private Warehouse lastWarehouse;
 		
 		public EntityEntryViewModel<Warehouse> EntryWarehouseViewModel { get; }
 
@@ -88,8 +89,6 @@ namespace Workwear.ViewModels.Stock
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 			EntryWarehouseViewModel.IsEditable = CanEdit;
-			EntryWarehouseViewModel.Changed += (sender, args) => 
-				OnPropertyChanged(nameof(CanAddItems));
 			
 			if (Entity.Id < 1) {
 				Entity.Type = AvailableOverNormTypes.FirstOrDefault();
@@ -106,7 +105,9 @@ namespace Workwear.ViewModels.Stock
 			if(Entity.Warehouse == null)
 				Entity.Warehouse =
 					stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			lastWarehouse = Entity.Warehouse;
 			
+			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.Items.ContentChanged += CalculateTotal;
 			CalculateTotal(null, null);
 		}
@@ -168,6 +169,26 @@ namespace Workwear.ViewModels.Stock
 		{
 			Total = $"Позиций в документе: {Entity.Items.Count}  " +
 			        $"Количество единиц: {Entity.Items.Sum(x => x.OverNormOperation.WarehouseOperation?.Amount)}";
+		}
+
+		private void Entity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName != nameof(Entity.Warehouse) || Entity.Warehouse == lastWarehouse)
+				return;
+
+			if(Entity.Items.Any()) {
+				if(interactive.Question("При изменении склада строки документа будут очищены. Продолжить?")) {
+					Entity.Items.Clear();
+				}
+				else {
+					Entity.Warehouse = lastWarehouse;
+					return;
+				}
+			}
+
+			lastWarehouse = Entity.Warehouse;
+			OnPropertyChanged(nameof(CanAddItems));
+			CalculateTotal(null, null);
 		}
 		
 		#region Commands
