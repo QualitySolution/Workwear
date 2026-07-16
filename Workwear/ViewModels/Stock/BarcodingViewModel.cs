@@ -182,7 +182,7 @@ namespace Workwear.ViewModels.Stock {
 					throw new ArgumentNullException(nameof(StockReleaseBarcodesViewModel));
 				
 				var stockPosition = new StockPosition(
-					UoW.GetById<Nomenclature>(widgetVm.balanceNode.NomeclatureId),
+					UoW.GetById<Nomenclature>(widgetVm.balanceNode.NomenclatureId),
 					widgetVm.balanceNode.WearPercent,
 					widgetVm.balanceNode.SizeId != null ? UoW.GetById<Size>((int)widgetVm.balanceNode.SizeId) : null,
 					widgetVm.balanceNode.HeightId != null ? UoW.GetById<Size>((int)widgetVm.balanceNode.HeightId) : null,

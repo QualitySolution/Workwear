@@ -41,7 +41,7 @@ namespace Workwear.ViewModels.Sizes {
 			this.model = model ?? throw new ArgumentNullException(nameof(model));
 
 			uow = uowFactory.CreateWithoutRoot();
-			nomenclature  = uow.GetById<Nomenclature>(node.NomeclatureId);
+			nomenclature  = uow.GetById<Nomenclature>(node.NomenclatureId);
 			currentSize   = node.SizeId.HasValue   ? uow.GetById<Size>(node.SizeId.Value)   : null;
 			currentHeight = node.HeightId.HasValue ? uow.GetById<Size>(node.HeightId.Value) : null;
 

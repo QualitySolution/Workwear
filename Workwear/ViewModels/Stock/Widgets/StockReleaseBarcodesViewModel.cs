@@ -4,7 +4,6 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.ViewModels.Dialog;
-using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Tools.Barcodes;
@@ -53,14 +52,14 @@ namespace Workwear.ViewModels.Stock.Widgets
 		public string Description { get; }
 		
 		private int selectedAmount;
-		[PropertyChangedAlso(nameof(ConfirmButtonSensetive))]
+		[PropertyChangedAlso(nameof(ConfirmButtonSensitive))]
 		public int SelectedAmount {
 			get => selectedAmount;
 			set => SetField(ref selectedAmount, value);
 		}
 
 		private string label = string.Empty;
-		[PropertyChangedAlso(nameof(ConfirmButtonSensetive))]
+		[PropertyChangedAlso(nameof(ConfirmButtonSensitive))]
 		public string Label {
 			get => label;
 			set => SetField(ref label, value);
@@ -76,7 +75,7 @@ namespace Workwear.ViewModels.Stock.Widgets
 		#endregion
 
 		#region Sensetive
-		public bool ConfirmButtonSensetive => SelectedAmount > 0 && SelectedAmount <= WithoutBarcodesAmount;
+		public bool ConfirmButtonSensitive => SelectedAmount > 0 && SelectedAmount <= WithoutBarcodesAmount;
 		#endregion
 		
 		#region Commands

@@ -131,7 +131,7 @@ SELECT
 		 FROM barcodes b
 		 JOIN operation_barcodes ob ON ob.barcode_id = b.id
 		 JOIN operation_warehouse opwh ON ob.warehouse_operation_id = opwh.id
-		 WHERE b.nomenclature_id = stock.NomeclatureId
+		 WHERE b.nomenclature_id = stock.NomenclatureId
 		   AND opwh.size_id <=> stock.SizeId
 		   AND opwh.height_id <=> stock.HeightId
 		   AND opwh.owner_id <=> stock.OwnerId
@@ -148,7 +148,7 @@ SELECT
 		) AS BarcodeCount";
 				
 	sql += @"
-    FROM (SELECT nomenclature.id        AS NomeclatureId,
+    FROM (SELECT nomenclature.id        AS NomenclatureId,
                  nomenclature.name      AS NomenclatureName,
                  nomenclature.number    AS NomenclatureNumber,
                  nomenclature.sex       AS Sex,
@@ -268,7 +268,7 @@ SELECT
 
 	public class StockBalanceJournalNode
 	{
-		public int NomeclatureId { get; set; }
+		public int NomenclatureId { get; set; }
 		public string NomenclatureName { get; set; }
 		public string NomenclatureNumber { get; set; }
 		public ClothesSex Sex { get; set; }
@@ -309,7 +309,7 @@ SELECT
 		public string WearPercentText => WearPercent.ToString("P0");
 
 		public StockPosition GetStockPosition(IUnitOfWork uow) => new StockPosition(
-			uow.GetById<Nomenclature>(NomeclatureId), 
+			uow.GetById<Nomenclature>(NomenclatureId), 
 			WearPercent, 
 			SizeId.HasValue ? uow.GetById<Size>(SizeId.Value) : null, 
 			HeightId.HasValue ? uow.GetById<Size>(HeightId.Value) : null,

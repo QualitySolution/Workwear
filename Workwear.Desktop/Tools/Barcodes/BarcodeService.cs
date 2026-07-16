@@ -25,9 +25,9 @@ namespace Workwear.Tools.Barcodes
 		}
 
 		/// <summary>
-		/// Стартовый код для серийных номеров. Коды начинающиеся с 2 зарезервированы под внутреннее использование на предприятии по стандарту EAN-13
+		/// Стартовый код для серийных номеров. Коды, начинающиеся с 2, зарезервированы под внутреннее использование на предприятии по стандарту EAN-13.
 		/// Мы в первые 3 цифры после 2-ки зашиваем код клиента, вернее последние 3 цифры кода клиента, для того чтобы штрих коды из разных баз отличались.
-		/// Это параметр можно поменять в настройка базы BarcodePrefix
+		/// Это параметр можно поменять в настройке базы BarcodePrefix
 		/// </summary>
 		public int BaseCode { get; } //2001-2999
 
@@ -115,7 +115,7 @@ namespace Workwear.Tools.Barcodes
 				newBarCode.Height = height;
 				newBarCode.Title = "generated" + random.Next(); //т.к. в базе not null, а далее уже нужен id
 				unitOfWork.Save(newBarCode);
-				//Перезаписываем Title так как он формируется на основании полученного Id
+				//Перезаписываем Title, так как он формируется на основании полученного Id
 				newBarCode.Title = $"{BaseCode}{newBarCode.Id:D8}{CheckSum($"{BaseCode}{newBarCode.Id:D8}")}";
 				unitOfWork.Save(newBarCode);
 				barCodeList.Add(newBarCode);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
 using Gtk;
 using QS.Navigation;
@@ -37,11 +37,11 @@ namespace Workwear.Views.Stock.Widgets
 			ybuttonCancel.Clicked += OnButtonCancelClicked;
 			createBarcodesButton.Clicked += OnCreateBarcodesButtonClicked;
 			createBarcodesButton.Binding
-				.AddBinding(ViewModel, vm => vm.ConfirmButtonSensetive, w => w.Sensitive)
+				.AddBinding(ViewModel, vm => vm.ConfirmButtonSensitive, w => w.Sensitive)
 				.InitializeFromSource();
 			createAndPrintBarcodesButton.Clicked += OnCreateAndPrintBarcodesButtonClicked;
 			createAndPrintBarcodesButton.Binding
-				.AddBinding(ViewModel, vm => vm.ConfirmButtonSensetive, w => w.Sensitive)
+				.AddBinding(ViewModel, vm => vm.ConfirmButtonSensitive, w => w.Sensitive)
 				.InitializeFromSource();
 				
 			ConfigureAutocomplete();
