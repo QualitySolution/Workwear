@@ -218,8 +218,10 @@ namespace Workwear.ViewModels.Stock
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 						filter => {
 							filter.ShowNegativeBalance = false;
-							filter.ShowWithBarcodes = true;
-							filter.CanChangeShowWithBarcodes = false;
+							filter.ShowWithBarcodes = !OverNormModel.CanUseWithoutBarcodes;
+							filter.CanChangeShowWithBarcodes = OverNormModel.CanChangeUseBarcodes;
+							filter.CanChooseAmount = OverNormModel.CanUseWithoutBarcodes;
+							filter.AddAmount = AddedAmount.One;
 							filter.Warehouse = Entity.Warehouse;
 							filter.SensetiveWarehouse = false;
 						});
@@ -250,6 +252,21 @@ namespace Workwear.ViewModels.Stock
 					);
 				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 				barcodeJournal.ViewModel.OnSelectResult += (s, args) => AddWithBarcode(s, args, item);
+			}
+			else if(OverNormModel.CanUseWithoutBarcodes) {
+				var selectVM = sender as StockBalanceJournalViewModel;
+				var addedAmount = selectVM.Filter.AddAmount;
+				var addedParam = new OverNormParam(
+					item.Employee,
+					stockPosition.Nomenclature,
+					addedAmount == AddedAmount.All ? node.Amount : 1,
+					stockPosition.WearSize,
+					stockPosition.Height,
+					item.OverNormOperation?.SubstitutedIssueOperation,
+					wearPercent: stockPosition.WearPercent,
+					owner: stockPosition.Owner);
+				OverNormModel.UseBarcodes = false;
+				AddOrUpdateItem(item, addedParam).MaxAmount = node.Amount;
 			}
 		}
 
@@ -299,12 +316,9 @@ namespace Workwear.ViewModels.Stock
 			}
 		} 
 		
-		private void AddOrUpdateItem(OverNormItem item, OverNormParam param) {
-			if (item.Id < 1) {
-				Entity.DeleteItem(item);
-				OverNormModel.AddOperation(Entity, param, Entity.Warehouse);
-			} else 
-				OverNormModel.UpdateOperation(item, param);
+		private OverNormItem AddOrUpdateItem(OverNormItem item, OverNormParam param) {
+			OverNormModel.UpdateOperation(item, param);
+			return item;
 		}
 		#endregion
 

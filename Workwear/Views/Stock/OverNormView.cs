@@ -94,7 +94,7 @@ namespace Workwear.Views.Stock
 					.Visible(ViewModel.OverNormModel.RequiresEmployeeIssueOperation)
 					.Resizable()
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.SubstitutedIssueOperation?.Nomenclature?.Name ?? x.OverNormOperation.SubstitutedIssueOperation?.ProtectionTools?.Name)
-				.AddColumn("Выдаваемая номеклатура")
+				.AddColumn("Выдаваемая номенклатура")
 					.Resizable()
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Nomenclature.Name)
 				.AddColumn("Размер").MinWidth(60)
@@ -102,7 +102,12 @@ namespace Workwear.Views.Stock
 				.AddColumn("Рост").MinWidth(70)
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Height?.Name)
 				.AddColumn("Количество").MinWidth(60)
-					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Amount.ToString())
+					.AddNumericRenderer(x => x.Amount)
+					.Editing(new Adjustment(1, 1, int.MaxValue, 1, 10, 0), ViewModel.CanEdit)
+					.AddSetter((c, x) => {
+						c.Editable = ViewModel.CanEdit && x.CanEditAmount;
+						c.Adjustment.Upper = x.MaxAmount;
+					})
 			.AddColumn("Штрихкоды")
 				.Tag(BarcodesColumn)
 				.Visible(ViewModel.OverNormModel.CanUseWithBarcodes)

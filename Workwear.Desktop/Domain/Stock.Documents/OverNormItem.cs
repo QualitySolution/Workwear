@@ -41,6 +41,26 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual EmployeeCard Employee => OverNormOperation.Employee;
 
 		public virtual IEnumerable<Barcode> Barcodes => OverNormOperation.BarcodeOperations?.Select(b => b.Barcode);
+
+		public virtual int Amount {
+			get => OverNormOperation?.WarehouseOperation?.Amount ?? 0;
+			set {
+				if(OverNormOperation?.WarehouseOperation == null)
+					return;
+				var amount = Math.Max(1, Math.Min(value, MaxAmount));
+				if(OverNormOperation.WarehouseOperation.Amount == amount)
+					return;
+				OverNormOperation.WarehouseOperation.Amount = amount;
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(Title));
+			}
+		}
+
+		public virtual int MaxAmount { get; set; } = int.MaxValue;
+
+		public virtual bool CanEditAmount =>
+			OverNormOperation?.WarehouseOperation != null
+			&& OverNormOperation.BarcodeOperations?.Any() != true;
 			
 		public virtual string Title => $"Строка выдачи вне нормы ({OverNormOperation.Type.GetAttribute<DisplayAttribute>().Name}) {OverNormOperation.WarehouseOperation.Nomenclature.Name} в количестве {OverNormOperation.WarehouseOperation.Amount}";
 		#endregion

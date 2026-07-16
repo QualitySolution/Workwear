@@ -49,7 +49,6 @@ namespace Workwear.Tools.OverNorms.Models
 		}
 
 		public override void WriteOffOperation(OverNormOperation operation, Warehouse receiptWarehouse, UserBase createdByUser = null, string docNumber = null, string comment = null) {
-////1289			
 			throw new InvalidOperationException("Разовые операции не списываются");
 		}
 
@@ -87,7 +86,14 @@ namespace Workwear.Tools.OverNorms.Models
 			if (UseBarcodes && param.Amount != param.Barcodes.Count) throw new InvalidOperationException("При использовании штрихкодов заполните их");
 
 			item.OverNormOperation.LastUpdate = DateTime.Now;
+			item.OverNormOperation.Type = OverNormType.Simple;
 			item.OverNormOperation.Employee = param.Employee;
+			item.OverNormOperation.Nomenclature = param.Nomenclature;
+			item.OverNormOperation.WearSize = param.Size;
+			item.OverNormOperation.Height = param.Height;
+			item.OverNormOperation.WearPercent = param.WearPercent;
+			if(item.OverNormOperation.WarehouseOperation == null)
+				item.OverNormOperation.WarehouseOperation = new WarehouseOperation { ExpenseWarehouse = item.Document.Warehouse };
 			UpdateBarcodeOperations(item.OverNormOperation, param.Barcodes);
 			
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;

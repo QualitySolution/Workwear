@@ -43,13 +43,24 @@ namespace Workwear.Tools.OverNorms
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="ArgumentOutOfRangeException">Количество выдаваемой номенклатуры не соответствует количеству переданных штрихкодов, если коллекция не пустая</exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		public OverNormParam(EmployeeCard employee, Nomenclature nomenclature, int amount, Size size = null, Size height = null, EmployeeIssueOperation employeeIssueOperation = null, IList<Barcode> barcodes = null) 
+		public OverNormParam(
+			EmployeeCard employee,
+			Nomenclature nomenclature,
+			int amount,
+			Size size = null,
+			Size height = null,
+			EmployeeIssueOperation employeeIssueOperation = null,
+			IList<Barcode> barcodes = null,
+			decimal wearPercent = 0,
+			Owner owner = null)
 		{
 			Employee = employee ?? throw new ArgumentNullException(nameof(employee));;
 			Nomenclature = nomenclature ?? throw new ArgumentNullException(nameof(nomenclature));
 			this.amount = amount;
 			Size = size;
 			Height = height;
+			WearPercent = wearPercent;
+			Owner = owner;
 			EmployeeIssueOperation = employeeIssueOperation;
 			Barcodes = barcodes ?? new List<Barcode>();
 			

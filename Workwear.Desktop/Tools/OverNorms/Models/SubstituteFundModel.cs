@@ -86,9 +86,16 @@ namespace Workwear.Tools.OverNorms.Models
 			if (UseBarcodes && param.Amount != param.Barcodes.Count) throw new InvalidOperationException("При использовании штрихкодов заполните их");
 
 			item.OverNormOperation.LastUpdate = DateTime.Now;
+			item.OverNormOperation.Type = OverNormType.Substitute;
 			item.OverNormOperation.Employee = param.Employee;
 			item.OverNormOperation.SubstitutedIssueOperation = param.EmployeeIssueOperation ?? item.OverNormOperation.SubstitutedIssueOperation;
+			item.OverNormOperation.Nomenclature = param.Nomenclature;
+			item.OverNormOperation.WearSize = param.Size;
+			item.OverNormOperation.Height = param.Height;
+			item.OverNormOperation.WearPercent = param.WearPercent;
 
+			if(item.OverNormOperation.WarehouseOperation == null)
+				item.OverNormOperation.WarehouseOperation = new WarehouseOperation { ExpenseWarehouse = item.Document.Warehouse };
 			item.OverNormOperation.WarehouseOperation.OperationTime = DateTime.Now;
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
 			item.OverNormOperation.WarehouseOperation.StockPosition = param.StockPosition;
@@ -100,6 +107,7 @@ namespace Workwear.Tools.OverNorms.Models
 		{
 			WarehouseOperation newWarehouseOp = new WarehouseOperation {
 				StockPosition = param.StockPosition,
+				Amount = param.Amount,
 				ExpenseWarehouse = expenseWarehouse
 			};
 
