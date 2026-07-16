@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -38,6 +39,7 @@ namespace Workwear.ViewModels.Stock
 	{
 		private readonly IOverNormFactory overNormFactory;
 		private readonly FeaturesService featuresService;
+		private readonly IInteractiveService interactive;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		
 		public EntityEntryViewModel<Warehouse> EntryWarehouseViewModel { get; }
@@ -58,6 +60,7 @@ namespace Workwear.ViewModels.Stock
 			IOverNormFactory overNormFactory,
 			StockRepository stockRepository,
 			FeaturesService featuresService,
+			BaseParameters baseParameters,
 			ICurrentPermissionService permissionService,
 			IInteractiveService interactive,
 			IValidator validator = null,
@@ -69,8 +72,12 @@ namespace Workwear.ViewModels.Stock
 			if (autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
 			this.overNormFactory = overNormFactory ?? throw new ArgumentNullException(nameof(overNormFactory));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			if(baseParameters == null) throw new ArgumentNullException(nameof(baseParameters));
 			
 			SetDocumentDateProperty(e => e.Date);
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
 			
 			var builder = new CommonEEVMBuilderFactory<OverNorm>(this, Entity, UoW, NavigationManager, autofacScope);
 			EntryWarehouseViewModel = builder.ForProperty(x => x.Warehouse)
@@ -280,7 +287,29 @@ namespace Workwear.ViewModels.Stock
 				.List()
 				.Distinct()
 				.ToList();
-			var addedItems = barcodes.GroupBy(b => new { b.Nomenclature, b.Size, b.Height }).ToList();
+			var documentBarcodeIds = new HashSet<int>(Entity.Items
+				.Where(x => x != item)
+				.SelectMany(x => x.OverNormOperation?.BarcodeOperations ?? Enumerable.Empty<BarcodeOperation>())
+				.Where(x => x.Barcode != null)
+				.Select(x => x.Barcode.Id));
+			var skippedBarcodes = barcodes
+				.Where(x => documentBarcodeIds.Contains(x.Id))
+				.ToList();
+
+			if(skippedBarcodes.Any()) {
+				interactive.ShowMessage(
+					ImportanceLevel.Warning,
+					"Следующие штрихкоды не были добавлены в документ, потому что они уже есть в других строках:\n"
+					+ string.Join("\n", skippedBarcodes.Select(x => x.Title)));
+			}
+
+			var addedItems = barcodes
+				.Where(x => !documentBarcodeIds.Contains(x.Id))
+				.GroupBy(b => new { b.Nomenclature, b.Size, b.Height })
+				.ToList();
+			if(!addedItems.Any())
+				return;
+
 			if(addedItems.Count == 1) {
 				var addedItem = addedItems.First();
 				var addedParam = new OverNormParam(
@@ -297,7 +326,7 @@ namespace Workwear.ViewModels.Stock
 			else
 				throw new NotImplementedException("Выбраны несколько разных складских позиций. Нужно добавлять строки, пока это реализовано.");
 		}
-		
+
 		public void DeleteItem(OverNormItem item) {
 			Entity.DeleteItem(item);
 		}
