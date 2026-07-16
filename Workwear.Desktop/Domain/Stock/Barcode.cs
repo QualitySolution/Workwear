@@ -16,6 +16,8 @@ namespace Workwear.Domain.Stock {
 	)]
 	[HistoryTrace]
 	public class Barcode : PropertyChangedBase, IDomainObject {
+		public const int LabelMaxLength = 50;
+
 		public virtual int Id { get; }
 
 		private DateTime createDate = DateTime.Today;
@@ -39,7 +41,6 @@ namespace Workwear.Domain.Stock {
 			get => type;
 			set => SetField(ref type, value);
 		}
-
 
 		private Nomenclature nomenclature;
 
@@ -65,7 +66,7 @@ namespace Workwear.Domain.Stock {
 		
 		private string label;
 		[Display(Name = "Название")]
-		[StringLength(50)]
+		[StringLength(LabelMaxLength)]
 		public virtual string Label 
 		{
 			get => label;

@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 using Gtk;
 using QS.Navigation;
 using QS.Views.Dialog;
 using QSOrmProject;
+using Workwear.Domain.Stock;
 using Workwear.ViewModels.Stock.Widgets;
 
 namespace Workwear.Views.Stock.Widgets 
@@ -30,6 +31,7 @@ namespace Workwear.Views.Stock.Widgets
 				.AddBinding(ViewModel, vm => vm.WithBarcodesAmount, w => w.Text, new IntToStringConverter())
 				.InitializeFromSource();
 			
+			entryBarcodesLabel.MaxLength = Barcode.LabelMaxLength;
 			entryBarcodesLabel.Binding.AddBinding(ViewModel, vm => vm.Label, w => w.Text).InitializeFromSource();
 
 			ybuttonCancel.Clicked += OnButtonCancelClicked;

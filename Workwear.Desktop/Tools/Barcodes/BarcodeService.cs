@@ -101,11 +101,11 @@ namespace Workwear.Tools.Barcodes
 		/// Сгенерировать набор штрихкодов
 		/// </summary>
 		/// <param name="unitOfWork">В котором будут созданы и сохранены, без комита</param>
-		/// <param name="label">до 100 символов</param>
+		/// <param name="label">до 50 символов</param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		public IList<Barcode> Create(IUnitOfWork unitOfWork, int amount, Nomenclature nomenclature, Size size, Size height, string label = "") {
-			if (label?.Length > 100)
+			if (label?.Length > Barcode.LabelMaxLength)
 				throw new ArgumentOutOfRangeException(nameof(label));
 			var barCodeList = new List<Barcode>();
 			for(var i = 1; i < amount + 1; i++) {
