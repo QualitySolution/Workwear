@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using Gamma.GtkWidgets;
 using Gtk;
@@ -13,6 +14,7 @@ namespace Workwear.Views.Stock
 	{
 		private const string SubstituteColumn = "SubstituteColumn";
 		private const string BarcodesColumn = "BarcodesColumn";
+		private OverNormItem selectedItem;
 		
 		public OverNormView(OverNormViewModel viewModel) : base(viewModel) 
 		{
@@ -118,28 +120,55 @@ namespace Workwear.Views.Stock
 			ytreeItems.Selection.Changed += ytreeItems_Selection_Changed;
 		}
 
-		private void ytreeItems_Selection_Changed(object sender, EventArgs e) =>
-			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<OverNormItem>();
+		private void ytreeItems_Selection_Changed(object sender, EventArgs e)
+		{
+			ChangeSelectedItem(ytreeItems.GetSelectedObject<OverNormItem>());
+			UpdateDelBarcodesMenu();
+		}
+
+		private void ChangeSelectedItem(OverNormItem item)
+		{
+			if(selectedItem == item) {
+				ViewModel.SelectedItem = item;
+				return;
+			}
+
+			if(selectedItem != null)
+				selectedItem.PropertyChanged -= SelectedItemOnPropertyChanged;
+
+			selectedItem = item;
+			ViewModel.SelectedItem = item;
+
+			if(selectedItem != null)
+				selectedItem.PropertyChanged += SelectedItemOnPropertyChanged;
+		}
+
+		private void SelectedItemOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == nameof(OverNormItem.Barcodes))
+				UpdateDelBarcodesMenu();
+		}
 		
 		private void UpdateDelBarcodesMenu() 
 		{
 			OverNormItem item = ytreeItems.GetSelectedObject<OverNormItem>();
-			ViewModel.SelectedItem = item;
+			ChangeSelectedItem(item);
+			buttonDelBarcodes.Menu = null;
 			
-			//UpdateDelBarcodesMenu
-			buttonDelBarcodes.Sensitive = buttonDel.Sensitive && 
+			buttonDelBarcodes.Sensitive = ViewModel.CanRemoveActiveItem &&
 			                              ViewModel.OverNormModel.CanUseWithBarcodes &&
 			                              item != null &&
 			                              item.OverNormOperation?.BarcodeOperations != null &&
-			                              item.OverNormOperation.BarcodeOperations.Any();
+			                              item.OverNormOperation.BarcodeOperations.Count > 1;
 			if (buttonDelBarcodes.Sensitive && item != null) {
 				Menu barcodesMenu = new Menu();
 				yMenuItem menuItem;
 				foreach (var bo in item.OverNormOperation.BarcodeOperations) {
-					menuItem = new yMenuItem(bo.Barcode.Title);
+					var barcode = bo.Barcode;
+					menuItem = new yMenuItem(barcode.Title);
 					menuItem.Activated += (o, eventArgs) => {
-						ViewModel.DeleteBarcodeFromItem(item, bo.Barcode);
-						barcodesMenu.Remove(o as Widget);
+						ViewModel.DeleteBarcodeFromItem(item, barcode);
+						UpdateDelBarcodesMenu();
 						ytreeItems.QueueDraw();
 					};
 					
