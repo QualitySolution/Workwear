@@ -90,7 +90,8 @@ namespace Workwear.Domain.Stock.Documents
 
 			if(validationContext.Items.TryGetValue(nameof(BaseParameters), out var baseParametersObject)
 			   && baseParametersObject is BaseParameters baseParameters
-			   && UoW != null
+			   && validationContext.Items.TryGetValue(nameof(StockRepository), out var stockRepositoryObject)
+			   && stockRepositoryObject is StockRepository stockRepository
 			   && Warehouse != null
 			   && baseParameters.CheckBalances) {
 				var filledItems = Items
@@ -107,7 +108,7 @@ namespace Workwear.Domain.Stock.Documents
 					.Select(x => x.OverNormOperation.WarehouseOperation)
 					.Where(x => x.Id > 0)
 					.ToList();
-				var balance = new StockRepository().StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+				var balance = stockRepository.StockBalances(Warehouse, nomenclatures, Date, excludeOperations);
 
 				foreach(var positionGroup in filledItems.GroupBy(x => x.OverNormOperation.WarehouseOperation.StockPosition)) {
 					var amount = positionGroup.Sum(x => x.OverNormOperation.WarehouseOperation.Amount);
