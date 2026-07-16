@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
@@ -32,7 +33,17 @@ namespace Workwear.Domain.Stock.Documents
 		[Display(Name = "Операция")]
 		public virtual OverNormOperation OverNormOperation {
 			get => overNormOperation;
-			set => SetField(ref overNormOperation, value);
+			set {
+				if(overNormOperation == value)
+					return;
+
+				UnsubscribeFromBarcodeOperations();
+				overNormOperation = value;
+				SubscribeToBarcodeOperations();
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(Barcodes));
+				OnPropertyChanged(nameof(CanEditAmount));
+			}
 		}
 
 		#endregion
@@ -73,6 +84,24 @@ namespace Workwear.Domain.Stock.Documents
 		{
 			Document = document ?? throw new ArgumentNullException(nameof(document));
 			OverNormOperation = operation ?? throw new ArgumentNullException(nameof(operation));
+		}
+
+		private void SubscribeToBarcodeOperations()
+		{
+			if(OverNormOperation?.BarcodeOperations is INotifyCollectionChanged barcodeOperations)
+				barcodeOperations.CollectionChanged += BarcodeOperations_CollectionChanged;
+		}
+
+		private void UnsubscribeFromBarcodeOperations()
+		{
+			if(OverNormOperation?.BarcodeOperations is INotifyCollectionChanged barcodeOperations)
+				barcodeOperations.CollectionChanged -= BarcodeOperations_CollectionChanged;
+		}
+
+		private void BarcodeOperations_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			OnPropertyChanged(nameof(Barcodes));
+			OnPropertyChanged(nameof(CanEditAmount));
 		}
 	}
 }

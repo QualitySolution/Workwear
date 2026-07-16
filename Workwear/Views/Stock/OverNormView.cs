@@ -111,7 +111,6 @@ namespace Workwear.Views.Stock
 			.AddColumn("Штрихкоды")
 				.Tag(BarcodesColumn)
 				.Visible(ViewModel.OverNormModel.CanUseWithBarcodes)
-				.Resizable()
 				.AddReadOnlyTextRenderer(x =>  string.Join("\n", x.Barcodes.Select(b => b.Title)))
 				.Finish();
 			

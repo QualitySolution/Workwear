@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Gamma.Utilities;
 using QS.DomainModel.Entity;
+using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Utilities.Numeric;
 using Workwear.Domain.Company;
@@ -110,9 +111,9 @@ namespace Workwear.Domain.Operations {
 			set => SetField(ref returnFromOperation, value);
 		}
 
-		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
+		private IObservableList<BarcodeOperation> barcodeOperations = new ObservableList<BarcodeOperation>();
 		[Display(Name = "Операции со штрихкодами")]
-		public virtual IList<BarcodeOperation> BarcodeOperations 
+		public virtual IObservableList<BarcodeOperation> BarcodeOperations
 		{
 			get => barcodeOperations;
 			set => SetField(ref barcodeOperations, value);

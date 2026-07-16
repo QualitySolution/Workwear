@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.DomainModel.UoW;
@@ -61,6 +62,41 @@ namespace Workwear.Test.Models.OverNorms {
 			Assert.That(removedBarcode.BarcodeOperations, Does.Not.Contain(barcodeOperation1));
 			Assert.That(newBarcode.BarcodeOperations, Has.Count.EqualTo(1));
 			Assert.That(newBarcode.BarcodeOperations[0].OverNormOperation, Is.SameAs(operation));
+		}
+
+		[Test(Description = "При заполнении пустой строки разовой выдачи несколькими штрихкодами добавляем все выбранные метки.")]
+		public void UpdateOperation_EmptyItemWithSeveralBarcodes_AddAllBarcodeOperations()
+		{
+			var model = new SimpleModel(Substitute.For<IUnitOfWork>()) {
+				UseBarcodes = true
+			};
+			var employee = new EmployeeCard();
+			var nomenclature = new Nomenclature();
+			var barcode1 = new Barcode { Nomenclature = nomenclature };
+			var barcode2 = new Barcode { Nomenclature = nomenclature };
+			var document = new OverNorm {
+				Warehouse = new Warehouse()
+			};
+			var operation = new OverNormOperation {
+				Employee = employee
+			};
+			document.AddItem(operation);
+			var item = document.Items.Single();
+			var param = new OverNormParam(
+				employee,
+				nomenclature,
+				2,
+				barcodes: new List<Barcode> { barcode1, barcode2 });
+
+			model.UpdateOperation(item, param);
+
+			Assert.That(document.Items, Has.Count.EqualTo(1));
+			Assert.That(document.Items.Single(), Is.SameAs(item));
+			Assert.That(operation.WarehouseOperation.Amount, Is.EqualTo(2));
+			Assert.That(operation.BarcodeOperations, Has.Count.EqualTo(2));
+			Assert.That(operation.BarcodeOperations.Select(x => x.Barcode), Is.EquivalentTo(new[] { barcode1, barcode2 }));
+			Assert.That(barcode1.BarcodeOperations, Has.Count.EqualTo(1));
+			Assert.That(barcode2.BarcodeOperations, Has.Count.EqualTo(1));
 		}
 	}
 }
