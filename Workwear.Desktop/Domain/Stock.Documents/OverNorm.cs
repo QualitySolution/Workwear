@@ -7,7 +7,6 @@ using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
-using Workwear.Tools.OverNorms;
 
 namespace Workwear.Domain.Stock.Documents 
 {
@@ -44,11 +43,11 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual string Title => $"Выдача вне нормы ({Type.GetEnumTitle()}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetEnumTitle()}) от {Date:d}";
 		
-		public virtual void AddItem(OverNormOperation operation, OverNormParam param = null)
+		public virtual void AddItem(OverNormOperation operation)
 		{
 			if (operation == null) 
 				throw new ArgumentNullException(nameof(operation));
-			Items.Add(new OverNormItem(this, operation) { Param = param });
+			Items.Add(new OverNormItem(this, operation));
 		}
 
 
@@ -71,7 +70,7 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult("Документ должен содержать хотя бы одну строку",
 					new[] { nameof(Items) });
 		
-			if (Items.Any(x => x.Param == null)) 
+			if (Items.Any(x => x.OverNormOperation?.WarehouseOperation == null))
 				yield return new ValidationResult("Строки документа должны быть заполнены",
 					new[] { nameof(Items) });
 		}

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.Project.Domain;
 using Workwear.Domain.Operations;
@@ -77,5 +78,42 @@ namespace Workwear.Tools.OverNorms.Models
 		/// <param name="param">Параметры операции выдачи вне нормы</param>
 		/// <param name="expenseWarehouse">Склад списания</param>
 		public abstract void AddOperation(OverNorm document, OverNormParam param, Warehouse expenseWarehouse);
+
+		protected void AddBarcodeOperations(OverNormOperation overNormOperation, IEnumerable<Barcode> barcodes)
+		{
+			foreach(var barcode in barcodes)
+				AddBarcodeOperation(overNormOperation, barcode);
+		}
+
+		protected void UpdateBarcodeOperations(OverNormOperation overNormOperation, IList<Barcode> barcodes)
+		{
+			foreach(var barcodeOperation in overNormOperation.BarcodeOperations.ToList()) {
+				if(barcodes.Any(x => SameBarcode(x, barcodeOperation.Barcode)))
+					continue;
+
+				barcodeOperation.Barcode?.BarcodeOperations.Remove(barcodeOperation);
+				overNormOperation.BarcodeOperations.Remove(barcodeOperation);
+			}
+
+			foreach(var barcode in barcodes) {
+				if(overNormOperation.BarcodeOperations.Any(x => SameBarcode(x.Barcode, barcode)))
+					continue;
+
+				AddBarcodeOperation(overNormOperation, barcode);
+			}
+		}
+
+		private void AddBarcodeOperation(OverNormOperation overNormOperation, Barcode barcode)
+		{
+			var barcodeOperation = new BarcodeOperation {
+				Barcode = barcode,
+				OverNormOperation = overNormOperation
+			};
+			barcode.BarcodeOperations.Add(barcodeOperation);
+			overNormOperation.BarcodeOperations.Add(barcodeOperation);
+		}
+
+		private bool SameBarcode(Barcode first, Barcode second) =>
+			first == second || first?.Id > 0 && first.Id == second?.Id;
 	}
 }

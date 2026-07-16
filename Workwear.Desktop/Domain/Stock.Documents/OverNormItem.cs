@@ -7,7 +7,6 @@ using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Tools.OverNorms;
 
 namespace Workwear.Domain.Stock.Documents 
 {
@@ -39,12 +38,6 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 		
 		#region Not Mapped Propertis
-		private OverNormParam param;
-		public virtual OverNormParam Param {
-			get => param;
-			set => SetField(ref param, value);
-		}
-
 		public virtual EmployeeCard Employee => OverNormOperation.Employee;
 
 		public virtual IEnumerable<Barcode> Barcodes => OverNormOperation.BarcodeOperations?.Select(b => b.Barcode);

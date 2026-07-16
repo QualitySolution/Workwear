@@ -17,6 +17,9 @@ namespace Workwear.Tools.OverNorms.Models
 		public SimpleModel() {
 		}
 
+		public SimpleModel(IUnitOfWork uow) {
+		}
+
 		public override bool CanUseWithBarcodes => true;
 		
 		public override bool CanUseWithoutBarcodes => true;
@@ -73,9 +76,8 @@ namespace Workwear.Tools.OverNorms.Models
 				WearPercent = param.WearPercent,
 			};
 			
-			foreach(var barcode in param.Barcodes) 
-				barcode.BarcodeOperations.Add(new BarcodeOperation(){Barcode = barcode, OverNormOperation = overNormOp});
-			document.AddItem(overNormOp, param);
+			AddBarcodeOperations(overNormOp, param.Barcodes);
+			document.AddItem(overNormOp);
 		}
 		
 		public override void UpdateOperation(OverNormItem item, OverNormParam param) 
@@ -87,7 +89,6 @@ namespace Workwear.Tools.OverNorms.Models
 			item.OverNormOperation.LastUpdate = DateTime.Now;
 			item.OverNormOperation.Employee = param.Employee;
 			UpdateBarcodeOperations(item.OverNormOperation, param.Barcodes);
-			item.OverNormOperation.BarcodeOperations = param.Barcodes.SelectMany(b => b.BarcodeOperations) as IList<BarcodeOperation>;
 			
 			item.OverNormOperation.WarehouseOperation.Amount = param.Amount;
 			item.OverNormOperation.WarehouseOperation.StockPosition = param.StockPosition;

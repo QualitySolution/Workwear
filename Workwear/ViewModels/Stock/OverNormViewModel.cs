@@ -72,13 +72,6 @@ namespace Workwear.ViewModels.Stock
 			
 			SetDocumentDateProperty(e => e.Date);
 			
-			foreach (OverNormItem item in Entity.Items) {
-				OverNormOperation operation = item.OverNormOperation;
-				item.Param =
-					new OverNormParam(operation.Employee, operation.WarehouseOperation.Nomenclature, operation.WarehouseOperation.Amount, operation.WarehouseOperation.WearSize,
-						operation.WarehouseOperation.Height, operation.SubstitutedIssueOperation, operation.BarcodeOperations.Select(x => x.Barcode).ToList());
-			}
-			
 			var builder = new CommonEEVMBuilderFactory<OverNorm>(this, Entity, UoW, NavigationManager, autofacScope);
 			EntryWarehouseViewModel = builder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
@@ -281,12 +274,11 @@ namespace Workwear.ViewModels.Stock
 					addedItem.Key.Height,
 					item.OverNormOperation?.SubstitutedIssueOperation,
 					addedItem.ToList());
-				item.Param = addedParam;
+				OverNormModel.UseBarcodes = addedParam.Barcodes.Any();
+				AddOrUpdateItem(item, addedParam);
 			}
 			else
 				throw new NotImplementedException("Выбраны несколько разных складских позиций. Нужно добавлять строки, пока это реализовано.");
-
-			AddOrUpdateItem(item);
 		}
 		
 		public void DeleteItem(OverNormItem item) {
@@ -294,22 +286,25 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		public void DeleteBarcodeFromItem(OverNormItem item, Barcode barcode) {
-			if (item.Param.Barcodes.Count == 1) {
+			if (item.OverNormOperation.BarcodeOperations.Count == 1) {
 				DeleteItem(item);
 				return;
 			}
 
-			OverNormModel.UseBarcodes = true;
-			item.Param.Barcodes.Remove(barcode);
-			AddOrUpdateItem(item);
+			var barcodeOperation = item.OverNormOperation.BarcodeOperations
+				.FirstOrDefault(x => x.Barcode == barcode || x.Barcode.Id > 0 && x.Barcode.Id == barcode.Id);
+			if(barcodeOperation != null) {
+				barcodeOperation.Barcode?.BarcodeOperations.Remove(barcodeOperation);
+				item.OverNormOperation.BarcodeOperations.Remove(barcodeOperation);
+			}
 		} 
 		
-		private void AddOrUpdateItem(OverNormItem item) {
+		private void AddOrUpdateItem(OverNormItem item, OverNormParam param) {
 			if (item.Id < 1) {
 				Entity.DeleteItem(item);
-				OverNormModel.AddOperation(Entity, item.Param, Entity.Warehouse);
+				OverNormModel.AddOperation(Entity, param, Entity.Warehouse);
 			} else 
-				OverNormModel.UpdateOperation(item, item.Param);
+				OverNormModel.UpdateOperation(item, param);
 		}
 		#endregion
 
