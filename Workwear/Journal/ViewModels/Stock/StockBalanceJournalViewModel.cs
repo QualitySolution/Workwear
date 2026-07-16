@@ -114,7 +114,7 @@ SELECT
     stock.*,
     (SELECT SUM(operation_sub.amount)/DATEDIFF(NOW(), MIN(operation_sub.operation_time))
      FROM operation_warehouse operation_sub
-     WHERE operation_sub.nomenclature_id = stock.NomeclatureId
+     WHERE operation_sub.nomenclature_id = stock.NomenclatureId
          AND operation_sub.size_id <=> stock.SizeId
          AND operation_sub.height_id <=> stock.HeightId
          AND operation_sub.owner_id <=> stock.OwnerId
