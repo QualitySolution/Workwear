@@ -8,7 +8,7 @@ using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Tools.OverNorms.Models 
 {
-	public abstract class OverNormModelBase : PropertyChangedBase, IOverNormModel 
+	public abstract class OverNormModelBase : PropertyChangedBase
 	{
 		public virtual bool Editable => true;
 		
@@ -51,7 +51,7 @@ namespace Workwear.Tools.OverNorms.Models
 		/// <param name="createdByUser">Пользователь, создавший документ</param>
 		/// <param name="docNumber">Пользовательский номер документа</param>
 		/// <param name="comment">Комментарий</param>
-		/// <returns>Новый документ сверзз нормы с заполненными строками</returns>
+		/// <returns>Новый документ выдачи вне нормы с заполненными строками</returns>
 		public abstract OverNorm CreateDocument(IList<OverNormParam> @params, Warehouse expenseWarehouse, UserBase createdByUser = null, string docNumber = null, string comment = null);
 
 		/// <summary>
