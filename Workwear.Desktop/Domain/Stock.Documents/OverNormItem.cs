@@ -73,7 +73,7 @@ namespace Workwear.Domain.Stock.Documents
 			OverNormOperation?.WarehouseOperation != null
 			&& OverNormOperation.BarcodeOperations?.Any() != true;
 			
-		public virtual string Title => $"Строка выдачи вне нормы ({OverNormOperation.Type.GetAttribute<DisplayAttribute>().Name}) {OverNormOperation.WarehouseOperation.Nomenclature.Name} в количестве {OverNormOperation.WarehouseOperation.Amount}";
+		public virtual string Title => $"Строка выдачи вне нормы ({OverNormOperation.Type.GetEnumTitle()}) {OverNormOperation.WarehouseOperation.Nomenclature.Name} в количестве {OverNormOperation.WarehouseOperation.Amount}";
 		#endregion
 		
 		protected OverNormItem() 

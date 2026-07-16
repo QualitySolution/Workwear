@@ -50,18 +50,18 @@ namespace Workwear.Tools.Barcodes
 				if(operation.Issued > bcount) {
 					var barcodes = Create(unitOfWork, operation.Issued - bcount, operation.Nomenclature, operation.WearSize, operation.Height);
 					foreach(var barcode in barcodes) {
-						var kitNumper = GetNextKitNumber(usedNumbers, operation);
+						var kitNumber = GetNextKitNumber(usedNumbers, operation);
 						var barcodeOperation = new BarcodeOperation {
 							Barcode = barcode,
 							EmployeeIssueOperation = operation,
-							KitNumber = kitNumper
+							KitNumber = kitNumber
 						};
 						operation.BarcodeOperations.Add(barcodeOperation);
 						unitOfWork.Save(barcodeOperation);
 						usedNumbers.Add(new BarcodeNumberInfo {
 							EmployeeId = operation.Employee.Id,
 							ProtectionToolsId = GetProtectionToolsId(operation),
-							KitNumber = kitNumper
+							KitNumber = kitNumber
 						});
 					}
 				}

@@ -15,19 +15,6 @@ namespace Workwear.HibernateMapping.Stock.Documents {
 			References (x => x.Document).Column ("stock_barcoding_id").Not.Nullable();
 			References(x => x.OperationExpense).Column("operation_expense_id").Cascade.All().Not.Nullable();
 			References(x => x.OperationReceipt).Column("operation_receipt_id").Cascade.All().Not.Nullable();
-
-			
-			
-////1289			
-//сейчас получается во вьюмодели документа			
-//+ каскадное удаление
-			 /*HasMany(x => x.Barcodes)
-				.Inverse()
-				
-				.KeyColumn ("stock_barcoding_id").Not.KeyNullable ().
-				.Cascade.AllDeleteOrphan ()
-				.LazyLoad ();
-				*/
 		}
 	}
 }
