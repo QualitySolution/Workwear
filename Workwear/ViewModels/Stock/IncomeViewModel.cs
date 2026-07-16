@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.Stock {
 				owners = UoW.GetAll<Owner>().ToList();
 			
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
 			var entryEntityBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
 			var entryVmBuilder = new CommonEEVMBuilderFactory<IncomeViewModel>(this, this, UoW, navigation, autofacScope);

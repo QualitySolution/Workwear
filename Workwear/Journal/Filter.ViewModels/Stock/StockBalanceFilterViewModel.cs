@@ -135,7 +135,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 			var builder = new CommonEEVMBuilderFactory<StockBalanceFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 
-			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId, UoW);
 			addAmount = currentUserSettings.Settings.DefaultAddedAmount;
 			
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse)

@@ -77,7 +77,10 @@ namespace Workwear.ViewModels.Stock
 			
 			SetDocumentDateProperty(e => e.Date);
 			Validations.Clear();
-			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> {
+				{ nameof(BaseParameters), baseParameters },
+				{ nameof(StockRepository), stockRepository }
+			})));
 			
 			var builder = new CommonEEVMBuilderFactory<OverNorm>(this, Entity, UoW, NavigationManager, autofacScope);
 			EntryWarehouseViewModel = builder.ForProperty(x => x.Warehouse)
@@ -102,7 +105,7 @@ namespace Workwear.ViewModels.Stock
 			
 			if(Entity.Warehouse == null)
 				Entity.Warehouse =
-					stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+					stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
 			Entity.Items.ContentChanged += CalculateTotal;
 			CalculateTotal(null, null);

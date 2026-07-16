@@ -587,7 +587,7 @@ public partial class MainWindow : Gtk.Window {
 				builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 					filter => {
 						filter.ShowNegativeBalance = true;
-						filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+						filter.Warehouse = new StockRepository(UoW).GetDefaultWarehouse(FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 					});
 			});
 	}

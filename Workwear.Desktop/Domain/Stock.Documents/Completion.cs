@@ -86,11 +86,11 @@ namespace Workwear.Domain.Stock.Documents
             var baseParameters = (BaseParameters) validationContext.Items[nameof(BaseParameters)];
             if (!baseParameters.CheckBalances) yield break; {
                 var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
-                var repository = new StockRepository();
+                var repository = new StockRepository(uow);
                 foreach (var item in SourceItems) {
                     var nomenclatures = new List<Nomenclature> {item.Nomenclature};
                     var balance = repository
-                        .StockBalances(uow, SourceWarehouse, nomenclatures, DateTime.Now, new List<WarehouseOperation> {item.WarehouseOperation})
+                        .StockBalances(SourceWarehouse, nomenclatures, DateTime.Now, new List<WarehouseOperation> {item.WarehouseOperation})
                         .Where(s => Equals(s.StockPosition, item.StockPosition))
                         .ToList();
                     if (!balance.Any()) {yield return new ValidationResult(

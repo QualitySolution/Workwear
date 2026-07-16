@@ -47,7 +47,8 @@ namespace Workwear.ViewModels.Stock
 			IInteractiveService interactive,
 			ICurrentPermissionService permissionService,
 			SizeService sizeService,
-			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator)
+			IValidator validator = null,
+			UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			if(autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
 			if(userService == null) throw new ArgumentNullException(nameof(userService));
@@ -66,7 +67,7 @@ namespace Workwear.ViewModels.Stock
 			
 			if(Entity.SourceWarehouse == null)
 				Entity.SourceWarehouse = stockRepository.GetDefaultWarehouse
-					(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+					(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
 			WarehouseExpenseEntryViewModel = entryBuilder.ForProperty(x => x.SourceWarehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
@@ -76,7 +77,7 @@ namespace Workwear.ViewModels.Stock
 
 			if(Entity.ResultWarehouse == null)
 				Entity.ResultWarehouse = stockRepository.GetDefaultWarehouse
-					(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+					(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseReceiptEntryViewModel = entryBuilder.ForProperty(x => x.ResultWarehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()

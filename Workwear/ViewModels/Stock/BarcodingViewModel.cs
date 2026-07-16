@@ -45,8 +45,9 @@ namespace Workwear.ViewModels.Stock {
 			StockRepository stockRepository,
 			Warehouse warehouse = null,
 			StockBalanceJournalNode  stockBalanceJournalNode = null,
-			IValidator validator = null)
-			: base(uowBuilder, unitOfWorkFactory, navigation, validator) {
+			IValidator validator = null,
+			UnitOfWorkProvider unitOfWorkProvider = null)
+			: base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider) {
 			this.interactive = interactive;
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -62,7 +63,7 @@ namespace Workwear.ViewModels.Stock {
 				logger.Info($"Создание нового документа маркировки");
 				Entity.Warehouse = warehouse;
 				if(Entity.Warehouse == null)
-					Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+					Entity.Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			} else {
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 				loadBarcodes();
