@@ -253,9 +253,6 @@ SELECT
 					filter => filter.StockPosition = node.GetStockPosition(journal.ViewModel.UoW));
 			}
 		}
-		private void OpenReleaseBarcodesWindow(StockBalanceJournalNode node) =>
-			NavigationManager.OpenViewModel<StockReleaseBarcodesViewModel, StockBalanceJournalNode, Warehouse>
-				(this, node, Filter.Warehouse);
 		
 		public override string FooterInfo {
 			get => $"Суммарная стоимость: " +
