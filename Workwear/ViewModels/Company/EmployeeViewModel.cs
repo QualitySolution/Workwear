@@ -489,9 +489,8 @@ namespace Workwear.ViewModels.Company
 		public EmployeeCostCentersViewModel CostCenterViewModel;	//5
 		public EmployeeInGroupsViewModel InGroupsViewModel;			//6
 		public EmployeeListedItemsViewModel ListedItemsViewModel;	//7
-		public EmployeeMovementsViewModel MovementsViewModel;       //8
-////1289 После сделать дочерней. Исправить нумерацию
-		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //9
+		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //8
+		public EmployeeMovementsViewModel MovementsViewModel;       //9
 		public EmployeeVacationsViewModel VacationsViewModel;       //10
 
 
@@ -530,12 +529,11 @@ namespace Workwear.ViewModels.Company
 					if(Entity.Id != 0)
 						ListedItemsViewModel.OnShow();
 					break;
-				case 8: 
+				case 8: EmployeeOverNormViewModel.OnShow();
+					break;
+				case 9: 
 					if(Entity.Id != 0)
 						MovementsViewModel.OnShow();
-					break;
-				case 9: EmployeeOverNormViewModel.OnShow();
-					break;
 					break;
 				case 10:
 					if( Entity.Id == 0) {

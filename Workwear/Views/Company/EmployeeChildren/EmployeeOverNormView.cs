@@ -20,7 +20,6 @@ namespace Workwear.Views.Company.EmployeeChildren {
 		private void CreateTable()
 		{
 			ytreeviewOverNorm.CreateFluentColumnsConfig<EmployeeOverNormNode>()
-////1289 Стоит разложить на детали
 				.AddColumn("Тип выдачи").AddTextRenderer (e => e.DocType.GetEnumTitle())
 				.AddColumn("Дата выдачи").AddTextRenderer (e => e.DateString)
                 .AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName).WrapWidth(700)

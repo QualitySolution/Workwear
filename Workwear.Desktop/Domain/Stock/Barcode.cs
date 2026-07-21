@@ -89,7 +89,6 @@ namespace Workwear.Domain.Stock {
 			set => SetField(ref barcodeOperations, value);
 		}
 		
-////1289 проверить комментарий
 		//Предварительно нужно загрузить все BarcodeOperation и связанные с ними операции иначе будет много запросов в базу
 		public virtual IList<BarcodeOperation> SortedOperations => BarcodeOperations.OrderBy(x => x.OperationDate).ToList();
 		public virtual BarcodeOperation LastOperation => SortedOperations.Last();

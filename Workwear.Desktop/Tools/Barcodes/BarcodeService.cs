@@ -38,7 +38,6 @@ namespace Workwear.Tools.Barcodes
 			var usedNumbers = employeeIssueRepository
 				.GetBarcodeNumbersForEmployee(
 					employeeIssueOperations.Select(x => x.Employee).ToList(),
-//// Спорно, может лучше DateTime.Now. По идее должны быть во всех операциях одинаково
 					employeeIssueOperations.Max(x=> x.OperationTime),
 					unitOfWork)
 				.ToList();

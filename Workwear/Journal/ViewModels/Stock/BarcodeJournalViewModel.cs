@@ -69,7 +69,6 @@ namespace Workwear.Journal.ViewModels.Stock
 			OverNormOperation overNormOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
-////1289 проверить по месту			
 			var query = uow.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Where(MakeSearchCriterion().By(
 					() => barcodeAlias.Title,

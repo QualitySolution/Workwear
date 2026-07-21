@@ -89,7 +89,6 @@ namespace workwear.Journal.ViewModels.Company
 				Projections.Property(() => expenseOperationAlias.Issued),
 				Projections.SubQuery(subQueryRemove)
 			);
-////1289 Нужно внимательно проверить изменения            
 			if (Filter.Employee != null)
 				query
 					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
