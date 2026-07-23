@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using NHibernate;
+using NHibernate.Criterion;
+using NHibernate.Dialect.Function;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using QS.Measurement.Domain;
@@ -42,8 +44,14 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 			MeasurementUnit nomenclatureUnitAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
-			
-			
+			BarcodeOperation barcodeOperationAlias = null;
+			Barcode barcodeAlias = null;
+
+			var barcodesProjection = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR '\n')"),
+				NHibernateUtil.String,
+				Projections.Property(() => barcodeAlias.Title));
+
 			var query = UoW.Session.QueryOver(() => overNormOperationAlias)
 				.Where(e => e.Employee.Id == Entity.Id);
 			query
@@ -55,8 +63,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 				.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => nomenclatureAlias.Type, () => nomenclatureItemTypesAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => nomenclatureItemTypesAlias.Units, () => nomenclatureUnitAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => overNormOperationAlias.BarcodeOperations, () => barcodeOperationAlias, JoinType.LeftOuterJoin)
+				.JoinAlias(() => barcodeOperationAlias.Barcode, () => barcodeAlias, JoinType.LeftOuterJoin)
 				.SelectList (list => list
-					.Select(() => overNormOperationAlias.Id).WithAlias (() => resultAlias.Id)
+					.SelectGroup(() => overNormOperationAlias.Id).WithAlias (() => resultAlias.Id)
 					.Select(() => overNormDocAlias.Type).WithAlias (() => resultAlias.DocType)
 					.Select(() => overNormDocItemAlias.Id).WithAlias (() => resultAlias.OverNormItemId)
 					.Select(() => overNormDocAlias.Id).WithAlias (() => resultAlias.OverNormId)
@@ -69,8 +79,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 					.Select(() => warehouseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
 					.Select(() => warehouseOperationAlias.Amount).WithAlias (() => resultAlias.Added)
 					.Select(() => warehouseOperationAlias.OperationTime).WithAlias (() => resultAlias.Date)
+					.Select(barcodesProjection).WithAlias (() => resultAlias.BarcodesString)
 				);
-			
+
 			var items = query
 					.TransformUsing (Transformers.AliasToBean<EmployeeOverNormNode>())
 					.List<EmployeeOverNormNode>()
@@ -121,5 +132,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		public int Balance => Added - Removed;
 		public string BalanceText => $"{Balance} {NomenclatureUnitsName}";
 		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString(AvgCost) : String.Empty;
+		public string BarcodesString { get; set; }
 	}
 }

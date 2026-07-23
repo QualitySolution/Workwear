@@ -20,6 +20,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 		private void CreateTable()
 		{
 			ytreeviewOverNorm.CreateFluentColumnsConfig<EmployeeOverNormNode>()
+				.AddColumn("Метка(штрихкод)").AddTextRenderer(e => e.BarcodesString)
 				.AddColumn("Тип выдачи").AddTextRenderer (e => e.DocType.GetEnumTitle())
 				.AddColumn("Дата выдачи").AddTextRenderer (e => e.DateString)
                 .AddColumn ("Наименование").AddTextRenderer (e => e.NomenclatureName).WrapWidth(700)
