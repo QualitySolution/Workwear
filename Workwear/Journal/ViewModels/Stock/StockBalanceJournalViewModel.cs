@@ -25,7 +25,6 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Sizes;
 using Workwear.ViewModels.Stock;
-using ArgumentNullException = System.ArgumentNullException;
 
 namespace workwear.Journal.ViewModels.Stock
 {
