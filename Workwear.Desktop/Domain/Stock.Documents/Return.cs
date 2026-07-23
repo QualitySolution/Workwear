@@ -32,7 +32,7 @@ namespace Workwear.Domain.Stock.Documents
 			get => warehouse;
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
-		
+
 		private IObservableList<ReturnItem> items = new ObservableList<ReturnItem>();
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<ReturnItem> Items {
@@ -40,24 +40,24 @@ namespace Workwear.Domain.Stock.Documents
 			set { SetField (ref items, value, () => Items); }
 		}
 		#endregion
-		public virtual string Title => $"Возврат от работника №{DocNumber ?? Id.ToString()} от {Date:d}";
-		
+		public virtual string Title => $"Возврат от работника №{DocNumberText} от {Date:d}";
+
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Date < new DateTime(2008, 1, 1))
-				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
+				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)",
 					new[] { this.GetPropertyName (o => o.Date)});
-			
+
 			if (DocNumber != null && DocNumber.Length > 15)
-				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
+				yield return new ValidationResult ("Номер документа должен быть не более 15 символов",
 					new[] { this.GetPropertyName (o => o.DocNumber)});
 
 			if(Items.Count == 0)
-				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
+				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.",
 					new[] { this.GetPropertyName (o => o.Items)});
 
 			if(Items.Any (i => i.Amount <= 0))
-				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
+				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.",
 					new[] { this.GetPropertyName (o => o.Items)});
 			foreach(var item in items) {
 				if(item.EmployeeCard == null) continue;
@@ -152,8 +152,7 @@ namespace Workwear.Domain.Stock.Documents
 				}
 				// TODO Пересчитать start_of_use, autowriteoff в возврате, выдаче и списании деж. нормы
 			}
-			
+
 		}
 	}
 }
-

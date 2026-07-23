@@ -68,4 +68,7 @@ UPDATE stock_return_items
 ALTER TABLE stock_return
 DROP CONSTRAINT stock_return_employees_id_fk;
 ALTER TABLE stock_return
-DROP COLUMN employee_id;
+DROP COLUMN employee_id;    
+
+
+

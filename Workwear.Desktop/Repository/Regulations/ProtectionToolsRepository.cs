@@ -14,5 +14,10 @@ namespace Workwear.Repository.Regulations
 				.Where(x => x.Name.IsIn(names))
 				.List();
 		}
+		public IList<ProtectionTools> GetActiveProtectionTools(IUnitOfWork uow) {
+			return uow.Session.QueryOver<ProtectionTools>()
+				.Where(x => x.Archival == false)
+				.List();
+		}
 	}
 }

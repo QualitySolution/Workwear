@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
+using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Models.Import.Norms;
 using Workwear.Repository.Regulations;
@@ -16,7 +17,7 @@ namespace Workwear.Test.Models.Import.Norms {
 		[Test(Description =
 			"Проверяем что при отсутствии колонок с подразделением и отделом мы подбираем все должности с подходящем названием из любых подразделение или отделов.")]
 		public void SetOrMakePost_WithoutDepartmentAndSubdivision() {
-			var normRepository = Substitute.For<NormRepository>();
+			var normRepository = Substitute.For<NormRepository>((IUnitOfWork)null);
 			var protectionToolsRepository = Substitute.For<ProtectionToolsRepository>();
 			var sizeService = Substitute.For<SizeService>();
 
@@ -65,7 +66,7 @@ namespace Workwear.Test.Models.Import.Norms {
 		[Test(Description =
 			"Противоположность тесту выше! Проверяем что с колонкой подразделение мы подбираем все должности с подходящем названием и подразделением без учета отделов.")]
 		public void SetOrMakePost_WithSubdivisionWithoutDepartment() {
-			var normRepository = Substitute.For<NormRepository>();
+			var normRepository = Substitute.For<NormRepository>((IUnitOfWork)null);
 			var protectionToolsRepository = Substitute.For<ProtectionToolsRepository>();
 			var sizeService = Substitute.For<SizeService>();
 
@@ -115,7 +116,7 @@ namespace Workwear.Test.Models.Import.Norms {
 		[Test(Description =
 			"Как выше но с отделом! Проверяем что с колонкой подразделение мы подбираем все должности с подходящем названием и подразделением без учета отделов.")]
 		public void SetOrMakePost_WithSubdivisionAndDepartment() {
-			var normRepository = Substitute.For<NormRepository>();
+			var normRepository = Substitute.For<NormRepository>((IUnitOfWork)null);
 			var protectionToolsRepository = Substitute.For<ProtectionToolsRepository>();
 			var sizeService = Substitute.For<SizeService>();
 
@@ -164,7 +165,7 @@ namespace Workwear.Test.Models.Import.Norms {
 		[Test(Description =
 			"Проверяем что при отсутствии колонок с подразделением и отделом мы подбираем все должности(с учетом разделителя) с подходящем названием из любых подразделение или отделов.")]
 		public void SetOrMakePost_WithoutDepartmentAndSubdivisionAllPosts() {
-			var normRepository = Substitute.For<NormRepository>();
+			var normRepository = Substitute.For<NormRepository>((IUnitOfWork)null);
 			var protectionToolsRepository = Substitute.For<ProtectionToolsRepository>();
 			var sizeService = Substitute.For<SizeService>();
 

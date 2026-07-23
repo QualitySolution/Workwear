@@ -11,6 +11,9 @@ using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
+	/// <summary>
+	/// Вкладка "Числится за сотрудником"
+	/// </summary>
 	public class EmployeeListedItemsViewModel : ViewModelBase
 	{
 		public EmployeeListedItemsViewModel(EmployeeViewModel employeeViewModel, ITdiCompatibilityNavigation navigation, FeaturesService featuresService)
@@ -55,10 +58,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private EmployeeBalanceVM employeeBalanceVM;
 		public EmployeeBalanceVM EmployeeBalanceVM { get => employeeBalanceVM; private set => SetField(ref employeeBalanceVM, value); }
 
-		public bool SensetiveButtonGiveWear => !employeeViewModel.UoW.IsNew;
-		public bool SensetiveButtonReturn => !employeeViewModel.UoW.IsNew;
-		public bool SensetiveButtonWriteoff => !employeeViewModel.UoW.IsNew;
-		public bool SensetiveButtonInspecton => !employeeViewModel.UoW.IsNew;
+		public bool SensetiveButtonGiveWear => Entity.Id != 0;
+		public bool SensetiveButtonReturn => Entity.Id != 0;
+		public bool SensetiveButtonWriteoff => Entity.Id != 0;
+		public bool SensetiveButtonInspecton => Entity.Id != 0;
 		public bool VisibleButtonInspecton => featuresService.Available(WorkwearFeature.Inspection);
 
 		#endregion
@@ -69,7 +72,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!employeeViewModel.Save())
 				return;
-
 			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 

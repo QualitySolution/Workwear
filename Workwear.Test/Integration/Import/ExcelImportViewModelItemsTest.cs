@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using NSubstitute;
 using NUnit.Framework;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -53,7 +53,7 @@ namespace Workwear.Test.Integration.Import
 			Thread.CurrentThread.CurrentCulture =  CultureInfo.CreateSpecificCulture("ru-RU");
 			NewSessionWithSameDB();
 			using(var uowPrepare = UnitOfWorkFactory.CreateWithoutRoot()) {
-				MakeMeasurementUnits(uowPrepare, out MeasurementUnits sht, out MeasurementUnits pair);
+				MakeMeasurementUnit(uowPrepare, out MeasurementUnit sht, out MeasurementUnit pair);
 				MakeSizes(uowPrepare, out SizeType heightType, out SizeType sizeType, out SizeType shoesType, out SizeType glovesSizeType);
 
 				var subdivision = new Subdivision {
@@ -160,7 +160,7 @@ namespace Workwear.Test.Integration.Import
 				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(issueRepository);
 				var setting = new SettingsWorkwearItemsViewModel();
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -232,7 +232,7 @@ namespace Workwear.Test.Integration.Import
 		{
 			NewSessionWithSameDB();
 			using(var uowPrepare = UnitOfWorkFactory.CreateWithoutRoot()) {
-				MakeMeasurementUnits(uowPrepare, out MeasurementUnits sht, out MeasurementUnits pair);
+				MakeMeasurementUnit(uowPrepare, out MeasurementUnit sht, out MeasurementUnit pair);
 				MakeSizes(uowPrepare, out SizeType heightType, out SizeType sizeType, out SizeType shoesType, out SizeType glovesSizeType);
 
 				var glovesType = new ItemsType() {
@@ -301,7 +301,7 @@ namespace Workwear.Test.Integration.Import
 				var employeeRepository = new EmployeeRepository();
 				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(issueRepository);
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -329,7 +329,7 @@ namespace Workwear.Test.Integration.Import
 		{
 			NewSessionWithSameDB();
 			using(var uowPrepare = UnitOfWorkFactory.CreateWithoutRoot()) {
-				MakeMeasurementUnits(uowPrepare, out MeasurementUnits sht, out MeasurementUnits pair);
+				MakeMeasurementUnit(uowPrepare, out MeasurementUnit sht, out MeasurementUnit pair);
 				MakeSizes(uowPrepare, out SizeType heightType, out SizeType sizeType, out SizeType shoesType, out SizeType glovesSizeType);
 
 				var glovesType = new ItemsType() {
@@ -404,7 +404,7 @@ namespace Workwear.Test.Integration.Import
 				var unitOfWorkProvider = new UnitOfWorkProvider();
 				var employeeRepository = new EmployeeRepository();
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(unitOfWorkProvider));
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -436,13 +436,13 @@ namespace Workwear.Test.Integration.Import
 
 		#region Helpers
 
-		private void MakeMeasurementUnits(IUnitOfWork uow, out MeasurementUnits sht, out MeasurementUnits pair) {
-			sht = new MeasurementUnits {
+		private void MakeMeasurementUnit(IUnitOfWork uow, out MeasurementUnit sht, out MeasurementUnit pair) {
+			sht = new MeasurementUnit {
 				Name = "шт.",
 				OKEI = "796"
 			};
 			uow.Save(sht);
-			pair = new MeasurementUnits {
+			pair = new MeasurementUnit {
 				Name = "пара",
 				OKEI = "715"
 			};

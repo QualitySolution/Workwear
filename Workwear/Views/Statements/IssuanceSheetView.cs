@@ -6,6 +6,7 @@ using QS.Views.Dialog;
 using QS.Views.Resolve;
 using QSWidgetLib;
 using Workwear.Domain.Statements;
+using Workwear.Models.Print;
 using Workwear.ViewModels.Statements;
 
 namespace Workwear.Views.Statements
@@ -31,7 +32,7 @@ namespace Workwear.Views.Statements
 				.AddBinding(ViewModel, vm => vm.AutoDocNumber, w => w.Active)
 				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
 			
-			dateOfPreparation.Binding.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date).InitializeFromSource();
+			dateOfPreparation.Binding.AddBinding(Entity, e => e.Date, w => w.Date).InitializeFromSource();
 
 			entityentryOrganization.ViewModel = ViewModel.OrganizationEntryViewModel;
 			entityentrySubdivision.ViewModel = ViewModel.SubdivisionEntryViewModel;
@@ -40,7 +41,7 @@ namespace Workwear.Views.Statements
 			entityTransferAgent.ViewModel = ViewModel.TransferAgentEntryViewModel;
 
 			hboxExpense.Visible = ViewModel.VisibleExpense;
-			buttonFillBy.Visible = ViewModel.VisibleFillBy;
+			buttonFillBy.Visible = ViewModel.VisibleFillBy;              
 			labelExpense.LabelProp = Entity.Expense?.Title;
 			buttonAdd.Sensitive = ViewModel.CanEditItems;
 			entityTransferAgent.Sensitive = ViewModel.CanEditTransferAgent;

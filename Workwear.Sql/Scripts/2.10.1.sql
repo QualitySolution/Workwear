@@ -1,13 +1,34 @@
-﻿ALTER TABLE stock_return_items
-    ADD COLUMN claim_id int(10) unsigned NULL DEFAULT NULL AFTER duty_norm_issue_operation_id;
-ALTER TABLE stock_return_items
-    ADD CONSTRAINT stock_return_items_claim_id_fk FOREIGN KEY (claim_id) REFERENCES clothing_service_claim(id)
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION;
-CREATE INDEX stock_return_items_claim_id_index
-    ON stock_return_items(claim_id ASC);
+-- Права на вход в настройки учета
 
---Добвление нового статуса "Ожидает сервиса" в стирку
-ALTER TABLE `clothing_service_states` CHANGE `state` `state` ENUM('WaitService','InReceiptTerminal','InTransit','DeliveryToLaundry','InRepair','InWashing','InDryCleaning','AwaitIssue','DeliveryToDispenseTerminal','InDispenseTerminal','Returned', 'AwaitService') NOT NULL;
+ALTER TABLE users
+	ADD COLUMN can_accounting_settings TINYINT(1) NOT NULL DEFAULT 1 AFTER can_delete;
 
+-- Реализация поступления из поставки и поставки из прогноза
+alter table shipment_items
+	add diff_cause varchar(120) null after height_id,
+	add ordered int unsigned not null after quantity,
+	add received int unsigned not null after ordered;
 
+alter table shipment
+	modify status enum ('Draft', 'New', 'Present', 'Accepted', 'Ordered', 'Received') default 'Draft' not null,
+	modify start_period date null,
+	modify end_period date null,
+	add full_ordered boolean default false not null after status,
+	add full_received boolean default false not null after full_ordered,
+	add has_receive boolean default false not null after full_received,
+	add submitted datetime null after has_receive;
+
+UPDATE shipment SET full_ordered = COALESCE((
+												SELECT SUM(shipment_items.quantity > shipment_items.ordered) = 0
+												FROM shipment_items
+												WHERE shipment_items.shipment_id = shipment.id
+											), FALSE);
+
+alter table stock_income
+	add shipment_id int unsigned default null null after warehouse_id;
+alter table stock_income
+	add constraint fk_stock_income_shipment
+		foreign key (shipment_id) references shipment (id);
+
+alter table user_settings
+	add buyer_email varchar(320) null after maximize_on_start;

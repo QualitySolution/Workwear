@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Autofac;
 using Gamma.Utilities;
+using QS.BaseParameters;
 using QS.Cloud.Client;
 using QS.Dialog;
 using QS.ErrorReporting;
 using QS.Project.DB;
 using QS.Project.Versioning.Product;
-using QS.Serial;
 using QS.Serial.Encoding;
+using Workwear.Domain.Operations;
 
 namespace Workwear.Tools.Features
 {
@@ -23,13 +23,14 @@ namespace Workwear.Tools.Features
 			new ProductEdition(1, "Однопользовательская"),
 			new ProductEdition(2, "Профессиональная"),
 			new ProductEdition(3, "Предприятие"),
-			new ProductEdition(4, "Спецаутсорсинг")
+			new ProductEdition(4, "Спецаутсорсинг"),
+			new ProductEdition(5, "Корпорация")
 		};
 		private readonly SerialNumberEncoder serialNumberEncoder;
+		private readonly ParametersService parametersService;
 		private readonly CloudClientService cloudClientService;
 		private readonly IInteractiveMessage interactive;
 		private readonly IErrorReporter errorReporter;
-		private readonly ILifetimeScope autofacScope;
 		private readonly IDataBaseInfo dataBaseInfo;
 
 		public byte ProductEdition { get; private set; }
@@ -82,19 +83,19 @@ namespace Workwear.Tools.Features
 			}
 		}
 
-		public FeaturesService(ISerialNumberService serialNumberService,
+		public FeaturesService(
+			ParametersService parametersService,
 			SerialNumberEncoder serialNumberEncoder,
 			CloudClientService cloudClientService,
 			IInteractiveMessage interactive,
 			IErrorReporter errorReporter,
-			ILifetimeScope autofacScope,
 			IDataBaseInfo dataBaseInfo = null)
 		{
+			this.parametersService = parametersService ?? throw new ArgumentNullException(nameof(parametersService));
 			this.serialNumberEncoder = serialNumberEncoder ?? throw new ArgumentNullException(nameof(serialNumberEncoder));
 			this.cloudClientService = cloudClientService ?? throw new ArgumentNullException(nameof(cloudClientService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.errorReporter = errorReporter ?? throw new ArgumentNullException(nameof(errorReporter));
-			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.dataBaseInfo = dataBaseInfo;
 			if(dataBaseInfo?.IsDemo == true) {
 				ProductEdition = 0;
@@ -103,10 +104,10 @@ namespace Workwear.Tools.Features
 
 			ProductEdition = 1;
 			 
-			if(String.IsNullOrWhiteSpace(serialNumberService.SerialNumber))
+			if(String.IsNullOrWhiteSpace(parametersService.Dynamic.serial_number))
 				return;
 
-			SetProperties(serialNumberService);
+			SetProperties();
 		}
 
 		/// <summary>
@@ -116,15 +117,15 @@ namespace Workwear.Tools.Features
 		{
 		}
 
-		private void SetProperties(ISerialNumberService serialNumberService)
+		private void SetProperties()
 		{
-			serialNumberEncoder.Number = serialNumberService.SerialNumber;
+			serialNumberEncoder.Number = parametersService.Dynamic.serial_number;
 			if(serialNumberEncoder.IsValid) {
 				if(serialNumberEncoder.CodeVersion == 1)
 					ProductEdition = 2; //Все купленные серийные номера версии 1 приравниваются к профессиональной редакции.
 				else if((serialNumberEncoder.CodeVersion == 2 || serialNumberEncoder.CodeVersion == 3)
 				        && serialNumberEncoder.EditionId >= 1
-				        && serialNumberEncoder.EditionId <= 4) {
+				        && serialNumberEncoder.EditionId <= 5) {
 					ProductEdition = serialNumberEncoder.EditionId;
 					ClientId = serialNumberEncoder.ClientId;
 					ExpiryDate = serialNumberEncoder.ExpiryDate;
@@ -136,8 +137,7 @@ namespace Workwear.Tools.Features
 		
 		public void UpdateSerialNumber() 
 		{
-			ISerialNumberService serialNumberService = autofacScope.Resolve<ISerialNumberService>();
-			SetProperties(serialNumberService);
+			SetProperties();
 		}
 		
 		public string GetEditionName(int editionId) 
@@ -162,21 +162,29 @@ namespace Workwear.Tools.Features
 							return false;
 						return AvailableCloudFeatures.Contains("wear_lk");
 					case WorkwearFeature.SpecCoinsLk:
-						if(ProductEdition != 4) 
+						if(ProductEdition != 4)
 							return false;
 						return AvailableCloudFeatures.Contains("speccoin_lk");
 					case WorkwearFeature.Claims:
-						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4 && ProductEdition != 5)
 							return false;
 						return AvailableCloudFeatures.Contains("claims_lk");
 					case WorkwearFeature.Ratings:
-						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4 && ProductEdition != 5)
 							return false;
 						return AvailableCloudFeatures.Contains("ratings");
 					case WorkwearFeature.Postomats:
-						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4)
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4 && ProductEdition != 5)
 							return false;
 						return AvailableCloudFeatures.Contains("postomats");
+					case WorkwearFeature.Catalog:
+						if(ProductEdition != 4)
+							return false;
+						return AvailableCloudFeatures.Contains("catalog");
+					case WorkwearFeature.EmployeeChoose:
+						if(ProductEdition != 0 && ProductEdition != 3 && ProductEdition != 4 && ProductEdition != 5)
+							return false;
+						return AvailableCloudFeatures.Contains("choice_nomenclature_lk");
 				}
 			}
 
@@ -185,10 +193,15 @@ namespace Workwear.Tools.Features
 					return ProductEdition == 0 || ProductEdition == 1;
 				//Только СпецАутсорсинг
 				case WorkwearFeature.Selling:
+					return ProductEdition == 4;
+				//СпецАутсорсинг + Корпорация
 				case WorkwearFeature.Dashboard:
 				case WorkwearFeature.Shipment:
-					return ProductEdition == 4;
-				//Предприятие + СпецАутсорсинг
+				case WorkwearFeature.Visits:
+				case WorkwearFeature.IssuanceRequest:
+				case WorkwearFeature.ReportServiceServiced:
+					return ProductEdition == 4 || ProductEdition == 5;
+				//Предприятие + СпецАутсорсинг + Корпорация
 				case WorkwearFeature.BatchProcessing:
 				case WorkwearFeature.CostCenter:
 				case WorkwearFeature.EmployeeGroups:
@@ -201,32 +214,51 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.ReportSupply:
 				case WorkwearFeature.StockForecasting:
 				case WorkwearFeature.Warehouses:
-					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4;
+					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
 				// Платные функции предприятия
 				case WorkwearFeature.IdentityCards:
-					return ProductEdition == 0 || ProductEdition == 4 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.IdentityCards));
+					return ProductEdition == 0 || ProductEdition == 4 || ProductEdition == 5 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.IdentityCards));
 				case WorkwearFeature.ClothingService:
-					return ProductEdition == 0 || ProductEdition == 4 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.ClothingService));
+					return ProductEdition == 0 || ProductEdition == 4 || ProductEdition == 5 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.ClothingService));
 				case WorkwearFeature.Barcodes:
-					return ProductEdition == 0 || ProductEdition == 4 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.Barcodes));
-				// Профессиональная + Предприятие + СпецАутсорсинг
+					return ProductEdition == 0 || ProductEdition == 4 || ProductEdition == 5 || (ProductEdition == 3 && PaidFeatures.HasFlag(PaidFeatures.Barcodes));
+				// Профессиональная + Предприятие + СпецАутсорсинг + Корпорация
 				case WorkwearFeature.CollectiveExpense:
 				case WorkwearFeature.Completion:
 				case WorkwearFeature.ConditionNorm:
 				case WorkwearFeature.CustomSizes:
+				case WorkwearFeature.DutyNorms:
+				case WorkwearFeature.EditLockDate:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.ReportIssued:
 				case WorkwearFeature.ReportOrder:
 				case WorkwearFeature.ReportStock:
+				case WorkwearFeature.ReportWearCard:
 				case WorkwearFeature.ReportWrittenOff:
 				case WorkwearFeature.StatementJournal:
 				case WorkwearFeature.Vacation:
-				case WorkwearFeature.DutyNorms:
-				case WorkwearFeature.ReportWearCard:
-					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4;
-				// Профессиональная + Предприятие
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
+				case WorkwearFeature.OverNorm:
+					return Enum.GetValues(typeof(OverNormType))
+						.Cast<OverNormType>()
+						.Any(AvailableOverNorm);
+				// Профессиональная + Предприятие + Корпорация
 				case WorkwearFeature.Inspection:
-					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3;
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 5;
+				default:
+					return false;
+			}
+		}
+
+		public virtual bool AvailableOverNorm(OverNormType type)
+		{
+			switch(type) {
+				case OverNormType.Simple:
+					return ProductEdition == 0 || ProductEdition == 2 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
+				case OverNormType.Guest:
+					return ProductEdition == 0 || ProductEdition == 3 || ProductEdition == 4 || ProductEdition == 5;
+				case OverNormType.Substitute:
+					return ProductEdition == 0 || ProductEdition == 4 || ProductEdition == 5;
 				default:
 					return false;
 			}
@@ -250,16 +282,18 @@ namespace Workwear.Tools.Features
 		[Display(Name = "Журнал ведомостей")]
 		StatementJournal,
 		#endregion
-		[Display(Name = "Дежурные нормы")]
-		DutyNorms,
-		[Display(Name = "Отпуска")]
-		Vacation,
-		[Display(Name = "Загрузка из Excel")]
-		LoadExcel,
 		[Display(Name = "Условия нормы")]
 		ConditionNorm,
 		[Display(Name = "Пользовательские размеры")]
 		CustomSizes,
+		[Display(Name = "Дежурные нормы")]
+		DutyNorms,
+		[Display(Name = "Дата запрета редактирования")]
+		EditLockDate,
+		[Display(Name = "Загрузка из Excel")]
+		LoadExcel,
+		[Display(Name = "Отпуска")]
+		Vacation,
 		#region Отчеты
 		[Display(Name = "Отчет Складская ведомость")]
 		ReportStock,
@@ -271,6 +305,8 @@ namespace Workwear.Tools.Features
 		ReportOrder,
 		[Display(Name="Отчет Список сотрудников")]
 		ReportWearCard,
+		[Display(Name = "Отчет Оказанные услуги")]
+		ReportServiceServiced,
 		#endregion
 		#region С облаком
 		[IsCloudFeature]
@@ -294,12 +330,17 @@ namespace Workwear.Tools.Features
 		Owners,
 		[Display(Name = "Место возникновения затрат")]
 		CostCenter,
+		[Display(Name = "Выдачи вне нормы")]
+		OverNorm,
 		[Display(Name = "История изменений")]
 		HistoryLog,
 		[Display(Name = "Обмен с 1С")]
 		Exchange1C,
 		[Display(Name = "Прогнозирование запасов")]
 		StockForecasting,
+		[IsCloudFeature]
+		[Display(Name = "Выбор сотрудника")]
+		EmployeeChoose,
 		#region Отчеты
 		[Display(Name = "Отчет Справка по складским операциям")]
 		ReportStockOperations,
@@ -309,7 +350,7 @@ namespace Workwear.Tools.Features
 		ReportSupply,
 		#endregion
 		#region Платные
-		[Display(Name = "Штрихкоды")]
+		[Display(Name = "Маркировка(штрихкоды)")]
 		Barcodes,
 		[Display(Name = "Идентификация сотрудника по карте")]
 		IdentityCards,
@@ -332,6 +373,15 @@ namespace Workwear.Tools.Features
 		Dashboard,
 		[Display(Name = "Поставки")]
 		Shipment,
+		[IsCloudFeature]
+		[Display(Name = "Каталог спецодежды")]
+		Catalog,
+		[Display(Name = "Посещения склада")]
+		Visits,
+		[Display(Name = "Заявки на выдачу")]
+		IssuanceRequest,
+		[Display(Name = "Аренда")]
+		Rent,
 		#region С облаком
 		[IsCloudFeature]
 		[Display(Name = "Спецкойны")]

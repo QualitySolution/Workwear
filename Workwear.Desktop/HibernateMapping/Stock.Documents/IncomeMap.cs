@@ -21,6 +21,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			Map(x => x.CreationDate).Column("creation_date");
 			
 			References (x => x.CreatedbyUser).Column ("user_id");
+			References(x => x.Shipment).Column("shipment_id");
 			References(x => x.Warehouse).Column("warehouse_id").Not.Nullable();
 
 			HasMany (x => x.Items)

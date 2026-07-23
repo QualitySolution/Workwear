@@ -6,6 +6,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
@@ -62,6 +63,40 @@ namespace Workwear.Domain.Stock {
 			get => number;
 			set => SetField(ref number, value?.Trim());
 		}
+
+		private string additionalInfo;
+		[Display(Name = "Модель, марка, артикул, класс защиты СИЗ, дерматологических СИЗ")]
+		public virtual string AdditionalInfo {
+			get => additionalInfo;
+			set => SetField(ref additionalInfo, value);
+		}
+		private string protectionProperties;
+		[Display(Name = "Защитные свойства")]
+		[StringLength(120)]
+		public virtual string ProtectionProperties {
+			get => protectionProperties;
+			set => SetField(ref protectionProperties, value);
+		}
+		private string protectionClass;
+		[Display(Name = "Класс защиты")]
+		[StringLength(16)]
+		public virtual string ProtectionСlass {
+			get => protectionClass;
+			set => SetField(ref protectionClass, value);
+		}
+		private int weight;
+		[Display(Name = "Вес")]
+		public virtual int Weight {
+			get => weight;
+			set => SetField(ref weight, value);
+		}
+		private string catalogId;
+		[Display(Name = "ID каталога")]
+		[StringLength(24, ErrorMessage = "Максимальная длинна идентификатора в каталоге - 24 символа.")]
+		public virtual string CatalogId {
+			get => catalogId;
+			set => SetField(ref catalogId, value);
+		}
 		private bool archival;
 		[Display(Name ="Архивная")]
 		public virtual bool Archival {
@@ -74,6 +109,13 @@ namespace Workwear.Domain.Stock {
 		public virtual decimal? SaleCost {
 			get => saleCost;
 			set => SetField(ref saleCost, value);
+		}		
+		
+		private decimal? rentCost;
+		[Display(Name = "Цена Аренды")]
+		public virtual decimal? RentCost {
+			get => rentCost;
+			set => SetField(ref rentCost, value);
 		}
 		
 		private float? rating;
@@ -92,7 +134,7 @@ namespace Workwear.Domain.Stock {
 		}
 
 		private bool useBarcode;
-		[Display(Name ="Использовать штрихкод")]
+		[Display(Name ="Использовать маркировку")]
 		public virtual bool UseBarcode {
 			get => useBarcode;
 			set => SetField(ref useBarcode, value);
@@ -110,31 +152,37 @@ namespace Workwear.Domain.Stock {
 		public virtual string GetAmountAndUnitsText(int amount) => 
 			Type?.Units?.MakeAmountShortStr(amount) ?? amount.ToString();
 		#endregion
-		#region Средства защиты
-		private IObservableList<ProtectionTools> protectionTools = new ObservableList<ProtectionTools>();
-		[Display(Name = "Номенклатура нормы")]
-		public virtual IObservableList<ProtectionTools> ProtectionTools {
-			get => protectionTools;
-			set => SetField(ref protectionTools, value);
-		}
-		#endregion
+		
 		public Nomenclature () { }
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if (Archival && baseParameters.CheckBalances) {
-				var repository = new StockRepository();
-				var nomenclatures = new List<Nomenclature>() {this};
 				var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
+				var repository = new StockRepository(uow);
+				var nomenclatures = new List<Nomenclature>() {this};
 				var warehouses = uow.Query<Warehouse>().List();
 				foreach (var warehouse in warehouses) {
-					var anyBalance = repository.StockBalances(uow, warehouse, nomenclatures, DateTime.Now)
+					var anyBalance = repository.StockBalances(warehouse, nomenclatures, DateTime.Now)
 						.Where(x => x.Amount > 0);
 					foreach (var position in anyBalance) {
 						yield return new ValidationResult(
 							"Архивная номенклатура не должна иметь остатков на складе" +
 							$" склад {warehouse.Name} содержит {position.StockPosition.Title} в кол-ве {position.Amount} шт.");
 					}
+				}
+			}
+
+			if(NomenclatureSizes.Any()) {
+				var duplicates = NomenclatureSizes
+					.GroupBy(x => (x.Height, Size: x.WearSize))
+					.Where(g => g.Count() > 1)
+					.SelectMany(x => x)
+					.ToList();
+				
+				foreach(var item in duplicates.Select(x => x.Title).Distinct()) {
+					yield return new ValidationResult(
+						$"Не должно быть повторяющихся вариантов размеров. {item} повторяется.");
 				}
 			}
 		}
@@ -162,17 +210,28 @@ namespace Workwear.Domain.Stock {
 			Archival = nomenclature.Archival;
 			SaleCost = nomenclature.SaleCost;
 			UseBarcode = nomenclature.UseBarcode;
+			AdditionalInfo = nomenclature.AdditionalInfo;
+			ProtectionProperties = nomenclature.ProtectionProperties;
+			ProtectionСlass = nomenclature.ProtectionСlass;
+			Weight = nomenclature.Weight;
 
 			foreach(var pt in nomenclature.ProtectionTools) 
 				ProtectionTools.Add(pt);
 		}
 		#endregion
+		
 		#region ProtectionTools
+		private IObservableList<ProtectionTools> protectionTools = new ObservableList<ProtectionTools>();
+		[Display(Name = "Номенклатура нормы")]
+		public virtual IObservableList<ProtectionTools> ProtectionTools {
+			get => protectionTools;
+			set => SetField(ref protectionTools, value);
+		}
 
 		public virtual void AddProtectionTools(ProtectionTools protectionTools)
 		{
 			if(ProtectionTools.Any(p => DomainHelper.EqualDomainObjects(p, protectionTools))) {
-				logger.Warn("Номеклатура нормы уже добавлена. Пропускаем...");
+				logger.Warn("Номенклатура нормы уже добавлена. Пропускаем...");
 				return;
 			}
 			ProtectionTools.Add(protectionTools);
@@ -183,6 +242,35 @@ namespace Workwear.Domain.Stock {
 			ProtectionTools.Remove(protectionTools);
 		}
 		#endregion
+		
+		#region Размеры номенклатуры
+		private IObservableList<NomenclatureSizes> nomenclatureSizes = new ObservableList<NomenclatureSizes>();
+		[Display(Name = "Варианты размеров номенклатуры")]
+		public virtual IObservableList<NomenclatureSizes> NomenclatureSizes {
+			get => nomenclatureSizes;
+			set => SetField(ref nomenclatureSizes, value);
+		}
+		#endregion
+		
+		#region Обслуживание одежды
+		private IObservableList<Service> useServices = new ObservableList<Service>();
+		[Display(Name = "Услуги обслуживания")]
+		public virtual IObservableList<Service> UseServices {
+			get => useServices;
+			set => SetField(ref useServices, value);
+		}
+
+		public virtual void AddService(Service service) {
+			if(UseServices.Any(p => DomainHelper.EqualDomainObjects(p, service))) {
+				logger.Warn("Услуга уже добавлена. Пропускаем...");
+				return;
+			}
+			UseServices.Add(service);
+		}
+
+		public virtual void RemoveService(Service service) => UseServices.Remove(service);
+
+		#endregion
+
 	}
 }
-

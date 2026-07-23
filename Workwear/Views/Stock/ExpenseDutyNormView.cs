@@ -4,8 +4,8 @@ using Gamma.ColumnConfig;
 using Gtk;
 using QS.Views.Dialog;
 using QS.Widgets;
-using Workwear.Domain.Statements;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Print;
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.Views.Stock {
@@ -30,7 +30,9 @@ namespace Workwear.Views.Stock {
 			ylabelCreatedBy.Binding.AddFuncBinding(Entity, e => e.CreatedbyUser != null ? e.CreatedbyUser.Name : null, w => w.LabelProp).InitializeFromSource();
 			ydateDoc.Binding
 				.AddBinding(ViewModel, vm => vm.DocumentDate, w => w.Date)
-				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();
+				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive)
+				.AddBinding(ViewModel,vm => vm.CanChangeDocDate, w => w.IsEditable)
+				.InitializeFromSource();
 			ytextComment.Binding
 				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text)
 				.AddBinding(ViewModel,vm => vm.CanEdit, w => w.Sensitive).InitializeFromSource();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Gamma.ColumnConfig;
+using Grpc.Core;
 using Gtk;
 using NHibernate;
 using NHibernate.Criterion;
@@ -37,12 +38,15 @@ namespace workwear.Journal.ViewModels.Communications
 	[DontUseAsDefaultViewModel]
 	public class EmployeeNotificationJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeNotificationJournalNode>, IDialogDocumentation
 	{
+		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		
 		private readonly UnitOfWorkProvider unitOfWorkProvider;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly BaseParameters baseParameters;
 		private readonly NotificationManagerService notificationManager;
 		private readonly SizeService sizeService;
+		private readonly IInteractiveService interactiveService;
 		private bool alreadyLoaded;
 		
 		public EmployeeNotificationFilterViewModel Filter { get; private set; }
@@ -62,6 +66,7 @@ namespace workwear.Journal.ViewModels.Communications
 		{
 			UseSlider = false;
 			Title = "Уведомление сотрудников";
+			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.unitOfWorkProvider = unitOfWorkProvider ?? throw new ArgumentNullException(nameof(unitOfWorkProvider));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
@@ -84,13 +89,20 @@ namespace workwear.Journal.ViewModels.Communications
 			foreach(EmployeeNotificationJournalNode item in items) 
 				item.ViewModel = this;
 
-			var statuses = notificationManager.GetStatuses(newItems.Where(x => x.LkRegistered).Select(x => x.Phone));
-			foreach (var status in statuses)
-			{
-				var item = newItems.First(x => x.Phone == status.Phone);
-				item.StatusInfo = status;
+			try {
+				var statuses = notificationManager.GetStatuses(newItems.Where(x => x.LkRegistered).Select(x => x.Phone));
+				foreach (var status in statuses)
+				{
+					var item = newItems.First(x => x.Phone == status.Phone);
+					item.StatusInfo = status;
+				}
 			}
-			
+			catch(RpcException ex) {
+				logger.Warn(ex, "Не удалось получить статусы пользователей из облачного сервиса.");
+				interactiveService.ShowMessage(ImportanceLevel.Warning,
+					"Не удалось получить статусы пользователей из облачного сервиса уведомлений. " +
+					"Проверьте подключение к интернету или повторите попытку позже.");
+			}
 			if (Filter.ContainsPeriod && Filter.CheckInStockAvailability) 
 			{
 				stockBalanceModel.Warehouse = (Filter.SelectedWarehouse.Id == -1) ? null : Filter.SelectedWarehouse;
@@ -146,8 +158,11 @@ namespace workwear.Journal.ViewModels.Communications
 				.JoinAlias(() => employeeAlias.WorkwearItems, () => itemAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin);
 			if (Filter.ContainsPeriod) 
 			{
+				var selectedProtectionToolsIds = Filter.SelectedProtectionToolsIds;
+				if(selectedProtectionToolsIds.Length > 0)
+					employees = employees
+						.Where(() => itemAlias.ProtectionTools.Id.IsIn(selectedProtectionToolsIds));
 				employees = employees
-					.Where(() => itemAlias.ProtectionTools.Id.IsIn(Filter.SelectedProtectionToolsIds))
 					.Where(() => itemAlias.NextIssue >= startTime && itemAlias.NextIssue <= Filter.EndDateIssue);
 			}
 
@@ -186,7 +201,7 @@ namespace workwear.Journal.ViewModels.Communications
 						.JoinAlias(() => toolsAlias.Type, () => typesAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 						.Where(() => typesAlias.IssueType == IssueType.Personal);
 					break;
-				case (AskIssueType.Сollective):
+				case (AskIssueType.Collective):
 					employees
 						.JoinAlias(() => itemAlias.ProtectionTools, () => toolsAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 						.JoinAlias(() => toolsAlias.Type, () => typesAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -456,7 +471,7 @@ namespace workwear.Journal.ViewModels.Communications
 
 		public bool LkRegistered { get; set; }
 
-		public bool CanSandNotification => StatusInfo.Status != LkStatus.Missing || !string.IsNullOrWhiteSpace(Email);
+		public bool CanSandNotification => StatusInfo?.Status == LkStatus.HasTokens || StatusInfo?.Status == LkStatus.Registered || !string.IsNullOrWhiteSpace(Email);
 
 		public int IssueCount { get; set; }
 

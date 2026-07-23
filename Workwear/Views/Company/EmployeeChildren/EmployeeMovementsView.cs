@@ -102,7 +102,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 		{
 			var cardIcon = new Gdk.Pixbuf(Assembly.GetEntryAssembly(), "Workwear.icon.buttons.smart-card.png");
 			ytreeviewMovements.CreateFluentColumnsConfig<EmployeeMovementItem>()
-				.AddColumn("Штрихкод").AddTextRenderer(e => e.BarcodesString)
+				.AddColumn("Метка(штрихкод)").AddTextRenderer(e => e.BarcodesString)
 				.AddColumn("Дата").ToolTipText(x => $"ИД операции: {x.Operation.Id}")
 				.AddTextRenderer(e => e.Date.ToShortDateString())
 				//Заголовок колонки используется в методе YtreeviewMovements_RowActivated

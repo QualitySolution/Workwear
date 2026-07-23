@@ -46,6 +46,13 @@ namespace Workwear.Domain.Company
 			set => SetField (ref address, value);
 		}
 
+		private string employeesColor;
+		[Display (Name = "Подсветка сотрудников в журнале")]
+		public virtual string EmployeesColor {
+			get => employeesColor;
+			set => SetField (ref employeesColor, value);
+		}
+		
 		private Warehouse warehouse;
 		[Display(Name = "Склад подразделения")]
 		public virtual Warehouse Warehouse {
@@ -58,6 +65,20 @@ namespace Workwear.Domain.Company
 		public virtual Subdivision ParentSubdivision {
 			get => parentSubdivision;
 			set => SetField(ref parentSubdivision, value);
+		}
+		
+		private EmployeeCard headOfDivision;
+		[Display(Name = "Руководитель подразделения")]
+		public virtual EmployeeCard HeadOfDivision {
+			get => headOfDivision;
+			set => SetField(ref headOfDivision, value);
+		}
+
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get => comment;
+			set => SetField(ref comment, value);
 		}
 		
 		private IObservableList<Subdivision> childSubdivisions = new ObservableList<Subdivision>();

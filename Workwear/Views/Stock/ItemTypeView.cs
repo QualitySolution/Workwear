@@ -2,7 +2,7 @@
 using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using NLog;
-using QS.BusinessCommon.Repository;
+using QS.Measurement.Repository;
 using QS.Views.Dialog;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -29,7 +29,7 @@ namespace Workwear.Views.Stock
 				.AddBinding(Entity, e => e.Name, w => w.Text)
 				.InitializeFromSource ();
 
-			ycomboClothesType.ItemsEnum = typeof(СlothesType);
+			ycomboClothesType.ItemsEnum = typeof(ClothesType);
 			ycomboClothesType.Binding
 				.AddBinding(Entity, e => e.WearCategory, w => w.SelectedItemOrNull)
 				.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible)
@@ -52,7 +52,7 @@ namespace Workwear.Views.Stock
 			
 			labelWearCategory.Binding.AddBinding(ViewModel, v => v.VisibleWearCategory, w => w.Visible).InitializeFromSource();
 			
-			ycomboUnits.ItemsList = MeasurementUnitsRepository.GetActiveUnits(ViewModel.UoW);
+			ycomboUnits.ItemsList = MeasurementUnitRepository.GetActiveUnits(ViewModel.UoW);
 			ycomboUnits.Binding
 				.AddBinding (Entity, e => e.Units, w => w.SelectedItem)
 				.InitializeFromSource ();

@@ -18,6 +18,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
+using Workwear.Models.Regulations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
@@ -52,6 +53,7 @@ namespace Workwear.ViewModels.Regulations
 			ModalProgressCreator progressCreator,
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
+			NormToDutyNormModel normToDutyNormModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -72,13 +74,8 @@ namespace Workwear.ViewModels.Regulations
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
 				.Future();
 
-			var regulationQuery = UoW.Session.QueryOver<RegulationDoc>()
-				.Fetch(SelectMode.Fetch, x => x.Annexes)
-				.Future();
-			
 			NormConditions = normConditionQuery.ToList();
 			NormConditions.Insert(0, null);
-			RegulationDocs = regulationQuery.ToList();
 			if(Entity.Id == 0)
 				LastUpdate = "Новая норма";
 			else {
@@ -106,7 +103,8 @@ namespace Workwear.ViewModels.Regulations
 					x => x.Amount,
 					x => x.NormCondition,
 					x => x.NormPeriod,
-					x => x.PeriodCount);
+					x => x.PeriodCount,
+					x => x.IsDisabled);
 
 			this.changeWatcher.BatchSubscribe(e => needUpdateEmployees = true)
 				.IfEntity<Norm>()
@@ -159,7 +157,6 @@ namespace Workwear.ViewModels.Regulations
 
 		#region Свойства
 		public List<NormCondition> NormConditions { get; set; }
-		public List<RegulationDoc> RegulationDocs { get; set; }
 		
 		private NormItem selectedItem;
 		public virtual NormItem SelectedItem {
@@ -359,6 +356,14 @@ namespace Workwear.ViewModels.Regulations
 		{
 			NavigationManager.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(normItem.ProtectionTools.Id));
 		}
+
+		public void DisableNormItem(NormItem normItem) {
+			normItem.IsDisabled = true;
+		}
+
+		public void EnableNormItem(NormItem normItem) {
+			normItem.IsDisabled = false;
+		}
 		#endregion
 		#endregion
 		#region Сохранение
@@ -408,6 +413,7 @@ namespace Workwear.ViewModels.Regulations
 			}
 
 			var employees = employeeRepository.GetEmployeesUseNorm(new []{Entity}, UoW);
+			
 			if (employees.Any() && needUpdateEmployees) 
 			{
 				logger.Info("Пересчитываем сотрудников");
@@ -424,6 +430,7 @@ namespace Workwear.ViewModels.Regulations
 				NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
 				logger.Info("Ok");
 			}
+			
 			return true;
 		}
 		#endregion

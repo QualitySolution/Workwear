@@ -19,6 +19,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.Domain.Company
 {
@@ -121,13 +122,6 @@ namespace Workwear.Domain.Company
 			set => SetField(ref post, value);
 		}
 
-		private Leader leader;
-		[Display (Name = "Руководитель")]
-		public virtual Leader Leader {
-			get => leader;
-			set => SetField(ref leader, value);
-		}
-
 		private DateTime? hireDate;
 		[Display (Name = "Дата поступления")]
 		public virtual DateTime? HireDate {
@@ -217,6 +211,14 @@ namespace Workwear.Domain.Company
 			set => SetField(ref usedNorms, value);
 		}
 		#endregion
+		#region Norms
+		private IObservableList<DutyNorm> relatedDutyNorms = new ObservableList<DutyNorm>();
+		[Display (Name = "Привязанные дежурные нормы нормы")]
+		public virtual IObservableList<DutyNorm> RelatedDutyNorms {
+			get => relatedDutyNorms;
+			set => SetField(ref relatedDutyNorms, value);
+		}
+		#endregion
 		#region Items
 		private IObservableList<EmployeeCardItem> workwearItems = new ObservableList<EmployeeCardItem>();
 		[Display (Name = "Спецодежда")]
@@ -224,6 +226,12 @@ namespace Workwear.Domain.Company
 			get => workwearItems;
 			set => SetField(ref workwearItems, value);
 		}
+		private IObservableList<EmployeeSelectedNomenclature> selectedNomenclatures = new ObservableList<EmployeeSelectedNomenclature>();
+        [Display (Name = "Предпочтения")]
+        public virtual IObservableList<EmployeeSelectedNomenclature> SelectedNomenclatures {
+        	get => selectedNomenclatures;
+        	set => SetField(ref selectedNomenclatures, value);
+        }
 		#endregion
 		#region Vacation
 		private IObservableList<EmployeeVacation> vacations = new ObservableList<EmployeeVacation>();
@@ -233,13 +241,12 @@ namespace Workwear.Domain.Company
 			set => SetField(ref vacations, value);
 		}
 		#endregion
-		
 		#region CostCenters
-		private IObservableList<EmployeeCostCenter> сostCenters = new ObservableList<EmployeeCostCenter>();
+		private IObservableList<EmployeeCostCenter> costCenters = new ObservableList<EmployeeCostCenter>();
 		[Display(Name = "Места возникновения затрат")]
 		public virtual IObservableList<EmployeeCostCenter> CostCenters {
-			get => сostCenters;
-			set => SetField(ref сostCenters, value);
+			get => costCenters;
+			set => SetField(ref costCenters, value);
 		}
 		
 		public virtual void AddCostCenter(EmployeeCostCenter employeeCostCenter) {
@@ -344,6 +351,15 @@ namespace Workwear.Domain.Company
 				yield return new ValidationResult(
 				"Сумма по МВЗ в должна быть равна 100%", 
 				new[] { nameof(CostCenters) });
+
+			var featureService = (FeaturesService)validationContext.Items[nameof(FeaturesService)];
+			if(featureService.Available(WorkwearFeature.Postomats)) {
+				if(FirstName == null) {
+					yield return new ValidationResult(
+						"В Вашей версии программы включена функциональность Постаматы. Имя сотрудника должно быть заполнено.",
+						new[] { this.GetPropertyName(o => o.FirstName) });
+				}
+			}
 		}
 
 		#endregion
@@ -399,7 +415,9 @@ namespace Workwear.Domain.Company
 			foreach(var norm in UsedNorms) {
 				if(norm.Archival)
 					continue;
-				foreach (var normItem in norm.Items) {
+
+				foreach (var normItem in norm.Items.Where(n=> !n.IsDisabled && !n.ProtectionTools.Archival)) {
+        
 					if(!normItem.NormCondition?.MatchesForEmployee(this) ?? false) 
 						continue;
 					var currentItem = WorkwearItems.FirstOrDefault (i => i.ProtectionTools == normItem.ProtectionTools);
@@ -484,6 +502,19 @@ namespace Workwear.Domain.Company
 					item.Graph = new IssueGraph(protectionGroups[item.ProtectionTools.Id].ToList<IGraphIssueOperation>());
 				else 
 					item.Graph = new IssueGraph(new List<IGraphIssueOperation>());
+			}
+		}
+
+		/// <summary>
+		/// Метод заполняет информацию о получениях для строк потребности в виде графа Graph.
+		/// Принимает уже сгруппированный по Id номенклатуры нормы словарь операций.
+		/// Используется при массовой загрузке через <see cref="GraphIssueOperationDto"/> для экономии памяти.
+		/// </summary>
+		public virtual void FillWearReceivedInfo(IDictionary<int, List<IGraphIssueOperation>> operationsByProtectionToolsId) {
+			foreach (var item in WorkwearItems) {
+				item.Graph = operationsByProtectionToolsId.TryGetValue(item.ProtectionTools.Id, out var ops)
+					? new IssueGraph(ops)
+					: new IssueGraph(new List<IGraphIssueOperation>());
 			}
 		}
 

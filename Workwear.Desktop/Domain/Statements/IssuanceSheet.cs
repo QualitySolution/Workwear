@@ -5,7 +5,6 @@ using System.Linq;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
-using QS.Report;
 using QS.Utilities.Dates;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -202,18 +201,5 @@ namespace Workwear.Domain.Statements
 		public IssuanceSheet()
 		{
 		}
-	}
-
-	public enum IssuedSheetPrint
-	{
-		[Display(Name = "Альбомная")]
-		[ReportIdentifier("Statements.IssuanceSheet")]
-		IssuanceSheet,
-		[Display(Name = "Книжная")]
-		[ReportIdentifier("Statements.IssuanceSheetVertical")]
-		IssuanceSheetVertical,
-		[Display(Name = "Задание на сборку")]
-		[ReportIdentifier("Statements.AssemblyTask")]
-		AssemblyTask,
 	}
 }

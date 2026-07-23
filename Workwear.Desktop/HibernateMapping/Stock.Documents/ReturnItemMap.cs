@@ -15,7 +15,7 @@ namespace Workwear.HibernateMapping.Stock.Documents
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map (x => x.Amount).Column ("quantity");
-			Map (x => x.СommentReturn).Column ("comment_return");
+			Map (x => x.CommentReturn).Column ("comment_return");
 
 			References(x => x.Document).Column("stock_return_id");
 			References (x => x.Nomenclature).Column ("nomenclature_id");

@@ -14,6 +14,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
@@ -22,16 +23,19 @@ namespace workwear.ReportParameters.ViewModels {
 	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
+		private readonly ProtectionToolsRepository protectionToolsRepository;
 
 		public RequestSheetViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory,
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
-			FeaturesService featuresService)
+			FeaturesService featuresService,
+			ProtectionToolsRepository protectionToolsRepository)
 			: base(rdlViewerViewModel)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 			
 			Title = "Заявка на спецодежду";
 			Identifier = "RequestSheet";
@@ -53,7 +57,7 @@ namespace workwear.ReportParameters.ViewModels {
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
 
-			var protectionToolsList = uow.GetAll<ProtectionTools>().ToList();
+			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(uow);
 			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
@@ -155,6 +159,12 @@ namespace workwear.ReportParameters.ViewModels {
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
+
+		private bool showSize;
+		public virtual bool ShowSize {
+			get => showSize;
+			set=>SetField(ref showSize, value);
+		}
 		
 		public bool SensetiveSubdivision => department == null;
 		public bool VisibleIssueType => featuresService.Available(WorkwearFeature.CollectiveExpense);
@@ -177,7 +187,8 @@ namespace workwear.ReportParameters.ViewModels {
 					{"show_sex", ShowSex },
 					{"exclude_in_vacation", excludeInVacation },
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
-					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
+					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
+					{"show_size", ShowSize},
 					};
 
 		public void Dispose()

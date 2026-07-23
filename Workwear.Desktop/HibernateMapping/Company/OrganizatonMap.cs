@@ -15,6 +15,7 @@ namespace Workwear.HibernateMapping.Company
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map(x => x.Name).Column("name");
+			Map(x => x.OKPO).Column("okpo");
 			Map(x => x.Address).Column("address");
 		}
 	}

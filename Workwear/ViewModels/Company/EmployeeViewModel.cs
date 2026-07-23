@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -138,11 +138,6 @@ namespace Workwear.ViewModels.Company
 			
 			var builderVm = new CommonEEVMBuilderFactory<EmployeeViewModel>(this, this, UoW, NavigationManager, AutofacScope);
 
-			EntryLeaderViewModel = builderVm.ForProperty(x => x.Leader)
-				.UseViewModelJournalAndAutocompleter<LeadersJournalViewModel>()
-				.UseViewModelDialog<LeadersViewModel>()
-				.Finish();
-
 			subdivision = Entity.Subdivision;
 			EntrySubdivisionViewModel = builderVm.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
@@ -165,7 +160,7 @@ namespace Workwear.ViewModels.Company
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info("Создание карточки для нового сотрудника");
 			}
@@ -177,9 +172,11 @@ namespace Workwear.ViewModels.Company
 			var parameter = new TypedParameter(typeof(EmployeeViewModel), this);
 			NormsViewModel = AutofacScope.Resolve<EmployeeNormsViewModel>(parameter);
 			WearItemsViewModel = AutofacScope.Resolve<EmployeeWearItemsViewModel>(parameter);
+			DutyNormsViewModel = AutofacScope.Resolve<EmployeeDutyNormsViewModel>(parameter);
 			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
+			EmployeeOverNormViewModel = AutofacScope.Resolve<EmployeeOverNormViewModel>(parameter);
 			InGroupsViewModel = AutofacScope.Resolve<EmployeeInGroupsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
 			//Панели
@@ -189,15 +186,15 @@ namespace Workwear.ViewModels.Company
 			lkLastPhone = Entity.PhoneNumber;
 			LkPassword = Entity.LkRegistered ? unknownPassword : String.Empty;
 			
-			Validations.Add(new ValidationRequest(this));
 			Performance.CheckPoint("Создание View");
+			Validations.Clear();
+			Validations.Add(new ValidationRequest(this));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object>{{nameof(FeaturesService), featuresService}})));
 		}
 
 		public readonly ProgressPerformanceHelper Performance;
 
 		#region Контролы
-
-		public readonly EntityEntryViewModel<Leader> EntryLeaderViewModel;
 		public readonly EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
 		public readonly EntityEntryViewModel<Department> EntryDepartmentViewModel;
 		public readonly EntityEntryViewModel<Post> EntryPostViewModel;
@@ -208,12 +205,15 @@ namespace Workwear.ViewModels.Company
 
 		#region Visible
 
-		public bool VisibleListedItem => !UoW.IsNew;
-		public bool VisibleHistory => !UoW.IsNew;
+		public bool VisibleListedItem => Entity.Id != 0;
+		public bool VisibleHistory => Entity.Id != 0;
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
+		public bool VisibleOverNorm => featuresService.Available(WorkwearFeature.OverNorm);
 		public bool VisibleEmployeeGroups => featuresService.Available(WorkwearFeature.EmployeeGroups);
+		public bool VisibleDutyNorm => featuresService.Available(WorkwearFeature.DutyNorms) && Entity.RelatedDutyNorms.Count > 0;
+		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
 		public bool VisibleColorsLegend => CurrentTab == 3;
 
 		private bool visiblePhoto;
@@ -229,7 +229,6 @@ namespace Workwear.ViewModels.Company
 			set => SetField(ref visibleSpecCoinsViews, value);
 		}
 
-		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
 		#endregion
 
 		#region Sensetive
@@ -248,11 +247,6 @@ namespace Workwear.ViewModels.Company
 		public string CardNumber {
 			get => AutoCardNumber ? (Entity.Id != 0 ? Entity.Id.ToString() : "авто" ) : Entity.CardNumber;
 			set => Entity.CardNumber = (AutoCardNumber || value == "авто") ? null : value;
-		}
-
-		public Leader Leader {
-			get => Entity.Leader;
-			set => Entity.Leader = value;
 		}
 			
 		private Subdivision subdivision;
@@ -345,6 +339,8 @@ namespace Workwear.ViewModels.Company
 
 		public bool IsDocNumberInIssueSign => baseParameters.IsDocNumberInIssueSign;
 		public bool IsDocNumberInReturnSign => baseParameters.IsDocNumberInReturnSign;
+		public DateTime? StartDateOfOperations => baseParameters.StartDateOfOperations;
+		public bool IsGenericName => baseParameters.IsGenericName;
 
 		#region CardUid
 		public virtual string CardUid {
@@ -488,16 +484,18 @@ namespace Workwear.ViewModels.Company
 																	// 0 - Информация
 																	// 1 - Размеры
 		public EmployeeNormsViewModel NormsViewModel;				//2
-		public EmployeeWearItemsViewModel WearItemsViewModel; 		//3
-		public EmployeeCostCentersViewModel CostCenterViewModel;	//4
-		public EmployeeInGroupsViewModel InGroupsViewModel;			//5
-		public EmployeeListedItemsViewModel ListedItemsViewModel;	//6
-		public EmployeeMovementsViewModel MovementsViewModel;       //7
-		public EmployeeVacationsViewModel VacationsViewModel;       //8
+		public EmployeeWearItemsViewModel WearItemsViewModel;		//3
+		public EmployeeDutyNormsViewModel DutyNormsViewModel;		//4
+		public EmployeeCostCentersViewModel CostCenterViewModel;	//5
+		public EmployeeInGroupsViewModel InGroupsViewModel;			//6
+		public EmployeeListedItemsViewModel ListedItemsViewModel;	//7
+		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //8
+		public EmployeeMovementsViewModel MovementsViewModel;       //9
+		public EmployeeVacationsViewModel VacationsViewModel;       //10
 
 
 		private int lastTab;
-		private int currentTab;
+		private int currentTab = 0;
 		[PropertyChangedAlso(nameof(VisibleColorsLegend))]
 		public virtual int CurrentTab {
 			get => currentTab;
@@ -510,7 +508,7 @@ namespace Workwear.ViewModels.Company
 				case 2: NormsViewModel.OnShow();
 					break;
 				case 3:
-					if (UoW.IsNew)
+					if (Entity.Id == 0)
 						if (interactive.Question("Перед работой с имуществом сотрудника необходимо сохранить карточку. Сохранить?",
 							    "Сохранить сотрудника?") && Save())
 						{
@@ -521,16 +519,24 @@ namespace Workwear.ViewModels.Company
 					else
 						WearItemsViewModel.OnShow();;
 					break;
-				case 4: CostCenterViewModel.OnShow();
+				case 4: DutyNormsViewModel.OnShow();
 					break;
-				case 5: InGroupsViewModel.OnShow();
+				case 5: CostCenterViewModel.OnShow();
 					break;
-				case 6: ListedItemsViewModel.OnShow();
+				case 6: InGroupsViewModel.OnShow();
 					break;
-				case 7: MovementsViewModel.OnShow();
+				case 7:
+					if(Entity.Id != 0)
+						ListedItemsViewModel.OnShow();
 					break;
-				case 8:
-					if(UoW.IsNew) {
+				case 8: EmployeeOverNormViewModel.OnShow();
+					break;
+				case 9: 
+					if(Entity.Id != 0)
+						MovementsViewModel.OnShow();
+					break;
+				case 10:
+					if( Entity.Id == 0) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {
 							VacationsViewModel.OnShow();
@@ -589,7 +595,6 @@ namespace Workwear.ViewModels.Company
 						return false;
 				}
 			}
-			
 			return SyncLkPassword();
 		}
 
@@ -642,7 +647,7 @@ namespace Workwear.ViewModels.Company
 
 		public void Print(PersonalCardPrint doc)
 		{
-			if(UoWGeneric.HasChanges && messages.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
+			if(UoW.HasChanges && messages.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
 				Save();
 
 			var reportInfo = new ReportInfo {
@@ -653,6 +658,8 @@ namespace Workwear.ViewModels.Company
 					{"isDocNumberInIssueSign", IsDocNumberInIssueSign},
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
 					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
+					{"startDateOfOperations", StartDateOfOperations},
+					{"isGenericName", IsGenericName}
 				}
 			};
 

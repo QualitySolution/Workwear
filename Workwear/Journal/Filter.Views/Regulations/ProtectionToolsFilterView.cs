@@ -10,6 +10,9 @@ namespace Workwear.Journal.Filter.Views.Regulations {
 			ycheckOnlyDermal.Binding
 				.AddBinding(viewModel, vm => vm.OnlyDermal, w => w.Active)
 				.InitializeFromSource();
+			yShowArchival.Binding
+				.AddBinding(viewModel, vm=>vm.ShowArchival, w=>w.Active)
+				.InitializeFromSource();
 		}
 	}
 }

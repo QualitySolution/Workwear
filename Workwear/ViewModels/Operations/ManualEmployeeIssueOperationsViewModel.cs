@@ -350,10 +350,13 @@ namespace Workwear.ViewModels.Operations
 
 		public string BarcodesColor => NeedCreateBarcodes ? "red" : null;
 		public void ReleaseBarcodes() {
+			if(SelectOperation == null)
+				return;
+			
 			if(SelectOperation.Id == 0)
 				UoW.Save(SelectOperation);
 			
-			barcodeService.CreateOrRemove(UoW, new []{SelectOperation});
+			barcodeService.CreateBarcodeEAN13(UoW, new []{SelectOperation});
 			UoW.Commit();
 			OnPropertyChanged(nameof(SensitiveCreateBarcodes));
 			OnPropertyChanged(nameof(ButtonCreateOrRemoveBarcodesTitle));
@@ -370,7 +373,7 @@ namespace Workwear.ViewModels.Operations
 
 			var reportInfo = new ReportInfo {
 				Title = "Штрихкоды",
-				Identifier = "Barcodes.BarcodeFromEmployeeIssue",
+				Identifier = "Barcodes.Barcode",
 				Parameters = new Dictionary<string, object> {
 					{"barcodes", SelectOperation.BarcodeOperations.Select(x => x.Barcode.Id).ToList()}
 				}

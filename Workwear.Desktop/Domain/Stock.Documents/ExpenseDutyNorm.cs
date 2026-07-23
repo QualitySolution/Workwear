@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -24,11 +25,11 @@ namespace Workwear.Domain.Stock.Documents {
 
 	public class ExpenseDutyNorm : StockDocument, IValidatableObject{
 		
-		#region Генерирумые Сввойства
+		#region Генерирумые Свойства
 		public virtual string Title => $"Выдача по деж. норме №{DocNumberText} от {Date:d}";
 		#endregion
 		
-		#region Хранимые Сввойства
+		#region Хранимые Свойства
 
 		private EmployeeCard responsibleEmployee;
 		[Display (Name = "Ответственный сотрудник")]
@@ -174,10 +175,11 @@ namespace Workwear.Domain.Stock.Documents {
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if(UoW != null && baseParameters.CheckBalances) {
-				var repository = new StockRepository();
-				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
+				var repository = new StockRepository(UoW);
+				var nomenclaturesIds = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature.Id).Distinct().ToList();
+				var nomenclatures = UoW.Session.QueryOver<Nomenclature>().Where(x => x.Id.IsIn(nomenclaturesIds)).List();
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
-				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+				var balance = repository.StockBalances(Warehouse, nomenclatures, Date, excludeOperations);
 
 				var positionGroups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
 				foreach(var position in positionGroups) {

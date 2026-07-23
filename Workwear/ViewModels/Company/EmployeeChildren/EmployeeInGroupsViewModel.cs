@@ -10,6 +10,9 @@ using Workwear.Domain.Company;
 using workwear.Journal.ViewModels.Company;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren {
+	/// <summary>
+	/// Вкладка "Группы"
+	/// </summary>
 	public class EmployeeInGroupsViewModel: ViewModelBase {
 		
 		private readonly INavigationManager navigation;

@@ -25,20 +25,11 @@ namespace Workwear.Views.Regulations
 		{
 			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter()).InitializeFromSource ();
 
-			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
-			yentryRegulationDoc.SetRenderTextFunc<RegulationDoc>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
-			yentryRegulationDoc.ItemsList = ViewModel.RegulationDocs;
-			yentryRegulationDoc.WidthRequest = 1; //Минимальное не нулевое значение, чтобы элемент не участвовал в расчёте минимальной ширины окна
-			ycomboAnnex.WidthRequest = 1;  
-			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
-			yentryRegulationDoc.Changed += OnYentryRegulationDocChanged;
-			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
 			datefrom.Binding.AddBinding(Entity, e => e.DateFrom, w => w.DateOrNull).InitializeFromSource();
 			dateto.Binding.AddBinding(Entity, e => e.DateTo, w => w.DateOrNull).InitializeFromSource();
 			ylabellastupdate.Binding.AddBinding(ViewModel, e=>e.LastUpdate, w=>w.LabelProp).InitializeFromSource();
 			ycheckArchival.Binding.AddBinding(Entity, e => e.Archival, w => w.Active).InitializeFromSource();
 			
-			yentryTonParagraph.Binding.AddBinding (Entity, e => e.TONParagraph, w => w.Text).InitializeFromSource ();
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
@@ -52,10 +43,16 @@ namespace Workwear.Views.Regulations
 					.AddTextRenderer(i => i.ProtectionTools != null && i.ProtectionTools.Type.Units != null ? i.ProtectionTools.Type.Units.Name : String.Empty)
 						.AddSetter((c, n) => c.Visible = !n.ProtectionTools.Dispenser)
 				.AddColumn("Период")
-				.AddNumericRenderer(i => i.PeriodCount).WidthChars(6).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
+				.AddNumericRenderer(i => i.PeriodCount).WidthChars(5).Editing().Adjustment(new Gtk.Adjustment(1, 1, 100, 1, 10, 10))
 					.AddSetter((c, n) => c.Visible = n.NormPeriod != NormPeriodType.Wearout && n.NormPeriod != NormPeriodType.Duty && !n.ProtectionTools.Dispenser)
-				.AddEnumRenderer(i => i.NormPeriod).Editing()
-					.AddSetter((c, n) => c.Visible = !n.ProtectionTools.Dispenser)
+				.AddEnumRenderer(i => i.NormPeriod)
+					.HideCondition((node, value) => value == NormPeriodType.Shift) 
+					.Editing()
+					.AddSetter((c, n) => {
+						c.Text = n.PeriodText;
+						c.Visible = !n.ProtectionTools.Dispenser;
+						c.WidthChars = 8;
+						c.Xalign = 1.0f; })
 				.AddColumn("Условие нормы").Visible(ViewModel.VisibleNormCondition)
 					.AddComboRenderer(i => i.NormCondition)
 						.SetDisplayFunc(x => x?.Name)
@@ -64,6 +61,8 @@ namespace Workwear.Views.Regulations
 					.Editing()
 				.AddColumn("Пункт норм").AddTextRenderer(x => x.NormParagraph).Editable()
 				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable()
+				.RowCells()
+				.AddSetter<CellRendererText>((c,x) => c.Foreground = SetColor(x.IsDisabled, x.ProtectionTools.Archival))
 				.Finish ();
 			ytreeItems.ItemsDataSource = Entity.Items;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
@@ -101,12 +100,6 @@ namespace Workwear.Views.Regulations
 		}
 		#endregion
 
-		protected void OnYentryRegulationDocChanged(object sender, EventArgs e)
-		{
-			ycomboAnnex.ItemsList = Entity.Document?.Annexes;
-			ycomboAnnex.Sensitive = Entity.Document?.Annexes.Count > 0;
-		}
-		
 		#region PopupMenu
 
 		private void TreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
@@ -119,7 +112,24 @@ namespace Workwear.Views.Regulations
 				menuItem.Sensitive = selected != null;
 				menuItem.Activated += (sender, e) => ViewModel.OpenProtectionTools(selected);
 				menu.Add(menuItem);
-				
+
+				if(!(selected?.IsDisabled ?? false)) {
+					bool isSensitive = !Entity.Archival;
+					string label = "Отключить строку нормы" + (Entity.Archival ? " (архивная)" : "");
+					menuItem = new MenuItem(label);
+					menuItem.Sensitive = isSensitive;
+					menuItem.Activated += (sender, e) => ViewModel.DisableNormItem(selected);
+					menu.Add(menuItem);
+				}
+
+				if(selected?.IsDisabled ?? false){
+					bool isSensitive = !Entity.Archival;
+					string label = "Включить строку нормы" + (Entity.Archival ? " (архивная)" : "");
+					menuItem = new MenuItem(label);
+					menuItem.Sensitive = isSensitive;
+					menuItem.Activated += (sender, e) => ViewModel.EnableNormItem(selected);
+					menu.Add(menuItem);
+				}
 				menu.Add(new SeparatorMenuItem());
 				
 				menuItem = new MenuItem("Пересчитать сроки носки в документах выдачи");
@@ -132,6 +142,11 @@ namespace Workwear.Views.Regulations
 			}
 		}
 		#endregion
+
+		private string SetColor(bool isDisabled, bool isArchival) {
+			if(isDisabled)
+				return "gray";
+			return isArchival ? "#2F353B" : "black";
+		}
 	}
 }
-

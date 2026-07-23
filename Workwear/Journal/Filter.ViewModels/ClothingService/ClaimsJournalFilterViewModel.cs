@@ -16,7 +16,8 @@ namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 			JournalViewModelBase journalViewModel,
 			PostomatManagerService postomatService,
 			FeaturesService featuresService,
-			IUnitOfWorkFactory unitOfWorkFactory = null)
+			IUnitOfWorkFactory unitOfWorkFactory = null,
+			Action<ClaimsJournalFilterViewModel> setFilterParameters = null)
 			: base(journalViewModel, unitOfWorkFactory)
 		{
 			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
@@ -24,9 +25,12 @@ namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 			var postomats = new List<PostomatInfo>();
 			postomat = new PostomatInfo() { Id = 0, Name = "Любой" };//заодно проставим умолчания
 			postomats.Add(postomat);
-			if(featuresService.Available(WorkwearFeature.Postomats))
+			if(featuresService.Available(WorkwearFeature.Postomats)) 
 				postomats.AddRange(postomatService.GetPostomatList(PostomatListType.Aso));
+			else 
+				HiddenStates = new object[] { ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
 			Postomats = postomats;
+			setFilterParameters?.Invoke(this);
 		}
 		
 		public IList<PostomatInfo> Postomats { get; }
@@ -43,7 +47,9 @@ namespace Workwear.Journal.Filter.ViewModels.ClothingService {
 			get => showOnlyRepair;
 			set => SetField(ref showOnlyRepair, value);
 		}
-		
+
+		public virtual object[] HiddenStates { get; }
+
 		private ClaimState? status;
 		public virtual ClaimState? Status {
 			get => status;

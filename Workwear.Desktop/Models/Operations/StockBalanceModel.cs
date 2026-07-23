@@ -65,14 +65,14 @@ namespace Workwear.Models.Operations {
 		public IEnumerable<WarehouseOperation> ExcludeOperations { get; set; }
 		#endregion
 
-		#region Номеклатура
+		#region Номенклатура
 		public HashSet<Nomenclature> Nomenclatures { get; } = new HashSet<Nomenclature>();
 		
 		public void AddNomenclatures(IEnumerable<Nomenclature> nomenclatures) {
 			var newNomenclatures = nomenclatures.Except(Nomenclatures).ToList();
 			if (newNomenclatures.Any()) {
 				Nomenclatures.UnionWith(newNomenclatures);
-				stockBalances.AddRange(stockRepository.StockBalances(UoW, Warehouse, newNomenclatures, OnDate?.Date ?? DateTime.Today, ExcludeOperations)
+				stockBalances.AddRange(stockRepository.StockBalances(Warehouse, newNomenclatures, OnDate?.Date ?? DateTime.Today, ExcludeOperations)
 					.Select(sto => new StockBalance(sto.StockPosition, sto.Amount)));
 			}
 			
@@ -81,11 +81,11 @@ namespace Workwear.Models.Operations {
 
 		#region Работа с базой
 		/// <summary>
-		/// Обновляет информацию о остатках. 
+		/// Обновляет информацию об остатках. 
 		/// </summary>
 		public void Refresh() {
 			if(Nomenclatures.Any())
-				stockBalances = stockRepository.StockBalances(UoW, Warehouse, Nomenclatures, OnDate?.Date ?? DateTime.Today, ExcludeOperations)
+				stockBalances = stockRepository.StockBalances(Warehouse, Nomenclatures, OnDate?.Date ?? DateTime.Today, ExcludeOperations)
 					.Select(sto => new StockBalance(sto.StockPosition, sto.Amount)).ToList();
 		}
 		#endregion
@@ -94,6 +94,14 @@ namespace Workwear.Models.Operations {
 		public virtual IEnumerable<StockBalance> Balances => stockBalances;
 		public IEnumerable<StockBalance> ForNomenclature(params Nomenclature[] nomenclatures) => stockBalances.Where(x => nomenclatures.Contains(x.Position.Nomenclature));
 		public int GetAmount(StockPosition stockPosition) => stockBalances.FirstOrDefault(x => x.Position.Equals(stockPosition))?.Amount ?? 0;
+		public int GetShipmentItemInStock(StockPosition stockPosition, bool isNullWearPercent) {
+			var balances = stockBalances
+				.Where(x => x.Position.Nomenclature.Id == stockPosition.Nomenclature.Id &&
+				            x.Position.WearSize?.Id == stockPosition.WearSize?.Id &&
+				            x.Position.Height?.Id == stockPosition.Height?.Id);
+			return isNullWearPercent ? balances.Where(x => x.Position.WearPercent == stockPosition.WearPercent).Sum(x => x.Amount) : balances.Sum(x => x.Amount);
+		}
+
 		#endregion
 	}
 

@@ -12,6 +12,8 @@ namespace Workwear.Views.Export {
 				.InitializeFromSource();
 			entityentryOrganization.ViewModel = ViewModel.ResponsibleOrganizationEntryViewModel;
 			checkMoveDebt.Binding.AddBinding(ViewModel, v => v.MoveDebt, w => w.Active).InitializeFromSource();
+			checkIncludeEmployees.Binding.AddBinding(ViewModel, v => v.IncludeEmployees, w => w.Active).InitializeFromSource();
+			checkIncludeDutyNorms.Binding.AddBinding(ViewModel, v => v.IncludeDutyNorms, w => w.Active).InitializeFromSource();
 
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			

@@ -42,6 +42,7 @@ namespace Workwear.Views.ClothingService
 			this.Name = "Workwear.Views.ClothingService.ClothingReceiptView";
 			// Container child Workwear.Views.ClothingService.ClothingReceiptView.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
@@ -51,7 +52,7 @@ namespace Workwear.Views.ClothingService
 			this.ylabel1 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel1.Name = "ylabel1";
 			this.ylabel1.Xalign = 1F;
-			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Штрих код:");
+			this.ylabel1.LabelProp = global::Mono.Unix.Catalog.GetString("Идентификатор метки:");
 			this.hbox1.Add(this.ylabel1);
 			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.ylabel1]));
 			w1.Position = 0;
@@ -124,7 +125,7 @@ namespace Workwear.Views.ClothingService
 			this.ylabel4.Name = "ylabel4";
 			this.ylabel4.Xpad = 20;
 			this.ylabel4.Xalign = 1F;
-			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Отписание дефекта:");
+			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Описание дефекта:");
 			this.hbox3.Add(this.ylabel4);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.ylabel4]));
 			w9.Position = 1;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -20,8 +20,10 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Models.Regulations;
 using Workwear.Repository.Company;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 
 namespace workwear.Journal.ViewModels.Regulations
@@ -29,14 +31,27 @@ namespace workwear.Journal.ViewModels.Regulations
 	public class NormJournalViewModel : EntityJournalViewModelBase<Norm, NormViewModel, NormJournalNode>, IDialogDocumentation
 	{
 		private readonly ILifetimeScope autofacScope;
+		private readonly NormToDutyNormModel normToDutyNormModel;
 		public NormFilterViewModel Filter { get; private set; }
+		public FeaturesService FeaturesService { get; }
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("regulations.html#norms");
 		public string ButtonTooltip => DocHelper.GetJournalDocTooltip(typeof(Norm));
 		#endregion
-		public NormJournalViewModel(IUnitOfWorkFactory unitOfWorkFactory, IInteractiveService interactiveService, INavigationManager navigationManager, ILifetimeScope autofacScope, IDeleteEntityService deleteEntityService = null, ICurrentPermissionService currentPermissionService = null) : base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
+		public NormJournalViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IInteractiveService interactiveService,
+			INavigationManager navigationManager,
+			ILifetimeScope autofacScope,
+			NormToDutyNormModel normToDutyNormModel,
+			FeaturesService featuresService,
+			IDeleteEntityService deleteEntityService = null,
+			ICurrentPermissionService currentPermissionService = null) 
+			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
+			this.normToDutyNormModel = normToDutyNormModel ?? throw new ArgumentNullException(nameof(normToDutyNormModel));
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			UseSlider = false;
 			JournalFilter = Filter = autofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
 			CreatePopupActions();
@@ -53,8 +68,6 @@ namespace workwear.Journal.ViewModels.Regulations
 			Department departmentAlias = null;
 			Norm normAlias = null;
 			NormItem normItemAlias = null;
-			RegulationDoc regulationDocAlias = null;
-			RegulationDocAnnex docAnnexAlias = null;
 			EmployeeCard employeeAlias = null;
 			Norm usedNormAlias = null;
 
@@ -71,8 +84,6 @@ namespace workwear.Journal.ViewModels.Regulations
 
 
 			var norms = uow.Session.QueryOver<Norm>(() => normAlias)
-				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => normAlias.Posts, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => postAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => postAlias.Department, () => departmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -102,9 +113,6 @@ namespace workwear.Journal.ViewModels.Regulations
 			return norms
 				.SelectList(list => list
 				   .SelectGroup(() => normAlias.Id).WithAlias(() => resultAlias.Id)
-				   .Select(() => regulationDocAlias.Number).WithAlias(() => resultAlias.TonNumber)
-				   .Select(() => docAnnexAlias.Number).WithAlias(() => resultAlias.AnnexNumber)
-				   .Select(() => normAlias.TONParagraph).WithAlias(() => resultAlias.TonParagraph)
 				   .Select(() => normAlias.Name).WithAlias(() => resultAlias.Name)
 				   .Select(() => normAlias.Archival).WithAlias(() => resultAlias.Archival)
 				   .SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Usages)
@@ -140,6 +148,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				(nodes) => nodes.Cast<NormJournalNode>().Any(x => x.UsagesWorked > 0),
 				(arg) => true,
 				UpdateWearItems));
+			PopupActionsList.Add(new JournalAction("Перенести норму и выдачи в дежурные", arg => arg.Length == 1, arg => FeaturesService.Available(WorkwearFeature.DutyNorms), TransformToDutyNorm));
 		}
 
 		private void CopyNorm(object[] nodes)
@@ -186,6 +195,14 @@ namespace workwear.Journal.ViewModels.Regulations
 			}
 			NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);
 		}
+
+		private void TransformToDutyNorm(object[] nodes) {
+			if(nodes.Length != 1)
+				return;
+			int normId = (nodes[0] as NormJournalNode).Id;
+			normToDutyNormModel.CopyNormToDutyNorm(normId);
+			
+		}
 		#endregion
 	}
 
@@ -193,10 +210,6 @@ namespace workwear.Journal.ViewModels.Regulations
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string TonNumber { get; set; }
-		public int? AnnexNumber { get; set; }
-		public string TonAttachment => AnnexNumber?.ToString();
-		public string TonParagraph { get; set; }
 		public string Posts { get; set; }
 		public int Usages { get; set; }
 		public int UsagesWorked { get; set; }

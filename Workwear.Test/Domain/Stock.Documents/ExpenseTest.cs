@@ -174,6 +174,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 			var expense = new Expense();
 			expense.Employee = employee;
 			expense.Date = new DateTime(2019, 1, 15);
+			expense.IssueDate = new DateTime(2019, 1, 15);
 			expense.Warehouse = warehouse;
 			expense.Items.Add(expenseItem);
 			expenseItem.ExpenseDoc = expense;
@@ -210,6 +211,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 			var expense = new Expense();
 			expense.Employee = employee;
 			expense.Date = new DateTime(2019, 1, 15);
+			expense.IssueDate = new DateTime(2019, 1, 15);
 			expense.Items.Add(expenseItem);
 			expenseItem.ExpenseDoc = expense;
 

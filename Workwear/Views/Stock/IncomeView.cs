@@ -27,18 +27,16 @@ namespace Workwear.Views.Stock {
 			ylabelCreatedBy.Binding
 				.AddFuncBinding(ViewModel, vm => vm.DocCreatedbyUser != null ? vm.DocCreatedbyUser.Name : null, w => w.LabelProp)
 				.InitializeFromSource ();
-			ydateDoc.Binding
-				.AddSource(ViewModel)
+			ydateDoc.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.DocumentDate, w => w.Date)
 				.AddBinding(vm => vm.CanEdit, w => w.Sensitive)
+				.AddBinding(ViewModel,vm => vm.CanChangeDocDate, w => w.IsEditable)
 				.InitializeFromSource ();
-			yentryNumber.Binding
-				.AddSource(ViewModel)
+			yentryNumber.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.NumberTN, w => w.Text)
 				.AddBinding(vm => vm.CanEdit, w => w.Sensitive)
 				.InitializeFromSource();
-			ytextComment.Binding
-				.AddSource(ViewModel)
+			ytextComment.Binding.AddSource(ViewModel)
 				.AddBinding(vm => vm.DocComment, w => w.Buffer.Text)
 				.AddBinding(vm => vm.CanEdit, w => w.Sensitive)
 				.InitializeFromSource();
@@ -49,9 +47,19 @@ namespace Workwear.Views.Stock {
 			entityWarehouse.Binding
 				.AddBinding(ViewModel, vm => vm.WarehouseVisible, w => w.Visible)
 				.InitializeFromSource();
+			ylabelShipment.Binding
+				.AddBinding(ViewModel, vm => vm.ShipmentLabel, w => w.LabelProp)
+				.AddBinding(ViewModel, vm => vm.ShowShipment, w => w.Visible)
+				.InitializeFromSource();
+			entityShipment.ViewModel = ViewModel.ShipmentEntryViewModel;
+			entityShipment.Binding
+				.AddBinding(ViewModel, vm => vm.ShowShipment, w => w.Visible)
+				.InitializeFromSource();
 			ybuttonReadInFile.Binding
+				.AddBinding(ViewModel, vm => vm.CanReadFile, w => w.Sensitive)
 				.AddBinding(ViewModel, vm => vm.ReadInFileVisible, w => w.Visible)
 				.InitializeFromSource();
+			
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)
 				.InitializeFromSource();
@@ -59,8 +67,6 @@ namespace Workwear.Views.Stock {
 			ybuttonAdd.Binding.AddBinding(ViewModel, vm => vm.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonAddSizes.Binding.AddBinding(ViewModel, vm => vm.CanAddSize, w => w.Sensitive).InitializeFromSource();
-			ybuttonReadInFile.Binding.AddBinding(ViewModel, vm => vm.CanReadFile, w => w.Sensitive).InitializeFromSource();
-			ybuttonReadInFile.Binding.AddBinding(ViewModel, vm => vm.ReadInFileVisible, w => w.Visible).InitializeFromSource();
 		}
 
 		private void ConfigureItems() {
@@ -73,12 +79,16 @@ namespace Workwear.Views.Stock {
 				.AddColumn("Сертификат").Resizable()
 					.AddTextRenderer(e => e.Certificate).Editable(ViewModel.CanEdit)
 				.AddColumn("Размер").MinWidth(60)
-					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => ViewModel.GetSizeVariants(x))
+					.AddComboRenderer(x => x.WearSizeVariant)
+					.SetDisplayFunc(x => x.WearSize?.Name)
+					.SetDisplayListFunc(x => x.Title)
+					.DynamicFillListFunc(x => ViewModel.GetSizeVariants(x), "Нет")
 					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.WearSizeType != null)
 				.AddColumn("Рост").MinWidth(70)
-					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
-					.DynamicFillListFunc(x => ViewModel.GetHeightVariants(x))
+					.AddComboRenderer(x => x.HeightVariant)
+					.SetDisplayFunc(x => x.Height?.Name)
+					.SetDisplayListFunc(x => x.Title)
+					.DynamicFillListFunc(x => ViewModel.GetHeightVariants(x), "Нет")
 					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.HeightType != null)
 				.AddColumn("Собственники").Resizable()
 					.Visible(ViewModel.OwnersVisible)
@@ -105,24 +115,16 @@ namespace Workwear.Views.Stock {
 			ytreeItems.ItemsDataSource = ViewModel.Items;
 			
 		}
-		
-		protected void OnYbuttonReadInFileClicked(object sender, EventArgs e) {
-		}
 
-		protected void OnYbuttonAddClicked(object sender, EventArgs e) {
+		protected void OnYbuttonReadInFileClicked(object sender, EventArgs e) =>
+			ViewModel.ReadInFile();
+		protected void OnYbuttonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItem();
-		}
-
-		protected void OnYbuttonDelClicked(object sender, EventArgs e) {
+		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<IncomeItem>());
-		}
-
-		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) {
+		protected void OnYbuttonAddSizesClicked(object sender, EventArgs e) =>
 			ViewModel.AddSize(ytreeItems.GetSelectedObject<IncomeItem>());
-		}
-		
-		private void ytreeItems_Selection_Changed(object sender, EventArgs e) {
+		private void ytreeItems_Selection_Changed(object sender, EventArgs e) =>
 			ViewModel.SelectedItem = ytreeItems.GetSelectedObject<IncomeItem>();
-		}
 	}
 }

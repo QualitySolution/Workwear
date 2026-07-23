@@ -30,6 +30,9 @@ namespace Workwear.HibernateMapping.Stock {
 			References(x => x.IssuedOperation).Column("issued_operation_id");
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
+
+			HasMany(x => x.BarcodeOperations)
+				.KeyColumn("duty_norm_issue_operation_id").Inverse().LazyLoad();
 		}
 	}
 }

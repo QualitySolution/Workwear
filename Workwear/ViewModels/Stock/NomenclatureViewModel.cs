@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Autofac;
+using QS.Cloud.WearLk.Client;
+using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -15,6 +17,7 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Journal.ViewModels.Catalog;
 using Workwear.Models.Sizes;
 using Workwear.Tools.Features;
 using Workwear.Tools;
@@ -26,6 +29,7 @@ namespace Workwear.ViewModels.Stock
 {
 	public class NomenclatureViewModel : EntityDialogViewModelBase<Nomenclature>, IDialogDocumentation {
 		private readonly FeaturesService featuresService;
+		private readonly ProductsManagerService productsService;
 		private readonly IInteractiveService interactive;
 		private readonly ModalProgressCreator progressCreator;
 		private readonly SizeTypeReplaceModel sizeTypeReplaceModel;
@@ -36,33 +40,50 @@ namespace Workwear.ViewModels.Stock
 			IUnitOfWorkFactory unitOfWorkFactory, 
 			INavigationManager navigation, 
 			ILifetimeScope autofacScope,
-			FeaturesService featuresService,
 			IInteractiveService interactive,
+			FeaturesService featuresService,
+			ProductsManagerService productsService,
 			ModalProgressCreator progressCreator,
 			SizeTypeReplaceModel sizeTypeReplaceModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.productsService = productsService;
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.sizeTypeReplaceModel = sizeTypeReplaceModel ?? throw new ArgumentNullException(nameof(sizeTypeReplaceModel));
 			
 			var entryBuilder = 
 				new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
+			var viewModelBuilder = 
+				new CommonEEVMBuilderFactory<NomenclatureViewModel>(this, this, UoW, navigation, autofacScope);
 
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
 				.Finish();
+			
+			var thisViewModel = new TypedParameter(typeof(NomenclatureViewModel), this);
+				ProtectionToolsViewModel = autofacScope.Resolve<NomenclatureProtectionToolsViewModel>(thisViewModel);
+			if(ShowServices)
+				ServicesViewModel = autofacScope.Resolve<NomenclatureServicesViewModel>(thisViewModel);
+			if(ShowNomenclatureSizes)
+				NomenclatureSizesViewModel = autofacScope.Resolve<NomenclatureSizesViewModel>(thisViewModel);
+
+			
+			if(featuresService.Available(WorkwearFeature.Catalog) && productsService != null) {
+				EntryCatalogItemsViewModel = viewModelBuilder.ForProperty(x => x.Product)
+					.UseViewModelJournal<ProductJournalViewModel>()
+					.UseFuncAdapter(x => productsService.GetProduct(((Product)x).CatalogId))
+					.Finish();
+			}
+				
 			Validations.Clear();
 			Validations.Add(
 				new ValidationRequest(Entity, 
 					new ValidationContext(Entity, 
 						new Dictionary<object, object> { { nameof(BaseParameters), baseParameters }, 
 							{nameof(IUnitOfWork), UoW} })));
-
-			var parentParameter = new TypedParameter(typeof(NomenclatureViewModel), this);
-			ProtectionToolsViewModel = autofacScope.Resolve<NomenclatureProtectionToolsViewModel>(parentParameter);
-			
+				
 			Entity.PropertyChanged += Entity_PropertyChanged;
 
 			lastSizeType = Entity.Type?.SizeType;
@@ -74,18 +95,46 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region EntityViewModels
 		public EntityEntryViewModel<ItemsType> ItemTypeEntryViewModel;
+		public EntityEntryViewModel<ProductResponse> EntryCatalogItemsViewModel;
 		#endregion
+		#region Свойства
+		private ProductResponse product;
+		public ProductResponse Product {
+			get {
+				if(product == null && Entity.CatalogId != null) {
+					product = productsService.GetProduct(Entity.CatalogId);
+				}
+				return product;
+			}
+			set {
+				Entity.CatalogId = value?.CatalogId; //Сначала устанавливаем CatalogId, чтобы при очистке поле не восстанавливалось.
+				SetField(ref product, value);
+			}
+		}
+		private int currentTab = 0;
+		public virtual int CurrentTab {
+			get => currentTab;
+			set => SetField(ref currentTab, value);
+		}
 
+		public string UsedCurrency => CurrencyWorks.CurrencyShortName;
+		#endregion
 		#region ChildrenViewModels	
 		public NomenclatureProtectionToolsViewModel ProtectionToolsViewModel;
+		public NomenclatureServicesViewModel ServicesViewModel;
+		public NomenclatureSizesViewModel NomenclatureSizesViewModel;
 		#endregion
 		#region Visible
 		public bool VisibleClothesSex => true; //Поле стало в базе обязательным для всех номенклатур.
 
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
+		public bool VisibleRentCost => featuresService.Available(WorkwearFeature.Rent);
 		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		public bool VisibleBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 		public bool VisibleWashable => featuresService.Available(WorkwearFeature.ClothingService);
+		public bool ShowServices => featuresService.Available(WorkwearFeature.ClothingService);
+		public bool ShowNomenclatureSizes => featuresService.Available(WorkwearFeature.StockForecasting);
+		public bool VisibleCatalogId => featuresService.Available(WorkwearFeature.Catalog);
 		#endregion
 		#region Sensitive
 		public bool SensitiveOpenMovements => Entity.Id > 0;
@@ -118,11 +167,13 @@ namespace Workwear.ViewModels.Stock
 			if(!Validate())
 				return false;
 			//Обрабатываем размеры
-			if(!UoW.IsNew && ((lastSizeType != null && !lastSizeType.IsSame(Entity.Type.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.Type.HeightType)))) {
+			if(Entity.Id != 0 && ((lastSizeType != null && !lastSizeType.IsSame(Entity.Type.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.Type.HeightType)))) {
 				if(!sizeTypeReplaceModel.TryReplaceSizes(UoW, interactive, progressCreator, new []{Entity}, Entity.Type.SizeType, Entity.Type.HeightType))
 					return false;
 			}
-			UoW.Save();
+			
+			UoW.Save(Entity);
+			UoW.Commit();
 			lastSizeType = Entity.Type.SizeType;
 			lastHeightType = Entity.Type.HeightType;
 			return true;

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.Postomat.Manage;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.Navigation;
 using QS.Project.Domain;
 using QS.Validation;
+using QS.ViewModels.Control;
 using QS.ViewModels.Dialog;
 using Workwear.Domain.ClothingService;
 using Workwear.Tools.Features;
@@ -34,6 +36,14 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel.Barcode = Entity.Barcode;
 			if(this.featuresService.Available(WorkwearFeature.Postomats))
 				Postomats = postomatService.GetPostomatList(PostomatListType.Aso);
+
+			foreach(var service in Entity.Barcode.Nomenclature.UseServices) { //Все услуги оказываемые для номенклатуры
+				ProvidedService provServ = Entity.ProvidedServices.FirstOrDefault(x => DomainHelper.EqualDomainObjects(service, x.Service))
+				                           ?? new ProvidedService(Entity, service); // Заготовка не сохранённая в UoW, при выборе пользователем надо сохранять
+				provideServices.Add(new SelectableEntity<ProvidedService>(service.Id, service.Name, entity: provServ)
+					{ Select = provServ.Id != 0 }); //Если в базе есть, значит уже выбран
+			}
+			
 		}
 
 		#region Postamat
@@ -60,10 +70,16 @@ namespace Workwear.ViewModels.ClothingService {
 		public bool PostomatVisible => featuresService.Available(WorkwearFeature.Postomats);
 		#endregion
 
-		#region Пропрос свойств модели
+		#region Свойства и проброс из модели
 
 		public virtual bool IsClosed => Entity.IsClosed;
 		public virtual IObservableList<StateOperation> States => Entity.States;
+		
+		private IObservableList<SelectableEntity<ProvidedService>> provideServices = new ObservableList<SelectableEntity<ProvidedService>>();
+		public virtual IObservableList<SelectableEntity<ProvidedService>> ProvideServices {
+			get => provideServices;
+			set => SetField(ref provideServices, value);
+		}
 		
 		public virtual bool NeedForRepair {
 			get { return Entity.NeedForRepair; }
@@ -86,6 +102,20 @@ namespace Workwear.ViewModels.ClothingService {
 			set {if(Entity.Comment != value)
 					Entity.Comment = value;
 			}
+		}
+
+		#endregion
+
+		#region Сохранение
+
+		public override bool Save() {
+			foreach(var s in provideServices) {
+				if(s.Select && !Entity.ProvidedServices.Any(x => DomainHelper.EqualDomainObjects(s.Entity.Service, x.Service)))
+					Entity.ProvidedServices.Add(s.Entity);
+				if(!s.Select && Entity.ProvidedServices.Any(x => DomainHelper.EqualDomainObjects(s.Entity.Service, x.Service)))
+					Entity.ProvidedServices.Remove(s.Entity);
+			}
+			return base.Save();
 		}
 
 		#endregion

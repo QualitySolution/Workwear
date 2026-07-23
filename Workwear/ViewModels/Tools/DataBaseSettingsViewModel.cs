@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using QS.DomainModel.UoW;
 using QS.Navigation;
+using QS.Permissions;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
+using Workwear.Domain.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -11,17 +13,30 @@ namespace Workwear.ViewModels.Tools
 	public class DataBaseSettingsViewModel : UowDialogViewModelBase, IDialogDocumentation
 	{
 		private readonly BaseParameters baseParameters;
+		private readonly ICurrentPermissionService permissionService;
 
 		#region Ограниения версии
-		public bool CollectiveIssueWithPersonalVisible = true;
-
+		public bool CollectiveIssueWithPersonalVisible { get; }
+		public bool EditLockDateVisible { get; }
+		public bool MarkingVisible { get; }
+		public bool CanEdit { get; }
+		public bool StartDateOfOperationsVisible { get; } = true;
 		#endregion
 		
-		public DataBaseSettingsViewModel(IUnitOfWorkFactory unitOfWorkFactory, INavigationManager navigation, BaseParameters baseParameters, FeaturesService featuresService) : base(unitOfWorkFactory, navigation)
+		public DataBaseSettingsViewModel(
+			IUnitOfWorkFactory unitOfWorkFactory,
+			INavigationManager navigation,
+			BaseParameters baseParameters,
+			ICurrentPermissionService permissionService,
+			FeaturesService featuresService) : base(unitOfWorkFactory, navigation)
 		{
 			Title = "Настройки учёта";
+			CanEdit = permissionService.ValidatePresetPermission("can_accounting_settings");
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 			EditLockDate = baseParameters.EditLockDate;
+			EditLockDateVisible = featuresService.Available(WorkwearFeature.EditLockDate);
+			MarkingVisible = featuresService.Available(WorkwearFeature.Barcodes);
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
@@ -33,6 +48,9 @@ namespace Workwear.ViewModels.Tools
 			UsedCurrency = baseParameters.UsedCurrency;
 			IsDocNumberInIssueSign = baseParameters.IsDocNumberInIssueSign;
 			IsDocNumberInReturnSign = baseParameters.IsDocNumberInReturnSign;
+			ClothingMarkingType = baseParameters.ClothingMarkingType;
+			StartDateOfOperations = baseParameters.StartDateOfOperations;
+			IsGenericName = baseParameters.IsGenericName;
 		}
 		
 		#region IDialogDocumentation
@@ -50,7 +68,10 @@ namespace Workwear.ViewModels.Tools
 		                                   || ExtendPeriod != baseParameters.ExtendPeriod
 		                                   || UsedCurrency != baseParameters.UsedCurrency
 		                                   || IsDocNumberInIssueSign!=baseParameters.IsDocNumberInIssueSign
-		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign;
+		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign
+		                                   || StartDateOfOperations != baseParameters.StartDateOfOperations
+		                                   || ClothingMarkingType != baseParameters.ClothingMarkingType
+										   || IsGenericName != baseParameters.IsGenericName;
 
 		#region Parameters
 		public DateTime? EditLockDate { get; set; }
@@ -59,12 +80,15 @@ namespace Workwear.ViewModels.Tools
 		public int ColDayAheadOfShedule { get; set; }
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
+		public BarcodeTypes ClothingMarkingType { get; set; }
 		public string UsedCurrency { get; set; }
 
 		public bool CollectiveIssueWithPersonal { get; set; }
 		public bool CollapseDuplicateIssuanceSheet { get; set; }
 		public bool IsDocNumberInIssueSign{get;set;}
 		public bool IsDocNumberInReturnSign { get; set; }
+		public DateTime? StartDateOfOperations { get; set; }
+		public bool IsGenericName { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -91,6 +115,12 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.IsDocNumberInReturnSign = IsDocNumberInReturnSign;
 			if(EditLockDate != baseParameters.EditLockDate)
 				baseParameters.EditLockDate = EditLockDate;
+			if(ClothingMarkingType != baseParameters.ClothingMarkingType)
+				baseParameters.ClothingMarkingType = ClothingMarkingType;
+			if(StartDateOfOperations != baseParameters.StartDateOfOperations)
+				baseParameters.StartDateOfOperations = StartDateOfOperations;
+			if(IsGenericName != baseParameters.IsGenericName)
+				baseParameters.IsGenericName = IsGenericName;
 			return true;
 		}
 	}

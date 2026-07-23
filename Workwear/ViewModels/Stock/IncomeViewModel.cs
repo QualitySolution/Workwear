@@ -16,15 +16,18 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
-using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Supply;
+using Workwear.Models.Supply;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock.Widgets;
+using Workwear.ViewModels.Supply;
 
 namespace Workwear.ViewModels.Stock {
 	public class IncomeViewModel  : PermittingEntityDialogViewModelBase<Income>, IDialogDocumentation {
@@ -37,6 +40,7 @@ namespace Workwear.ViewModels.Stock {
 			ILifetimeScope autofacScope,
 			StockRepository stockRepository,
 			BaseParameters baseParameters,
+			ShipmentCalculateModel shipmentCalculateModel,
 			IUserService userService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null
@@ -45,6 +49,7 @@ namespace Workwear.ViewModels.Stock {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.shipmentCalculateModel = shipmentCalculateModel ?? throw new ArgumentNullException(nameof(shipmentCalculateModel));
 			SetDocumentDateProperty(e => e.Date);
 			
 			if(Entity.Id == 0)
@@ -54,16 +59,22 @@ namespace Workwear.ViewModels.Stock {
 				owners = UoW.GetAll<Owner>().ToList();
 			
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
-			
-			var entryBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
-			
-			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse)
+			var entryEntityBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
+			var entryVmBuilder = new CommonEEVMBuilderFactory<IncomeViewModel>(this, this, UoW, navigation, autofacScope);
+            			
+			WarehouseEntryViewModel = entryEntityBuilder.ForProperty(x => x.Warehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
 				.UseViewModelDialog<WarehouseViewModel>()
 				.Finish();
 			WarehouseEntryViewModel.IsEditable = CanEdit;
+			ShipmentEntryViewModel = entryVmBuilder.ForProperty(t => t.Shipment)
+				.UseViewModelJournalAndAutocompleter<ShipmentJournalViewModel>()
+				.UseViewModelDialog<ShipmentViewModel>()
+				.Finish();
+			ShipmentEntryViewModel.IsEditable = CanEdit;
+			ShipmentEntryViewModel.Changed += (s,e) => OnPropertyChanged(nameof(ShipmentLabel));
 			
 			CalculateTotal();
 		}
@@ -77,27 +88,18 @@ namespace Workwear.ViewModels.Stock {
 		private readonly IInteractiveService interactive;
 		private readonly BaseParameters baseParameters;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
+		private readonly ShipmentCalculateModel shipmentCalculateModel;
 		
 		private string total;
 		public string Total {
 			get => total;
 			set => SetField(ref total, value);
 		}
-		#endregion
 		
-		#region Проброс свойств документа
-
-		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
-		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
-		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
-
-		public virtual IObservableList<IncomeItem> Items => Entity.Items;
-		#endregion
-
-		#region Свойства ViewModel
 		private readonly FeaturesService featuresService;
 		private readonly SizeService sizeService = new SizeService();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
+		public readonly EntityEntryViewModel<Shipment> ShipmentEntryViewModel;
 		
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -116,10 +118,6 @@ namespace Workwear.ViewModels.Stock {
 			set => Entity.DocNumber = (AutoDocNumber || value == "авто") ? null : value;
 		}
 
-		#endregion
-
-		#region Свойства Viewmodel
-
 		private IncomeItem selectedItem;
 		[PropertyChangedAlso(nameof(CanRemoveItem))]
 		[PropertyChangedAlso(nameof(CanAddSize))]
@@ -130,10 +128,32 @@ namespace Workwear.ViewModels.Stock {
 
 		#endregion
 		
+		#region Проброс свойств документа
+
+		public virtual UserBase DocCreatedbyUser => Entity.CreatedbyUser;
+		public virtual string DocComment { get => Entity.Comment; set => Entity.Comment = value;}
+		public virtual string NumberTN { get => Entity.Number; set => Entity.Number = value;}
+
+		[PropertyChangedAlso(nameof(ShipmentLabel))]
+		public virtual Shipment Shipment {
+			get => Entity.Shipment;
+			set {
+				if(Entity.Shipment != value) {
+				   if (Entity.Items.Count == 0 && value != null) 
+						Entity.FillFromShipment(value);
+				   Entity.Shipment = value;
+				   OnPropertyChanged();
+				}
+			}
+		}
+
+		public virtual IObservableList<IncomeItem> Items => Entity.Items;
+		#endregion
 		
 		#region Свойства для View
 
 		public virtual bool SensitiveDocNumber => !AutoDocNumber && CanEdit;
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public virtual bool CanAddItem => CanEdit;
 		public virtual bool CanRemoveItem => SelectedItem != null && CanEdit;
 		public virtual bool CanAddSize => SelectedItem != null && (SelectedItem.WearSizeType != null || SelectedItem.HeightType != null) && CanEdit;
@@ -141,12 +161,27 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
 		public virtual bool ReadInFileVisible  => featuresService.Available(WorkwearFeature.Exchange1C);
 		public virtual bool CanReadFile => false;
-		public virtual IList<Size> GetSizeVariants(IncomeItem item) {
-			return sizeService.GetSize(UoW, item.WearSizeType, onlyUseInNomenclature: true).ToList();
-		}
+		public virtual bool ShowShipment => featuresService.Available(WorkwearFeature.Shipment);
+		public string ShipmentLabel => (Entity.Id == 0 && Entity.Shipment == null) ? "Заполнить \nиз поставки:" : "Поставка:";
+
+		public virtual IList<NomenclatureSizes> GetSizeVariants(IncomeItem item) =>
+			GetNomenclatureSizeVariants(item, forWearSize: true);
 		
-		public virtual IList<Size> GetHeightVariants(IncomeItem item) {
-			return sizeService.GetSize(UoW, item.HeightType, onlyUseInNomenclature: true).ToList();
+		public virtual IList<NomenclatureSizes> GetHeightVariants(IncomeItem item) =>
+			GetNomenclatureSizeVariants(item, forWearSize: false);
+
+		private IList<NomenclatureSizes> GetNomenclatureSizeVariants(IncomeItem item, bool forWearSize) {
+			if(item?.Nomenclature?.NomenclatureSizes?.Any() == true)
+				return item.Nomenclature.NomenclatureSizes.ToList();
+
+			var sizes = sizeService.GetSize(UoW, forWearSize ? item.WearSizeType : item.HeightType, onlyUseInNomenclature: true);
+			return sizes
+				.Select(x => new NomenclatureSizes {
+					Nomenclature = item.Nomenclature,
+					WearSize = forWearSize ? x : null,
+					Height = forWearSize ? null : x
+				})
+				.ToList();
 		}
 		#endregion
 
@@ -184,11 +219,12 @@ namespace Workwear.ViewModels.Stock {
 		
 		private void SelectWearSize_SizeSelected(AddedSizesEventArgs e, IncomeItem item) {
 			foreach (var i in e.SizesWithAmount.ToList()) {
-				var exist = Entity.FindItem(item.Nomenclature, i.Size, e.Height, item.Owner);
+				var height = i.Height ?? e.Height;
+				var exist = Entity.FindItem(item.Nomenclature, i.Size, height, item.Owner);
 				if(exist != null)
 					exist.Amount = i.Amount;
 				else
-					Entity.AddItem(item.Nomenclature,  i.Size, e.Height, i.Amount, item.Certificate, item.Cost, item.Owner);
+					Entity.AddItem(item.Nomenclature,  i.Size, height, i.Amount, item.Certificate, item.Cost, item.Owner);
 			}
 
 			if(item.WearSize == null) {
@@ -198,6 +234,11 @@ namespace Workwear.ViewModels.Stock {
 			}
 
 			CalculateTotal();
+		}
+		
+		public void ReadInFile() {
+			//TODO Надо реализовать, заявка i-1653
+			throw new NotImplementedException();
 		}
 		
 		private void CalculateTotal() {
@@ -233,7 +274,12 @@ namespace Workwear.ViewModels.Stock {
 			Entity.UpdateOperations(UoW);
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
-			UoWGeneric.Save ();
+			
+			UoW.Save(Entity);
+			UoW.Commit();
+			
+			if(Entity.Shipment != null)
+				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id, UoW);
 
 			logger.Info ("Документ сохранён.");
 			return true;

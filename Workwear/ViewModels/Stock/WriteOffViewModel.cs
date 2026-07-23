@@ -24,6 +24,8 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Company;
+using Workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
@@ -118,7 +120,7 @@ namespace Workwear.ViewModels.Stock
             if(Entity.Id == 0)
 	            Entity.Organization = organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
 
-            if(UoW.IsNew) {
+            if(Entity.Id == 0) {
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
 	            logger.Info($"Создание Нового документа Списания");
             } else 
@@ -142,8 +144,10 @@ namespace Workwear.ViewModels.Stock
         public EntityEntryViewModel<Leader> ResponsibleDirectorPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Leader> ResponsibleChairmanPersonEntryViewModel { get; set; }
         public EntityEntryViewModel<Organization> ResponsibleOrganizationEntryViewModel { get; set; }
+        
+        public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
         public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
-		
+        
         private bool autoDocNumber = true;
         [PropertyChangedAlso(nameof(DocNumberText))]
         [PropertyChangedAlso(nameof(SensitiveDocNumber))]
@@ -164,11 +168,6 @@ namespace Workwear.ViewModels.Stock
         public string Total {
             get => total;
             set => SetField(ref total, value);
-        }
-        private bool delSensitive;
-        public bool DelSensitive {
-            get => CanEdit && delSensitive;
-            set => SetField(ref delSensitive, value);
         }
         #endregion
 
@@ -208,13 +207,17 @@ namespace Workwear.ViewModels.Stock
                 NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
                     this,
                     Employee,
-                    OpenPageOptions.AsSlave);
-            selectJournal.ViewModel.Filter.DateSensitive = false;
-            selectJournal.ViewModel.Filter.CheckShowWriteoffVisible = false;
-            selectJournal.ViewModel.Filter.SubdivisionSensitive =  Employee == null;
-            selectJournal.ViewModel.Filter.EmployeeSensitive = Employee == null;
-            selectJournal.ViewModel.Filter.Date = Entity.Date;
-            selectJournal.ViewModel.Filter.CanChooseAmount = true;
+                    OpenPageOptions.AsSlave,
+                    addingRegistrations: builder => { builder.RegisterInstance<Action<EmployeeBalanceFilterViewModel>>(
+	                    filter => {
+		                    filter.DateSensitive = false;
+		                    filter.CheckShowWriteoffVisible = false;
+		                    filter.SubdivisionSensitive = Employee == null;
+		                    filter.EmployeeSensitive = Employee == null;
+		                    filter.Date = Entity.Date;
+		                    filter.CanChooseAmount = true;
+	                    });
+                    });
             selectJournal.ViewModel.OnSelectResult += SelectFromEmployee_Selected;
         }
         private void SelectFromEmployee_Selected(object sender, JournalSelectedEventArgs e)
@@ -234,11 +237,16 @@ namespace Workwear.ViewModels.Stock
 	        var selectJournal = NavigationManager.OpenViewModel<DutyNormBalanceJournalViewModel, DutyNorm>(
 		        this,
 		        DutyNorm,
-		        OpenPageOptions.AsSlave);
-	        selectJournal.ViewModel.Filter.DateSensitive = false;
-	        selectJournal.ViewModel.Filter.SubdivisionSensitive =  DutyNorm == null;
-	        selectJournal.ViewModel.Filter.DutyNormSensitive = DutyNorm == null;
-	        selectJournal.ViewModel.Filter.Date = Entity.Date;
+		        OpenPageOptions.AsSlave,
+		        addingRegistrations: builder => {
+			        builder.RegisterInstance<Action<DutyNormBalanceFilterViewModel>>(
+				        filter => {
+					        filter.DateSensitive = false;
+					        filter.SubdivisionSensitive =  DutyNorm == null;
+					        filter.DutyNormSensitive = DutyNorm == null;
+					        filter.Date = Entity.Date;
+				        });
+		        });
 	        selectJournal.ViewModel.OnSelectResult += SelectFromDutyNorm_Selected;
         }
 
@@ -257,6 +265,7 @@ namespace Workwear.ViewModels.Stock
 		        // для всех списаний со склада
 		        var nomenclatures = itemsWh.Select(i => i.Nomenclature);
 		        stockBalanceModel.OnDate = date;
+		        stockBalanceModel.ExcludeOperations = itemsWh.Select(i => i.WarehouseOperation);
 		        stockBalanceModel.AddNomenclatures(nomenclatures);
 		        foreach(var item in itemsWh)
 			        item.MaxAmount = stockBalanceModel.GetAmount(item.StockPosition);

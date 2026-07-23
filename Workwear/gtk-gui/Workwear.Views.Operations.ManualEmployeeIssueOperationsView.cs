@@ -52,7 +52,7 @@ namespace Workwear.Views.Operations
 
 		private global::Gamma.GtkWidgets.yLabel ylabel6;
 
-		private global::Gamma.GtkWidgets.yButton buttonCalculateExpence;
+		private global::Gamma.GtkWidgets.yButton buttonCalculateExpense;
 
 		private global::Gtk.Label label3;
 
@@ -76,7 +76,7 @@ namespace Workwear.Views.Operations
 
 		private global::Gamma.GtkWidgets.yLabel ylabelBarcodeTitle;
 
-		private global::Gamma.GtkWidgets.yLabel ylabelСommentTitle1;
+		private global::Gamma.GtkWidgets.yLabel ylabelCommentTitle1;
 
 		private global::Gamma.GtkWidgets.ySpinButton yspinbuttonAmmount;
 
@@ -342,13 +342,13 @@ namespace Workwear.Views.Operations
 			w25.Expand = false;
 			w25.Fill = false;
 			// Container child hboxManualCalculate.Gtk.Box+BoxChild
-			this.buttonCalculateExpence = new global::Gamma.GtkWidgets.yButton();
-			this.buttonCalculateExpence.CanFocus = true;
-			this.buttonCalculateExpence.Name = "buttonCalculateExpence";
-			this.buttonCalculateExpence.UseUnderline = true;
-			this.buttonCalculateExpence.Label = global::Mono.Unix.Catalog.GetString("Рассчитать");
-			this.hboxManualCalculate.Add(this.buttonCalculateExpence);
-			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.hboxManualCalculate[this.buttonCalculateExpence]));
+			this.buttonCalculateExpense = new global::Gamma.GtkWidgets.yButton();
+			this.buttonCalculateExpense.CanFocus = true;
+			this.buttonCalculateExpense.Name = "buttonCalculateExpense";
+			this.buttonCalculateExpense.UseUnderline = true;
+			this.buttonCalculateExpense.Label = global::Mono.Unix.Catalog.GetString("Рассчитать");
+			this.hboxManualCalculate.Add(this.buttonCalculateExpense);
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.hboxManualCalculate[this.buttonCalculateExpense]));
 			w26.Position = 3;
 			w26.Expand = false;
 			w26.Fill = false;
@@ -488,13 +488,13 @@ namespace Workwear.Views.Operations
 			w38.XOptions = ((global::Gtk.AttachOptions)(4));
 			w38.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytableSelectedOPeration.Gtk.Table+TableChild
-			this.ylabelСommentTitle1 = new global::Gamma.GtkWidgets.yLabel();
-			this.ylabelСommentTitle1.Name = "ylabelСommentTitle1";
-			this.ylabelСommentTitle1.Xalign = 1F;
-			this.ylabelСommentTitle1.Yalign = 0F;
-			this.ylabelСommentTitle1.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
-			this.ytableSelectedOPeration.Add(this.ylabelСommentTitle1);
-			global::Gtk.Table.TableChild w39 = ((global::Gtk.Table.TableChild)(this.ytableSelectedOPeration[this.ylabelСommentTitle1]));
+			this.ylabelCommentTitle1 = new global::Gamma.GtkWidgets.yLabel();
+			this.ylabelCommentTitle1.Name = "ylabelCommentTitle1";
+			this.ylabelCommentTitle1.Xalign = 1F;
+			this.ylabelCommentTitle1.Yalign = 0F;
+			this.ylabelCommentTitle1.LabelProp = global::Mono.Unix.Catalog.GetString("Комментарий:");
+			this.ytableSelectedOPeration.Add(this.ylabelCommentTitle1);
+			global::Gtk.Table.TableChild w39 = ((global::Gtk.Table.TableChild)(this.ytableSelectedOPeration[this.ylabelCommentTitle1]));
 			w39.TopAttach = ((uint)(10));
 			w39.BottomAttach = ((uint)(11));
 			w39.XOptions = ((global::Gtk.AttachOptions)(4));

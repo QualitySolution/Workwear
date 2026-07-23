@@ -5,7 +5,7 @@ using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -25,17 +25,13 @@ namespace workwear.Journal.ViewModels.Regulations {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,
-			ILifetimeScope autofacScope,
-			DutyNorm dutyNorm = null
+			ILifetimeScope autofacScope
 		) : base(unitOfWorkFactory, interactiveService, navigationManager) {
 			var dataLoader = new ThreadDataLoader<DutyNormBalanceJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(ItemsQuery);
 			DataLoader = dataLoader;
-			JournalFilter =  Filter = autofacScope.Resolve<DutyNormBalanceFilterViewModel>(
-				new TypedParameter(typeof(JournalViewModelBase), this),
-				new TypedParameter(typeof(DutyNorm), dutyNorm)
-			);
-			Title = dutyNorm != null
+			JournalFilter =  Filter = autofacScope.Resolve<DutyNormBalanceFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
+			Title = Filter.DutyNorm != null
 				? $"Числится по дежурной норме {Filter.DutyNorm.Name}"
 				: "Остатки по дежурным нормам";
 			SelectionMode = JournalSelectionMode.Multiple;
@@ -48,11 +44,11 @@ namespace workwear.Journal.ViewModels.Regulations {
 			DutyNormIssueOperation expenseOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			ItemsType nomenclatureItemTypesAlias = null;
-			MeasurementUnits nomenclatureUnitsAlias = null;
+			MeasurementUnit nomenclatureUnitsAlias = null;
 			DutyNormIssueOperation removeOperationAlias = null;
 			ProtectionTools protectionToolsAlias = null;
 			ItemsType protectionToolsItemTypesAlias = null;
-			MeasurementUnits protectionToolsUnitsAlias  = null;
+			MeasurementUnit protectionToolsUnitsAlias  = null;
 			WarehouseOperation warehouseOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
@@ -61,7 +57,8 @@ namespace workwear.Journal.ViewModels.Regulations {
 			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias);
 			query.Where(GetSearchCriterion(
 				() => dutyNormAlias.Name,
-				() => nomenclatureAlias.Name
+				() => nomenclatureAlias.Name,
+				() => protectionToolsAlias.Name
 			));
 			
 			if(Filter.DutyNorm != null)

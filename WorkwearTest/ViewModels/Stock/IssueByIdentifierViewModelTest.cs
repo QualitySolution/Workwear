@@ -78,7 +78,7 @@ namespace WorkwearTest.ViewModels.Stock
 					}
 				};
 
-				cardReaderService.СardStatusRead += Raise.EventWith(new CardStateEventArgs(
+				cardReaderService.CardStatusRead += Raise.EventWith(new CardStateEventArgs(
 					new RG_PIN_SATETS_16 { Pin00 = true, Pin01 = true },
 					RG_DEVICE_STATUS_TYPE.DS_CARD,
 					new RG_CARD_INFO { CardType = RG_CARD_TYPE_CODE.CT_MF_CL1K_PL2K, CardUid = new byte[] {0x80, 0x31, 0x3E, 0x3A, 0x4A, 0x99, 0x04 } },

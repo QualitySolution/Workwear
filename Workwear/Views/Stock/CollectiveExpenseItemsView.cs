@@ -63,13 +63,13 @@ namespace Workwear.Views.Stock
 				.AddColumn("Размер")
 					.AddComboRenderer(x => x.WearSize).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => 
-					ViewModel.SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.SizeType == null)
+					ViewModel.SizeService.GetSize(viewModel.collectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.SizeType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.SizeType == null)
 				.AddColumn("Рост")
 					.AddComboRenderer(x => x.Height).SetDisplayFunc(x => x.Name)
 					.DynamicFillListFunc(x => 
-					ViewModel.SizeService.GetSize(viewModel.сollectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
-					.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Nomenclature?.Type?.HeightType != null)
+					ViewModel.SizeService.GetSize(viewModel.collectiveExpenseViewModel.UoW, x.Nomenclature?.Type?.HeightType, onlyUseInNomenclature:true).ToList())
+					.AddSetter((c, n) => c.Editable = n.Nomenclature?.Type?.HeightType != null)
 				.AddColumn("Собственники")
 					.Visible(ViewModel.featuresService.Available(WorkwearFeature.Owners))
 					.AddComboRenderer(x => x.Owner)
@@ -194,7 +194,7 @@ namespace Workwear.Views.Stock
 				"<span color='black'>●</span> — обычная выдача\n" +
 				"<span color='gray'>●</span> — выдача не требуется\n" +
 				"<span color='blue'>●</span> — выдаваемого количества не достаточно\n" +
-				"<span color='red'>●</span> — отсутствует номенклатура\n" +
+				"<span color='red'>●</span> — отсутствует номенклатура или количество\n" +
 				"<span color='Dark red'>●</span> — указано количество без номенклатуры\n"
 			);
 		}

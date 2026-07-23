@@ -61,7 +61,7 @@ namespace Workwear.ViewModels.Stock
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			SetDocumentDateProperty(e => e.Date);
 			
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.Organization =
 					organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
@@ -129,6 +129,7 @@ namespace Workwear.ViewModels.Stock
 				stockBalanceModel.OnDate = Entity.Date;
 		}
 		#region Sensetive
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public bool CanAddItem => CanEdit && Entity.WarehouseFrom != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		#endregion

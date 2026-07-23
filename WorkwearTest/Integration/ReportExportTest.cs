@@ -19,10 +19,20 @@ namespace WorkwearTest.Integration
 		}
 
 		[Test(Description = "Проверяем что можем сделать экспорт Excel2007. Проверяем работает ли NPOI.")]
-		public void Reports_ExportExcel2007Test()
+		public void Reports_ExportExcel2007_NPOITest()
 		{
 			var reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Integration", "Reports", "NoDBTestReport.rdl");
-			using(MemoryStream stream = ReportExporter.ExportToMemoryStream(new Uri(reportPath), OutputPresentationType.Excel2007)) {
+			using(MemoryStream stream = ReportExporter.ExportToMemoryStream(new Uri(reportPath), OutputPresentationType.Excel2007NPOI)) {
+				var file = stream.GetBuffer();
+				Assert.That(file.Length, Is.GreaterThan(1), "Размер файла должен быть больше 1 байта.");
+			}
+		}
+		
+		[Test(Description = "Проверяем что можем сделать экспорт Excel2007. Проверяем работает ли ClosedXML.")]
+		public void Reports_ExportExcel2007_ClosedXMLTest()
+		{
+			var reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Integration", "Reports", "NoDBTestReport.rdl");
+			using(MemoryStream stream = ReportExporter.ExportToMemoryStream(new Uri(reportPath), OutputPresentationType.Excel2007ClosedXML)) {
 				var file = stream.GetBuffer();
 				Assert.That(file.Length, Is.GreaterThan(1), "Размер файла должен быть больше 1 байта.");
 			}

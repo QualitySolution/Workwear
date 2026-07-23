@@ -32,6 +32,8 @@ namespace Stetic
 				w1.Add("logs", w10);
 				global::Gtk.IconSet w11 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.toolbar.claims.png"));
 				w1.Add(" SendBox", w11);
+				global::Gtk.IconSet w12 = new global::Gtk.IconSet(global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.speccoin.png"));
+				w1.Add("SpecCoin", w12);
 				w1.AddDefault();
 			}
 		}

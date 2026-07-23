@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -8,17 +9,17 @@ using Autofac;
 using Gtk;
 using MySqlConnector;
 using NLog;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Journal.ViewModels;
 using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.ErrorReporting;
-using QS.HistoryLog.ViewModels;
 using QS.HistoryLog;
+using QS.HistoryLog.ViewModels;
 using QS.Navigation;
-using QS.NewsFeed.Views;
 using QS.NewsFeed;
+using QS.NewsFeed.Views;
 using QS.Project.DB;
 using QS.Project.Domain;
 using QS.Project.Services;
@@ -28,34 +29,24 @@ using QS.Project.Views;
 using QS.Report.ViewModels;
 using QS.Serial.ViewModels;
 using QS.Services;
-using QS.Tdi.Gtk;
 using QS.Tdi;
-using QS.Updater.App;
+using QS.Tdi.Gtk;
 using QS.Updater;
+using QS.Updater.App;
+using QS.Updates;
+using QS.Utilities;
 using QS.Utilities.Processes;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
-using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
+using workwear;
+using Workwear;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
-using Workwear.Models.Import.Employees;
-using Workwear.Models.Import.Issuance;
-using Workwear.Models.Import.Norms;
-using Workwear.Models.Import;
-using Workwear.Repository.Stock;
-using Workwear.Tools.Features;
-using Workwear.Tools.User;
-using Workwear.Tools;
-using Workwear.ViewModels.Communications;
-using Workwear.ViewModels.Company;
-using Workwear.ViewModels.Import;
-using Workwear.ViewModels.Stock;
-using Workwear.ViewModels.Tools;
-using Workwear.ViewModels.User;
+using workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Journal.ViewModels.Analytics;
 using workwear.Journal.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -63,20 +54,32 @@ using workwear.Journal.ViewModels.Postomats;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Journal.ViewModels.Stock;
+using workwear.Journal.ViewModels.Supply;
 using workwear.Journal.ViewModels.Tools;
+using workwear.Journal.ViewModels.Visits;
+using Workwear.Models.Import;
+using Workwear.Models.Import.Employees;
+using Workwear.Models.Import.Issuance;
+using Workwear.Models.Import.Norms;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
 using workwear.ReportsDlg;
-using workwear;
-using Workwear;
-using workwear.Journal.Filter.ViewModels.Stock;
-using Workwear.Journal.ViewModels.Analytics;
-using workwear.Journal.ViewModels.Supply;
 using Workwear.Repository.Company;
-using Workwear.ViewModels.Export;
-using CurrencyWorks = QS.Utilities.CurrencyWorks;
+using Workwear.Repository.Stock;
+using Workwear.Tools;
+using Workwear.Tools.Features;
+using Workwear.Tools.User;
 using Workwear.ViewModels.Analytics;
+using Workwear.ViewModels.Communications;
+using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Export;
+using Workwear.ViewModels.Import;
+using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Tools;
+using Workwear.ViewModels.User;
+using Workwear.ViewModels.Visits;
 
 public partial class MainWindow : Gtk.Window {
 	private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -89,22 +92,27 @@ public partial class MainWindow : Gtk.Window {
 	public readonly IApplicationQuitService quitService;
 	public readonly IInteractiveService interactive;
 	public readonly IGuiDispatcher dispatcher;
-	
+
 	public FeaturesService FeaturesService { get; private set; }
-	
+
+	// Информация о статусе подписки
+	private SubscriptionStatus currentSubscriptionStatus = SubscriptionStatus.None;
+	private string subscriptionStatusTitle = string.Empty;
+	private string subscriptionStatusMessage = string.Empty;
+
 	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
+		toolbarMain.Sensitive = false;
+		menubar1.Sensitive = false;
+		entitySearchEmployee.Sensitive = false;
 		ProgressBar = progresswidget1;
 		var progress = new ProgressPerformanceHelper(ProgressBar, 34, "Подготовка статусной строк", logger, showProgressText: true);
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
-		toolbarMain.Sensitive = false;
-		menubar1.Sensitive = false;
-		entitySearchEmployee.Sensitive = false;
-		
+
 		progress.StartGroup("Настройка базы");
-		MainClass.CreateBaseConfig (progress);
+		MainClass.CreateBaseConfig(progress);
 		progress.EndGroup();
 		progress.CheckPoint("Конфигурация классов приложения");
 		MainClass.AppDIContainer = MainClass.StartupContainer.BeginLifetimeScope(c => MainClass.AutofacClassConfig(c, isDemo));
@@ -127,35 +135,31 @@ public partial class MainWindow : Gtk.Window {
 		quitService = AutofacScope.Resolve<IApplicationQuitService>();
 		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
-		
+
 		progress.CheckPoint("Настройка каналов обновления");
 		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
 			var appInfo = releaseScope.Resolve<IApplicationInfo>();
 			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
 				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
-				var channel = configuration[$"AppUpdater:Channel"];
-				if(channel == null) { //Устанавливаем значение по умолчанию. Необходимо поменять при уходе версии в Stable 
-					channel = UpdateChannel.Current.ToString();
-					configuration[$"AppUpdater:Channel"] = channel;
-				}
-				ActionChannelStable.Active = channel == UpdateChannel.Stable.ToString();
-				ActionChannelCurrent.Active = channel == UpdateChannel.Current.ToString();
+				UpdateChannelActive(configuration);
 			}
 			else {
 				ActionUpdateChannel.Visible = false;
 			}
 		}
-		
+
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
+			var configuration = updateScope.Resolve<IChangeableConfiguration>();
 			UpdateInfo? updateInfo = checker.RunUpdate();
+			UpdateChannelActive(configuration);
 			if(updateInfo?.Status == UpdateStatus.AppUpdateIsRunning) {
 				quitService.Quit();
 				return;
 			}
-			
-			if (updateInfo?.Status == UpdateStatus.ConnectionError) {
+
+			if(updateInfo?.Status == UpdateStatus.ConnectionError) {
 				logger.Warn(updateInfo.Value.Message);
 			}
 
@@ -164,20 +168,25 @@ public partial class MainWindow : Gtk.Window {
 				quitService.Quit();
 				return;
 			}
-			
-			if (updateInfo?.Status == UpdateStatus.ExternalError) {
-				interactive.ShowMessage(updateInfo.Value.ImportanceLevel, updateInfo.Value.Message, updateInfo.Value.Title);
-				if (!EnterNewSN()) {
-					quitService.Quit();
-					return;
+
+			var appUpdater = (ApplicationUpdater)checker.ApplicationUpdater;
+			if(appUpdater.LastResponse != null) {
+				if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked) {
+					interactive.ShowMessage(ImportanceLevel.Error, appUpdater.LastResponse.Message, appUpdater.LastResponse.Title);
+					EnterNewSN();
+					appUpdater.CheckUpdate();
+					if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked)
+						quitService.Quit();
 				}
+				else
+					SetSubscriptionStatusInStatusBar(appUpdater.LastResponse);
 			}
 		}
 
 		progress.CheckPoint("Настройка удаления");
 		//Настройка удаления
 		Configure.ConfigureDeletion();
-		
+
 		progress.CheckPoint("Проверка входа под root");
 		//Пока такая реализация чтобы не плодить сущностей.
 		var connectionBuilder = AutofacScope.Resolve<MySqlConnectionStringBuilder>();
@@ -201,8 +210,8 @@ public partial class MainWindow : Gtk.Window {
 		var user = userService.GetCurrentUser();
 		var databaseInfo = AutofacScope.Resolve<IDataBaseInfo>();
 		CurrentUserSettings = AutofacScope.Resolve<CurrentUserSettings>();
-		CurrencyWorks.CurrencyShortName = AutofacScope.Resolve<BaseParameters>().UsedCurrency;
-		
+		QS.Utilities.CurrencyWorks.CurrencyShortName = AutofacScope.Resolve<BaseParameters>().UsedCurrency;
+
 		if(databaseInfo.IsDemo) {
 			string message = "Вы подключились к демонстрационному серверу. НЕ используете его для работы! " +
 				"Введенные данные будут доступны другим пользователям.\n\nДля работы вам необходимо " +
@@ -253,29 +262,22 @@ public partial class MainWindow : Gtk.Window {
 			var baseParam = localScope.Resolve<BaseParameters>();
 			if(baseParam.Dynamic.BaseGuid == null)
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
-			
+
 			//Уведомление о скором истечении срока действия серийного номера
-			if (FeaturesService.ExpiryDate != null) 
-			{
-				if (FeaturesService.ExpiryDate < DateTime.Now) 
-				{
-					if (EnterNewSN())
-					{
-						quitService.Quit();
-						return;
-					}
+			if(FeaturesService.ExpiryDate != null) {
+				if(FeaturesService.ExpiryDate < DateTime.Now) {
+					interactive.ShowMessage(ImportanceLevel.Error, "Срок действия серийного номера истек. Введите новый серийный номер для продолжения работы.", "Серийный номер истек");
+					EnterNewSN();
 				}
-				else
-				{
+				else {
 					int daysLeft = (FeaturesService.ExpiryDate.Value - DateTime.Now).Days;
-					if (daysLeft < 14) 
-					{
+					if(daysLeft < 14) {
 						interactive.ShowMessage(ImportanceLevel.Warning,
 							$"Срок действия серийного номера истекает {FeaturesService.ExpiryDate.Value.ToString("d")}");
 					}
 				}
 			}
-			
+
 			//Если доступна возможность использовать штрих коды, а префикс штрих кодов для базы не задан, создаем его.
 			if(FeaturesService.Available(WorkwearFeature.Barcodes) && baseParam.Dynamic.BarcodePrefix == null) {
 				var prefix = FeaturesService.ClientId % 1000 + 2000; //Оставляем последние 3 цифры кода клиента и добавляем их к 2000.
@@ -294,13 +296,13 @@ public partial class MainWindow : Gtk.Window {
 
 		progress.CheckPoint("Включаем мониторинг изменений");
 		HistoryMain.Enable(connectionBuilder);
-		
+
 		progress.CheckPoint("Настройка панелей");
 		ReadUserSettings();
-		
+
 		//Дополнительные параметры в телеметрию
 		progress.CheckPoint("Запускаем телеметрию");
-		#if !DEBUG
+#if !DEBUG
 			//Инициализируем телеметрию
 			using(var telemetryScope = AutofacScope.BeginLifetimeScope()) {
 				var applicationInfo = telemetryScope.Resolve<IApplicationInfo>();
@@ -314,14 +316,14 @@ public partial class MainWindow : Gtk.Window {
 				NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 				tdiMain.DocumentationOpened += (sender, e) => MainTelemetry.AddCount("DocumentationButton");
 			}
-		#else
-			MainTelemetry.DoNotTrack = true;
-		#endif
+#else
+		MainTelemetry.DoNotTrack = true;
+#endif
 		if(!MainTelemetry.DoNotTrack)
 			Task.Run(FillTelemetry);
-		
+
 		progress.CheckPoint("Запуск QS: Облако");
-		QSSaaS.Session.StartSessionRefresh ();
+		QSSaaS.Session.StartSessionRefresh();
 		toolbarMain.Sensitive = true;
 		menubar1.Sensitive = true;
 		entitySearchEmployee.Sensitive = true;
@@ -342,39 +344,25 @@ public partial class MainWindow : Gtk.Window {
 		}
 		logger.Debug("Характеристики базы собраны");
 	}
-	
+
 	private void CreateDefaultWarehouse() {
 		Warehouse warehouse = new Warehouse();
 		warehouse.Name = "Основной склад";
 		UoW.Session.Save(warehouse);
 	}
 
-	private bool EnterNewSN() 
-	{
-		if (!interactive.Question($"Серийный номер недействителен.\nОткрыть окно для его обновления?\n\nПри отказе приложение будет закрыто.")) 
-		{
-			return false;
-		}
-					
+	private void EnterNewSN() {
 		IPage<SerialNumberViewModel> page = NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
-		bool res = false;
 		bool isClosed = false;
-		page.PageClosed += (sender, closedArgs) => 
-		{
+		page.PageClosed += (sender, closedArgs) => {
 			isClosed = true;
-			if (closedArgs.CloseSource == CloseSource.Save) 
-			{
+			if(closedArgs.CloseSource == CloseSource.Save)
 				FeaturesService.UpdateSerialNumber();
-				res = true;
-			}
 			else
-			{
-				res = false;
-			}
+				quitService.Quit();
 		};
 
 		dispatcher.WaitInMainLoop(() => isClosed);
-		return res;
 	}
 
 	void NavigationManager_ViewModelOpened(object sender, ViewModelOpenedEventArgs e) {
@@ -393,6 +381,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionCardIssuee.Visible = FeaturesService.Available(WorkwearFeature.IdentityCards);
 		ActionClaims.Visible = FeaturesService.Available(WorkwearFeature.Claims);
 		ActionClothingService.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
+		ActionClothingServices.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionClothingServiceReport.Visible = FeaturesService.Available(WorkwearFeature.ClothingService);
 		ActionConditionNorm.Visible = FeaturesService.Available(WorkwearFeature.ConditionNorm);
 		ActionConversatoins.Visible = FeaturesService.Available(WorkwearFeature.Communications);
@@ -419,16 +408,21 @@ public partial class MainWindow : Gtk.Window {
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
+		ActionVisits.Visible = FeaturesService.Available(WorkwearFeature.Visits);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
 		ActionWearCardsReport.Visible = FeaturesService.Available(WorkwearFeature.ReportWearCard);
 		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
-		
+		ActionRentAct.Visible = FeaturesService.Available(WorkwearFeature.Rent);
+		ActionRentMovements.Visible = FeaturesService.Available(WorkwearFeature.Rent);
+
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
 						 || FeaturesService.Available(WorkwearFeature.Ratings)
 						 || FeaturesService.Available(WorkwearFeature.Postomats)
 						 || FeaturesService.Available(WorkwearFeature.SpecCoinsLk);
+		ActionShipmentReport.Visible = FeaturesService.Available(WorkwearFeature.Shipment);
+		ActionIssuanceRequest.Visible = FeaturesService.Available(WorkwearFeature.IssuanceRequest);
 	}
 	#endregion
 
@@ -441,6 +435,17 @@ public partial class MainWindow : Gtk.Window {
 	}
 	#endregion
 
+	private void UpdateChannelActive(IChangeableConfiguration configuration) {
+		var channel = configuration[$"AppUpdater:Channel"];
+		if(channel == null) {  //Устанавливаем значение по умолчанию.
+			channel = UpdateChannel.Current.ToString();
+			configuration[$"AppUpdater:Channel"] = channel;
+		}
+		ActionChannelStable.Active = channel == nameof(UpdateChannel.Stable);
+		ActionChannelCurrent.Active = channel == nameof(UpdateChannel.Current);
+		ActionOffAutoUpdate.Active = channel == nameof(UpdateChannel.Off);
+	}
+
 	void SearchEmployee_EntitySelected(object sender, EntitySelectedEventArgs e) {
 		MainTelemetry.AddCount("SearchEmployeeToolBar");
 		var id = DomainHelper.GetId(e.Entity);
@@ -451,7 +456,7 @@ public partial class MainWindow : Gtk.Window {
 		a.RetVal = true;
 		if(quitService != null)
 			quitService.Quit();
-		else 
+		else
 			Environment.Exit(1); //В случае если были проблемы при запуске программа не полностью инициализировалась, на надо падать при закрытии.
 	}
 
@@ -479,10 +484,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnAction7Activated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("MeasurementUnits");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<MeasurementUnits>(),
-						() => new OrmReference(typeof(MeasurementUnits))
-					   );
+		NavigationManager.OpenViewModel<MeasurementUnitJournalViewModel>(null);
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e) {
@@ -547,7 +549,10 @@ public partial class MainWindow : Gtk.Window {
 		MainTelemetry.AddCount("CheckUpdate");
 		using(var scope = MainClass.AppDIContainer.BeginLifetimeScope()) {
 			var updater = scope.Resolve<IAppUpdater>();
-			_ = updater.CheckUpdate(true);
+			updater.CheckUpdate();
+			updater.RunUpdate();
+			var configuration = scope.Resolve<IChangeableConfiguration>();
+			UpdateChannelActive(configuration);
 		}
 	}
 
@@ -582,7 +587,7 @@ public partial class MainWindow : Gtk.Window {
 				builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 					filter => {
 						filter.ShowNegativeBalance = true;
-						filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+						filter.Warehouse = new StockRepository(UoW).GetDefaultWarehouse(FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 					});
 			});
 	}
@@ -738,13 +743,6 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionSiteActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenSite");
 		OpenHelper.OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
-	}
-
-	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("RegulationDoc");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<RegulationDoc>(),
-						() => new OrmReference(typeof(RegulationDoc))
-			   );
 	}
 
 	protected void OnActionBaseSettingsActivated(object sender, EventArgs e) {
@@ -962,8 +960,7 @@ public partial class MainWindow : Gtk.Window {
 		NavigationManager.OpenViewModel<PostomatDocumentsWithdrawJournalViewModel>(null);
 	}
 
-	protected void OnProtectionToolsCategoriesActivated(object sender, EventArgs e) 
-	{
+	protected void OnProtectionToolsCategoriesActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ProtectionToolsCategoryJournalViewModel>(null);
 	}
 
@@ -997,5 +994,160 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionShipmentActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ShipmentJournalViewModel>(null);
+	}
+
+	protected void OnActionClothingServicesActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<ServicesJournalViewModel>(null);
+	}
+
+	protected void OnActionShipmentReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(ShipmentReportViewModel));
+	}
+
+	protected void OnActionVisitsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<VisitListViewModel>(null);
+	}
+
+	protected void OnActionIssuanceRequestActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<IssuanceRequestJournalViewModel>(null);
+	}
+
+	#region Обработка статуса подписки
+
+	/// <summary>
+	/// Устанавливает статус подписки в строке состояния на основе ответа от сервера обновлений
+	/// </summary>
+	private void SetSubscriptionStatusInStatusBar(CheckForUpdatesResponse response) {
+		currentSubscriptionStatus = response.SubscriptionStatus;
+		subscriptionStatusTitle = response.Title;
+		subscriptionStatusMessage = response.Message;
+
+		string statusText = string.Empty;
+		string color = "black";
+
+		switch(currentSubscriptionStatus) {
+			case SubscriptionStatus.None:
+				statusText = "Бесплатная версия";
+				color = "blue";
+				subscriptionStatusTitle = "Бесплатная версия";
+				subscriptionStatusMessage = "Вы используете бесплатную версию программы. Для получения доступа к дополнительным функциям и поддержке приобретите расширенную редакцию.";
+				break;
+
+			case SubscriptionStatus.Active:
+				// Проверяем, не истекает ли подписка в ближайшие 30 дней
+				if(response.SubscriptionActiveUntil != null) {
+					var expirationDate = response.SubscriptionActiveUntil.ToDateTime();
+					var daysLeft = (expirationDate - DateTime.UtcNow).Days;
+
+					if(daysLeft <= 30 && daysLeft > 0) {
+						statusText = $"Активно ещё {daysLeft} {NumberToTextRus.Case(daysLeft, "день", "дня", "дней")}";
+						color = "green";
+						subscriptionStatusTitle = "Подписка скоро истекает";
+						subscriptionStatusMessage = $"До окончания подписки осталось {daysLeft} {NumberToTextRus.Case(daysLeft, "день", "дня", "дней")}. Рекомендуем продлить подписку заранее.";
+					}
+					else {
+						// Подписка активна и не истекает в ближайшее время - ничего не показываем
+						labelSubscriptionStatus.Visible = false;
+						eventboxSubscriptionStatus.Visible = false;
+						return;
+					}
+				}
+				else {
+					// Нет информации о дате окончания - не показываем статус
+					labelSubscriptionStatus.Visible = false;
+					eventboxSubscriptionStatus.Visible = false;
+					return;
+				}
+				break;
+
+			case SubscriptionStatus.Expired:
+				statusText = "(!) Подписка истекла";
+				color = "orange";
+				break;
+
+			case SubscriptionStatus.ExpiredUnsupported:
+				statusText = "(!) Не поддерживается";
+				color = "red";
+				break;
+
+			case SubscriptionStatus.ExpiredSupported:
+				statusText = "(!) Поддержка ограничена";
+				color = "orange";
+				break;
+
+			default:
+				// Для неизвестных статусов ничего не показываем
+				labelSubscriptionStatus.Visible = false;
+				eventboxSubscriptionStatus.Visible = false;
+				return;
+		}
+
+		labelSubscriptionStatus.Markup = $"<span foreground=\"{color}\" weight=\"bold\"> {statusText}</span>";
+		labelSubscriptionStatus.Visible = true;
+		eventboxSubscriptionStatus.Visible = true;
+	}
+
+	/// <summary>
+	/// Обработчик клика по статусу подписки
+	/// </summary>
+	protected void OnSubscriptionStatusClicked(object o, ButtonPressEventArgs args) {
+		// Показываем сообщение для всех статусов, кроме случая когда статус не установлен
+		if(string.IsNullOrEmpty(subscriptionStatusMessage))
+			return;
+
+		interactive.ShowMessage(ImportanceLevel.Warning, subscriptionStatusMessage, subscriptionStatusTitle);
+
+		// Открываем страницу покупки
+		try {
+			string url = "https://workwear.qsolution.ru/stoimost/";
+			Process.Start(new ProcessStartInfo {
+				FileName = url,
+				UseShellExecute = true
+			});
+		}
+		catch(Exception ex) {
+			logger.Error(ex, "Не удалось открыть браузер");
+		}
+	}
+
+	#endregion
+
+	protected void OnActionOffAutoUpdateToggled(object sender, EventArgs e) {
+		if(ActionOffAutoUpdate.Active)
+			SetChannel(UpdateChannel.Off);
+	}
+
+	protected void OnIssueSizeReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(IssuedSizesViewModel));
+	}
+
+	protected void OnActionDutyNormIssuedReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountIssuedDutyNormsViewModel));
+	}
+
+	protected void OnActionRentMovementsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RentMovementsViewModel));
+	}
+
+	protected void OnActionRentActActivated(object sender, EventArgs e) {
+	}
+	
+	protected void OnActionCausesIssueActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<CauseIssueJournalViewModel>(null);
+	}
+
+	protected void OnTelegramActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenTelegram");
+		OpenHelper.OpenUrl("https://t.me/qs_specodezhda");
+	}
+
+	protected void OnMAXActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenMax");
+		OpenHelper.OpenUrl("https://max.ru/id7810524703_biz");
+	}
+
+	protected void OnEmailActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenEmail");
+		OpenHelper.OpenUrl("https://forms.msndr.net/subscriptions/3db9fe188746bac0e094a6a715d45444/form");
 	}
 }

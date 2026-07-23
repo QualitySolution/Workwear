@@ -83,6 +83,13 @@ namespace Workwear.Domain.Regulations
 			get => String.IsNullOrWhiteSpace(comment) ? null : comment; //Чтобы в базе хранить null, а не пустую строку. 
 			set => SetField(ref comment, value); 
 		}
+
+		private bool isDisabled;
+		[Display(Name = "Отключена строка нормы")]
+		public virtual bool IsDisabled {
+			get => isDisabled;
+			set => SetField(ref isDisabled, value);
+		}
 		private DateTime lastUpdate;
 		[Display(Name="Последнее обновление")]
 		public virtual DateTime LastUpdate {
@@ -143,11 +150,28 @@ namespace Workwear.Domain.Regulations
 					return String.Empty;
 				switch(NormPeriod) {
 					case NormPeriodType.Year:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} год", "{0} года", "{0} лет");
 					case NormPeriodType.Month:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} месяц", "{0} месяца", "{0} месяцев");
 					case NormPeriodType.Shift:
-						return NumberToTextRus.FormatCase (PeriodCount, "{0} смена", "{0} смены", "{0} смен");
+						return PeriodCount + " " + PeriodText;
+					case NormPeriodType.Wearout:
+						return "До износа";
+					case NormPeriodType.Duty:
+						return "Дежурный";
+					default:
+						return String.Empty;
+				}
+			}
+		}
+
+		public virtual string PeriodText {
+			get {
+				switch(NormPeriod) {
+					case NormPeriodType.Year:
+						return NumberToTextRus.FormatCase(PeriodCount, "год", "года", "лет");
+					case NormPeriodType.Month:
+						return NumberToTextRus.FormatCase(PeriodCount, "месяц", "месяца", "месяцев");
+					case NormPeriodType.Shift:
+						return NumberToTextRus.FormatCase(PeriodCount, "смена", "смены", "смен");
 					case NormPeriodType.Wearout:
 						return "До износа";
 					case NormPeriodType.Duty:

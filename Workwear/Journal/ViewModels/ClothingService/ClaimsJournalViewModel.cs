@@ -154,23 +154,23 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				selected => ChangeState());
 			NodeActionsList.Add(changeStateAction);
 			
-			var cancelAction = new JournalAction("Отменить получение",
-				selected => (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.WaitService 
-				|| (selected.FirstOrDefault() as ClaimsJournalNode)?.State == ClaimState.InReceiptTerminal,
+			var cancelAction = new JournalAction("Удалить заявку",
+				selected => selected.FirstOrDefault() != null,
 				selected => true,
-				selected => CancelReceive(selected.Cast<ClaimsJournalNode>()));
+				selected => RemoveClaim(selected.Cast<ClaimsJournalNode>()));
 			NodeActionsList.Add(cancelAction);
 		}
 
-		private void CancelReceive(IEnumerable<ClaimsJournalNode> selected) {
-			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Отмена получения")) {
+		private void RemoveClaim(IEnumerable<ClaimsJournalNode> selected) {
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Удаление заявки на обслуживание")) {
 				var node = selected.First();
 				var claim = uow.GetById<ServiceClaim>(node.Id);
-				if(claim.States.Count != 1) {
-					interactive.ShowMessage(ImportanceLevel.Warning, "Невозможно отменить получение, так как уже были выполнены другие движения.");
+				var postomatDocumentItems = uow.Session.QueryOver<PostomatDocumentItem>().Where(x => x.ServiceClaim.Id == claim.Id).RowCount();
+				if(uow.Session.QueryOver<PostomatDocumentItem>().Where(x => x.ServiceClaim.Id == claim.Id).RowCount() != 0) {
+					interactive.ShowMessage(ImportanceLevel.Warning, "Заявка уже добавлена в документ для закладки в постомат. Её нельзя удалить.");
 					return;
 				}
-				bool isTerminalReceipt = claim.States.First().State == ClaimState.InReceiptTerminal;
+				bool isTerminalReceipt = claim.States.OrderByDescending(i => i.OperationTime).FirstOrDefault()?.State == ClaimState.InReceiptTerminal;
 				var terminalWarning = isTerminalReceipt ? "Если одежда все таки находится в терминале сдачи в стирку, может возникнуть путаница. " : "";
 				if(interactive.Question($"Данная операция удалит сдачу в стирку, восстановить ее будет невозможно. {terminalWarning}Вы уверены, что хотите продолжить?") == false)
 					return;
@@ -179,6 +179,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 					claim.Employee.LastUpdate = DateTime.Now;
 					uow.Save(claim.Employee);
 				}
+				foreach(var state in claim.States)
+					uow.Delete(state);
 				uow.Delete(claim.States.First());
 				uow.Delete(claim);
 				uow.Commit();

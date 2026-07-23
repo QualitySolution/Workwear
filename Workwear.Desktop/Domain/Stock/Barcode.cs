@@ -1,25 +1,27 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 
-namespace Workwear.Domain.Stock
-{
-	[Appellative (Gender = GrammaticalGender.Masculine,
-		NominativePlural = "штрихкоды",
-		Nominative = "штрихкод",
-		Genitive = "штрихкода",
-		GenitivePlural = "штрихкодов"
-		)]
+namespace Workwear.Domain.Stock {
+	[Appellative(Gender = GrammaticalGender.Masculine,
+		NominativePlural = "метки (штрихкоды)",
+		Nominative = "метка (штрихкод)",
+		Genitive = "метки (штрихкода)",
+		GenitivePlural = "меток (штрихкодов)"
+	)]
 	[HistoryTrace]
-	public class Barcode : PropertyChangedBase, IDomainObject
-	{
+	public class Barcode : PropertyChangedBase, IDomainObject {
+		public const int LabelMaxLength = 50;
+
 		public virtual int Id { get; }
 
 		private DateTime createDate = DateTime.Today;
+
 		[Display(Name = "Дата создания")]
 		public virtual DateTime CreateDate {
 			get => createDate;
@@ -32,8 +34,16 @@ namespace Workwear.Domain.Stock
 			get => title;
 			set => SetField(ref title, value);
 		}
-		
+
+		private BarcodeTypes type;
+		[Display(Name = "Тип метки")]
+		public virtual BarcodeTypes Type {
+			get => type;
+			set => SetField(ref type, value);
+		}
+
 		private Nomenclature nomenclature;
+
 		[Display(Name = "Номенклатура")]
 		public virtual Nomenclature Nomenclature {
 			get => nomenclature;
@@ -54,13 +64,22 @@ namespace Workwear.Domain.Stock
 			set => SetField(ref height, value);
 		}
 		
+		private string label;
+		[Display(Name = "Название")]
+		[StringLength(LabelMaxLength)]
+		public virtual string Label 
+		{
+			get => label;
+			set => SetField(ref label, value, () => Label);
+		}
+		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
 			get { return comment; }
 			set { SetField(ref comment, value, () => Comment); }
 		}
-
+		
 		#region Списки
 
 		private IList<BarcodeOperation> barcodeOperations = new List<BarcodeOperation>();
@@ -69,7 +88,23 @@ namespace Workwear.Domain.Stock
 			get => barcodeOperations;
 			set => SetField(ref barcodeOperations, value);
 		}
+		
+		//Предварительно нужно загрузить все BarcodeOperation и связанные с ними операции иначе будет много запросов в базу
+		public virtual IList<BarcodeOperation> SortedOperations => BarcodeOperations.OrderBy(x => x.OperationDate).ToList();
+		public virtual BarcodeOperation LastOperation => SortedOperations.Last();
+		public virtual DateTime LastOperationTime => BarcodeOperations.Max(x => x.OperationDate);
+		public virtual string GetKitNumberText(WarehouseOperation warehouseOperation) {
+			var kitNumber = BarcodeOperations.FirstOrDefault(x => x.WarehouseOperation?.Id == warehouseOperation?.Id)?.KitNumber;
+			return kitNumber > 0 ? kitNumber.ToString() : "";
+		}
 
 		#endregion
+	}
+	
+	public enum BarcodeTypes {
+		[Display(Name = "Линейный EAN-13")]
+		EAN13,
+		[Display(Name ="RFID EPC 96bit ")]
+		EPC96 
 	}
 }

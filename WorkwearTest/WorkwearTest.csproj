@@ -51,9 +51,11 @@
     <Compile Include="ViewModels\Company\EmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
     <Compile Include="ViewModels\Regulations\NormViewModelTest.cs" />
+    <Compile Include="ViewModels\Stock\CollectiveExpenseViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModelTest.cs" />
+    <Compile Include="ViewModels\Visits\IssuanceRequestEmployeeCardItemsViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\QSProjects\QS.Testing.Desktop\QS.Testing.Desktop.csproj">
@@ -120,9 +122,9 @@
       <Project>{E2228A2B-4883-4DD8-8A05-23501F7B8A33}</Project>
       <Name>QS.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
+    <ProjectReference Include="..\QSProjects\Modules\QS.Measurement\QS.Measurement.csproj">
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
-      <Name>QS.BusinessCommon</Name>
+      <Name>QS.Measurement</Name>
     </ProjectReference>
     <ProjectReference Include="..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
       <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>

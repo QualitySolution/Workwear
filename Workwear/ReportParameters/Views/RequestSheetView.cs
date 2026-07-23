@@ -49,6 +49,7 @@ namespace workwear.ReportParameters.Views {
 			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			ycheckShowSize.Binding.AddBinding(ViewModel, v=>v.ShowSize,w=>w.Active).InitializeFromSource();
 		}
 
 		protected void OnButtonRunClicked(object sender, EventArgs e)

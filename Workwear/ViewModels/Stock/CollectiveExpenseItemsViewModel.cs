@@ -33,10 +33,10 @@ namespace Workwear.ViewModels.Stock
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		
-		public readonly CollectiveExpenseViewModel сollectiveExpenseViewModel;
+		public readonly CollectiveExpenseViewModel collectiveExpenseViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
-		private readonly IInteractiveMessage interactive;
+		private readonly IInteractiveService interactive;
 		private readonly ICurrentPermissionService permissionService;
 		private readonly ModalProgressCreator modalProgress;
 		private readonly EmployeeRepository employeeRepository;
@@ -53,14 +53,14 @@ namespace Workwear.ViewModels.Stock
 			EmployeeIssueModel issueModel,
 			StockBalanceModel stockBalanceModel,
 			EmployeeRepository employeeRepository,
-			IInteractiveMessage interactive,
+			IInteractiveService interactive,
 			ICurrentPermissionService permissionService,
 			BaseParameters baseParameters,
 			ModalProgressCreator modalProgress,
 			PerformanceHelper performance //Только для использования в конструкторе. Шаги запуска.
 			)
 		{
-			this.сollectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
+			this.collectiveExpenseViewModel = collectiveExpenseViewModel ?? throw new ArgumentNullException(nameof(collectiveExpenseViewModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
 			this.modalProgress = modalProgress ?? throw new ArgumentNullException(nameof(modalProgress));
@@ -119,8 +119,8 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		#region Хелперы
-		private IUnitOfWork UoW => сollectiveExpenseViewModel.UoW;
-		public CollectiveExpense Entity => сollectiveExpenseViewModel.Entity;
+		private IUnitOfWork UoW => collectiveExpenseViewModel.UoW;
+		public CollectiveExpense Entity => collectiveExpenseViewModel.Entity;
 		#endregion
 		#region Поля
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +
@@ -146,7 +146,7 @@ namespace Workwear.ViewModels.Stock
 		#region Sensetive
 		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(CollectiveExpense), Entity.Date).CanUpdate;
 		public bool SensitiveAddButton => CanEdit && Entity.Warehouse != null;
-		public bool SensitiveButtonChange => CanEdit && SelectedItem != null;
+		public bool SensitiveButtonChange => CanEdit && SelectedItem != null && Entity.Warehouse != null;
 		public bool SensitiveButtonDel => CanEdit && SelectedItem != null;
 		public bool SensitiveRefreshMenuItem => SelectedItem != null;
 		public bool SensitiveRefreshAllMenuItem => Entity.Items.Any();
@@ -158,9 +158,10 @@ namespace Workwear.ViewModels.Stock
 		#region Действия View
 
 		public void AddEmployees(){
-			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<EmployeeJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.Filter.ShowOnlyWork = true;
+			selectJournal.ViewModel.Filter.Date = Entity.Date;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployees;
 		}
 		private void LoadEmployees(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
@@ -172,7 +173,7 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		public void AddSubdivisions() {
-			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<SubdivisionJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadSubdivisions;
 		}
@@ -186,7 +187,7 @@ namespace Workwear.ViewModels.Stock
 		}
 
 		public void AddDepartments() {
-			var selectJournal = navigation.OpenViewModel<DepartmentJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<DepartmentJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadDepartments;
 		}
@@ -199,7 +200,7 @@ namespace Workwear.ViewModels.Stock
 		}
 		
 		public void AddEmployeeGroups() {
-			var selectJournal = navigation.OpenViewModel<EmployeeGroupJournalViewModel>(сollectiveExpenseViewModel, OpenPageOptions.AsSlave);
+			var selectJournal = navigation.OpenViewModel<EmployeeGroupJournalViewModel>(collectiveExpenseViewModel, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += LoadEmployeeGroups;
 		}
@@ -211,7 +212,7 @@ namespace Workwear.ViewModels.Stock
 			AddEmployeesList(employees, performance);
 		}
 
-		private void AddEmployeesList(IEnumerable<EmployeeCard> employees, ProgressPerformanceHelper performance) {
+		public void AddEmployeesList(IEnumerable<EmployeeCard> employees, ProgressPerformanceHelper performance) {
 			AddEmployeesList(employees.Select(x => x.Id).ToArray(), performance);
 		}
 
@@ -239,7 +240,7 @@ namespace Workwear.ViewModels.Stock
 			
 			var needs = employees
 				.SelectMany(x => x.WorkwearItems)
-				.Where(x=> !Entity.Items.Any(y =>y.EmployeeCardItem == x))
+				.Where(x=> Entity.Items.All(y => y.EmployeeCardItem != x))
 				.ToList();
 			
 			foreach(var item in needs) {
@@ -295,13 +296,15 @@ namespace Workwear.ViewModels.Stock
 		
 		private void ChangeItemPositions(List<CollectiveExpenseItem> items)
 		{
-			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(сollectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave,
+			var selectJournal = navigation.OpenViewModel<StockBalanceJournalViewModel>(collectiveExpenseViewModel, QS.Navigation.OpenPageOptions.AsSlave,
 				addingRegistrations: builder => {
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 						filter => {
 							filter.WarehouseEntry.IsEditable = false;
-							filter.Warehouse = сollectiveExpenseViewModel.Entity.Warehouse;
+							filter.Warehouse = collectiveExpenseViewModel.Entity.Warehouse;
 							filter.ProtectionTools = items.First().ProtectionTools;
+							filter.Date = collectiveExpenseViewModel.Entity.Date;
+							filter.SensitiveDate = false;
 						});
 				});
 			
@@ -331,6 +334,7 @@ namespace Workwear.ViewModels.Stock
 				Entity.IssuanceSheet.Items.Remove(deleteItem.IssuanceSheetItem);
 			}
 			Entity.RemoveItem(deleteItem);
+			UoW.Delete(deleteItem.WarehouseOperation);
 			OnPropertyChanged(nameof(Sum));
 		}
 
@@ -352,6 +356,10 @@ namespace Workwear.ViewModels.Stock
 		#endregion
 		#region Расчет для View
 		public string GetRowColor(CollectiveExpenseItem item) {
+			if(item.Id != 0 && item.Amount <= 0)
+				return "red";
+			if(item.Id != 0)
+				return null;
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
@@ -364,6 +372,12 @@ namespace Workwear.ViewModels.Stock
 
 		#endregion
 		#region Обновление документа
+
+		private void UpdateAmounts() {
+			foreach(var item in Entity.Items) {
+				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date) ?? 0;
+			}
+		}
 
 		public void Refresh(CollectiveExpenseItem[] selectedCollectiveExpenseItem) {
 			var performance = new ProgressPerformanceHelper(modalProgress, 6, "Загружаем...", logger, showProgressText: true);
@@ -378,17 +392,17 @@ namespace Workwear.ViewModels.Stock
 		#region Открытие
 		public void OpenEmployee(CollectiveExpenseItem item)
 		{
-			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Employee.Id));
+			navigation.OpenViewModel<EmployeeViewModel, IEntityUoWBuilder>(collectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Employee.Id));
 		}
 
 		public void OpenNomenclature(CollectiveExpenseItem item)
 		{
-			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
+			navigation.OpenViewModel<NomenclatureViewModel, IEntityUoWBuilder>(collectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.Nomenclature.Id));
 		}
 
 		public void OpenProtectionTools(CollectiveExpenseItem item)
 		{
-			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(сollectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
+			navigation.OpenViewModel<ProtectionToolsViewModel, IEntityUoWBuilder>(collectiveExpenseViewModel, EntityUoWBuilder.ForOpen(item.ProtectionTools.Id));
 		}
 		#endregion
 		#region Обработка событий
@@ -402,9 +416,12 @@ namespace Workwear.ViewModels.Stock
 				case nameof(Entity.Warehouse):
 					stockBalanceModel.Warehouse = Entity.Warehouse;
 					OnPropertyChanged(nameof(SensitiveAddButton));
+					OnPropertyChanged(nameof(SensitiveButtonChange));
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;
+					if(Entity.Items.Any() && interactive.Question("Обновить количество по потребности на новую дату документа?"))
+						UpdateAmounts();
 					break;
 			}
 		}

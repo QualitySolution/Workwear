@@ -23,19 +23,23 @@ namespace Workwear.ReportParameters.ViewModels {
 			: base(rdlViewerViewModel) {
 			UoW = uowFactory.CreateWithoutRoot();
 
+			ProtectionToolsNomenclature protectionToolsNomenclatureAlias = null;
 			Nomenclature nomenclatureAlias = null;
 
 			var protectionToolsList =  UoW.Session.QueryOver<ProtectionTools>()
-				.Left.JoinAlias(x => x.Nomenclatures, () => nomenclatureAlias)
+				.Left.JoinAlias(x => x.ProtectionToolsNomenclatures, () => protectionToolsNomenclatureAlias)
+				.Left.JoinAlias(() => protectionToolsNomenclatureAlias.Nomenclature, () => nomenclatureAlias)
 				.Where(() => nomenclatureAlias.UseBarcode)
-				.List();
+				.Where(x=>!x.Archival)
+				.List()
+				.Distinct().ToList();
 			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			ChoiceProtectionToolsViewModel.UnSelectAll();
 			
 			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
 			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
-			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подразделения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 

@@ -71,13 +71,13 @@ namespace Workwear.Test.Integration.Stock
                 uow.Save(income2);
                 uow.Commit();
                 
-                var stockRepository = new StockRepository();
+                var stockRepository = new StockRepository(uow);
                 var stock1 = stockRepository
-                    .StockBalances(uow, warehouseSource, new List<Nomenclature> { nomenclature1 }, new DateTime(2017, 1, 2));
+                    .StockBalances(warehouseSource, new List<Nomenclature> { nomenclature1 }, new DateTime(2017, 1, 2));
                 Assert.That(stock1.Where(x => x.WearSize == sizeX).Sum(x => x.Amount), Is.EqualTo(10));
                 
                 var stock2 = stockRepository
-                    .StockBalances(uow, warehouseResult, new List<Nomenclature> { nomenclature2 }, new DateTime(2017, 1, 2));
+                    .StockBalances(warehouseResult, new List<Nomenclature> { nomenclature2 }, new DateTime(2017, 1, 2));
                 Assert.That(stock2.Where(x => x.WearSize == sizeXl).Sum(x => x.Amount), Is.EqualTo(7));
                 
                 //Создаём комплектацию 5 ед. комплектующих в 5 ед. результата
@@ -92,11 +92,11 @@ namespace Workwear.Test.Integration.Stock
                 uow.Commit();
                 
                 var stockSource = stockRepository
-                    .StockBalances(uow, warehouseSource, new List<Nomenclature> { nomenclature1 }, new DateTime(2017, 1, 4));
+                    .StockBalances(warehouseSource, new List<Nomenclature> { nomenclature1 }, new DateTime(2017, 1, 4));
                 Assert.That(stockSource.Where(x => x.WearSize == sizeX).Sum(x => x.Amount), Is.EqualTo(5));
                 
                 var stockResult = stockRepository
-                    .StockBalances(uow, warehouseResult, new List<Nomenclature> { nomenclature2 }, new DateTime(2017, 1, 4));
+                    .StockBalances(warehouseResult, new List<Nomenclature> { nomenclature2 }, new DateTime(2017, 1, 4));
                 Assert.That(stockResult.Where(x => x.WearSize == sizeXl).Sum(x => x.Amount), Is.EqualTo(12));
             }
         }

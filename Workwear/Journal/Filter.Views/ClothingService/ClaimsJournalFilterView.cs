@@ -16,6 +16,8 @@ namespace Workwear.Journal.Filter.Views.ClothingService {
 				.AddBinding(v=>v.ShowOnlyRepair, w => w.Active)
 				.InitializeFromSource();
 			comboStatus.ItemsEnum = typeof(ClaimState);
+			if(ViewModel.HiddenStates != null)
+				comboStatus.HiddenItems = ViewModel.HiddenStates;
 			comboStatus.Binding.AddSource(ViewModel)	
 				.AddBinding(v => v.Status, w => w.SelectedItemOrNull)
 				.InitializeFromSource();

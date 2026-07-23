@@ -28,7 +28,9 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.ClothingService;
+using Workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
@@ -50,13 +52,13 @@ namespace Workwear.ViewModels.Stock {
 			StockRepository stockRepository,
 			StockBalanceModel stockBalanceModel,
 			IInteractiveService interactiveService,
-      DutyNormRepository dutyNormRepository,
+			DutyNormRepository dutyNormRepository,
 			ICurrentPermissionService permissionService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
 			Warehouse warehouse = null,
-      DutyNorm dutyNorm = null
+			DutyNorm dutyNorm = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactiveService, validator, unitOfWorkProvider)
 		{
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
@@ -73,7 +75,7 @@ namespace Workwear.ViewModels.Stock {
 				logger.Info("Создание Нового документа выдачи");
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				EmployeeCard = UoW.GetInSession(employee);
-				Entity.Warehouse = UoW.GetInSession(warehouse) ?? stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+				Entity.Warehouse = UoW.GetInSession(warehouse) ?? stockRepository.GetDefaultWarehouse(featuresService, userService.CurrentUserId);
 			} 
 			else 
 				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
@@ -149,6 +151,7 @@ namespace Workwear.ViewModels.Stock {
 		#endregion 
 		
 		#region Свойства для View
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public virtual bool CanAddEmployee => CanEdit;
 		public virtual bool CanAddDutyNorms => CanEdit;
 		public virtual bool CanAddClaim => CanEdit;
@@ -184,13 +187,17 @@ namespace Workwear.ViewModels.Stock {
 				NavigationManager.OpenViewModel<EmployeeBalanceJournalViewModel, EmployeeCard>(
 					this,
 					EmployeeCard,
-					OpenPageOptions.AsSlave);
-			selectJournal.ViewModel.Filter.DateSensitive = false;
-			selectJournal.ViewModel.Filter.CheckShowWriteoffVisible = false;
-			selectJournal.ViewModel.Filter.SubdivisionSensitive = true;
-			selectJournal.ViewModel.Filter.EmployeeSensitive = true;
-			selectJournal.ViewModel.Filter.Date = Entity.Date;
-			selectJournal.ViewModel.Filter.CanChooseAmount = false;
+					OpenPageOptions.AsSlave,
+					addingRegistrations: builder => { builder.RegisterInstance<Action<EmployeeBalanceFilterViewModel>>(
+						filter => {
+							filter.DateSensitive = false;
+							filter.CheckShowWriteoffVisible = false;
+							filter.SubdivisionSensitive = true;
+							filter.EmployeeSensitive = true;
+							filter.Date = Entity.Date;
+							filter.CanChooseAmount = false;
+						});
+					});
 			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromDictionary(
 				e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToDictionary(
 					k => k.Id,
@@ -205,12 +212,17 @@ namespace Workwear.ViewModels.Stock {
 				NavigationManager.OpenViewModel<DutyNormBalanceJournalViewModel, DutyNorm>(
 					this,
 					DutyNorm,
-					OpenPageOptions.AsSlave
+					OpenPageOptions.AsSlave,
+					addingRegistrations: builder => {
+						builder.RegisterInstance<Action<DutyNormBalanceFilterViewModel>>(
+							filter => {
+								filter.DateSensitive = false;
+								filter.SubdivisionSensitive =  DutyNorm == null;
+								filter.DutyNormSensitive = DutyNorm == null;
+								filter.Date = Entity.Date;
+							});
+					}
 				);
-			selectJournal.ViewModel.Filter.DateSensitive = false;
-			selectJournal.ViewModel.Filter.SubdivisionSensitive =  DutyNorm == null;
-			selectJournal.ViewModel.Filter.DutyNormSensitive = DutyNorm == null;
-			selectJournal.ViewModel.Filter.Date = Entity.Date;
 			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromDictionaryDutyNorm(
 				e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(
 					k => k.Id,

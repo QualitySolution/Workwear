@@ -23,36 +23,13 @@
     employees.change_of_position_date,
     employees.sex,
     posts.name AS post,
-    CONCAT_WS('',
-              CONCAT(leaders.surname, ' '),
-              IF(leaders.name = '',
-                 NULL,
-                 CONCAT(LEFT(leaders.name, 1), '.')),
-              IF(leaders.patronymic = '',
-                 NULL,
-                 CONCAT(LEFT(leaders.patronymic, 1), '.'))) AS leader,
+    "" AS leader,
     subdivisions.name AS subdivision,
-    (SELECT
-         GROUP_CONCAT(DISTINCT CONCAT_WS(' ',
-                                         regulations.name,
-                                         CONCAT('от ',
-                                                DATE_FORMAT(regulations.doc_date, '%d.%m.%Y')),
-                                         CONCAT('№ ', regulations.number))
-                      SEPARATOR ', ')
-     FROM
-         employees_norms
-             LEFT JOIN
-         norms ON norms.id = employees_norms.norm_id
-             LEFT JOIN
-         regulations ON regulations.id = norms.regulations_id
-     WHERE
-             employees_norms.employee_id = employees.id) AS regulations
+    '' AS regulations
 FROM
     employees
         LEFT JOIN
     posts ON employees.post_id = posts.id
-        LEFT JOIN
-    leaders ON leaders.id = employees.leader_id
         LEFT JOIN
     subdivisions ON subdivisions.id = employees.subdivision_id
 WHERE
@@ -119,7 +96,7 @@ WHERE
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     protection_tools.name AS type_name,
-    IFNULL(norms_item.norm_paragraph, norms.ton_paragraph) AS ton_paragraph,
+    norms_item.norm_paragraph AS ton_paragraph,
     measurement_units.name AS unit,
     CASE
         WHEN norms_item.period_type = 'Shift' THEN CONCAT_WS(' ', norms_item.amount, 'на смену')

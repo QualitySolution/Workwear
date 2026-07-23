@@ -28,7 +28,7 @@ namespace Workwear.Domain.ClothingService {
 		}
 		
 		private Barcode barcode;
-		[Display(Name = "Штрихкод")]
+		[Display(Name = "Метка(штрихкод)")]
 		public virtual Barcode Barcode {
 			get { return barcode; }
 			set { SetField(ref barcode, value, () => Barcode); }
@@ -74,6 +74,13 @@ namespace Workwear.Domain.ClothingService {
 		public virtual IObservableList<StateOperation> States {
 			get { return states; }
 			set { SetField(ref states, value, () => States); }
+		}
+				
+		private IObservableList<ProvidedService> providedServices = new ObservableList<ProvidedService>();
+		[Display(Name = "Перечень услуг")]
+		public virtual IObservableList<ProvidedService> ProvidedServices {
+			get { return providedServices; }
+			set { SetField(ref providedServices, value); }
 		}
 		#endregion
 

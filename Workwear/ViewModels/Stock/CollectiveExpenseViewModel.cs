@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
 using Autofac;
-using Gamma.Utilities;
 using NHibernate;
 using NLog;
 using QS.Dialog;
@@ -25,10 +23,11 @@ using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Visits;
 using Workwear.Models.Operations;
+using Workwear.Models.Print;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -43,10 +42,11 @@ namespace Workwear.ViewModels.Stock
 		private readonly CurrentUserSettings currentUserSettings;
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		public CollectiveExpenseItemsViewModel CollectiveExpenseItemsViewModel;
+		private IEnumerable<EmployeeCard> Employees;
 		private IInteractiveQuestion interactive;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly CommonMessages commonMessages;
-		private readonly FeaturesService featuresService;
+		private readonly IssuedSheetPrintModel printModel;
 		private readonly BaseParameters baseParameters;
 		private readonly ModalProgressCreator progressCreator;
 		private readonly IEntityChangeWatcher changeWatcher;
@@ -68,7 +68,10 @@ namespace Workwear.ViewModels.Stock
 			BaseParameters baseParameters,
 			IProgressBarDisplayable globalProgress,
 			ModalProgressCreator progressCreator,
-			IEntityChangeWatcher changeWatcher
+			IEntityChangeWatcher changeWatcher,
+			IssuedSheetPrintModel printModel,
+			IssuanceRequest issuanceRequest = null,
+			Warehouse warehouse = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -76,7 +79,7 @@ namespace Workwear.ViewModels.Stock
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
-			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
@@ -84,7 +87,7 @@ namespace Workwear.ViewModels.Stock
 
 			var performance = new ProgressPerformanceHelper(globalProgress, 12, "Предзагрузка данных документа", logger);
 			var entryBuilder = new CommonEEVMBuilderFactory<CollectiveExpense>(this, Entity, UoW, navigation, autofacScope);
-			if (UoW.IsNew) {
+			if (Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			}
 			else {
@@ -97,8 +100,8 @@ namespace Workwear.ViewModels.Stock
 			}
 			
 			performance.CheckPoint("Warehouse");
-			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			if(Entity.Warehouse == null && issuanceRequest == null)
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			WarehouseEntryViewModel.IsEditable = CanEdit;
@@ -117,7 +120,13 @@ namespace Workwear.ViewModels.Stock
 				.AndChangeType(TypeOfChangeEvent.Insert)
 				.AndChangeType(TypeOfChangeEvent.Update);
 			
-			if(UoW.IsNew) {
+			if(issuanceRequest != null) {
+				Entity.IssuanceRequest = issuanceRequest;
+				Entity.Warehouse = warehouse;
+				CollectiveExpenseItemsViewModel.AddEmployeesList(issuanceRequest.Employees, performance);
+			}
+
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				logger.Info($"Создание Нового документа Коллективной выдачи выдачи.");
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
@@ -140,6 +149,8 @@ namespace Workwear.ViewModels.Stock
 		
 		#region Свойства View
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+		
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		
 		private bool autoDocNumber = true;
 		[PropertyChangedAlso(nameof(DocNumberText))]
@@ -179,13 +190,13 @@ namespace Workwear.ViewModels.Stock
 			var performance = new ProgressPerformanceHelper(progressCreator, 6, "Подготовка документа...", logger, showProgressText: true);
 			Entity.CleanupItems();
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
+			performance.CheckPoint("Сохранение документа...");
+			UoW.Session.SaveOrUpdate(Entity);
 			performance.CheckPoint("Обновление ведомости...");
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
 				UoW.Save(Entity.IssuanceSheet);
-
-			performance.CheckPoint("Сохранение...");
-			UoWGeneric.Save();
+			performance.CheckPoint("Завершение транзакции...");
 			UoW.Commit();
 			performance.CheckPoint("Обновление карточек сотрудников...");
 			if(changedOperations.Any()) {
@@ -194,7 +205,6 @@ namespace Workwear.ViewModels.Stock
 			}
 			
 			performance.CheckPoint("Завершение...");
-			UoWGeneric.Commit();
 			performance.End();
 			logger.Info("Ok");
 			return true;
@@ -226,28 +236,14 @@ namespace Workwear.ViewModels.Stock
 			OnPropertyChanged(nameof(IssuanceSheetOpenVisible));
 			OnPropertyChanged(nameof(IssuanceSheetPrintVisible));
 		}
-		public void PrintIssuanceSheet(IssuedSheetPrint doc)
+		public void PrintIssuanceSheet(IssuedSheetPrint type)
 		{
 			if(UoW.HasChanges) {
-				if(!commonMessages.SaveBeforePrint(Entity.GetType(), doc == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
+				if(!commonMessages.SaveBeforePrint(Entity.GetType(), type == IssuedSheetPrint.AssemblyTask ? "задания на сборку" : "ведомости") || !Save())
 					return;
 			}
 
-			var reportInfo = new ReportInfo {
-				Title = doc == IssuedSheetPrint.AssemblyTask ? $"Задание на сборку №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()}" 
-					: $"Ведомость №{Entity.IssuanceSheet.DocNumber ?? Entity.IssuanceSheet.Id.ToString()} (МБ-7)",
-				Identifier = doc.GetAttribute<ReportIdentifierAttribute>().Identifier,
-				Parameters = new Dictionary<string, object> {
-					{ "id",  Entity.IssuanceSheet.Id },
-					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)}
-				}
-			};
-
-			//Если пользователь не хочет сворачивать ФИО и табельник (настройка в базе)
-			if((doc == IssuedSheetPrint.IssuanceSheet || doc == IssuedSheetPrint.IssuanceSheetVertical) && !baseParameters.CollapseDuplicateIssuanceSheet)
-				reportInfo.Source = File.ReadAllText(reportInfo.GetPath()).Replace("<HideDuplicates>Data</HideDuplicates>", "<HideDuplicates></HideDuplicates>");
-
-			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, printModel.GetReportInfo(type, Entity.IssuanceSheet));
 		}
 		#endregion
 

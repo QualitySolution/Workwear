@@ -46,6 +46,10 @@ namespace Workwear.ViewModels.Company
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
 				.UseViewModelDialog<SubdivisionViewModel>()
 				.Finish();
+			EntryHeadOfDivision = builder.ForProperty(x => x.HeadOfDivision)
+				.UseViewModelJournalAndAutocompleter<EmployeeJournalViewModel>()
+				.UseViewModelDialog<EmployeeViewModel>()
+				.Finish();
 		}
 		
 		#region IDialogDocumentation
@@ -60,6 +64,20 @@ namespace Workwear.ViewModels.Company
 		#region Controls
 		public EntityEntryViewModel<Warehouse> EntryWarehouse;
 		public EntityEntryViewModel<Subdivision> EntrySubdivisionViewModel;
+		public EntityEntryViewModel<EmployeeCard> EntryHeadOfDivision;
 		#endregion
+
+		public bool EmployeesColorOn {
+			get => !String.IsNullOrEmpty(Entity.EmployeesColor);
+			set {
+				if(EmployeesColorOn != value) {
+					if(value)
+						Entity.EmployeesColor = "#FFFFFF";
+					else 
+						Entity.EmployeesColor = null;
+					OnPropertyChanged();
+				}
+			}
+		}
 	}
 }

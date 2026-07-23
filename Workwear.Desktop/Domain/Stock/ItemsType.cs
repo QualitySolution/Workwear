@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
@@ -30,17 +30,17 @@ namespace Workwear.Domain.Stock
 			set => SetField (ref name, value?.Trim());
 		}
 
-		private MeasurementUnits units;
+		private MeasurementUnit units;
 		[Display (Name = "Единица измерения")]
 		[Required(ErrorMessage = "Единица измерения должна быть указана.")]
-		public virtual MeasurementUnits Units {
+		public virtual MeasurementUnit Units {
 			get => units;
 			set => SetField (ref units, value);
 		}
 		
-		СlothesType? wearCategory;
+		ClothesType? wearCategory;
 		[Display (Name = "Вид одежды")]
-		public virtual СlothesType? WearCategory {
+		public virtual ClothesType? WearCategory {
 			get { return wearCategory; }
 			set { SetField (ref wearCategory, value, () => WearCategory); }
 		}
@@ -88,7 +88,7 @@ namespace Workwear.Domain.Stock
 		[Display(Name = "Коллективная")]
 		Collective
 	}
-	public enum СlothesType
+	public enum ClothesType
 	{
 		[Display(Name = "Одежда")]
 		Wear,

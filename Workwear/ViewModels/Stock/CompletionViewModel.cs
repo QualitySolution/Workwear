@@ -47,7 +47,8 @@ namespace Workwear.ViewModels.Stock
 			IInteractiveService interactive,
 			ICurrentPermissionService permissionService,
 			SizeService sizeService,
-			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator)
+			IValidator validator = null,
+			UnitOfWorkProvider unitOfWorkProvider = null) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
 		{
 			if(autofacScope == null) throw new ArgumentNullException(nameof(autofacScope));
 			if(userService == null) throw new ArgumentNullException(nameof(userService));
@@ -59,14 +60,14 @@ namespace Workwear.ViewModels.Stock
 			
 			var entryBuilder = new CommonEEVMBuilderFactory<Completion>(this, Entity, UoW, navigation, autofacScope);
 			
-			if(UoW.IsNew) 
+			if(Entity.Id == 0) 
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			else 
 				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			
 			if(Entity.SourceWarehouse == null)
 				Entity.SourceWarehouse = stockRepository.GetDefaultWarehouse
-					(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+					(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
 			WarehouseExpenseEntryViewModel = entryBuilder.ForProperty(x => x.SourceWarehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
@@ -76,7 +77,7 @@ namespace Workwear.ViewModels.Stock
 
 			if(Entity.ResultWarehouse == null)
 				Entity.ResultWarehouse = stockRepository.GetDefaultWarehouse
-					(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+					(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseReceiptEntryViewModel = entryBuilder.ForProperty(x => x.ResultWarehouse)
 				.UseViewModelJournalAndAutocompleter<WarehouseJournalViewModel>()
@@ -99,6 +100,7 @@ namespace Workwear.ViewModels.Stock
 		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
 		#endregion
 		#region View
+		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public bool SensitiveDellSourceItemButton => CanEdit && SelectedSourceItem != null;
 		public bool SensitiveDellResultItemButton => CanEdit && SelectedResultItem != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
