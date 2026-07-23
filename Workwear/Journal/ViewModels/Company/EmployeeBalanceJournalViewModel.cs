@@ -65,12 +65,6 @@ namespace workwear.Journal.ViewModels.Company
 			EmployeeCard employeeCardAlias = null;
 
 			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias);
-			query.Where(GetSearchCriterion(
-				() => employeeCardAlias.LastName,
-				() => employeeCardAlias.FirstName,
-				() => employeeCardAlias.Patronymic,
-				() => nomenclatureAlias.Name)
-			);
 
 			if (Filter.Employee != null)
 				query.Where(e => e.Employee == Filter.Employee);
@@ -101,6 +95,14 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)					
+					.Where(GetSearchCriterion(
+						() => employeeCardAlias.LastName,
+						() => employeeCardAlias.FirstName,
+						() => employeeCardAlias.Patronymic,
+						() => nomenclatureAlias.Name,
+						() => protectionToolsAlias.Name,
+						() => sizeAlias.Name,
+						() => heightAlias.Name))
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.SelectGroup(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
@@ -138,6 +140,7 @@ namespace workwear.Journal.ViewModels.Company
 						() => employeeCardAlias.FirstName,
 						() => employeeCardAlias.Patronymic,
 						() => nomenclatureAlias.Name,
+						() => protectionToolsAlias.Name,
 						() => sizeAlias.Name,
 						() => heightAlias.Name))
 					.SelectList(list => list
