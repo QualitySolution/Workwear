@@ -12,16 +12,23 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
+using Workwear.Domain.Company;
+using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Postomats;
+//FIXME нужен для вызова виджета
+using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class ClothingAddViewModel : UowDialogViewModelBase, IWindowDialogSettings {
 		private readonly IUserService userService;
 		private readonly BarcodeRepository barcodeRepository;
 		private readonly Dictionary<string, (string title, Action<object> action)> actionBarcodes;
-		private PostomatDocumentViewModel documentVM;
+		private readonly PostomatDocumentViewModel postomatDocVM;
+		private readonly OverNormViewModel overNormDocVM;
+		private readonly OverNormItem overNormItem;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
 		public ClothingAddViewModel(
@@ -32,14 +39,17 @@ namespace Workwear.ViewModels.ClothingService {
 			IValidator validator = null,
 			string UoWTitle = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
-			PostomatDocumentViewModel documentVm = null) 
+			PostomatDocumentViewModel postomatDocVm = null,
+			OverNormViewModel overNormDocVm = null) 
 			: base(unitOfWorkFactory, navigation, validator, UoWTitle, unitOfWorkProvider)
 		{
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			barcodeInfoViewModel.ActionBarcodes = SetActionBarcodes();
 			
-			this.documentVM = documentVm;
+			this.postomatDocVM = postomatDocVm;
+			this.overNormDocVM = overNormDocVm;
+			overNormItem = overNormDocVm?.SelectedItem;
 			_ = UoW; //Дёргаем, чтобы заполнился провайдер
 			Title = "Добавить в документ";
 			BarcodeInfoViewModel.PropertyChanged += BarcodeInfoViewModelOnPropertyChanged;
@@ -54,48 +64,94 @@ namespace Workwear.ViewModels.ClothingService {
 			set => SetField(ref activeClaim, value);
 		}
 
-		private IObservableList<AddServiceClaimNode> items = new ObservableList<AddServiceClaimNode>();
-		public virtual IObservableList<AddServiceClaimNode> Items {
+		private IObservableList<IAddMarkNode> items = new ObservableList<IAddMarkNode>();
+		public virtual IObservableList<IAddMarkNode> Items {
 			get { return items; }
 			set { SetField(ref items, value); }
 		}
 
 		public virtual IEnumerable<ServiceClaim> Claims =>
-			Items.Where(x => x.Add).Select(x => x.Claim);
-		public virtual IEnumerable<ServiceClaim> InDocClaims => documentVM.Entity.Items.Select(x => x.ServiceClaim).ToList();
+			Items.OfType<AddMarkServiceClaimNode>().Where(x => x.Add).Select(x => x.Claim);
+		public virtual IEnumerable<ServiceClaim> InDocClaims =>
+			postomatDocVM?.Entity.Items.Select(x => x.ServiceClaim).ToList() ?? Enumerable.Empty<ServiceClaim>();
+		public virtual IEnumerable<Barcode> ScannedBarcodes =>
+			Items.OfType<AddMarkBarcodeNode>().Where(x => x.Add).Select(x => x.Barcode);
 		public virtual bool AutoAdd { get; set; } = true;
-		public virtual bool CanAdd => ActiveClaim != null 
-		                              && !Claims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim))
-		                              && !InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim));
+		public virtual bool CanAdd {
+			get {
+				if(overNormDocVM != null)
+					return BarcodeInfoViewModel.Barcode != null
+					       && string.IsNullOrEmpty(BarcodeInfoViewModel.LabelInfo)
+					       && !Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == BarcodeInfoViewModel.Barcode.Id);
+				if(postomatDocVM != null)
+					return ActiveClaim != null
+					       && !Claims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim))
+					       && !InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim));
+				return false;
+			}
+		}
 		#endregion
-		
-		#region Методы 
+
+		#region Методы
 		private void BarcodeInfoViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if(nameof(BarcodeInfoViewModel.Barcode) == e.PropertyName) {
-				if(BarcodeInfoViewModel.Barcode == null) {
-					ActiveClaim = null;
-					BarcodeInfoViewModel.LabelInfo = "Не найдено";
+			if(nameof(BarcodeInfoViewModel.Barcode) != e.PropertyName)
+				return;
+			
+			var barcode = BarcodeInfoViewModel.Barcode;
+			if(barcode == null) {
+				ActiveClaim = null;
+				BarcodeInfoViewModel.LabelInfo = "Не найдено";
+				OnPropertyChanged(nameof(CanAdd));
+				return;
+			}
+
+			if(overNormDocVM != null) {
+				if(Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == barcode.Id)) {
+					BarcodeInfoViewModel.LabelInfo = $"Спецодежда {barcode.Title} уже в списке.";
 					return;
 				}
 
-				ActiveClaim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
+				var error = overNormDocVM.ValidateBarcodeForScan(barcode);
+				if(error != null) {
+					BarcodeInfoViewModel.LabelInfo = error;
+					return;
+				}
+
+				BarcodeInfoViewModel.LabelInfo = null;
+				if(AutoAdd)
+					Items.Add(new AddMarkBarcodeNode(barcode, overNormItem?.Employee));
+				
+				OnPropertyChanged(nameof(CanAdd));
+				return;
+			}
+
+			if(overNormDocVM != null) {
+				ActiveClaim = barcodeRepository.GetActiveServiceClaimFor(barcode);
 				if(ActiveClaim == null)
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда не была принята в стирку.";
-				else if(!Claims.Contains(ActiveClaim) && documentVM != null && InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim)))
+				
+				else if(!Claims.Contains(ActiveClaim) && InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim)))
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда уже добавлена.";
 				else if(AutoAdd) {
-					Items.Add(new AddServiceClaimNode(ActiveClaim));
+					Items.Add(new AddMarkServiceClaimNode(ActiveClaim));
 				}
 			}
 		}
 
 		public void Accept() {
-			documentVM.AddItems(Claims);
+			postomatDocVM?.AddItems(Claims);
+			foreach(var barcode in ScannedBarcodes.ToList())
+				overNormDocVM?.AddBarcode(overNormItem, barcode);
 			Close(false, CloseSource.Save);
 		}
 
 		public void AddClaim() {
-			Items.Add(new AddServiceClaimNode(ActiveClaim));
+			if(overNormDocVM != null) {
+				if(BarcodeInfoViewModel.Barcode != null)
+					Items.Add(new AddMarkBarcodeNode(BarcodeInfoViewModel.Barcode, overNormItem?.Employee));
+				return;
+			}
+			Items.Add(new AddMarkServiceClaimNode(ActiveClaim));
 		}
 
 		private Dictionary<string, (string, Action)> SetActionBarcodes() {
@@ -106,7 +162,7 @@ namespace Workwear.ViewModels.ClothingService {
 			};
 		}
 
-		#endregion 
+		#endregion
 		
 		
 		#region IWindowDialogSettings implementation
@@ -119,16 +175,42 @@ namespace Workwear.ViewModels.ClothingService {
 		#endregion
 	}
 
-	public class AddServiceClaimNode {
-		public AddServiceClaimNode(ServiceClaim claim) {
+	/// <summary>
+	/// Интерфейс  для добавления со сканера как заявок на обслуживание так и промаркированных позиций
+	/// </summary>
+	public interface IAddMarkNode {
+		bool Add { get; set; }
+		string BarcodeText { get; }
+		string EmployeeText { get; }
+		string NomenclatureText { get; }
+		string SizeText { get; }
+	}
+
+	public class AddMarkServiceClaimNode : IAddMarkNode {
+		public AddMarkServiceClaimNode(ServiceClaim claim) {
 			Claim = claim;
 		}
-		
+
 		public ServiceClaim Claim { get; }
 		public bool Add { get; set; } = true;
 		public string BarcodeText => Claim.Barcode.Title;
 		public string EmployeeText => Claim.Employee.ShortName;
 		public string NomenclatureText => Claim.Barcode.Nomenclature.Name;
 		public string SizeText => SizeService.SizeTitle(Claim.Barcode.Size, Claim.Barcode.Height);
+	}
+
+	public class AddMarkBarcodeNode : IAddMarkNode {
+		public AddMarkBarcodeNode(Barcode barcode, EmployeeCard employee) {
+			Barcode = barcode;
+			Employee = employee;
+		}
+
+		public Barcode Barcode { get; }
+		public EmployeeCard Employee { get; }
+		public bool Add { get; set; } = true;
+		public string BarcodeText => Barcode.Title;
+		public string EmployeeText => Employee?.ShortName;
+		public string NomenclatureText => Barcode.Nomenclature.Name;
+		public string SizeText => SizeService.SizeTitle(Barcode.Size, Barcode.Height);
 	}
 }
