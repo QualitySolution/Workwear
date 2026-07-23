@@ -442,7 +442,7 @@ namespace workwear.Journal
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
 						.AddTextRenderer(e => e.SumSaleCostText)
 					.AddColumn("Промаркировано")
-						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Barcodes))
 						.AddTextRenderer(e => e.BarcodeCount.ToString())
 					.Finish()
 			);

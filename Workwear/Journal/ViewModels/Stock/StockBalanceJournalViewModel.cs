@@ -25,7 +25,6 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Sizes;
 using Workwear.ViewModels.Stock;
-using Workwear.ViewModels.Stock.Widgets;
 using ArgumentNullException = System.ArgumentNullException;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -124,7 +123,7 @@ SELECT
        AND NOT (operation_sub.warehouse_expense_id IS NULL)
        ) AS DailyConsumption";
 ////Возможно, стоит завязать на фильтр
-	if(FeaturesService.Available(WorkwearFeature.Selling))		
+	if(FeaturesService.Available(WorkwearFeature.Barcodes))
 		//TODO не учитывает возврат на склад штрихкода
 				sql += @",
 		(SELECT COUNT(*)
