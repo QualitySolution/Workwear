@@ -24,7 +24,5 @@ namespace Workwear.Domain.ClothingService {
 		InDispenseTerminal,
 		[Display(Name = "Возвращена")]
 		Returned,
-		[Display(Name = "Ожидает сервиса")]
-		AwaitService,
 	}
 }

@@ -111,7 +111,7 @@ namespace Workwear.Tools
 								continue;
 
 							serviceClaim.IsClosed = false;
-							serviceClaim.ChangeState(ClaimState.AwaitService);
+							serviceClaim.ChangeState(ClaimState.AwaitIssue);
 							uow.Save(serviceClaim);
 						}
 					}

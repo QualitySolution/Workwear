@@ -168,7 +168,3 @@ ALTER TABLE stock_return_items
 
 CREATE INDEX stock_return_items_claim_id_index
 	ON stock_return_items(claim_id ASC);
-
--- Добавление нового статуса "Ожидает сервиса" в стирку
-ALTER TABLE `clothing_service_states`
-	CHANGE `state` `state` ENUM('WaitService','InReceiptTerminal','InTransit','DeliveryToLaundry','InRepair','InWashing','InDryCleaning','AwaitIssue','DeliveryToDispenseTerminal','InDispenseTerminal','Returned','AwaitService') NOT NULL;

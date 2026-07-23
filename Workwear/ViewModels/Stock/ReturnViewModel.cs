@@ -373,8 +373,8 @@ namespace Workwear.ViewModels.Stock {
 					foreach (var removedReturnClaim in removedReturnClaims)
 					{
 						removedReturnClaim.ServiceClaim.IsClosed = false;
-						removedReturnClaim.ServiceClaim.ChangeState(ClaimState.AwaitService); 
-						 
+						removedReturnClaim.ServiceClaim.ChangeState(ClaimState.AwaitIssue);
+
 					}
 					UoW.Commit();
 				}
