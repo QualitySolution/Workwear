@@ -199,6 +199,30 @@
 |✅
 |❌
 
+|<<stock-documents.adoc#over-norm-simple,Простая выдача вне нормы>>
+|❌
+|✅
+|✅
+|✅
+
+|<<stock-documents.adoc#over-norm-guest,Гостевой фонд>>
+|❌
+|❌
+|✅
+|✅
+
+|<<stock-documents.adoc#over-norm-substitute,Подменный фонд>>
+|❌
+|❌
+|❌
+|✅
+
+|<<stock-documents.adoc#barcoding-document,Документ маркировки>>
+|❌
+|❌
+|с модулем штрихкоды
+|✅
+
 |<<stock-documents.adoc#transfer,Документ перемещения>>
 |❌
 |❌

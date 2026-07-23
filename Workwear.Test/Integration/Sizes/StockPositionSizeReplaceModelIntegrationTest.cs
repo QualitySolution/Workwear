@@ -130,6 +130,17 @@ namespace Workwear.Test.Integration.Sizes {
 			var dutyNormOp = new DutyNormIssueOperation { Nomenclature = nomenclature, WearSize = oldSize };
 			uow.Save(dutyNormOp);
 
+			// ── OverNormOperation ────────────────────────────────────────────
+			var overNormWareOp = new WarehouseOperation { Nomenclature = nomenclature };
+			uow.Save(overNormWareOp);
+			var overNormOp = new OverNormOperation {
+				Employee = employee,
+				Nomenclature = nomenclature,
+				WarehouseOperation = overNormWareOp,
+				WearSize = oldSize
+			};
+			uow.Save(overNormOp);
+
 			// ── ReturnItem (protected ctor) ──────────────────────────────────
 			var returnDoc  = new Return { Warehouse = warehouse };
 			uow.Save(returnDoc);
@@ -188,6 +199,9 @@ namespace Workwear.Test.Integration.Sizes {
 
 			Assert.That(uow.GetById<DutyNormIssueOperation>(dutyNormOp.Id).WearSize.Id,
 				Is.EqualTo(newSize.Id), "DutyNormIssueOperation.WearSize не обновлён");
+
+			Assert.That(uow.GetById<OverNormOperation>(overNormOp.Id).WearSize.Id,
+				Is.EqualTo(newSize.Id), "OverNormOperation.WearSize не обновлён");
 
 			Assert.That(uow.GetById<ReturnItem>(returnItem.Id).WearSize.Id,
 				Is.EqualTo(newSize.Id), "ReturnItem.WearSize не обновлён");
@@ -292,6 +306,17 @@ namespace Workwear.Test.Integration.Sizes {
 			var dutyNormOp = new DutyNormIssueOperation { Nomenclature = nomenclature, Height = oldHeight };
 			uow.Save(dutyNormOp);
 
+			// ── OverNormOperation ────────────────────────────────────────────
+			var overNormWareOp = new WarehouseOperation { Nomenclature = nomenclature };
+			uow.Save(overNormWareOp);
+			var overNormOp = new OverNormOperation {
+				Employee = employee,
+				Nomenclature = nomenclature,
+				WarehouseOperation = overNormWareOp,
+				Height = oldHeight
+			};
+			uow.Save(overNormOp);
+
 			// ── ReturnItem (protected ctor) ──────────────────────────────────
 			var returnDoc  = new Return { Warehouse = warehouse };
 			uow.Save(returnDoc);
@@ -351,6 +376,9 @@ namespace Workwear.Test.Integration.Sizes {
 			Assert.That(uow.GetById<DutyNormIssueOperation>(dutyNormOp.Id).Height.Id,
 				Is.EqualTo(newHeight.Id), "DutyNormIssueOperation.Height не обновлён");
 
+			Assert.That(uow.GetById<OverNormOperation>(overNormOp.Id).Height.Id,
+				Is.EqualTo(newHeight.Id), "OverNormOperation.Height не обновлён");
+
 			Assert.That(uow.GetById<ReturnItem>(returnItem.Id).Height.Id,
 				Is.EqualTo(newHeight.Id), "ReturnItem.Height не обновлён");
 
@@ -367,4 +395,3 @@ namespace Workwear.Test.Integration.Sizes {
 			(T)Activator.CreateInstance(typeof(T), nonPublic: true);
 	}
 }
-

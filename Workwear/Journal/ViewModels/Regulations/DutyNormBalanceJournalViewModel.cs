@@ -57,7 +57,8 @@ namespace workwear.Journal.ViewModels.Regulations {
 			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias);
 			query.Where(GetSearchCriterion(
 				() => dutyNormAlias.Name,
-				() => nomenclatureAlias.Name
+				() => nomenclatureAlias.Name,
+				() => protectionToolsAlias.Name
 			));
 			
 			if(Filter.DutyNorm != null)

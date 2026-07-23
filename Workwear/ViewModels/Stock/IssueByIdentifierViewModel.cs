@@ -94,7 +94,7 @@ namespace Workwear.ViewModels.Stock
 
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
-			Warehouse = stockRepository.GetDefaultWarehouse(UowOfDialog, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId, UowOfDialog);
 			stockBalanceModel.Warehouse = Warehouse;
 
 			//Настройка таймера сброса

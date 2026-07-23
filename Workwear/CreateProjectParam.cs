@@ -91,6 +91,7 @@ using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Permissions;
 using Workwear.Tools.Sizes;
+using Workwear.Tools.OverNorms;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Import;
 using Connection = QS.Project.DB.Connection;
@@ -254,6 +255,7 @@ namespace workwear
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterType<FileDialogService>().As<IFileDialogService>();
             builder.RegisterType<ObjectValidator>().As<IValidator>();
+			builder.RegisterType<OverNormFactory>().As<IOverNormFactory>();
 			#endregion
 
 			#region Навигация

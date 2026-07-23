@@ -39,7 +39,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			
 			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
 			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
-			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подразделения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 

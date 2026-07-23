@@ -101,7 +101,7 @@ namespace Workwear.ViewModels.Stock
 			
 			performance.CheckPoint("Warehouse");
 			if(Entity.Warehouse == null && issuanceRequest == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			WarehouseEntryViewModel.IsEditable = CanEdit;

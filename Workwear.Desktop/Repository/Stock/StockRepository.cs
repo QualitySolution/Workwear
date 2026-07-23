@@ -18,13 +18,38 @@ namespace Workwear.Repository.Stock
 	public class StockRepository
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private readonly UnitOfWorkProvider unitOfWorkProvider;
+		private IUnitOfWork repoUow;
+
+		public StockRepository()
+		{
+		}
+
+		public StockRepository(IUnitOfWork uow)
+		{
+			RepoUow = uow;
+		}
+
+		public StockRepository(UnitOfWorkProvider unitOfWorkProvider)
+		{
+			this.unitOfWorkProvider = unitOfWorkProvider;
+		}
+
+		public IUnitOfWork RepoUow {
+			get => repoUow ?? unitOfWorkProvider?.UoW;
+			set => repoUow = value;
+		}
+
+		private IUnitOfWork GetUoW(IUnitOfWork uow = null) =>
+			uow ?? RepoUow ?? throw new InvalidOperationException("Для работы StockRepository должен быть передан IUnitOfWork или UnitOfWorkProvider.");
 
 		/// <summary>
 		/// Возвращается первый склад из БД, если версия программы с единственным складом.
 		/// Возвращает склад по умолчанию, определенный в настройках пользователя, при создании различных документов и прочее.
 		/// </summary>
-		public virtual Warehouse GetDefaultWarehouse(IUnitOfWork uow, FeaturesService featureService, int idUser)
+		public virtual Warehouse GetDefaultWarehouse(FeaturesService featureService, int idUser, IUnitOfWork uow = null)
 		{
+			uow = GetUoW(uow);
 			if(!featureService.Available(WorkwearFeature.Warehouses)) {
 				var warehouse = uow.Session.Query<Warehouse>().FirstOrDefault();
 				return warehouse;
@@ -40,12 +65,13 @@ namespace Workwear.Repository.Stock
 		}
 
 		public virtual IList<StockBalanceDTO> StockBalances(
-			IUnitOfWork uow, 
 			Warehouse warehouse, 
 			IEnumerable<Nomenclature> nomenclatures, 
 			DateTime onDate, 
-			IEnumerable<WarehouseOperation> excludeOperations = null)
+			IEnumerable<WarehouseOperation> excludeOperations = null,
+			IUnitOfWork uow = null)
 		{
+			uow = GetUoW(uow);
 			StockBalanceDTO resultAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
 			Nomenclature nomenclatureAlias = null;

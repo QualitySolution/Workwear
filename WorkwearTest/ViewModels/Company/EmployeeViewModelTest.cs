@@ -79,6 +79,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<EmployeeListedItemsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeMovementsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeNormsViewModel>().AsSelf();
+			builder.RegisterType<EmployeeOverNormViewModel>().AsSelf();
 			builder.RegisterType<EmployeePhotoViewModel>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
 			builder.RegisterType<EmployeeVacationsViewModel>().AsSelf();

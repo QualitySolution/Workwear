@@ -58,7 +58,7 @@ namespace Workwear.ViewModels.Visits {
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			Warehouses = UoW.GetAll<Warehouse>().ToList();
-			SelectWarehouseIssued =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			SelectWarehouseIssued =  stockRepository.GetDefaultWarehouse(featuresService, userService.CurrentUserId);
 			selectWarehouseStock = SelectWarehouseIssued;
 			var thisViewModel = new TypedParameter(typeof(IssuanceRequestViewModel), this);
 			EmployeeCardItemsViewModel = autofacScope.Resolve<IssuanceRequestEmployeeCardItemsViewModel>(thisViewModel);

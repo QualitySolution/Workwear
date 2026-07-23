@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using QS.DomainModel.UoW;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Operations;
@@ -13,6 +14,7 @@ namespace Workwear.Tools.Barcodes
 	public class BarcodeService 
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+		private static Random random = new Random();
 		private EmployeeIssueRepository employeeIssueRepository;
 
 		public BarcodeService(BaseParameters baseParameters, EmployeeIssueRepository employeeIssueRepository) {
@@ -21,20 +23,21 @@ namespace Workwear.Tools.Barcodes
 		}
 
 		/// <summary>
-		/// Стартовый код для серийных номеров. Коды начинающиеся с 2 зарезервированы под внутреннее использование на предприятии по стандарту EAN-13
+		/// Стартовый код для серийных номеров. Коды, начинающиеся с 2, зарезервированы под внутреннее использование на предприятии по стандарту EAN-13.
 		/// Мы в первые 3 цифры после 2-ки зашиваем код клиента, вернее последние 3 цифры кода клиента, для того чтобы штрих коды из разных баз отличались.
-		/// Это параметр можно поменять в настройка базы BarcodePrefix
+		/// Это параметр можно поменять в настройке базы BarcodePrefix
 		/// </summary>
 		public int BaseCode { get; } //2001-2999
 
 		#region Create
 
+		/// <summary>
+		/// Генерирует штрихкоды для выданного сотруднику
+		/// </summary>
 		public void CreateBarcodeEAN13(IUnitOfWork unitOfWork, IEnumerable<EmployeeIssueOperation> employeeIssueOperations) {
-			
 			var usedNumbers = employeeIssueRepository
 				.GetBarcodeNumbersForEmployee(
 					employeeIssueOperations.Select(x => x.Employee).ToList(),
-//// Спорно, может лучше DateTime.Now. По идее должны быть во всех операциях одинаково
 					employeeIssueOperations.Max(x=> x.OperationTime),
 					unitOfWork)
 				.ToList();
@@ -44,18 +47,18 @@ namespace Workwear.Tools.Barcodes
 				if(operation.Issued > bcount) {
 					var barcodes = Create(unitOfWork, operation.Issued - bcount, operation.Nomenclature, operation.WearSize, operation.Height);
 					foreach(var barcode in barcodes) {
-						var kitNumper = GetNextKitNumber(usedNumbers, operation);
+						var kitNumber = GetNextKitNumber(usedNumbers, operation);
 						var barcodeOperation = new BarcodeOperation {
 							Barcode = barcode,
 							EmployeeIssueOperation = operation,
-							KitNumber = kitNumper
+							KitNumber = kitNumber
 						};
 						operation.BarcodeOperations.Add(barcodeOperation);
 						unitOfWork.Save(barcodeOperation);
 						usedNumbers.Add(new BarcodeNumberInfo {
 							EmployeeId = operation.Employee.Id,
 							ProtectionToolsId = GetProtectionToolsId(operation),
-							KitNumber = kitNumper
+							KitNumber = kitNumber
 						});
 					}
 				}
@@ -91,16 +94,25 @@ namespace Workwear.Tools.Barcodes
 		private static int GetProtectionToolsId(EmployeeIssueOperation operation) =>
 			operation.ProtectionTools?.Id ?? operation.NormItem?.ProtectionTools?.Id ?? 0;
 		
-		public IList<Barcode> Create(IUnitOfWork unitOfWork, int amount, Nomenclature nomenclature, Size size, Size height) {
+		/// <summary>
+		/// Сгенерировать набор штрихкодов
+		/// </summary>
+		/// <param name="unitOfWork">В котором будут созданы и сохранены, без комита</param>
+		/// <param name="label">до 50 символов</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		public IList<Barcode> Create(IUnitOfWork unitOfWork, int amount, Nomenclature nomenclature, Size size, Size height, string label = "") {
+			if (label?.Length > Barcode.LabelMaxLength)
+				throw new ArgumentOutOfRangeException(nameof(label));
 			var barCodeList = new List<Barcode>();
 			for(var i = 1; i < amount + 1; i++) {
 				var newBarCode = new Barcode();
 				newBarCode.Nomenclature = nomenclature;
 				newBarCode.Size = size;
 				newBarCode.Height = height;
-				newBarCode.Title = "generated" + new Random().Next(); //т.к. в базе not null, а далее уже нужен id
+				newBarCode.Title = "generated" + random.Next(); //т.к. в базе not null, а далее уже нужен id
 				unitOfWork.Save(newBarCode);
-				//Перезаписываем Title так как он формируется на основании полученного Id
+				//Перезаписываем Title, так как он формируется на основании полученного Id
 				newBarCode.Title = $"{BaseCode}{newBarCode.Id:D8}{CheckSum($"{BaseCode}{newBarCode.Id:D8}")}";
 				unitOfWork.Save(newBarCode);
 				barCodeList.Add(newBarCode);
@@ -113,7 +125,8 @@ namespace Workwear.Tools.Barcodes
 			service.Code = $"2000{service.Id:D8}{CheckSum($"2000{service.Id:D8}")}";
 			uow.Save(service);
 		}
-
+		#endregion
+        #region Barcodes Info
 		public static bool CheckBarcode(string barcode, BarcodeTypes type) {
 			switch(type) {
 				case BarcodeTypes.EAN13:
@@ -125,8 +138,33 @@ namespace Workwear.Tools.Barcodes
 			}
 		}
 
-		#endregion
+		public int CountBarcodesOnWarehouse(IUnitOfWork unitOfWork, StockPosition stockPosition, Warehouse warehouse)
+		{
+			if (unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
+			if (stockPosition == null) throw new ArgumentNullException(nameof(stockPosition));
+			if (warehouse == null) throw new ArgumentNullException(nameof(warehouse));
 
+			Barcode bAlias = null;
+			WarehouseOperation who = null;
+			int barcodesInStock = unitOfWork.Session.QueryOver<BarcodeOperation>()
+				.JoinAlias(bo => bo.Barcode, () => bAlias)
+				.JoinAlias(bo => bo.WarehouseOperation, () => who)
+				.Where(b =>
+					bAlias.Nomenclature == stockPosition.Nomenclature &&
+					bAlias.Size == stockPosition.WearSize &&
+					bAlias.Height == stockPosition.Height &&
+					who.WearPercent == stockPosition.WearPercent &&
+					who.Owner == stockPosition.Owner)
+				.Where(() => who.ReceiptWarehouse.Id == warehouse.Id)
+				.SelectList(list => list
+					.SelectCountDistinct(() => bAlias.Id)
+				)
+				.SingleOrDefault<int>();
+
+			return barcodesInStock;
+		}
+		#endregion
+		
 		#region Private Methods
 		static int CheckSum(string upccode)
 		{
@@ -140,7 +178,7 @@ namespace Workwear.Tools.Barcodes
 			var cs = 10 - sum % 10;
 			return cs == 10? 0: cs;
 		}
-		
+
 		#endregion
 	}
 }

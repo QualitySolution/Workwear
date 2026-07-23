@@ -158,12 +158,12 @@ namespace Workwear.Domain.Stock {
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if (Archival && baseParameters.CheckBalances) {
-				var repository = new StockRepository();
-				var nomenclatures = new List<Nomenclature>() {this};
 				var uow = (IUnitOfWork) validationContext.Items[nameof(IUnitOfWork)];
+				var repository = new StockRepository(uow);
+				var nomenclatures = new List<Nomenclature>() {this};
 				var warehouses = uow.Query<Warehouse>().List();
 				foreach (var warehouse in warehouses) {
-					var anyBalance = repository.StockBalances(uow, warehouse, nomenclatures, DateTime.Now)
+					var anyBalance = repository.StockBalances(warehouse, nomenclatures, DateTime.Now)
 						.Where(x => x.Amount > 0);
 					foreach (var position in anyBalance) {
 						yield return new ValidationResult(
@@ -274,4 +274,3 @@ namespace Workwear.Domain.Stock {
 
 	}
 }
-

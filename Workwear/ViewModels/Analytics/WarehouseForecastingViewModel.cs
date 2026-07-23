@@ -85,7 +85,7 @@ namespace Workwear.ViewModels.Analytics {
 			Title = "Прогнозирование склада";
 			
 			var builder = new CommonEEVMBuilderFactory<WarehouseForecastingViewModel>(this, this, UoW, navigation, autofacScope);
-			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse)
 				.MakeByType()
 				.Finish();
