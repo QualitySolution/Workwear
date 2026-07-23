@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using NHibernate.SqlCommand;
 using QS.DomainModel.UoW;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Repository.Stock {
@@ -22,15 +25,22 @@ namespace Workwear.Repository.Stock {
 		}
 
 		public EmployeeCard GetLastEmployeeFor(Barcode barcode) {
-			EmployeeIssueOperation employeeIssueOperationAlias = null;
-
-			return unitOfWorkProvider.UoW.Session.QueryOver<BarcodeOperation>()
+			var result = unitOfWorkProvider.UoW.Session.Query<BarcodeOperation>()
 				.Where(x => x.Barcode.Id == barcode.Id)
-				.JoinAlias(x => x.EmployeeIssueOperation, () => employeeIssueOperationAlias)
-				.Select(x => employeeIssueOperationAlias.Employee)
-				.Take(1)
-				.SingleOrDefault<EmployeeCard>();
+				.Select(x => new {
+					EmployeeIssueEmployee = x.EmployeeIssueOperation.Employee,
+					OverNormEmployee = x.OverNormOperation.Employee,
+					DutyNormEmployee = x.DutyNormIssueOperation.DutyNorm.ResponsibleEmployee,
+					Date = (DateTime?)x.EmployeeIssueOperation.OperationTime
+					       ?? (DateTime?)x.OverNormOperation.OperationTime
+					       ?? (DateTime?)x.DutyNormIssueOperation.OperationTime
+				})
+				.OrderByDescending(x => x.Date)
+				.FirstOrDefault();
+
+			return result?.EmployeeIssueEmployee ?? result?.OverNormEmployee ?? result?.DutyNormEmployee;
 		}
+
 		
 		public ServiceClaim GetActiveServiceClaimFor(Barcode barcode) {
 			return unitOfWorkProvider.UoW.Session.QueryOver<ServiceClaim>()
