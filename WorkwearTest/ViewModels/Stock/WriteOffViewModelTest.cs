@@ -12,7 +12,6 @@ using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Services;
 using QS.Services;
-using QS.Testing.DB;
 using QS.Testing.Testing.Navigation;
 using QS.Validation;
 using QS.Validation.Testing;
@@ -32,18 +31,17 @@ using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Stock;
+using WorkwearTest.Testing;
 
 namespace WorkwearTest.ViewModels.Stock
 {
 	[TestFixture(TestOf = typeof(WriteOffViewModel))]
-	public class WriteOffViewModelTest : InMemoryDBGlobalConfigTestFixtureBase
+	public class WriteOffViewModelTest : WorkwearMariaDbTestFixtureBase
 	{
 		[OneTimeSetUp]
 		public void Init()
 		{
-			ConfigureOneTime.ConfigureNh();
 			NotifyConfiguration.Enable();
-			InitialiseUowFactory();
 		}
 
 		[Test(Description = "Проверяем что при списании обновляем дату следующей выдачи в карточке сотрудника.")]
@@ -51,8 +49,6 @@ namespace WorkwearTest.ViewModels.Stock
 		[Category("Integrated")]
 		public void Employee_UpdateNextIssueDate()
 		{
-			NewSessionWithSameDB();
-
 			var validator = new ValidatorForTests();
 			var userService = Substitute.For<IUserService>();
 			var permissionService = Substitute.For<ICurrentPermissionService>();
