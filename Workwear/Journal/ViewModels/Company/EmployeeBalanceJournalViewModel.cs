@@ -17,6 +17,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Tools.Features;
 using workwear.Journal.Filter.ViewModels.Company;
 
 namespace workwear.Journal.ViewModels.Company
@@ -29,9 +30,11 @@ namespace workwear.Journal.ViewModels.Company
             IInteractiveService interactiveService, 
             INavigationManager navigation,
             ILifetimeScope autofacScope,
+            FeaturesService featuresService,
             EmployeeCard employeeCard = null
             ) : base(unitOfWorkFactory, interactiveService, navigation)
         {
+	        FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 	        var dataLoader = new ThreadDataLoader<EmployeeBalanceJournalNode>(unitOfWorkFactory);
 	        dataLoader.AddQuery(ItemsQuery);
 	        DataLoader = dataLoader;
@@ -46,6 +49,8 @@ namespace workwear.Journal.ViewModels.Company
 	        //Журнал используется только для выбора. Если понадобится другой вариант, передавайте режим через конструктор.
 	        SelectionMode = JournalSelectionMode.Multiple;
         }
+
+        public FeaturesService FeaturesService { get; }
 
         #region Query
         public IQueryOver<EmployeeIssueOperation> ItemsQuery(IUnitOfWork unitOfWork)
@@ -63,6 +68,8 @@ namespace workwear.Journal.ViewModels.Company
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			EmployeeCard employeeCardAlias = null;
+			BarcodeOperation barcodeOperationAlias = null;
+			Barcode barcodeAlias = null;
 
 			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias);
 
@@ -83,6 +90,21 @@ namespace workwear.Journal.ViewModels.Company
 				Projections.Property(() => expenseOperationAlias.Issued),
 				Projections.SubQuery(subQueryRemove)
 			);
+
+			var barcodesProjection = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.String,
+					"GROUP_CONCAT(DISTINCT IF(NOT EXISTS (" +
+					"SELECT 1 FROM operation_barcodes return_barcode_operation " +
+					"LEFT JOIN operation_issued_by_employee return_operation " +
+						"ON return_operation.id = return_barcode_operation.employee_issue_operation_id " +
+					"WHERE return_operation.issued_operation_id = ?1 " +
+						"AND return_barcode_operation.barcode_id = ?2" +
+					"), ?3, NULL) SEPARATOR '\n')"),
+				NHibernateUtil.String,
+				Projections.Property(() => expenseOperationAlias.Id),
+				Projections.Property(() => barcodeAlias.Id),
+				Projections.Property(() => barcodeAlias.Title));
+
 			if (Filter.Employee != null)
 				query
 					.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
@@ -94,7 +116,9 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => protectionToolsAlias.Type, () => protectionToolsItemTypesAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
-					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)					
+					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
+					.Left.JoinAlias(() => expenseOperationAlias.BarcodeOperations, () => barcodeOperationAlias)
+					.Left.JoinAlias(() => barcodeOperationAlias.Barcode, () => barcodeAlias)
 					.Where(GetSearchCriterion(
 						() => employeeCardAlias.LastName,
 						() => employeeCardAlias.FirstName,
@@ -102,7 +126,8 @@ namespace workwear.Journal.ViewModels.Company
 						() => nomenclatureAlias.Name,
 						() => protectionToolsAlias.Name,
 						() => sizeAlias.Name,
-						() => heightAlias.Name))
+						() => heightAlias.Name,
+						() => barcodeAlias.Title))
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.SelectList(list => list
 						.SelectGroup(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
@@ -121,6 +146,7 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
 						.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
 						.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
+						.Select(barcodesProjection).WithAlias(() => resultAlias.Barcodes)
 						.Select(balance).WithAlias(() => resultAlias.Balance));
 			else {
 				query
@@ -134,6 +160,8 @@ namespace workwear.Journal.ViewModels.Company
 					.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => expenseOperationAlias.Employee, () => employeeCardAlias)
+					.Left.JoinAlias(() => expenseOperationAlias.BarcodeOperations, () => barcodeOperationAlias)
+					.Left.JoinAlias(() => barcodeOperationAlias.Barcode, () => barcodeAlias)
 					.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 					.Where(GetSearchCriterion(
 						() => employeeCardAlias.LastName,
@@ -142,7 +170,8 @@ namespace workwear.Journal.ViewModels.Company
 						() => nomenclatureAlias.Name,
 						() => protectionToolsAlias.Name,
 						() => sizeAlias.Name,
-						() => heightAlias.Name))
+						() => heightAlias.Name,
+						() => barcodeAlias.Title))
 					.SelectList(list => list
 						.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
@@ -161,6 +190,7 @@ namespace workwear.Journal.ViewModels.Company
 						.Select(() => employeeCardAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
 						.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
 						.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
+						.Select(barcodesProjection).WithAlias(() => resultAlias.Barcodes)
 						.Select(balance).WithAlias(() => resultAlias.Balance));
 				query = query.OrderBy(() => employeeCardAlias.LastName).Asc
 					.ThenBy(() => employeeCardAlias.FirstName).Asc
@@ -192,6 +222,7 @@ namespace workwear.Journal.ViewModels.Company
 	    public bool FixedOperation { get; set; }
 	    public int Balance { get; set;}
 	    public string BalanceText => $"{Balance} {UnitsName}";
+	    public string Barcodes { get; set; }
 	    public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
 	    public string EmployeeName => String.Join(" ", LastName, FirstName, Patronymic);
 	    public string LastName { get; set; }

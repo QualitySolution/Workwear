@@ -279,7 +279,7 @@ namespace Workwear.Domain.Stock.Documents {
 		#region Конструкторы
 
 		protected ReturnItem () { }
-		public ReturnItem(Return Return, EmployeeIssueOperation issueOperation, int amount) {
+		public ReturnItem(Return Return, EmployeeIssueOperation issueOperation, int amount, IEnumerable<Barcode> barcodes = null) {
 			document = Return;
 			returnFromEmployeeOperation = new EmployeeIssueOperation{
 				Employee = issueOperation.Employee,
@@ -292,13 +292,15 @@ namespace Workwear.Domain.Stock.Documents {
 				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
+			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromEmployeeOperation.BarcodeOperations, barcodes,
+				x => x.EmployeeIssueOperation = returnFromEmployeeOperation);
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
 			Height = issueOperation.Height;
 			employeeCard = issueOperation.Employee;
 			this.amount = amount;
 		}
-		public ReturnItem(Return Return, DutyNormIssueOperation issueOperation, int amount) {
+		public ReturnItem(Return Return, DutyNormIssueOperation issueOperation, int amount, IEnumerable<Barcode> barcodes = null) {
 			document = Return;
 			dutyNorm = issueOperation.DutyNorm;
 			returnFromDutyNormOperation = new DutyNormIssueOperation {
@@ -312,6 +314,8 @@ namespace Workwear.Domain.Stock.Documents {
 				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
+			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromDutyNormOperation.BarcodeOperations, barcodes,
+				x => x.DutyNormIssueOperation = returnFromDutyNormOperation);
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
 			Height = issueOperation.Height;
@@ -338,20 +342,42 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			};
 			warehouseOperation = returnFromOverNormOperation.WarehouseOperation;
-			foreach(var barcodeOperation in issueOperation.BarcodeOperations
-				.Where(x => returningBarcodes == null || returningBarcodes.Any(b => DomainHelper.EqualDomainObjects(b, x.Barcode)))) {
-				var newBarcodeOperation = new BarcodeOperation {
-					Barcode = barcodeOperation.Barcode,
-					OverNormOperation = returnFromOverNormOperation
-				};
-				returnFromOverNormOperation.BarcodeOperations.Add(newBarcodeOperation);
-				barcodeOperation.Barcode.BarcodeOperations.Add(newBarcodeOperation);
-			}
+			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromOverNormOperation.BarcodeOperations, returningBarcodes,
+				x => x.OverNormOperation = returnFromOverNormOperation);
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
 			Height = issueOperation.Height;
 			employeeCard = issueOperation.Employee;
 			this.amount = amount;
+		}
+
+		private void CopyBarcodeOperations(
+			IEnumerable<BarcodeOperation> sourceOperations,
+			ICollection<BarcodeOperation> targetOperations,
+			IEnumerable<Barcode> barcodes,
+			Action<BarcodeOperation> configureOperation)
+		{
+			foreach(var sourceOperation in FilterBarcodeOperations(sourceOperations, barcodes)) {
+				var newBarcodeOperation = new BarcodeOperation {
+					Barcode = sourceOperation.Barcode,
+					KitNumber = sourceOperation.KitNumber
+				};
+				configureOperation(newBarcodeOperation);
+				targetOperations.Add(newBarcodeOperation);
+				sourceOperation.Barcode.BarcodeOperations.Add(newBarcodeOperation);
+			}
+		}
+
+		private IEnumerable<BarcodeOperation> FilterBarcodeOperations(
+			IEnumerable<BarcodeOperation> sourceOperations,
+			IEnumerable<Barcode> barcodes = null)
+		{
+			var selectedBarcodes = barcodes?.ToList();
+			var operations = sourceOperations ?? Enumerable.Empty<BarcodeOperation>();
+
+			return selectedBarcodes == null
+				? Enumerable.Empty<BarcodeOperation>()
+				: operations.Where(x => selectedBarcodes.Any(b => DomainHelper.EqualDomainObjects(b, x.Barcode)));
 		}
 
 		#endregion

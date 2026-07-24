@@ -57,6 +57,7 @@ namespace Workwear.ViewModels.Stock {
 			IInteractiveService interactiveService,
 			DutyNormRepository dutyNormRepository,
 			OverNormOperationRepository overNormOperationRepository,
+			BarcodeOperationRepository barcodeOperationRepository,
 			ICurrentPermissionService permissionService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
@@ -70,6 +71,7 @@ namespace Workwear.ViewModels.Stock {
 			this.interactiveService = interactiveService;
 			this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
 			this.overNormOperationRepository = overNormOperationRepository ?? throw new ArgumentNullException(nameof(overNormOperationRepository));
+			this.barcodeOperationRepository = barcodeOperationRepository ?? throw new ArgumentNullException(nameof(barcodeOperationRepository));
 			DutyNorm = UoW.GetInSession(dutyNorm);
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			SetDocumentDateProperty(e => e.Date);
@@ -134,6 +136,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly IInteractiveService interactiveService;
 		private readonly DutyNormRepository dutyNormRepository;
 		private readonly OverNormOperationRepository overNormOperationRepository;
+		private readonly BarcodeOperationRepository barcodeOperationRepository;
 		
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -280,7 +283,7 @@ namespace Workwear.ViewModels.Stock {
 					notAddedClaims.Add(claim.Id);
 					continue;
 				}
-				Entity.AddItem(issuedOperation, 1, claim);
+				Entity.AddItem(issuedOperation, 1, claim, new[] { claim.Barcode });
 			}
 			if(notAddedClaims.Any())
 				interactiveService.ShowMessage(
@@ -301,7 +304,7 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch, x => x.Height)
 				.List(); 
 			foreach(var operation in operations) {
-				Entity.AddItem(operation, returningOperation[operation.Id]);
+				AddEmployeeOperation(operation, returningOperation[operation.Id]);
 			}
 			CalculateTotal();
 		}
@@ -316,7 +319,7 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch, x => x.Height)
 				.List(); 
 			foreach(var operation in operations) {
-				Entity.AddItem(operation, returningOperation[operation.Id]);
+				AddDutyNormOperation(operation, returningOperation[operation.Id]);
 			}
 			CalculateTotal();
 		}
@@ -332,23 +335,47 @@ namespace Workwear.ViewModels.Stock {
 		private void AddFromOverNormNodes(IList<OverNormIssuedJournalNode> nodes) {
 			foreach(var node in nodes) {
 				var operation = overNormOperationRepository.GetIssuedOperation(node.Id, UoW);
-				var availableBarcodeIds = overNormOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
+				var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
 				if(availableBarcodeIds.Count > 1) {
-					OpenOverNormBarcodeSelector(operation, availableBarcodeIds);
+					OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedOverNormBarcodes);
 					continue;
 				}
 
 				var barcodes = availableBarcodeIds.Count == 1
-					? UoW.Session.QueryOver<Barcode>()
-						.Where(x => x.Id == availableBarcodeIds[0])
-						.List()
+					? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
 					: null;
 				Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : node.Amount, barcodes: barcodes);
 			}
 			CalculateTotal();
 		}
 
-		private void OpenOverNormBarcodeSelector(OverNormOperation operation, IList<int> availableBarcodeIds) {
+		private void AddEmployeeOperation(EmployeeIssueOperation operation, int amount) {
+			var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
+			if(availableBarcodeIds.Count > 1) {
+				OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedEmployeeBarcodes);
+				return;
+			}
+
+			var barcodes = availableBarcodeIds.Count == 1
+				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
+				: null;
+			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes);
+		}
+
+		private void AddDutyNormOperation(DutyNormIssueOperation operation, int amount) {
+			var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
+			if(availableBarcodeIds.Count > 1) {
+				OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedDutyNormBarcodes);
+				return;
+			}
+
+			var barcodes = availableBarcodeIds.Count == 1
+				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
+				: null;
+			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes);
+		}
+
+		private void OpenBarcodeSelector<T>(T operation, IList<int> availableBarcodeIds, EventHandler<JournalSelectedEventArgs> selectHandler) {
 			var barcodeJournal = NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
 				this,
 				OpenPageOptions.AsSlave,
@@ -360,21 +387,41 @@ namespace Workwear.ViewModels.Stock {
 				});
 			barcodeJournal.Tag = operation;
 			barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-			barcodeJournal.ViewModel.OnSelectResult += AddSelectedOverNormBarcodes;
+			barcodeJournal.ViewModel.OnSelectResult += selectHandler;
+		}
+
+		private void AddSelectedEmployeeBarcodes(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
+			var operation = (EmployeeIssueOperation)page.Tag;
+			var barcodes = GetSelectedBarcodes(e);
+
+			Entity.AddItem(operation, barcodes.Count, barcodes);
+			CalculateTotal();
+		}
+
+		private void AddSelectedDutyNormBarcodes(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
+			var operation = (DutyNormIssueOperation)page.Tag;
+			var barcodes = GetSelectedBarcodes(e);
+
+			Entity.AddItem(operation, barcodes.Count, barcodes);
+			CalculateTotal();
 		}
 
 		private void AddSelectedOverNormBarcodes(object sender, JournalSelectedEventArgs e) {
 			var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
 			var operation = (OverNormOperation)page.Tag;
-			var barcodeIds = e.GetSelectedObjects<BarcodeJournalNode>()
-				.Select(x => x.Id)
-				.ToArray();
-			var barcodes = UoW.Session.QueryOver<Barcode>()
-				.WhereRestrictionOn(x => x.Id).IsIn(barcodeIds)
-				.List();
+			var barcodes = GetSelectedBarcodes(e);
 
 			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
 			CalculateTotal();
+		}
+
+		private IList<Barcode> GetSelectedBarcodes(JournalSelectedEventArgs e) {
+			var barcodeIds = e.GetSelectedObjects<BarcodeJournalNode>()
+				.Select(x => x.Id)
+				.ToArray();
+			return barcodeOperationRepository.GetBarcodes(barcodeIds, UoW);
 		}
 
 		public void FillMaxAmount(DateTime? date = null) {

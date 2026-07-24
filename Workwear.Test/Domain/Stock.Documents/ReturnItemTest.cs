@@ -2,6 +2,7 @@ using System.Linq;
 using NUnit.Framework;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 
@@ -27,6 +28,40 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
 		}
 
+		[Test(Description = "При возврате от сотрудника с выбранными штрихкодами в операцию возврата попадают только выбранные штрихкоды.")]
+		public void Constructor_EmployeeIssueWithSelectedBarcode_AddOnlySelectedBarcodeOperation()
+		{
+			var selectedBarcode = new Barcode { Title = "100001" };
+			var otherBarcode = new Barcode { Title = "100002" };
+			var issuedOperation = CreateEmployeeIssueOperation(selectedBarcode, otherBarcode);
+			var document = new Return();
+
+			var item = new ReturnItem(document, issuedOperation, 1, new[] { selectedBarcode });
+
+			Assert.That(item.ReturnFromEmployeeOperation.BarcodeOperations, Has.Count.EqualTo(1));
+			Assert.That(
+				item.ReturnFromEmployeeOperation.BarcodeOperations.Single().Barcode,
+				Is.SameAs(selectedBarcode));
+			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
+		}
+
+		[Test(Description = "При возврате с дежурной нормы с выбранными штрихкодами в операцию возврата попадают только выбранные штрихкоды.")]
+		public void Constructor_DutyNormIssueWithSelectedBarcode_AddOnlySelectedBarcodeOperation()
+		{
+			var selectedBarcode = new Barcode { Title = "100001" };
+			var otherBarcode = new Barcode { Title = "100002" };
+			var issuedOperation = CreateDutyNormIssueOperation(selectedBarcode, otherBarcode);
+			var document = new Return();
+
+			var item = new ReturnItem(document, issuedOperation, 1, new[] { selectedBarcode });
+
+			Assert.That(item.ReturnFromDutyNormOperation.BarcodeOperations, Has.Count.EqualTo(1));
+			Assert.That(
+				item.ReturnFromDutyNormOperation.BarcodeOperations.Single().Barcode,
+				Is.SameAs(selectedBarcode));
+			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
+		}
+
 		private static OverNormOperation CreateOverNormOperation(params Barcode[] barcodes)
 		{
 			var operation = new OverNormOperation {
@@ -43,6 +78,48 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				var barcodeOperation = new BarcodeOperation {
 					Barcode = barcode,
 					OverNormOperation = operation
+				};
+				operation.BarcodeOperations.Add(barcodeOperation);
+				barcode.BarcodeOperations.Add(barcodeOperation);
+			}
+
+			return operation;
+		}
+
+		private static EmployeeIssueOperation CreateEmployeeIssueOperation(params Barcode[] barcodes)
+		{
+			var operation = new EmployeeIssueOperation {
+				Employee = new EmployeeCard(),
+				Nomenclature = new Nomenclature(),
+				ProtectionTools = new ProtectionTools(),
+				Issued = barcodes.Length
+			};
+
+			foreach(var barcode in barcodes) {
+				var barcodeOperation = new BarcodeOperation {
+					Barcode = barcode,
+					EmployeeIssueOperation = operation
+				};
+				operation.BarcodeOperations.Add(barcodeOperation);
+				barcode.BarcodeOperations.Add(barcodeOperation);
+			}
+
+			return operation;
+		}
+
+		private static DutyNormIssueOperation CreateDutyNormIssueOperation(params Barcode[] barcodes)
+		{
+			var operation = new DutyNormIssueOperation {
+				DutyNorm = new DutyNorm(),
+				Nomenclature = new Nomenclature(),
+				ProtectionTools = new ProtectionTools(),
+				Issued = barcodes.Length
+			};
+
+			foreach(var barcode in barcodes) {
+				var barcodeOperation = new BarcodeOperation {
+					Barcode = barcode,
+					DutyNormIssueOperation = operation
 				};
 				operation.BarcodeOperations.Add(barcodeOperation);
 				barcode.BarcodeOperations.Add(barcodeOperation);

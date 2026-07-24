@@ -87,8 +87,17 @@ namespace Workwear.Journal.ViewModels.Stock {
 					Projections.Property(() => employeeAlias.Patronymic));
 
 				var barcodesProjection = Projections.SqlFunction(
-					new SQLFunctionTemplate(NHibernateUtil.String, "GROUP_CONCAT(DISTINCT ?1 SEPARATOR '\n')"),
+					new SQLFunctionTemplate(NHibernateUtil.String,
+						"GROUP_CONCAT(DISTINCT IF(NOT EXISTS (" +
+						"SELECT 1 FROM operation_barcodes return_barcode_operation " +
+						"LEFT JOIN operation_over_norm return_operation " +
+							"ON return_operation.id = return_barcode_operation.over_norm_operation_id " +
+						"WHERE return_operation.return_from_operation = ?1 " +
+							"AND return_barcode_operation.barcode_id = ?2" +
+						"), ?3, NULL) SEPARATOR '\n')"),
 					NHibernateUtil.String,
+					Projections.Property(() => operationAlias.Id),
+					Projections.Property(() => barcodeAlias.Id),
 					Projections.Property(() => barcodeAlias.Title));
 
 				var query = uow.Session.QueryOver(() => operationAlias)
