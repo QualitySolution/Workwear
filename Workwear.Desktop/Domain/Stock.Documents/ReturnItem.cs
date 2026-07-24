@@ -199,6 +199,8 @@ namespace Workwear.Domain.Stock.Documents {
 				.Select(x => x.Barcode?.Title)
 				.Where(x => !string.IsNullOrWhiteSpace(x)));
 
+		public virtual bool CanEditAmount => !ReturnBarcodeOperations.Any();
+
 		private IEnumerable<BarcodeOperation> ReturnBarcodeOperations {
 			get {
 				switch(ReturnFrom) {

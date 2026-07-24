@@ -73,6 +73,11 @@ namespace Workwear.Domain.Stock.Documents
 					yield return new ValidationResult(
 						$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.",
 						new[] { nameof(Items) });
+				var barcodesCount = GetReturnBarcodesCount(item);
+				if(barcodesCount > 0 && item.Amount != barcodesCount)
+					yield return new ValidationResult(
+						$"Для \"{item.ItemName}\" количество должно быть равно количеству выбранных штрихкодов.",
+						new[] { nameof(Items) });
 				switch(item.ReturnFrom) {
 					case ReturnFrom.Employee:
 						if(item.Amount > item.MaxAmount)
@@ -97,6 +102,19 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#endregion
+
+		private int GetReturnBarcodesCount(ReturnItem item) {
+			switch(item.ReturnFrom) {
+				case ReturnFrom.Employee:
+					return item.ReturnFromEmployeeOperation.BarcodeOperations.Count;
+				case ReturnFrom.DutyNorm:
+					return item.ReturnFromDutyNormOperation.BarcodeOperations.Count;
+				case ReturnFrom.OverNorm:
+					return item.ReturnFromOverNormOperation.BarcodeOperations.Count;
+				default:
+					return 0;
+			}
+		}
 
 		#region Строки документа
 		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count, IEnumerable<Barcode> barcodes = null) {

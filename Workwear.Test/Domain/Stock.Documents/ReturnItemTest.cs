@@ -1,4 +1,5 @@
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 using NUnit.Framework;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -26,6 +27,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				item.ReturnFromOverNormOperation.BarcodeOperations.Single().Barcode,
 				Is.SameAs(selectedBarcode));
 			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
+			Assert.That(item.CanEditAmount, Is.False);
 		}
 
 		[Test(Description = "При возврате от сотрудника с выбранными штрихкодами в операцию возврата попадают только выбранные штрихкоды.")]
@@ -43,6 +45,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				item.ReturnFromEmployeeOperation.BarcodeOperations.Single().Barcode,
 				Is.SameAs(selectedBarcode));
 			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
+			Assert.That(item.CanEditAmount, Is.False);
 		}
 
 		[Test(Description = "При возврате с дежурной нормы с выбранными штрихкодами в операцию возврата попадают только выбранные штрихкоды.")]
@@ -60,6 +63,36 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				item.ReturnFromDutyNormOperation.BarcodeOperations.Single().Barcode,
 				Is.SameAs(selectedBarcode));
 			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
+			Assert.That(item.CanEditAmount, Is.False);
+		}
+
+		[Test(Description = "Документ возврата не проходит валидацию, если количество строки не равно количеству возвращаемых штрихкодов.")]
+		public void Validate_ReturnItemWithBarcodesAndDifferentAmount_ReturnValidationError()
+		{
+			var selectedBarcode = new Barcode { Title = "100001" };
+			var issuedOperation = CreateEmployeeIssueOperation(selectedBarcode);
+			var document = new Return();
+			var item = new ReturnItem(document, issuedOperation, 1, new[] { selectedBarcode }) {
+				Nomenclature = new Nomenclature()
+			};
+			item.Amount = 2;
+			document.Items.Add(item);
+
+			var errors = document.Validate(new ValidationContext(document)).ToList();
+
+			Assert.That(errors, Has.Some.Matches<ValidationResult>(x =>
+				x.ErrorMessage.Contains("количество должно быть равно количеству выбранных штрихкодов")));
+		}
+
+		[Test(Description = "Для строки возврата без штрихкодов количество можно редактировать.")]
+		public void CanEditAmount_ReturnItemWithoutBarcodes_ReturnTrue()
+		{
+			var issuedOperation = CreateEmployeeIssueOperation();
+			var document = new Return();
+
+			var item = new ReturnItem(document, issuedOperation, 1);
+
+			Assert.That(item.CanEditAmount, Is.True);
 		}
 
 		private static OverNormOperation CreateOverNormOperation(params Barcode[] barcodes)
