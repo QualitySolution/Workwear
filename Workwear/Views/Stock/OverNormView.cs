@@ -55,6 +55,10 @@ namespace Workwear.Views.Stock
 			buttonAddNomenclature.Binding
 				.AddBinding(ViewModel, wm => wm.CanChoiceForActiveItem, w => w.Sensitive)
 				.InitializeFromSource();
+			buttonAddScan.Binding
+				.AddBinding(ViewModel, v => v.CanChoiceForActiveItem, w => w.Sensitive)
+				.InitializeFromSource();
+			buttonAddScan.Clicked += (sender, args) => ViewModel.AddFromScan();
 			
 			enumTypesComboBox.ItemsEnum = typeof(OverNormType);
 			enumTypesComboBox.AddEnumToHideList(ViewModel.HiddenOverNormTypes.ToArray());

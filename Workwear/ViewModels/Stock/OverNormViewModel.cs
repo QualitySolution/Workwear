@@ -32,8 +32,11 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.OverNorms;
 using Workwear.Tools.OverNorms.Models;
+using Workwear.ViewModels.ClothingService;
+//FIXME нужен для вызова виджета
+using Workwear.ViewModels.Postomats;
 
-namespace Workwear.ViewModels.Stock 
+namespace Workwear.ViewModels.Stock
 {
 	public sealed class OverNormViewModel : PermittingEntityDialogViewModelBase<OverNorm>, IDialogDocumentation
 	{
@@ -372,6 +375,52 @@ namespace Workwear.ViewModels.Stock
 		private OverNormItem AddOrUpdateItem(OverNormItem item, OverNormParam param) {
 			OverNormModel.UpdateOperation(item, param);
 			return item;
+		}
+		
+		public void AddFromScan() =>
+			//FIXME Явно можно без PostomatDocumentViewModel сделать
+			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel>(this, null, this);
+
+		public string ValidateBarcodeForScan(Barcode barcode) {
+			if(barcode == null)
+				return null;
+			//перезагружаем его в UoW документа.
+			barcode = UoW.GetById<Barcode>(barcode.Id);
+
+			var lastWarehouseOperation = barcode.BarcodeOperations.Any() ? barcode.LastOperation.WarehouseOperation : null;
+			if(lastWarehouseOperation?.ReceiptWarehouse?.Id != Entity.Warehouse?.Id)
+				return $"{barcode.Title} сейчас не числится на {Entity.Warehouse?.Name}.";
+
+			bool alreadyInDocument = Entity.Items
+				.SelectMany(x => x.OverNormOperation?.BarcodeOperations ?? Enumerable.Empty<BarcodeOperation>())
+				.Any(x => x.Barcode?.Id == barcode.Id);
+			if(alreadyInDocument)
+				return $"{barcode.Title} уже добавлен в документ.";
+
+			return null;
+		}
+
+		public void AddBarcode(OverNormItem item, Barcode barcode) {
+			if(item == null || barcode == null)
+				return;
+
+			barcode = UoW.GetById<Barcode>(barcode.Id);
+			var lastWarehouseOperation = barcode.LastOperation.WarehouseOperation;
+
+			var targetItem = item.OverNormOperation?.WarehouseOperation == null ? item :
+					Entity.AddItem(new OverNormOperation { Employee = item.Employee, SubstitutedIssueOperation = item.OverNormOperation?.SubstitutedIssueOperation });
+			var addedParam = new OverNormParam(
+				targetItem.Employee,
+				barcode.Nomenclature,
+				1,
+				barcode.Size,
+				barcode.Height,
+				targetItem.OverNormOperation?.SubstitutedIssueOperation,
+				new List<Barcode> { barcode },
+				wearPercent: lastWarehouseOperation.WearPercent,
+				owner: lastWarehouseOperation.Owner);
+			OverNormModel.UseBarcodes = true;
+			AddOrUpdateItem(targetItem, addedParam);
 		}
 		#endregion
 
