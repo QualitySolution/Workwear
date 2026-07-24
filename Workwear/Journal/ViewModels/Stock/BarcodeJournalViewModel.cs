@@ -83,6 +83,8 @@ namespace Workwear.Journal.ViewModels.Stock
 
 				if(Filter.Nomenclature != null)
 					query.Where(x => x.Nomenclature.Id == Filter.Nomenclature.Id);
+				if(Filter.AllowedBarcodeIds?.Any() == true)
+					query.WhereRestrictionOn(x => x.Id).IsIn(Filter.AllowedBarcodeIds.ToArray());
 				if(Filter.Size != null)
 					query.Where(x => x.Size.Id == Filter.Size.Id);
 				if(Filter.Height != null)

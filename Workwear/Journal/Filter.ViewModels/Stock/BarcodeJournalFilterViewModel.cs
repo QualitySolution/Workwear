@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.DomainModel.Entity;
@@ -117,6 +118,12 @@ namespace Workwear.Journal.Filter.ViewModels.Stock {
 		public virtual bool OnlyFreeBarcodes {
 			get => onlyFreeBarcodes;
 			set => SetField(ref onlyFreeBarcodes, value);
+		}
+
+		private IList<int> allowedBarcodeIds;
+		public virtual IList<int> AllowedBarcodeIds {
+			get => allowedBarcodeIds;
+			set => SetField(ref allowedBarcodeIds, value);
 		}
 		
 		/// <summary>

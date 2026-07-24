@@ -44,11 +44,16 @@ namespace Workwear.Views.Stock {
 				.AddBinding(ViewModel, vm => vm.CanAddEmployee, w => w.Sensitive).InitializeFromSource();
 			ybuttonAddDutyNorm.Binding
 				.AddBinding(ViewModel, vm => vm.CanAddDutyNorms, w => w.Sensitive).InitializeFromSource();
+			ybuttonAddOverNorm.Binding
+				.AddBinding(ViewModel, vm => vm.CanAddOverNorm, w => w.Sensitive).InitializeFromSource();
 			ybuttonDel.Binding
 				.AddBinding(ViewModel, vm => vm.CanRemoveItem, w => w.Sensitive).InitializeFromSource();
 			ybuttonSetNomenclature.Binding
 				.AddBinding(ViewModel, vm => vm.CanSetNomenclature, w => w.Sensitive).InitializeFromSource();
 			enumPrint.ItemsEnum = typeof(ReturnViewModel.ReturnDocReportEnum);
+			ybuttonAddClaim.Binding.AddSource(ViewModel)
+				.AddBinding(vm=>vm.ClaimVisible,w=>w.Visible)
+				.AddBinding(vm=>vm.CanAddClaim, w=>w.Sensitive).InitializeFromSource();
 		}
 		
 		private void ConfigureItems() {
@@ -74,8 +79,12 @@ namespace Workwear.Views.Stock {
 					.AddTextRenderer(i => "%", expand: false)
 				.AddColumn("Количество")
 					.AddNumericRenderer(i => i.Amount)
-					.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit).WidthChars(2)
+					.Adjustment(new Adjustment(0, 0, 100000, 1, 10, 1))
+					.Editing(i => ViewModel.CanEdit && i.CanEditAmount).WidthChars(2)
 					.AddReadOnlyTextRenderer(e => e.Units?.Name)
+				.AddColumn("Штрихкоды").Resizable()
+					.Visible(ViewModel.BarcodesVisible)
+					.AddTextRenderer(i => i.BarcodesString)
 				.AddColumn ("Возврат из").AddTextRenderer (e => e.ReturnFromText)
 				.AddColumn("Отметка о износе")
 					.AddTextRenderer(e => e.CommentReturn)
@@ -93,6 +102,8 @@ namespace Workwear.Views.Stock {
 		}
 		protected void OnYbuttonAddWorkerClicked(object sender, EventArgs e) =>
 			ViewModel.AddFromEmployee();
+		protected void OnYbuttonAddOverNormClicked(object sender, EventArgs e) =>
+			ViewModel.AddFromOverNorm();
 		protected void OnYbuttonDelClicked(object sender, EventArgs e) =>
 			ViewModel.DeleteItem(ytreeItems.GetSelectedObject<ReturnItem>());
 		protected void OnYbuttonSetNomenclatureClicked(object sender, EventArgs e) =>
@@ -100,6 +111,10 @@ namespace Workwear.Views.Stock {
 		protected void OnEnumPrintEnumItemClicked(object sender, QS.Widgets.EnumItemClickedEventArgs e) {
 			var doc = (ReturnViewModel.ReturnDocReportEnum)e.ItemEnum;
 			ViewModel.PrintReturnDoc(doc);
+		}
+
+		protected void OnYbuttonAddClaimClicked(object sender, EventArgs e) {
+			ViewModel.AddFromClaim();
 		}
 	}
 }

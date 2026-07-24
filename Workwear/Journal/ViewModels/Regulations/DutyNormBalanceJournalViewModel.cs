@@ -17,6 +17,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Journal.Filter.ViewModels.Regulations;
 using Workwear.Domain.Sizes;
+using Workwear.Tools.Features;
 
 namespace workwear.Journal.ViewModels.Regulations {
 	public class DutyNormBalanceJournalViewModel: JournalViewModelBase {
@@ -25,8 +26,10 @@ namespace workwear.Journal.ViewModels.Regulations {
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
 			INavigationManager navigationManager,
-			ILifetimeScope autofacScope
+			ILifetimeScope autofacScope,
+			FeaturesService featuresService
 		) : base(unitOfWorkFactory, interactiveService, navigationManager) {
+			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			var dataLoader = new ThreadDataLoader<DutyNormBalanceJournalNode>(unitOfWorkFactory);
 			dataLoader.AddQuery(ItemsQuery);
 			DataLoader = dataLoader;
@@ -36,6 +39,8 @@ namespace workwear.Journal.ViewModels.Regulations {
 				: "Остатки по дежурным нормам";
 			SelectionMode = JournalSelectionMode.Multiple;
 		}
+
+		public FeaturesService FeaturesService { get; }
 
 		#region Query
 
@@ -53,12 +58,15 @@ namespace workwear.Journal.ViewModels.Regulations {
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			DutyNorm dutyNormAlias = null;
+			BarcodeOperation barcodeOperationAlias = null;
+			Barcode barcodeAlias = null;
 
 			var query = unitOfWork.Session.QueryOver(() => expenseOperationAlias);
 			query.Where(GetSearchCriterion(
 				() => dutyNormAlias.Name,
 				() => nomenclatureAlias.Name,
-				() => protectionToolsAlias.Name
+				() => protectionToolsAlias.Name,
+				() => barcodeAlias.Title
 			));
 			
 			if(Filter.DutyNorm != null)
@@ -76,6 +84,20 @@ namespace workwear.Journal.ViewModels.Regulations {
 				Projections.Property(() => expenseOperationAlias.Issued),
 				Projections.SubQuery(subQueryRemove)
 			);
+
+			var barcodesProjection = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.String,
+					"GROUP_CONCAT(DISTINCT IF(NOT EXISTS (" +
+					"SELECT 1 FROM operation_barcodes return_barcode_operation " +
+					"LEFT JOIN operation_issued_by_duty_norm return_operation " +
+						"ON return_operation.id = return_barcode_operation.duty_norm_issue_operation_id " +
+					"WHERE return_operation.issued_operation_id = ?1 " +
+						"AND return_barcode_operation.barcode_id = ?2" +
+					"), ?3, NULL) SEPARATOR '\n')"),
+				NHibernateUtil.String,
+				Projections.Property(() => expenseOperationAlias.Id),
+				Projections.Property(() => barcodeAlias.Id),
+				Projections.Property(() => barcodeAlias.Title));
 			
 			query
 				.JoinAlias(() => expenseOperationAlias.Nomenclature, () => nomenclatureAlias, JoinType.LeftOuterJoin)
@@ -88,6 +110,8 @@ namespace workwear.Journal.ViewModels.Regulations {
 				.JoinAlias(() => protectionToolsItemTypesAlias.Units, () => protectionToolsUnitsAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseOperationAlias.WarehouseOperation, () => warehouseOperationAlias, JoinType.LeftOuterJoin)
 				.JoinAlias(() => expenseOperationAlias.DutyNorm, () => dutyNormAlias)
+				.Left.JoinAlias(() => expenseOperationAlias.BarcodeOperations, () => barcodeOperationAlias)
+				.Left.JoinAlias(() => barcodeOperationAlias.Barcode, () => barcodeAlias)
 				.Where(Restrictions.Not(Restrictions.Eq(balance, 0)))
 				.SelectList(list => list
 					.Select(() => expenseOperationAlias.Id).WithAlias(() => resultAlias.Id)
@@ -104,6 +128,7 @@ namespace workwear.Journal.ViewModels.Regulations {
 					.Select(() => dutyNormAlias.Name).WithAlias(() => resultAlias.DutyNormName)
 					.Select(() => protectionToolsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsName)
 					.Select(() => protectionToolsUnitsAlias.Name).WithAlias(() => resultAlias.ProtectionToolsUnitsName)
+					.Select(barcodesProjection).WithAlias(() => resultAlias.Barcodes)
 					.Select(balance).WithAlias(() => resultAlias.Balance));
 			query = query.OrderBy(()=>dutyNormAlias.Name).Asc
 				.ThenBy(()=>protectionToolsAlias.Name).Asc
@@ -137,6 +162,7 @@ namespace workwear.Journal.ViewModels.Regulations {
 		public decimal Percentage => ExpiryDate != null ? DutyNormIssueOperation.CalculatePercentWear(DateTime.Today, StartUseDate, ExpiryDate, WearPercent) : 0;
 		public int Balance { get; set; }
 		public string BalanceText => $"{Balance} {UnitsName}";
+		public string Barcodes { get; set; }
 		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString (AvgCost) : String.Empty;
 		public string DutyNormName {get;set;}
 	}

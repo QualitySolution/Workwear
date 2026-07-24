@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -34784,6 +34784,40 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonAddOverNorm">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Type">TextAndIcon</property>
+                    <property name="Icon">stock:gtk-add Menu</property>
+                    <property name="Label" translatable="yes">Сверх нормы</property>
+                    <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonAddOverNormClicked" />
+                  </widget>
+                  <packing>
+                    <property name="Position">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yButton" id="ybuttonAddClaim">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Type">TextAndIcon</property>
+                    <property name="Icon">stock:gtk-add Menu</property>
+                    <property name="Label" translatable="yes">Со стирки</property>
+                    <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnYbuttonAddClaimClicked" />
+                  </widget>
+                  <packing>
+                    <property name="Position">3</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gamma.GtkWidgets.yButton" id="ybuttonDel">
                     <property name="MemberName" />
                     <property name="Sensitive">False</property>
@@ -34795,7 +34829,7 @@
                     <signal name="Clicked" handler="OnYbuttonDelClicked" />
                   </widget>
                   <packing>
-                    <property name="Position">2</property>
+                    <property name="Position">4</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -34813,7 +34847,7 @@
                     <signal name="Clicked" handler="OnYbuttonSetNomenclatureClicked" />
                   </widget>
                   <packing>
-                    <property name="Position">3</property>
+                    <property name="Position">5</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -34826,7 +34860,7 @@
                     <property name="LabelProp" translatable="yes">Количество:</property>
                   </widget>
                   <packing>
-                    <property name="Position">4</property>
+                    <property name="Position">6</property>
                     <property name="AutoSize">False</property>
                   </packing>
                 </child>
@@ -39608,7 +39642,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.OverNormView" design-size="882 411">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.OverNormView" design-size="987 411">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -40102,6 +40136,22 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="Gamma.GtkWidgets.yButton" id="buttonAddScan">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Type">TextAndIcon</property>
+                    <property name="Icon">resource:Workwear.icon.buttons.qr-code.png</property>
+                    <property name="Label" translatable="yes" />
+                    <property name="UseUnderline">True</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">3</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gamma.GtkWidgets.yButton" id="buttonDel">
                     <property name="MemberName" />
                     <property name="Sensitive">False</property>
@@ -40112,7 +40162,7 @@
                     <property name="label">gtk-remove</property>
                   </widget>
                   <packing>
-                    <property name="Position">3</property>
+                    <property name="Position">4</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -40131,7 +40181,7 @@
                     <property name="LabelXAlign">0</property>
                   </widget>
                   <packing>
-                    <property name="Position">4</property>
+                    <property name="Position">5</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -40144,7 +40194,7 @@
                     <property name="LabelProp" translatable="yes">Количество:</property>
                   </widget>
                   <packing>
-                    <property name="Position">5</property>
+                    <property name="Position">6</property>
                     <property name="AutoSize">False</property>
                   </packing>
                 </child>
@@ -40860,6 +40910,39 @@
             <property name="CanFocus">True</property>
             <property name="ShowScrollbars">True</property>
           </widget>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.Journal.Filter.Views.Stock.OverNormIssuedJournalFilterView" design-size="300 48">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.HBox" id="hbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gamma.GtkWidgets.yLabel" id="labelType">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Тип:</property>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.Widgets.yEnumComboBox" id="enumcomboType">
+            <property name="MemberName" />
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
         </child>
       </widget>
     </child>

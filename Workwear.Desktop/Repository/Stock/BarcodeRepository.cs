@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NHibernate.SqlCommand;
 using QS.DomainModel.UoW;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Repository.Stock {

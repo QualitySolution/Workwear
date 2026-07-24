@@ -3,6 +3,7 @@ using System.Linq;
 using Autofac;
 using QS.Dialog;
 using QS.DomainModel.UoW;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -26,6 +27,10 @@ namespace Workwear.Tools
 
 			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteEmployeeIssueOperation)
 				.IfEntity<EmployeeIssueOperation>()
+				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
+
+			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteReturnServiceClaim)
+				.IfEntity<Return>()
 				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
 
 			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteIncome)
@@ -73,18 +78,46 @@ namespace Workwear.Tools
 				}
 			}
 		}
-		
+
 		private static void HandleDeleteIncome(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents)
 		{
 			using(var scope = LifetimeScope.BeginLifetimeScope()) {
 				var unitOfWorkFactory = scope.Resolve<IUnitOfWorkFactory>();
-				using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления документов поступления на склад")) { 
+				using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления документов поступления на склад")) {
 					ShipmentCalculateModel sCalcModel = scope.Resolve<ShipmentCalculateModel>(new TypedParameter(typeof(UnitOfWorkProvider), new UnitOfWorkProvider(uow)));
-					foreach(var doc in changeEvents.Select(x => (x.Entity as Income))) 
-						if(doc != null) 
+					foreach(var doc in changeEvents.Select(x => (x.Entity as Income)))
+						if(doc != null)
 							sCalcModel.UpdateShipment(doc.Shipment.Id, uow);
 					uow.Commit();
 				}
+			}
+		}
+
+		private static void HandleDeleteReturnServiceClaim(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents) {
+			using(var scope = LifetimeScope.BeginLifetimeScope()) {
+				var unitOfWorkFactory = scope.Resolve<IUnitOfWorkFactory>();
+				using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления возврата с обслуживания одежды")) {
+					var deletedReturnClaims = changeEvents
+						.Select(x => x.Entity as Return)
+						.Where(x => x != null && x.Items.Any(item => item.ServiceClaim != null))
+						.ToList();
+					if(!deletedReturnClaims.Any())
+						return;
+
+					foreach(var returnDoc in deletedReturnClaims) {
+						foreach(var item in returnDoc.Items.Where(i => i.ServiceClaim != null)) {
+							var serviceClaim = uow.GetById<ServiceClaim>(item.ServiceClaim.Id);
+							if(serviceClaim == null)
+								continue;
+
+							serviceClaim.IsClosed = false;
+							serviceClaim.ChangeState(ClaimState.AwaitIssue);
+							uow.Save(serviceClaim);
+						}
+					}
+					uow.Commit();
+				}
+
 			}
 		}
 	}

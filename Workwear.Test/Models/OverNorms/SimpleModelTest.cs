@@ -62,6 +62,7 @@ namespace Workwear.Test.Models.OverNorms {
 			Assert.That(removedBarcode.BarcodeOperations, Does.Not.Contain(barcodeOperation1));
 			Assert.That(newBarcode.BarcodeOperations, Has.Count.EqualTo(1));
 			Assert.That(newBarcode.BarcodeOperations[0].OverNormOperation, Is.SameAs(operation));
+			Assert.That(newBarcode.BarcodeOperations[0].WarehouseOperation, Is.SameAs(operation.WarehouseOperation));
 		}
 
 		[Test(Description = "При заполнении пустой строки разовой выдачи несколькими штрихкодами добавляем все выбранные метки.")]
@@ -95,6 +96,7 @@ namespace Workwear.Test.Models.OverNorms {
 			Assert.That(operation.WarehouseOperation.Amount, Is.EqualTo(2));
 			Assert.That(operation.BarcodeOperations, Has.Count.EqualTo(2));
 			Assert.That(operation.BarcodeOperations.Select(x => x.Barcode), Is.EquivalentTo(new[] { barcode1, barcode2 }));
+			Assert.That(operation.BarcodeOperations.Select(x => x.WarehouseOperation), Is.All.SameAs(operation.WarehouseOperation));
 			Assert.That(barcode1.BarcodeOperations, Has.Count.EqualTo(1));
 			Assert.That(barcode2.BarcodeOperations, Has.Count.EqualTo(1));
 		}
