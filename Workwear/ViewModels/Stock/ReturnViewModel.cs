@@ -487,7 +487,6 @@ namespace Workwear.ViewModels.Stock {
 				.JoinAlias(() => overNormOperationAlias.BarcodeOperations, () => barcodeOperationAlias)
 				.Where(() => barcodeOperationAlias.Barcode.Id == claim.Barcode.Id)
 				.Where(() => warehouseOperationAlias.ExpenseWarehouse != null)
-				.Where(() => overNormOperationAlias.Type != OverNormType.Simple)
 				.Where(() => overNormOperationAlias.ReturnFromOperation == null)
 				.Fetch(SelectMode.Fetch, x => x.Employee)
 				.Fetch(SelectMode.Fetch, x => x.Nomenclature)

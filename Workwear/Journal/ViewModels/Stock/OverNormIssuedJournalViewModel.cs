@@ -93,7 +93,6 @@ namespace Workwear.Journal.ViewModels.Stock {
 					.Left.JoinAlias(() => operationAlias.BarcodeOperations, () => barcodeOperationAlias)
 					.Left.JoinAlias(() => barcodeOperationAlias.Barcode, () => barcodeAlias)
 					.Where(() => warehouseOperationAlias.ExpenseWarehouse != null)
-					.Where(() => operationAlias.Type != OverNormType.Simple)
 					.Where(() => operationAlias.ReturnFromOperation == null)
 					.WithSubquery.WhereNotExists(returnedOperationSubquery)
 					.Where(GetSearchCriterion(
