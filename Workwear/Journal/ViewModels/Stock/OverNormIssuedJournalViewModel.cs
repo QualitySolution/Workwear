@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Autofac;
 using Gamma.Utilities;
 using NHibernate;
 using NHibernate.Criterion;
@@ -14,6 +15,7 @@ using QS.Navigation;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.ViewModels.Extension;
+using Workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
@@ -25,8 +27,11 @@ namespace Workwear.Journal.ViewModels.Stock {
 		public OverNormIssuedJournalViewModel(
 			IUnitOfWorkFactory unitOfWorkFactory,
 			IInteractiveService interactiveService,
-			INavigationManager navigation
+			INavigationManager navigation,
+			ILifetimeScope autofacScope
 		) : base(unitOfWorkFactory, interactiveService, navigation) {
+			JournalFilter = Filter = autofacScope.Resolve<OverNormIssuedJournalFilterViewModel>(
+				new TypedParameter(typeof(JournalViewModelBase), this));
 			DataLoader = new AnyDataLoader<OverNormIssuedJournalNode>(GetNodes);
 			TableSelectionMode = JournalSelectionMode.Multiple;
 			Title = "Выдано сверх нормы";
@@ -34,9 +39,11 @@ namespace Workwear.Journal.ViewModels.Stock {
 		}
 
 		#region IDialogDocumentation
-		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#over-norm");
+		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#over-norm-issue");
 		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
 		#endregion
+
+		public OverNormIssuedJournalFilterViewModel Filter { get; }
 
 		private EmployeeCard employee;
 		public EmployeeCard Employee {
@@ -100,6 +107,9 @@ namespace Workwear.Journal.ViewModels.Stock {
 
 				if(Employee != null)
 					query.Where(() => employeeAlias.Id == Employee.Id);
+
+				if(Filter.Type != null)
+					query.Where(() => operationAlias.Type == Filter.Type);
 
 				return query
 					.SelectList(list => list
