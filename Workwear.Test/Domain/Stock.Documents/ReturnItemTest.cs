@@ -24,6 +24,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			Assert.That(
 				item.ReturnFromOverNormOperation.BarcodeOperations.Single().Barcode,
 				Is.SameAs(selectedBarcode));
+			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
 		}
 
 		private static OverNormOperation CreateOverNormOperation(params Barcode[] barcodes)

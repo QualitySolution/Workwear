@@ -193,6 +193,27 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual decimal Total => Cost * Amount;
 		public virtual StockPosition StockPosition => new StockPosition(Nomenclature, WarehouseOperation.WearPercent, WearSize, Height, Owner);
 
+		public virtual string BarcodesString => string.Join(
+			"\n",
+			ReturnBarcodeOperations
+				.Select(x => x.Barcode?.Title)
+				.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+		private IEnumerable<BarcodeOperation> ReturnBarcodeOperations {
+			get {
+				switch(ReturnFrom) {
+					case ReturnFrom.Employee:
+						return ReturnFromEmployeeOperation.BarcodeOperations;
+					case ReturnFrom.DutyNorm:
+						return ReturnFromDutyNormOperation.BarcodeOperations;
+					case ReturnFrom.OverNorm:
+						return ReturnFromOverNormOperation.BarcodeOperations;
+					default:
+						return Enumerable.Empty<BarcodeOperation>();
+				}
+			}
+		}
+
 		public virtual ReturnFrom ReturnFrom {
 			get {
 				if(IssuedEmployeeOnOperation != null && IssuedDutyNormOnOperation == null && IssuedOverNormOperation == null)
