@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.Measurement.Domain;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -295,10 +297,11 @@ namespace Workwear.Domain.Stock.Documents {
 			this.amount = amount;
 		}
 
-		public ReturnItem(Return Return, OverNormOperation issueOperation, int amount, ServiceClaim claim = null) {
+		public ReturnItem(Return Return, OverNormOperation issueOperation, int amount, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
 			document = Return;
 			serviceClaim = claim;
 			issuedOverNormOperation = issueOperation;
+			var returningBarcodes = barcodes?.ToList();
 			returnFromOverNormOperation = new OverNormOperation {
 				Type = issueOperation.Type,
 				Employee = issueOperation.Employee,
@@ -314,7 +317,8 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			};
 			warehouseOperation = returnFromOverNormOperation.WarehouseOperation;
-			foreach(var barcodeOperation in issueOperation.BarcodeOperations) {
+			foreach(var barcodeOperation in issueOperation.BarcodeOperations
+				.Where(x => returningBarcodes == null || returningBarcodes.Any(b => DomainHelper.EqualDomainObjects(b, x.Barcode)))) {
 				var newBarcodeOperation = new BarcodeOperation {
 					Barcode = barcodeOperation.Barcode,
 					OverNormOperation = returnFromOverNormOperation

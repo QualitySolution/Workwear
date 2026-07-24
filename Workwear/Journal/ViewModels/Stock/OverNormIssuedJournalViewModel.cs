@@ -33,7 +33,7 @@ namespace Workwear.Journal.ViewModels.Stock {
 			JournalFilter = Filter = autofacScope.Resolve<OverNormIssuedJournalFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
 			DataLoader = new AnyDataLoader<OverNormIssuedJournalNode>(GetNodes);
-			TableSelectionMode = JournalSelectionMode.Multiple;
+			SelectionMode = JournalSelectionMode.Multiple;
 			Title = "Выдано сверх нормы";
 			UpdateOnChanges(typeof(OverNormOperation));
 		}
@@ -60,6 +60,7 @@ namespace Workwear.Journal.ViewModels.Stock {
 				OverNormOperation operationAlias = null;
 				OverNormOperation returnedOperationAlias = null;
 				WarehouseOperation warehouseOperationAlias = null;
+				WarehouseOperation returnedWarehouseOperationAlias = null;
 				EmployeeCard employeeAlias = null;
 				Nomenclature nomenclatureAlias = null;
 				Size sizeAlias = null;
@@ -68,9 +69,15 @@ namespace Workwear.Journal.ViewModels.Stock {
 				Barcode barcodeAlias = null;
 
 				var returnedOperationSubquery = QueryOver.Of(() => returnedOperationAlias)
+					.JoinAlias(() => returnedOperationAlias.WarehouseOperation, () => returnedWarehouseOperationAlias)
 					.Where(() => returnedOperationAlias.ReturnFromOperation.Id == operationAlias.Id)
-					.Select(x => x.Id)
-					.Take(1);
+					.Select(Projections.Sum(() => returnedWarehouseOperationAlias.Amount));
+
+				var balanceProjection = Projections.SqlFunction(
+					new SQLFunctionTemplate(NHibernateUtil.Int32, "(?1 - IFNULL(?2, 0))"),
+					NHibernateUtil.Int32,
+					Projections.Property(() => warehouseOperationAlias.Amount),
+					Projections.SubQuery(returnedOperationSubquery));
 
 				var employeeNameProjection = Projections.SqlFunction(
 					new SQLFunctionTemplate(NHibernateUtil.String, "CONCAT_WS(' ', ?1, ?2, ?3)"),
@@ -94,7 +101,7 @@ namespace Workwear.Journal.ViewModels.Stock {
 					.Left.JoinAlias(() => barcodeOperationAlias.Barcode, () => barcodeAlias)
 					.Where(() => warehouseOperationAlias.ExpenseWarehouse != null)
 					.Where(() => operationAlias.ReturnFromOperation == null)
-					.WithSubquery.WhereNotExists(returnedOperationSubquery)
+					.Where(Restrictions.Gt(balanceProjection, 0))
 					.Where(GetSearchCriterion(
 						() => employeeAlias.LastName,
 						() => employeeAlias.FirstName,
@@ -119,7 +126,7 @@ namespace Workwear.Journal.ViewModels.Stock {
 						.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.NomenclatureName)
 						.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.WearSize)
 						.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
-						.Select(() => warehouseOperationAlias.Amount).WithAlias(() => resultAlias.Amount)
+						.Select(balanceProjection).WithAlias(() => resultAlias.Amount)
 						.Select(() => warehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
 						.Select(() => warehouseOperationAlias.OperationTime).WithAlias(() => resultAlias.Date)
 						.Select(barcodesProjection).WithAlias(() => resultAlias.Barcodes)

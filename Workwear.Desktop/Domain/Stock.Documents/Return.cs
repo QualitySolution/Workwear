@@ -127,7 +127,7 @@ namespace Workwear.Domain.Stock.Documents
 			return newItem;
 		}
 
-		public virtual ReturnItem AddItem(OverNormOperation issuedOperation, int count, ServiceClaim claim = null) {
+		public virtual ReturnItem AddItem(OverNormOperation issuedOperation, int count, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
 			if(issuedOperation.WarehouseOperation?.ExpenseWarehouse == null)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи вне нормы.");
 
@@ -136,7 +136,7 @@ namespace Workwear.Domain.Stock.Documents
 				return null;
 			}
 
-			var newItem = new ReturnItem(this, issuedOperation, count, claim);
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodes);
 
 			Items.Add(newItem);
 			return newItem;
