@@ -159,12 +159,21 @@ CREATE TABLE `stock_barcoding_items`
 
 -- Возврат с обслуживания
 ALTER TABLE stock_return_items
-	ADD COLUMN claim_id int(10) unsigned NULL DEFAULT NULL AFTER duty_norm_issue_operation_id;
+	ADD COLUMN over_norm_operation_id int(10) unsigned NULL DEFAULT NULL AFTER duty_norm_issue_operation_id,
+	ADD COLUMN claim_id int(10) unsigned NULL DEFAULT NULL AFTER over_norm_operation_id;
+
+ALTER TABLE stock_return_items
+	ADD CONSTRAINT stock_return_items_over_norm_operation_id_fk FOREIGN KEY (over_norm_operation_id) REFERENCES operation_over_norm(id)
+		ON UPDATE NO ACTION
+		ON DELETE NO ACTION;
 
 ALTER TABLE stock_return_items
 	ADD CONSTRAINT stock_return_items_claim_id_fk FOREIGN KEY (claim_id) REFERENCES clothing_service_claim(id)
 		ON UPDATE NO ACTION
 		ON DELETE NO ACTION;
+
+CREATE INDEX stock_return_items_over_norm_operation_id_index
+	ON stock_return_items(over_norm_operation_id ASC);
 
 CREATE INDEX stock_return_items_claim_id_index
 	ON stock_return_items(claim_id ASC);

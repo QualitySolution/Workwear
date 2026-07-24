@@ -31,6 +31,7 @@ using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.ClothingService;
 using Workwear.Journal.Filter.ViewModels.Regulations;
+using Workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
@@ -154,13 +155,14 @@ namespace Workwear.ViewModels.Stock {
 		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public virtual bool CanAddEmployee => CanEdit;
 		public virtual bool CanAddDutyNorms => CanEdit;
-		public virtual bool CanAddClaim => CanEdit;
+		public virtual bool CanAddOverNorm => CanEdit && featuresService.Available(WorkwearFeature.OverNorm);
+		public virtual bool CanAddClaim => CanEdit && CanAddOverNorm;
 		public virtual bool CanRemoveItem => CanEdit && SelectedItem != null;
 		public virtual bool CanSetNomenclature => CanEdit && SelectedItem != null;
 		public virtual bool CanEditItems => CanEdit && EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
-		public virtual bool ClaimVisible => false;
+		public virtual bool ClaimVisible => featuresService.Available(WorkwearFeature.ClothingService) && CanAddOverNorm;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
@@ -229,6 +231,17 @@ namespace Workwear.ViewModels.Stock {
 					v => v.Balance));
 		}
 
+		public void AddFromOverNorm() {
+			var selectJournal = NavigationManager.OpenViewModel<OverNormIssuedJournalViewModel>(
+				this,
+				OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.Employee = EmployeeCard;
+			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromOverNormDictionary(
+				e.GetSelectedObjects<OverNormIssuedJournalNode>().ToDictionary(
+					k => k.Id,
+					v => v.Amount));
+		}
+
 		public void AddFromClaim() {
 			var selectJournal =
 				NavigationManager.OpenViewModel<ClaimsJournalViewModel, ServiceClaim>(
@@ -239,14 +252,14 @@ namespace Workwear.ViewModels.Stock {
 			selectJournal.ViewModel.Filter.ShowClosed = false;
 			selectJournal.ViewModel.Filter.SensitiveShowClosed = false;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
-			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromNode(
+			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromClaimNodes(
 				e.GetSelectedObjects<ClaimsJournalNode>().ToDictionary(
 					k=>k.Id,
 					v=>v.Balance
 					));
 		}
 
-		public void AddFromNode(Dictionary<int, int> returningOperation) {
+		public void AddFromClaimNodes(Dictionary<int, int> returningOperation) {
 			Barcode barcodeAlias = null;
 			var claims = UoW.Session.QueryOver<ServiceClaim>()
 				.Where(x=>x.Id.IsIn(returningOperation.Select(i=>i.Key).ToList()))
@@ -256,9 +269,19 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch, () => barcodeAlias.Size)
 				.Fetch(SelectMode.Fetch,() => barcodeAlias.Height)
 				.List();
+			var notAddedClaims = new List<int>();
 			foreach(var claim  in claims) {
-				Entity.AddItem(claim, 1);
+				var issuedOperation = GetActualOverNormOperation(claim);
+				if(issuedOperation == null) {
+					notAddedClaims.Add(claim.Id);
+					continue;
+				}
+				Entity.AddItem(issuedOperation, 1, claim);
 			}
+			if(notAddedClaims.Any())
+				interactiveService.ShowMessage(
+					ImportanceLevel.Warning,
+					$"Заявки №{String.Join(", ", notAddedClaims)} не добавлены. Для их штрихкодов не найдена действующая выдача сверх нормы.");
 			CalculateTotal();
 		}
 
@@ -294,6 +317,21 @@ namespace Workwear.ViewModels.Stock {
 			CalculateTotal();
 		}
 
+		public void AddFromOverNormDictionary(Dictionary<int, int> returningOperation) {
+			var operations = UoW.Session.QueryOver<OverNormOperation>()
+				.Where(x => x.Id.IsIn(returningOperation.Select(i => i.Key).ToList()))
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.WearSize)
+				.Fetch(SelectMode.Fetch, x => x.Height)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.List();
+			foreach(var operation in operations) {
+				Entity.AddItem(operation, returningOperation[operation.Id]);
+			}
+			CalculateTotal();
+		}
+
 		public void FillMaxAmount(DateTime? date = null) {
 			var itemsEmp = Entity.Items.Where(i=>i.ReturnFrom==ReturnFrom.Employee).ToList();
 			if(itemsEmp.Any()) {
@@ -319,6 +357,17 @@ namespace Workwear.ViewModels.Stock {
 				foreach(var item in itemsDutyNorm) {
 					var operation = item.ReturnFromDutyNormOperation.IssuedOperation;
 					item.MaxAmount = operation.Issued - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
+				}
+			}
+			var itemsOverNorm = Entity.Items.Where(i => i.ReturnFrom == ReturnFrom.OverNorm).ToList();
+			if(itemsOverNorm.Any()) {
+				var operations = itemsOverNorm
+					.Select(i => i.IssuedOverNormOperation)
+					.ToArray();
+				var writtenOff = CalculateOverNormReturned(operations);
+				foreach(var item in itemsOverNorm) {
+					var operation = item.IssuedOverNormOperation;
+					item.MaxAmount = operation.WarehouseOperation.Amount - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
 				}
 			}
 		}
@@ -363,7 +412,7 @@ namespace Workwear.ViewModels.Stock {
 				var currentReturnClaims = Entity.Items.Select(x => x.Id);
 
 				var removedReturnClaims = oldReturnClaims
-					.Where(x => !currentReturnClaims.Contains(x.Id) && x.ReturnFrom==ReturnFrom.Claim)
+					.Where(x => !currentReturnClaims.Contains(x.Id) && x.ServiceClaim != null)
 					.ToList();
 
 				if (removedReturnClaims.Any())
@@ -398,6 +447,64 @@ namespace Workwear.ViewModels.Stock {
 			logger.Info ("Ok");
 			return true;
 		}
+
+		private Dictionary<int, int> CalculateOverNormReturned(OverNormOperation[] operations) {
+			var operationIds = operations
+				.Where(x => x?.Id > 0)
+				.Select(x => x.Id)
+				.Distinct()
+				.ToArray();
+			if(!operationIds.Any())
+				return new Dictionary<int, int>();
+
+			var currentReturnOperationIds = Entity.Items
+				.Where(i => i.ReturnFrom == ReturnFrom.OverNorm)
+				.Select(i => i.ReturnFromOverNormOperation?.Id ?? 0)
+				.Where(id => id > 0)
+				.ToArray();
+
+			OverNormOperation returnOperationAlias = null;
+			var returnOperations = UoW.Session.QueryOver(() => returnOperationAlias)
+				.WhereRestrictionOn(() => returnOperationAlias.ReturnFromOperation.Id)
+				.IsIn(operationIds)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.List();
+
+			return returnOperations
+				.Where(x => x.WarehouseOperation != null)
+				.Where(x => !currentReturnOperationIds.Contains(x.Id))
+				.GroupBy(x => x.ReturnFromOperation.Id)
+				.ToDictionary(x => x.Key, x => x.Sum(o => o.WarehouseOperation.Amount));
+		}
+
+		private OverNormOperation GetActualOverNormOperation(ServiceClaim claim) {
+			OverNormOperation overNormOperationAlias = null;
+			WarehouseOperation warehouseOperationAlias = null;
+			BarcodeOperation barcodeOperationAlias = null;
+
+			var operations = UoW.Session.QueryOver(() => overNormOperationAlias)
+				.JoinAlias(() => overNormOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+				.JoinAlias(() => overNormOperationAlias.BarcodeOperations, () => barcodeOperationAlias)
+				.Where(() => barcodeOperationAlias.Barcode.Id == claim.Barcode.Id)
+				.Where(() => warehouseOperationAlias.ExpenseWarehouse != null)
+				.Where(() => overNormOperationAlias.Type != OverNormType.Simple)
+				.Where(() => overNormOperationAlias.ReturnFromOperation == null)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.WearSize)
+				.Fetch(SelectMode.Fetch, x => x.Height)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.OrderBy(() => overNormOperationAlias.OperationTime).Desc
+				.List();
+
+			return operations.FirstOrDefault(x => !HasReturnOperation(x));
+		}
+
+		private bool HasReturnOperation(OverNormOperation operation) =>
+			UoW.Session.QueryOver<OverNormOperation>()
+				.Where(x => x.ReturnFromOperation.Id == operation.Id)
+				.RowCount() > 0;
+
 		public void PrintReturnDoc(ReturnDocReportEnum doc) 
 		{
 			

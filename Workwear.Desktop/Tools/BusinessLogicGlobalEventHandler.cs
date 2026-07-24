@@ -99,13 +99,13 @@ namespace Workwear.Tools
 				using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления возврата с обслуживания одежды")) {
 					var deletedReturnClaims = changeEvents
 						.Select(x => x.Entity as Return)
-						.Where(x => x != null && x.Items.Any(item => item.ReturnFrom == ReturnFrom.Claim))
+						.Where(x => x != null && x.Items.Any(item => item.ServiceClaim != null))
 						.ToList();
 					if(!deletedReturnClaims.Any())
 						return;
 
 					foreach(var returnDoc in deletedReturnClaims) {
-						foreach(var item in returnDoc.Items.Where(i => i.ReturnFrom == ReturnFrom.Claim)) {
+						foreach(var item in returnDoc.Items.Where(i => i.ServiceClaim != null)) {
 							var serviceClaim = uow.GetById<ServiceClaim>(item.ServiceClaim.Id);
 							if(serviceClaim == null)
 								continue;

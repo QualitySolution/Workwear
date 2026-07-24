@@ -143,6 +143,7 @@
     <Compile Include="Journal\ViewModels\Stock\BarcodeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\CauseIssueJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\CauseWriteOffJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Stock\OverNormIssuedJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\OwnerJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Stock\SizeTypeJournalViewModel.cs" />

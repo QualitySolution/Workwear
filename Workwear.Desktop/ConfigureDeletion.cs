@@ -391,6 +391,7 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<ReturnItem> ()
 				.AddDeleteCascadeDependence(x => x.ReturnFromDutyNormOperation)
 				.AddDeleteCascadeDependence(x => x.ReturnFromEmployeeOperation)
+				.AddDeleteCascadeDependence(x => x.ReturnFromOverNormOperation)
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation);
 			
 			DeleteConfig.AddHibernateDeleteInfo<Writeoff> ()

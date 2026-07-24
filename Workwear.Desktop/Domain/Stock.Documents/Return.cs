@@ -86,10 +86,10 @@ namespace Workwear.Domain.Stock.Documents
 								$" \"{item.ItemName}\" указано количество больше выданного по дежурной норме.",
 								new[] { nameof(Items) });
 						break;
-					case ReturnFrom.Claim:
-						if(item.Amount > 1)
+					case ReturnFrom.OverNorm:
+						if(item.Amount > item.MaxAmount)
 							yield return new ValidationResult(
-								$" \"{item.ItemName}\" указано количество больше принятого в обслуживание (более 1 шт.).",
+								$" \"{item.ItemName}\" указано количество больше выданного вне нормы.",
 								new[] { nameof(Items) });
 						break;
 				}
@@ -127,11 +127,21 @@ namespace Workwear.Domain.Stock.Documents
 			return newItem;
 		}
 
-		public virtual ReturnItem AddItem(ServiceClaim claim, int count) {
-			var newItem = new ReturnItem(this, claim, count);
+		public virtual ReturnItem AddItem(OverNormOperation issuedOperation, int count, ServiceClaim claim = null) {
+			if(issuedOperation.WarehouseOperation?.ExpenseWarehouse == null)
+				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи вне нормы.");
+
+			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedOverNormOperation, issuedOperation))) {
+				logger.Warn("Номенклатура из этой выдачи вне нормы уже добавлена. Пропускаем...");
+				return null;
+			}
+
+			var newItem = new ReturnItem(this, issuedOperation, count, claim);
+
 			Items.Add(newItem);
 			return newItem;
 		}
+
 		public virtual void RemoveItem(ReturnItem item) {
 			Items.Remove (item);
 		}

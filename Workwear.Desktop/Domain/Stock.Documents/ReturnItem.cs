@@ -142,11 +142,20 @@ namespace Workwear.Domain.Stock.Documents {
 			set => SetField(ref returnFromDutyNormOperation, value);
 		}
 
+		private OverNormOperation returnFromOverNormOperation;
+		[Display(Name = "Операция возврата из выдачи вне нормы")]
+		[IgnoreHistoryTrace]
+		public virtual OverNormOperation ReturnFromOverNormOperation {
+			get => returnFromOverNormOperation;
+			set => SetField(ref returnFromOverNormOperation, value);
+		}
+
 		[Display(Name = "Процент износа")]
 		public virtual decimal WearPercent {
 			get { switch(ReturnFrom) {
 					case ReturnFrom.Employee : return ReturnFromEmployeeOperation.WearPercent;
 					case ReturnFrom.DutyNorm : return ReturnFromDutyNormOperation.WearPercent;
+					case ReturnFrom.OverNorm : return ReturnFromOverNormOperation.WearPercent;
 					default : return 0;
 				}
 			}
@@ -156,6 +165,9 @@ namespace Workwear.Domain.Stock.Documents {
 							OnPropertyChanged(); } break;
 					case ReturnFrom.DutyNorm: if(ReturnFromDutyNormOperation.WearPercent != value) {
 							ReturnFromDutyNormOperation.WearPercent = value;
+							OnPropertyChanged(); } break;
+					case ReturnFrom.OverNorm: if(ReturnFromOverNormOperation.WearPercent != value) {
+							ReturnFromOverNormOperation.WearPercent = value;
 							OnPropertyChanged(); } break;
 				}
 			}
@@ -181,12 +193,12 @@ namespace Workwear.Domain.Stock.Documents {
 
 		public virtual ReturnFrom ReturnFrom {
 			get {
-				if(IssuedEmployeeOnOperation != null && IssuedDutyNormOnOperation == null && ServiceClaim == null)
+				if(IssuedEmployeeOnOperation != null && IssuedDutyNormOnOperation == null && IssuedOverNormOperation == null)
 					return ReturnFrom.Employee;
-				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation != null && ServiceClaim == null)
+				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation != null && IssuedOverNormOperation == null)
 					return ReturnFrom.DutyNorm;
-				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation == null && ServiceClaim != null)
-					return ReturnFrom.Claim;
+				if(IssuedEmployeeOnOperation == null && IssuedDutyNormOnOperation == null && IssuedOverNormOperation != null)
+					return ReturnFrom.OverNorm;
 				throw new InvalidOperationException(
 					"Строка документа списания находится в поломанном состоянии. " +
 					"Должна быть заполнена хотя бы одна операция.");
@@ -197,7 +209,7 @@ namespace Workwear.Domain.Stock.Documents {
 				switch(ReturnFrom) {
 					case ReturnFrom.Employee : return $"Сотрудник: {IssuedEmployeeOnOperation.Employee.ShortName}";
 					case ReturnFrom.DutyNorm : return $"Дежурное: {IssuedDutyNormOnOperation.DutyNorm.Name}";
-					case ReturnFrom.Claim : return $"Заявка на обслуживание №{ServiceClaim.Id}";
+					case ReturnFrom.OverNorm : return $"Сверх нормы: {IssuedOverNormOperation.Employee.ShortName}";
 					default : return String.Empty;
 				}
 			}
@@ -230,6 +242,13 @@ namespace Workwear.Domain.Stock.Documents {
 		public virtual DutyNormIssueOperation IssuedDutyNormOnOperation {
 			get => issuedDutyNormOnOperation ?? ReturnFromDutyNormOperation?.IssuedOperation;
 			set => SetField(ref issuedDutyNormOnOperation, value);
+		}
+
+		private OverNormOperation issuedOverNormOperation;
+		[Display(Name = "Операция выдачи вне нормы")]
+		public virtual OverNormOperation IssuedOverNormOperation {
+			get => issuedOverNormOperation ?? ReturnFromOverNormOperation?.ReturnFromOperation;
+			set => SetField(ref issuedOverNormOperation, value);
 		}
 
 		#endregion
@@ -276,12 +295,37 @@ namespace Workwear.Domain.Stock.Documents {
 			this.amount = amount;
 		}
 
-		public ReturnItem(Return Return, ServiceClaim claim, int amount) {
+		public ReturnItem(Return Return, OverNormOperation issueOperation, int amount, ServiceClaim claim = null) {
 			document = Return;
 			serviceClaim = claim;
-			this.nomenclature = claim.Barcode.Nomenclature;
-			this.wearSize = claim.Barcode.Size;
-			this.height = claim.Barcode.Height;
+			issuedOverNormOperation = issueOperation;
+			returnFromOverNormOperation = new OverNormOperation {
+				Type = issueOperation.Type,
+				Employee = issueOperation.Employee,
+				Nomenclature = issueOperation.Nomenclature,
+				WearSize = issueOperation.WearSize,
+				Height = issueOperation.Height,
+				WearPercent = issueOperation.WearPercent,
+				ReturnFromOperation = issueOperation,
+				WarehouseOperation = new WarehouseOperation {
+					ReceiptWarehouse = document.Warehouse,
+					Amount = amount,
+					StockPosition = issueOperation.WarehouseOperation.StockPosition
+				}
+			};
+			warehouseOperation = returnFromOverNormOperation.WarehouseOperation;
+			foreach(var barcodeOperation in issueOperation.BarcodeOperations) {
+				var newBarcodeOperation = new BarcodeOperation {
+					Barcode = barcodeOperation.Barcode,
+					OverNormOperation = returnFromOverNormOperation
+				};
+				returnFromOverNormOperation.BarcodeOperations.Add(newBarcodeOperation);
+				barcodeOperation.Barcode.BarcodeOperations.Add(newBarcodeOperation);
+			}
+			nomenclature = issueOperation.Nomenclature;
+			WearSize = issueOperation.WearSize;
+			Height = issueOperation.Height;
+			employeeCard = issueOperation.Employee;
 			this.amount = amount;
 		}
 
@@ -299,12 +343,16 @@ namespace Workwear.Domain.Stock.Documents {
 				case ReturnFrom.DutyNorm:
 					ReturnFromDutyNormOperation.Update(uow,this);
 					break;
-				case ReturnFrom.Claim:
-					ServiceClaim.Update(uow,this);
+				case ReturnFrom.OverNorm:
+					ReturnFromOverNormOperation.OperationTime = Document.Date;
+					ReturnFromOverNormOperation.LastUpdate = DateTime.Now;
+					ReturnFromOverNormOperation.WarehouseOperation = WarehouseOperation;
+					uow.Save(ReturnFromOverNormOperation);
 					break;
 				default:
 					throw new NotImplementedException();
 			}
+			ServiceClaim?.Update(uow,this);
 		}
 		#endregion
 	}
@@ -312,6 +360,6 @@ namespace Workwear.Domain.Stock.Documents {
 	public enum ReturnFrom {
 		Employee,
 		DutyNorm,
-		Claim
+		OverNorm
 	}
 }

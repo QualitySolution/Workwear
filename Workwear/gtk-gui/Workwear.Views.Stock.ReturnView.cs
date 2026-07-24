@@ -62,6 +62,8 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton ybuttonAddDutyNorm;
 
+		private global::Gamma.GtkWidgets.yButton ybuttonAddOverNorm;
+
 		private global::Gamma.GtkWidgets.yButton ybuttonAddClaim;
 
 		private global::Gamma.GtkWidgets.yButton ybuttonDel;
@@ -378,6 +380,20 @@ namespace Workwear.Views.Stock
 			w31.Expand = false;
 			w31.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
+			this.ybuttonAddOverNorm = new global::Gamma.GtkWidgets.yButton();
+			this.ybuttonAddOverNorm.CanFocus = true;
+			this.ybuttonAddOverNorm.Name = "ybuttonAddOverNorm";
+			this.ybuttonAddOverNorm.UseUnderline = true;
+			this.ybuttonAddOverNorm.Label = global::Mono.Unix.Catalog.GetString("Сверх нормы");
+			global::Gtk.Image w32a = new global::Gtk.Image();
+			w32a.Pixbuf = global::Stetic.IconLoader.LoadIcon(this, "gtk-add", global::Gtk.IconSize.Menu);
+			this.ybuttonAddOverNorm.Image = w32a;
+			this.hbox8.Add(this.ybuttonAddOverNorm);
+			global::Gtk.Box.BoxChild w33a = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonAddOverNorm]));
+			w33a.Position = 2;
+			w33a.Expand = false;
+			w33a.Fill = false;
+			// Container child hbox8.Gtk.Box+BoxChild
 			this.ybuttonAddClaim = new global::Gamma.GtkWidgets.yButton();
 			this.ybuttonAddClaim.CanFocus = true;
 			this.ybuttonAddClaim.Name = "ybuttonAddClaim";
@@ -388,7 +404,7 @@ namespace Workwear.Views.Stock
 			this.ybuttonAddClaim.Image = w32;
 			this.hbox8.Add(this.ybuttonAddClaim);
 			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonAddClaim]));
-			w33.Position = 2;
+			w33.Position = 3;
 			w33.Expand = false;
 			w33.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
@@ -403,7 +419,7 @@ namespace Workwear.Views.Stock
 			this.ybuttonDel.Image = w34;
 			this.hbox8.Add(this.ybuttonDel);
 			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonDel]));
-			w35.Position = 3;
+			w35.Position = 4;
 			w35.Expand = false;
 			w35.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
@@ -418,7 +434,7 @@ namespace Workwear.Views.Stock
 			this.ybuttonSetNomenclature.Image = w36;
 			this.hbox8.Add(this.ybuttonSetNomenclature);
 			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.ybuttonSetNomenclature]));
-			w37.Position = 4;
+			w37.Position = 5;
 			w37.Expand = false;
 			w37.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
@@ -428,7 +444,7 @@ namespace Workwear.Views.Stock
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox8.Add(this.labelSum);
 			global::Gtk.Box.BoxChild w38 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
-			w38.Position = 5;
+			w38.Position = 6;
 			this.yvboxItems.Add(this.hbox8);
 			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.yvboxItems[this.hbox8]));
 			w39.Position = 2;
@@ -446,6 +462,7 @@ namespace Workwear.Views.Stock
 			this.enumPrint.EnumItemClicked += new global::System.EventHandler<QS.Widgets.EnumItemClickedEventArgs>(this.OnEnumPrintEnumItemClicked);
 			this.ybuttonAddWorker.Clicked += new global::System.EventHandler(this.OnYbuttonAddWorkerClicked);
 			this.ybuttonAddDutyNorm.Clicked += new global::System.EventHandler(this.OnYbuttonAddDutyNormClicked);
+			this.ybuttonAddOverNorm.Clicked += new global::System.EventHandler(this.OnYbuttonAddOverNormClicked);
 			this.ybuttonAddClaim.Clicked += new global::System.EventHandler(this.OnYbuttonAddClaimClicked);
 			this.ybuttonDel.Clicked += new global::System.EventHandler(this.OnYbuttonDelClicked);
 			this.ybuttonSetNomenclature.Clicked += new global::System.EventHandler(this.OnYbuttonSetNomenclatureClicked);

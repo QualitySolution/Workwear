@@ -66,7 +66,7 @@ namespace Workwear.Tools.OverNorms.Models
 			};
 
 			OverNormOperation writeOff = CreateOperationWithBarcodes(newWarehouseOp, operation.Employee, operation.SubstitutedIssueOperation, operation.BarcodeOperations.Select(x => x.Barcode));
-			operation.ReturnFromOperation = writeOff;
+			writeOff.ReturnFromOperation = operation;
 		}
 
 		public override void AddOperation(OverNorm document, OverNormParam param, Warehouse expenseWarehouse) 

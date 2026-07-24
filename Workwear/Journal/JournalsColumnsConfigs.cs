@@ -477,6 +477,21 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<OverNormIssuedJournalViewModel>(
+				() => FluentColumnsConfig<OverNormIssuedJournalNode>.Create()
+					.AddColumn("Дата").AddTextRenderer(node => node.DateText)
+					.AddColumn("Тип").AddTextRenderer(node => node.TypeText)
+					.AddColumn("Табельный").AddTextRenderer(node => node.PersonnelNumber).SearchHighlight()
+					.AddColumn("Сотрудник").Resizable().AddTextRenderer(node => node.EmployeeName).SearchHighlight()
+					.AddColumn("Номенклатура").Resizable().AddTextRenderer(node => node.NomenclatureName).SearchHighlight().WrapWidth(700)
+					.AddColumn("Размер").AddTextRenderer(node => node.WearSize)
+					.AddColumn("Рост").AddTextRenderer(node => node.Height)
+					.AddColumn("Количество").AddTextRenderer(node => node.Amount.ToString())
+					.AddColumn("Износ").AddTextRenderer(node => node.WearPercentText)
+					.AddColumn("Штрихкоды").Resizable().AddTextRenderer(node => node.Barcodes).SearchHighlight()
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<WarehouseJournalViewModel>(
 				() => FluentColumnsConfig<WarehouseJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
