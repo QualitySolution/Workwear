@@ -34,7 +34,8 @@ namespace Workwear
 			DeleteConfig.AddHibernateDeleteInfo<ServiceClaim>()
 				.AddDeleteDependence<StateOperation>(x => x.Claim)
 				.AddDeleteDependence<ProvidedService>(x => x.Claim)
-				.AddClearDependence<PostomatDocumentItem>(x => x.ServiceClaim);
+				.AddClearDependence<PostomatDocumentItem>(x => x.ServiceClaim)
+				.AddClearDependence<ReturnItem>(x => x.ServiceClaim);
 
 			DeleteConfig.AddHibernateDeleteInfo<StateOperation>();
 		
@@ -183,6 +184,7 @@ namespace Workwear
 				.AddDeleteCascadeDependence(x => x.ReturnFromOperation)
 				.AddDeleteDependence<BarcodeOperation>(x => x.OverNormOperation)
 				.AddDeleteDependence<OverNormItem>(x => x.OverNormOperation)
+				.AddDeleteDependence<ReturnItem>(x => x.ReturnFromOverNormOperation)
 				.AddClearDependence<OverNormOperation>(x => x.ReturnFromOperation);
 			#endregion
 			#region Постаматы
