@@ -1,8 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using NSubstitute;
 using NUnit.Framework;
+using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -82,6 +87,61 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			Assert.That(item.Height, Is.SameAs(issuedOperation.Height));
 			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
 			Assert.That(item.CanEditAmount, Is.False);
+		}
+
+		[Test(Description = "Операция возврата с дежурной нормы должна ссылаться на ту же строку нормы, что и операция выдачи")]
+		public void UpdateOperations_ReturnFromDutyNorm_ChildOperationInheritsDutyNormItem()
+		{
+			var protectionTools = new ProtectionTools();
+			var dutyNormItem = new DutyNormItem { ProtectionTools = protectionTools, Amount = 2 };
+			var issuedOperation = new DutyNormIssueOperation {
+				DutyNorm = new DutyNorm(),
+				Nomenclature = new Nomenclature(),
+				ProtectionTools = protectionTools,
+				DutyNormItem = dutyNormItem,
+				Issued = 2
+			};
+			var document = new Return();
+			var item = new ReturnItem(document, issuedOperation, 1);
+			var uow = Substitute.For<IUnitOfWork>();
+
+			item.ReturnFromDutyNormOperation.Update(uow, item);
+
+			Assert.That(item.ReturnFromDutyNormOperation.DutyNormItem, Is.SameAs(dutyNormItem));
+		}
+
+		[Test(Description = "Возврат с дежурной нормы должен уменьшать числящееся и пересчитывать дату следующей выдачи.")]
+		public void UpdateOperations_ReturnFromDutyNorm_DecreasesIssuedAmountAndUpdatesNextIssue()
+		{
+			var dutyNorm = new DutyNorm();
+			var protectionTools = new ProtectionTools();
+			var dutyNormItem = new DutyNormItem { DutyNorm = dutyNorm, ProtectionTools = protectionTools, Amount = 2 };
+			var issuedOperation = new DutyNormIssueOperation {
+				DutyNorm = dutyNorm,
+				Nomenclature = new Nomenclature(),
+				ProtectionTools = protectionTools,
+				DutyNormItem = dutyNormItem,
+				OperationTime = new DateTime(2024, 1, 1),
+				Issued = 2
+			};
+
+			dutyNormItem.Graph = new IssueGraph(new List<IGraphIssueOperation> { issuedOperation });
+			dutyNormItem.UpdateNextIssue();
+			Assert.That(dutyNormItem.Issued(new DateTime(2024, 1, 1)), Is.EqualTo(2));
+			Assert.That(dutyNormItem.NextIssue, Is.Null);
+
+			var document = new Return { Date = new DateTime(2024, 2, 1) };
+			var item = new ReturnItem(document, issuedOperation, 1);
+			var uow = Substitute.For<IUnitOfWork>();
+			item.ReturnFromDutyNormOperation.Update(uow, item);
+
+			dutyNormItem.Graph = new IssueGraph(new List<IGraphIssueOperation> { issuedOperation, item.ReturnFromDutyNormOperation });
+			dutyNormItem.UpdateNextIssue();
+
+			Assert.That(dutyNormItem.Issued(new DateTime(2024, 2, 1)), Is.EqualTo(1),
+				"Числящееся должно уменьшиться на возвращённое количество.");
+			Assert.That(dutyNormItem.NextIssue, Is.EqualTo(new DateTime(2024, 2, 1)),
+				"После возврата выданного недостаточно для нормы - должна появиться дата следующей выдачи.");
 		}
 
 		[Test(Description = "Документ возврата не проходит валидацию, если количество строки не равно количеству возвращаемых штрихкодов.")]
