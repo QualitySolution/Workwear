@@ -82,6 +82,7 @@ namespace Workwear.Tools.OverNorms.Models
 			if (UseBarcodes && param.Amount != param.Barcodes.Count) throw new InvalidOperationException("При использовании штрихкодов заполните их");
 			
 			item.OverNormOperation.LastUpdate = DateTime.Now;
+			item.OverNormOperation.Type = OverNormType.Guest;
 			item.OverNormOperation.Employee = param.Employee;
 			item.OverNormOperation.SubstitutedIssueOperation = RequiresEmployeeIssueOperation ? param.EmployeeIssueOperation : item.OverNormOperation.SubstitutedIssueOperation;
 			item.OverNormOperation.Nomenclature = param.Nomenclature;
