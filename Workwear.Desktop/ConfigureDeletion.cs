@@ -181,11 +181,10 @@ namespace Workwear
 
 			DeleteConfig.AddHibernateDeleteInfo<OverNormOperation>()
 				.AddDeleteCascadeDependence(x => x.WarehouseOperation)
-				.AddDeleteCascadeDependence(x => x.ReturnFromOperation)
 				.AddDeleteDependence<BarcodeOperation>(x => x.OverNormOperation)
 				.AddDeleteDependence<OverNormItem>(x => x.OverNormOperation)
 				.AddDeleteDependence<ReturnItem>(x => x.ReturnFromOverNormOperation)
-				.AddClearDependence<OverNormOperation>(x => x.ReturnFromOperation);
+				.AddDeleteDependence<OverNormOperation>(x => x.ReturnFromOperation);
 			#endregion
 			#region Постаматы
 			DeleteConfig.AddHibernateDeleteInfo<PostomatDocument>()

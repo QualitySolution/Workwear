@@ -22,9 +22,9 @@ namespace Workwear.HibernateMapping.Stock
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
-			References(x => x.WarehouseOperation).Column("operation_warehouse_id").Not.Nullable().Cascade.All();
+			References(x => x.WarehouseOperation).Column("operation_warehouse_id").Not.Nullable();
 			References(x => x.SubstitutedIssueOperation).Column("substituted_issue_operation_id").Nullable();
-            References(x => x.ReturnFromOperation).Column("return_from_operation").Nullable().Cascade.All();
+			References(x => x.ReturnFromOperation).Column("return_from_operation").Nullable();
             
 			HasMany(x => x.BarcodeOperations)
 				.KeyColumn("over_norm_operation_id").Inverse()
