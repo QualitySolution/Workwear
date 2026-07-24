@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
@@ -254,7 +254,7 @@ namespace Workwear.Domain.Operations {
 	        Issued = 0;
 	        Returned = item.Amount;
 	        WarehouseOperation = item.WarehouseOperation;
-	        DutyNormItem = null;
+	        DutyNormItem = item.IssuedDutyNormOnOperation?.DutyNormItem;
 	        ExpiryByNorm = null;
 	        AutoWriteoffDate = null;
 	        WearSize = item.WearSize;
