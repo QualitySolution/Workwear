@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 
@@ -26,6 +27,13 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			Assert.That(
 				item.ReturnFromOverNormOperation.BarcodeOperations.Single().Barcode,
 				Is.SameAs(selectedBarcode));
+			Assert.That(
+				item.ReturnFromOverNormOperation.BarcodeOperations.Single().WarehouseOperation,
+				Is.SameAs(item.WarehouseOperation));
+			Assert.That(item.WearSize, Is.SameAs(issuedOperation.WearSize));
+			Assert.That(item.Height, Is.SameAs(issuedOperation.Height));
+			Assert.That(item.WarehouseOperation.WearSize, Is.SameAs(issuedOperation.WearSize));
+			Assert.That(item.WarehouseOperation.Height, Is.SameAs(issuedOperation.Height));
 			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
 			Assert.That(item.CanEditAmount, Is.False);
 		}
@@ -44,6 +52,11 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			Assert.That(
 				item.ReturnFromEmployeeOperation.BarcodeOperations.Single().Barcode,
 				Is.SameAs(selectedBarcode));
+			Assert.That(
+				item.ReturnFromEmployeeOperation.BarcodeOperations.Single().WarehouseOperation,
+				Is.SameAs(item.WarehouseOperation));
+			Assert.That(item.WearSize, Is.SameAs(issuedOperation.WearSize));
+			Assert.That(item.Height, Is.SameAs(issuedOperation.Height));
 			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
 			Assert.That(item.CanEditAmount, Is.False);
 		}
@@ -62,6 +75,11 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			Assert.That(
 				item.ReturnFromDutyNormOperation.BarcodeOperations.Single().Barcode,
 				Is.SameAs(selectedBarcode));
+			Assert.That(
+				item.ReturnFromDutyNormOperation.BarcodeOperations.Single().WarehouseOperation,
+				Is.SameAs(item.WarehouseOperation));
+			Assert.That(item.WearSize, Is.SameAs(issuedOperation.WearSize));
+			Assert.That(item.Height, Is.SameAs(issuedOperation.Height));
 			Assert.That(item.BarcodesString, Is.EqualTo(selectedBarcode.Title));
 			Assert.That(item.CanEditAmount, Is.False);
 		}
@@ -117,13 +135,18 @@ namespace Workwear.Test.Domain.Stock.Documents {
 
 		private static OverNormOperation CreateOverNormOperation(params Barcode[] barcodes)
 		{
+			var nomenclature = new Nomenclature { Name = "Куртка" };
+			var size = new Size { Name = "52" };
+			var height = new Size { Name = "182" };
 			var operation = new OverNormOperation {
 				Employee = new EmployeeCard(),
-				Nomenclature = new Nomenclature { Name = "Куртка" },
+				Nomenclature = nomenclature,
+				WearSize = size,
+				Height = height,
 				WarehouseOperation = new WarehouseOperation {
 					ExpenseWarehouse = new Warehouse(),
 					Amount = barcodes.Length,
-					StockPosition = new StockPosition(new Nomenclature(), 0, null, null, null)
+					StockPosition = new StockPosition(nomenclature, 0, size, height, null)
 				}
 			};
 
@@ -145,6 +168,8 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				Employee = new EmployeeCard(),
 				Nomenclature = new Nomenclature(),
 				ProtectionTools = new ProtectionTools(),
+				WearSize = new Size { Name = "52" },
+				Height = new Size { Name = "182" },
 				Issued = barcodes.Length
 			};
 
@@ -166,6 +191,8 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				DutyNorm = new DutyNorm(),
 				Nomenclature = new Nomenclature(),
 				ProtectionTools = new ProtectionTools(),
+				WearSize = new Size { Name = "52" },
+				Height = new Size { Name = "182" },
 				Issued = barcodes.Length
 			};
 

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Tools.OverNorms;
@@ -43,6 +44,20 @@ namespace Workwear.Test.Models.OverNorms {
 		}
 
 		[TestCaseSource(nameof(ModelCases))]
+		public void CreateDocument_FillsWarehouseAndOverNormOperationStockPosition(
+			OverNormType expectedType,
+			Func<IUnitOfWork, OverNormModelBase> createModel)
+		{
+			var model = createModel(Substitute.For<IUnitOfWork>());
+			var param = CreateParam(expectedType);
+
+			var document = model.CreateDocument(new[] { param }, new Warehouse());
+			var operation = document.Items.Single().OverNormOperation;
+
+			AssertOperationStockPosition(operation, param);
+		}
+
+		[TestCaseSource(nameof(ModelCases))]
 		public void AddOperation_SetsOperationType(OverNormType expectedType, Func<IUnitOfWork, OverNormModelBase> createModel) {
 			var model = createModel(Substitute.For<IUnitOfWork>());
 			var document = new OverNorm { Warehouse = new Warehouse() };
@@ -67,11 +82,36 @@ namespace Workwear.Test.Models.OverNorms {
 			Assert.That(operation.Type, Is.EqualTo(expectedType));
 		}
 
+		[TestCaseSource(nameof(ModelCases))]
+		public void UpdateOperation_FillsWarehouseAndOverNormOperationStockPosition(
+			OverNormType expectedType,
+			Func<IUnitOfWork, OverNormModelBase> createModel)
+		{
+			var model = createModel(Substitute.For<IUnitOfWork>());
+			var document = new OverNorm { Warehouse = new Warehouse() };
+			var operation = new OverNormOperation {
+				Type = expectedType,
+				Employee = new EmployeeCard()
+			};
+			var item = document.AddItem(operation);
+			var param = CreateParam(expectedType);
+
+			model.UpdateOperation(item, param);
+
+			AssertOperationStockPosition(operation, param);
+		}
+
 		private static OverNormParam CreateParam(OverNormType type) {
 			var employee = new EmployeeCard();
 			var itemType = new ItemsType();
 			var nomenclature = new Nomenclature { Type = itemType };
-			var barcode = new Barcode { Nomenclature = nomenclature };
+			var size = new Size { Id = 10, Name = "52" };
+			var height = new Size { Id = 11, Name = "182" };
+			var barcode = new Barcode {
+				Nomenclature = nomenclature,
+				Size = size,
+				Height = height
+			};
 			var employeeIssueOperation = type == OverNormType.Substitute
 				? new EmployeeIssueOperation {
 					Employee = employee,
@@ -83,8 +123,23 @@ namespace Workwear.Test.Models.OverNorms {
 				employee,
 				nomenclature,
 				1,
+				size,
+				height,
 				employeeIssueOperation: employeeIssueOperation,
-				barcodes: new List<Barcode> { barcode });
+				barcodes: new List<Barcode> { barcode },
+				wearPercent: 0.3m);
+		}
+
+		private static void AssertOperationStockPosition(OverNormOperation operation, OverNormParam param)
+		{
+			Assert.That(operation.Nomenclature, Is.SameAs(param.Nomenclature));
+			Assert.That(operation.WearSize, Is.SameAs(param.Size));
+			Assert.That(operation.Height, Is.SameAs(param.Height));
+			Assert.That(operation.WearPercent, Is.EqualTo(param.WearPercent));
+			Assert.That(operation.WarehouseOperation.Nomenclature, Is.SameAs(param.Nomenclature));
+			Assert.That(operation.WarehouseOperation.WearSize, Is.SameAs(param.Size));
+			Assert.That(operation.WarehouseOperation.Height, Is.SameAs(param.Height));
+			Assert.That(operation.WarehouseOperation.WearPercent, Is.EqualTo(param.WearPercent));
 		}
 	}
 }

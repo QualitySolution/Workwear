@@ -294,7 +294,7 @@ namespace Workwear.Domain.Stock.Documents {
 				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
-			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromEmployeeOperation.BarcodeOperations, barcodes,
+			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromEmployeeOperation.BarcodeOperations, warehouseOperation, barcodes,
 				x => x.EmployeeIssueOperation = returnFromEmployeeOperation);
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
@@ -316,7 +316,7 @@ namespace Workwear.Domain.Stock.Documents {
 				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
-			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromDutyNormOperation.BarcodeOperations, barcodes,
+			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromDutyNormOperation.BarcodeOperations, warehouseOperation, barcodes,
 				x => x.DutyNormIssueOperation = returnFromDutyNormOperation);
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
@@ -344,7 +344,7 @@ namespace Workwear.Domain.Stock.Documents {
 				}
 			};
 			warehouseOperation = returnFromOverNormOperation.WarehouseOperation;
-			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromOverNormOperation.BarcodeOperations, returningBarcodes,
+			CopyBarcodeOperations(issueOperation.BarcodeOperations, returnFromOverNormOperation.BarcodeOperations, warehouseOperation, returningBarcodes,
 				x => x.OverNormOperation = returnFromOverNormOperation);
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
@@ -356,12 +356,14 @@ namespace Workwear.Domain.Stock.Documents {
 		private void CopyBarcodeOperations(
 			IEnumerable<BarcodeOperation> sourceOperations,
 			ICollection<BarcodeOperation> targetOperations,
+			WarehouseOperation warehouseOperation,
 			IEnumerable<Barcode> barcodes,
 			Action<BarcodeOperation> configureOperation)
 		{
 			foreach(var sourceOperation in FilterBarcodeOperations(sourceOperations, barcodes)) {
 				var newBarcodeOperation = new BarcodeOperation {
 					Barcode = sourceOperation.Barcode,
+					WarehouseOperation = warehouseOperation,
 					KitNumber = sourceOperation.KitNumber
 				};
 				configureOperation(newBarcodeOperation);

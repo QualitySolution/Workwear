@@ -86,6 +86,9 @@ namespace Workwear.Tools.OverNorms.Models
 			item.OverNormOperation.Employee = param.Employee;
 			item.OverNormOperation.SubstitutedIssueOperation = RequiresEmployeeIssueOperation ? param.EmployeeIssueOperation : item.OverNormOperation.SubstitutedIssueOperation;
 			item.OverNormOperation.Nomenclature = param.Nomenclature;
+			item.OverNormOperation.WearSize = param.Size;
+			item.OverNormOperation.Height = param.Height;
+			item.OverNormOperation.WearPercent = param.WearPercent;
 			
 			if(param.Amount > 0 && item.OverNormOperation.WarehouseOperation == null) 
 				item.OverNormOperation.WarehouseOperation = new WarehouseOperation() { ExpenseWarehouse = item.Document.Warehouse };
@@ -123,6 +126,9 @@ namespace Workwear.Tools.OverNorms.Models
 				Type = OverNormType.Guest,
 				Employee = employee,
 				Nomenclature = newWarehouseOp.Nomenclature,
+				WearSize = newWarehouseOp.WearSize,
+				Height = newWarehouseOp.Height,
+				WearPercent = newWarehouseOp.WearPercent,
 			};
 			
 			AddBarcodeOperations(newOverNormOp, barcodes);

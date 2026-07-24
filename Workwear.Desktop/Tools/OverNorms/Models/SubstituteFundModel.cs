@@ -125,6 +125,9 @@ namespace Workwear.Tools.OverNorms.Models
 				Type = OverNormType.Substitute,
 				Employee = employee,
 				Nomenclature = newWarehouseOp.Nomenclature,
+				WearSize = newWarehouseOp.WearSize,
+				Height = newWarehouseOp.Height,
+				WearPercent = newWarehouseOp.WearPercent,
 			};
 
 			AddBarcodeOperations(newOverNormOp, barcodes);
