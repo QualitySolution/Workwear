@@ -84,6 +84,26 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				x.ErrorMessage.Contains("количество должно быть равно количеству выбранных штрихкодов")));
 		}
 
+		[Test(Description = "Документ возврата выдачи вне нормы не проверяется как строка числящегося за сотрудником.")]
+		public void Validate_OverNormReturnWithEmployee_DoesNotReturnEmployeeBalanceValidationError()
+		{
+			var barcode = new Barcode { Title = "100001" };
+			var issuedOperation = CreateOverNormOperation(barcode);
+			var document = new Return {
+				Warehouse = new Warehouse()
+			};
+			var item = new ReturnItem(document, issuedOperation, 1, barcodes: new[] { barcode }) {
+				Nomenclature = issuedOperation.Nomenclature,
+				MaxAmount = 1
+			};
+			document.Items.Add(item);
+
+			var errors = document.Validate(new ValidationContext(document)).ToList();
+
+			Assert.That(errors, Has.None.Matches<ValidationResult>(x =>
+				x.ErrorMessage.Contains("не из числящегося за данным сотрудником")));
+		}
+
 		[Test(Description = "Для строки возврата без штрихкодов количество можно редактировать.")]
 		public void CanEditAmount_ReturnItemWithoutBarcodes_ReturnTrue()
 		{
@@ -99,7 +119,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 		{
 			var operation = new OverNormOperation {
 				Employee = new EmployeeCard(),
-				Nomenclature = new Nomenclature(),
+				Nomenclature = new Nomenclature { Name = "Куртка" },
 				WarehouseOperation = new WarehouseOperation {
 					ExpenseWarehouse = new Warehouse(),
 					Amount = barcodes.Length,

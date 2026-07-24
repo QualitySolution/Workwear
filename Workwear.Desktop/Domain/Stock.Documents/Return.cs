@@ -60,7 +60,7 @@ namespace Workwear.Domain.Stock.Documents
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.",
 					new[] { this.GetPropertyName (o => o.Items)});
 			foreach(var item in items) {
-				if(item.EmployeeCard == null) continue;
+				if(item.ReturnFrom != ReturnFrom.Employee || item.EmployeeCard == null) continue;
 				if(item.IssuedEmployeeOnOperation == null ||
 				   !DomainHelper.EqualDomainObjects(item.IssuedEmployeeOnOperation.Employee, item.EmployeeCard))
 					yield return new ValidationResult(
@@ -171,10 +171,11 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow) {
 			foreach(var item in items) {
-				if(item.EmployeeCard!=null && item.DutyNorm==null) {
+				if(item.ReturnFrom == ReturnFrom.Employee && item.EmployeeCard != null) {
 					item.EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
 					item.EmployeeCard.UpdateNextIssue(Items.Where(i =>
-							DomainHelper.EqualDomainObjects(i.EmployeeCard, item.EmployeeCard))
+							i.ReturnFrom == ReturnFrom.Employee
+							&& DomainHelper.EqualDomainObjects(i.EmployeeCard, item.EmployeeCard))
 						.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 						.Where(x => x != null).Distinct().ToArray());
 				}
