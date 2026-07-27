@@ -4,6 +4,7 @@ using System.Linq;
 using NHibernate;
 using NHibernate.Criterion;
 using QS.DomainModel.UoW;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
@@ -77,6 +78,59 @@ namespace Workwear.Repository.Regulations {
 				.List();
 		}
 		
+		/// <summary>
+		/// Ищем действующие операции выдачи, на которые ссылаются заявки на обслуживание.
+		/// </summary>
+		public virtual Dictionary<int, DutyNormIssueOperation> GetActualIssuedOperations(IEnumerable<ServiceClaim> claims, IUnitOfWork uow = null) {
+			var claimsList = claims.Where(c => c.Barcode != null).ToList();
+			var barcodeIds = claimsList.Select(c => c.Barcode.Id).Distinct().ToArray();
+			if(!barcodeIds.Any())
+				return new Dictionary<int, DutyNormIssueOperation>();
+
+			DutyNormIssueOperation issueAlias = null;
+			BarcodeOperation issuedBarcodeAlias = null;
+
+			var operations = (uow ?? RepoUoW).Session.QueryOver(() => issueAlias)
+				.JoinAlias(() => issueAlias.BarcodeOperations, () => issuedBarcodeAlias)
+				.WhereRestrictionOn(() => issuedBarcodeAlias.Barcode.Id).IsIn(barcodeIds)
+				.Where(() => issueAlias.Issued > 0)
+				.Fetch(SelectMode.Fetch, x => x.DutyNorm)
+				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.WearSize)
+				.Fetch(SelectMode.Fetch, x => x.Height)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
+				.OrderBy(() => issueAlias.OperationTime).Desc
+				.List()
+				.Distinct()
+				.ToList();
+
+			DutyNormIssueOperation resultIssueAlias = null;
+			BarcodeOperation resultBarcodeAlias = null;
+			var resultPairs = new HashSet<(int OperationId, int BarcodeId)>(
+				(uow ?? RepoUoW).Session.QueryOver(() => resultBarcodeAlias)
+					.JoinAlias(() => resultBarcodeAlias.DutyNormIssueOperation, () => resultIssueAlias)
+					.WhereRestrictionOn(() => resultBarcodeAlias.Barcode.Id).IsIn(barcodeIds)
+					.Where(() => resultIssueAlias.IssuedOperation != null)
+					.Fetch(SelectMode.Fetch, x => x.Barcode)
+					.Fetch(SelectMode.Fetch, x => x.DutyNormIssueOperation.IssuedOperation)
+					.List()
+					.Select(bo => (bo.DutyNormIssueOperation.IssuedOperation.Id, bo.Barcode.Id)));
+
+			var result = new Dictionary<int, DutyNormIssueOperation>();
+			foreach(var claim in claimsList) {
+				var operation = operations
+					.Where(op => op.BarcodeOperations.Any(bo => bo.Barcode.Id == claim.Barcode.Id))
+					.Where(op => !resultPairs.Contains((op.Id, claim.Barcode.Id)))
+					.OrderByDescending(op => op.OperationTime)
+					.FirstOrDefault();
+				if(operation != null)
+					result[claim.Id] = operation;
+			}
+			return result;
+		}
+
 		/// <summary>
 		/// Получаем все строки норм по фильтрам
 		/// </summary>

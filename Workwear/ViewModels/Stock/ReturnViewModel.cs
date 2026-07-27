@@ -57,6 +57,7 @@ namespace Workwear.ViewModels.Stock {
 			IInteractiveService interactiveService,
 			DutyNormRepository dutyNormRepository,
 			OverNormOperationRepository overNormOperationRepository,
+			EmployeeIssueRepository employeeIssueRepository,
 			BarcodeOperationRepository barcodeOperationRepository,
 			ICurrentPermissionService permissionService,
 			IValidator validator = null,
@@ -71,6 +72,7 @@ namespace Workwear.ViewModels.Stock {
 			this.interactiveService = interactiveService;
 			this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
 			this.overNormOperationRepository = overNormOperationRepository ?? throw new ArgumentNullException(nameof(overNormOperationRepository));
+			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.barcodeOperationRepository = barcodeOperationRepository ?? throw new ArgumentNullException(nameof(barcodeOperationRepository));
 			DutyNorm = UoW.GetInSession(dutyNorm);
 			featuresService = autofacScope.Resolve<FeaturesService>();
@@ -136,6 +138,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly IInteractiveService interactiveService;
 		private readonly DutyNormRepository dutyNormRepository;
 		private readonly OverNormOperationRepository overNormOperationRepository;
+		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly BarcodeOperationRepository barcodeOperationRepository;
 		
 		private List<Owner> owners = new List<Owner>();
@@ -164,14 +167,13 @@ namespace Workwear.ViewModels.Stock {
 		public virtual bool CanAddEmployee => CanEdit;
 		public virtual bool CanAddDutyNorms => CanEdit;
 		public virtual bool CanAddOverNorm => CanEdit && featuresService.Available(WorkwearFeature.OverNorm);
-		public virtual bool CanAddClaim => CanEdit && CanAddOverNorm;
+		public virtual bool CanAddClaim => CanEdit;
 		public virtual bool CanRemoveItem => CanEdit && SelectedItem != null;
 		public virtual bool CanSetNomenclature => CanEdit && SelectedItem != null;
-		public virtual bool CanEditItems => CanEdit && EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
 		public virtual bool BarcodesVisible => featuresService.Available(WorkwearFeature.Barcodes);
-		public virtual bool ClaimVisible => featuresService.Available(WorkwearFeature.ClothingService) && CanAddOverNorm;
+		public virtual bool ClaimVisible => featuresService.Available(WorkwearFeature.ClothingService);
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
@@ -276,19 +278,31 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch, () => barcodeAlias.Size)
 				.Fetch(SelectMode.Fetch,() => barcodeAlias.Height)
 				.List();
+
+			var overNormOperations = overNormOperationRepository.GetActualIssuedOperations(claims, UoW);
+			var employeeOperations = employeeIssueRepository.GetActualIssuedOperations(claims, UoW);
+			var dutyNormOperations = dutyNormRepository.GetActualIssuedOperations(claims, UoW);
+
 			var notAddedClaims = new List<int>();
-			foreach(var claim  in claims) {
-				var issuedOperation = overNormOperationRepository.GetActualIssuedOperation(claim, UoW);
-				if(issuedOperation == null) {
-					notAddedClaims.Add(claim.Id);
+			foreach(var claim in claims) {
+				if(overNormOperations.TryGetValue(claim.Id, out var overNormOperation)) {
+					Entity.AddItem(overNormOperation, 1, claim, new[] { claim.Barcode });
 					continue;
 				}
-				Entity.AddItem(issuedOperation, 1, claim, new[] { claim.Barcode });
+				if(employeeOperations.TryGetValue(claim.Id, out var employeeOperation)) {
+					Entity.AddItem(employeeOperation, 1, barcodes:new[] { claim.Barcode }, claim:claim);
+					continue;
+				}
+				if(dutyNormOperations.TryGetValue(claim.Id, out var dutyNormOperation)) {
+					Entity.AddItem(dutyNormOperation, 1, claim, new[] { claim.Barcode });
+					continue;
+				}
+				notAddedClaims.Add(claim.Id);
 			}
 			if(notAddedClaims.Any())
 				interactiveService.ShowMessage(
 					ImportanceLevel.Warning,
-					$"Заявки №{String.Join(", ", notAddedClaims)} не добавлены. Для их штрихкодов не найдена действующая выдача сверх нормы.");
+					$"Заявки №{String.Join(", ", notAddedClaims)} не добавлены. Для их штрихкодов не найдена действующая выдача.");
 			CalculateTotal();
 		}
 
@@ -359,7 +373,7 @@ namespace Workwear.ViewModels.Stock {
 			var barcodes = availableBarcodeIds.Count == 1
 				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
 				: null;
-			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes);
+			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes: barcodes);
 		}
 
 		private void AddDutyNormOperation(DutyNormIssueOperation operation, int amount) {
@@ -372,7 +386,7 @@ namespace Workwear.ViewModels.Stock {
 			var barcodes = availableBarcodeIds.Count == 1
 				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
 				: null;
-			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes);
+			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes: barcodes);
 		}
 
 		private void OpenBarcodeSelector<T>(T operation, IList<int> availableBarcodeIds, EventHandler<JournalSelectedEventArgs> selectHandler) {
@@ -395,7 +409,7 @@ namespace Workwear.ViewModels.Stock {
 			var operation = (EmployeeIssueOperation)page.Tag;
 			var barcodes = GetSelectedBarcodes(e);
 
-			Entity.AddItem(operation, barcodes.Count, barcodes);
+			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
 			CalculateTotal();
 		}
 
@@ -404,7 +418,7 @@ namespace Workwear.ViewModels.Stock {
 			var operation = (DutyNormIssueOperation)page.Tag;
 			var barcodes = GetSelectedBarcodes(e);
 
-			Entity.AddItem(operation, barcodes.Count, barcodes);
+			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
 			CalculateTotal();
 		}
 

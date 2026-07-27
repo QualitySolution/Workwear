@@ -281,8 +281,9 @@ namespace Workwear.Domain.Stock.Documents {
 		#region Конструкторы
 
 		protected ReturnItem () { }
-		public ReturnItem(Return Return, EmployeeIssueOperation issueOperation, int amount, IEnumerable<Barcode> barcodes = null) {
+		public ReturnItem(Return Return, EmployeeIssueOperation issueOperation, int amount, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
 			document = Return;
+			serviceClaim = claim;
 			returnFromEmployeeOperation = new EmployeeIssueOperation{
 				Employee = issueOperation.Employee,
 				ProtectionTools = issueOperation.ProtectionTools,
@@ -302,8 +303,9 @@ namespace Workwear.Domain.Stock.Documents {
 			employeeCard = issueOperation.Employee;
 			this.amount = amount;
 		}
-		public ReturnItem(Return Return, DutyNormIssueOperation issueOperation, int amount, IEnumerable<Barcode> barcodes = null) {
+		public ReturnItem(Return Return, DutyNormIssueOperation issueOperation, int amount, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
 			document = Return;
+			serviceClaim = claim;
 			dutyNorm = issueOperation.DutyNorm;
 			returnFromDutyNormOperation = new DutyNormIssueOperation {
 				DutyNorm = issueOperation.DutyNorm,

@@ -117,7 +117,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#region Строки документа
-		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count, IEnumerable<Barcode> barcodes = null) {
+		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count, IEnumerable<Barcode> barcodes = null, ServiceClaim claim = null) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
@@ -126,12 +126,12 @@ namespace Workwear.Domain.Stock.Documents
 				return null;
 			}
 
-			var newItem = new ReturnItem(this, issuedOperation, count, barcodes);
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodes);
 
 			Items.Add(newItem);
 			return newItem;
 		}
-		public virtual ReturnItem AddItem(DutyNormIssueOperation issuedOperation, int count, IEnumerable<Barcode> barcodes = null) {
+		public virtual ReturnItem AddItem(DutyNormIssueOperation issuedOperation, int count, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
@@ -139,7 +139,7 @@ namespace Workwear.Domain.Stock.Documents
 				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
 				return null;
 			}
-			var newItem = new ReturnItem(this, issuedOperation, count, barcodes);
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodes);
 
 			Items.Add(newItem);
 			return newItem;

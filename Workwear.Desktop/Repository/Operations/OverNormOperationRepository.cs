@@ -112,7 +112,15 @@ namespace Workwear.Repository.Operations {
 				.ToDictionary(x => x.Key, x => x.Sum(o => o.WarehouseOperation.Amount));
 		}
 
-		public virtual OverNormOperation GetActualIssuedOperation(ServiceClaim claim, IUnitOfWork uow = null) {
+		/// <summary>
+		/// Ищем действующие операции выдачи вне нормы, на которые ссылаются заявки на обслуживание.
+		/// </summary>
+		public virtual Dictionary<int, OverNormOperation> GetActualIssuedOperations(IEnumerable<ServiceClaim> claims, IUnitOfWork uow = null) {
+			var claimsList = claims.Where(c => c.Barcode != null).ToList();
+			var barcodeIds = claimsList.Select(c => c.Barcode.Id).Distinct().ToArray();
+			if(!barcodeIds.Any())
+				return new Dictionary<int, OverNormOperation>();
+
 			OverNormOperation overNormOperationAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
 			BarcodeOperation barcodeOperationAlias = null;
@@ -120,7 +128,7 @@ namespace Workwear.Repository.Operations {
 			var operations = (uow ?? RepoUow).Session.QueryOver(() => overNormOperationAlias)
 				.JoinAlias(() => overNormOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
 				.JoinAlias(() => overNormOperationAlias.BarcodeOperations, () => barcodeOperationAlias)
-				.Where(() => barcodeOperationAlias.Barcode.Id == claim.Barcode.Id)
+				.WhereRestrictionOn(() => barcodeOperationAlias.Barcode.Id).IsIn(barcodeIds)
 				.Where(() => warehouseOperationAlias.ExpenseWarehouse != null)
 				.Where(() => overNormOperationAlias.ReturnFromOperation == null)
 				.Fetch(SelectMode.Fetch, x => x.Employee)
@@ -128,15 +136,30 @@ namespace Workwear.Repository.Operations {
 				.Fetch(SelectMode.Fetch, x => x.WearSize)
 				.Fetch(SelectMode.Fetch, x => x.Height)
 				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
 				.OrderBy(() => overNormOperationAlias.OperationTime).Desc
-				.List();
+				.List()
+				.Distinct()
+				.ToList();
 
-			return operations.FirstOrDefault(x => !HasReturnOperation(x, uow));
+			var operationIds = operations.Select(x => x.Id).ToArray();
+			OverNormOperation resultAlias = null;
+			var returnedFromIds = new HashSet<int>((uow ?? RepoUow).Session.QueryOver(() => resultAlias)
+				.WhereRestrictionOn(() => resultAlias.ReturnFromOperation.Id).IsIn(operationIds)
+				.Select(Projections.Property(() => resultAlias.ReturnFromOperation.Id))
+				.List<int>());
+
+			var result = new Dictionary<int, OverNormOperation>();
+			foreach(var claim in claimsList) {
+				var operation = operations
+					.Where(op => op.BarcodeOperations.Any(bo => bo.Barcode.Id == claim.Barcode.Id))
+					.Where(op => !returnedFromIds.Contains(op.Id))
+					.OrderByDescending(op => op.OperationTime)
+					.FirstOrDefault();
+				if(operation != null)
+					result[claim.Id] = operation;
+			}
+			return result;
 		}
-
-		public virtual bool HasReturnOperation(OverNormOperation operation, IUnitOfWork uow = null) =>
-			(uow ?? RepoUow).Session.QueryOver<OverNormOperation>()
-				.Where(x => x.ReturnFromOperation.Id == operation.Id)
-				.RowCount() > 0;
 	}
 }
