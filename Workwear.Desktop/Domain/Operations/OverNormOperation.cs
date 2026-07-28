@@ -118,7 +118,14 @@ namespace Workwear.Domain.Operations {
 			get => barcodeOperations;
 			set => SetField(ref barcodeOperations, value);
 		}
-		
+
+		private string comment;
+		[Display(Name = "Комментарий")]
+		public virtual string Comment {
+			get => comment;
+			set => SetField(ref comment, value);
+		}
+
 		#endregion
 
 		#region Not Mapped Propertis
