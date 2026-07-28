@@ -120,6 +120,10 @@ namespace Workwear.Views.Stock
 				.Tag(BarcodesColumn)
 				.Visible(ViewModel.OverNormModel.CanUseWithBarcodes)
 				.AddReadOnlyTextRenderer(x =>  string.Join("\n", x.Barcodes.Select(b => b.Title)))
+			.AddColumn("Комментарий")
+				.Resizable()
+				.AddTextRenderer(x => x.Comment)
+				.Editable(ViewModel.CanEdit)
 				.Finish();
 			
 			ytreeItems.ItemsDataSource = Entity.Items;

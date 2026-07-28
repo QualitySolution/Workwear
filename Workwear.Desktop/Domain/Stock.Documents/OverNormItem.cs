@@ -47,7 +47,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#endregion
-		
+
 		#region Not Mapped Propertis
 		public virtual EmployeeCard Employee => OverNormOperation.Employee;
 
@@ -68,6 +68,16 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		public virtual int MaxAmount { get; set; } = int.MaxValue;
+
+		public virtual string Comment {
+			get => OverNormOperation?.Comment;
+			set {
+				if(OverNormOperation == null || OverNormOperation.Comment == value)
+					return;
+				OverNormOperation.Comment = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public virtual bool CanEditAmount =>
 			OverNormOperation?.WarehouseOperation != null

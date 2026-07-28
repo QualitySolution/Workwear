@@ -2175,6 +2175,7 @@ create table if not exists `operation_over_norm`
 	`operation_warehouse_id`          int unsigned                           not null,
 	`substituted_issue_operation_id`  int unsigned                           null     default null,
 	`return_from_operation`           int unsigned                           null     default null,
+	`comment`                         text                                   null,
 	constraint `FK_over_norm_substituted_issued`
 		foreign key (`substituted_issue_operation_id`) references `operation_issued_by_employee` (`id`)
 			on update cascade

@@ -17,6 +17,7 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.OperationTime).Column("operation_time").Not.Nullable();
 			Map(x => x.LastUpdate).Column("last_update").Not.Nullable();
 			Map(x => x.Type).Column("type").Not.Nullable();
+			Map(x => x.Comment).Column("comment").Nullable();
 
 			References(x => x.Employee).Column("employee_id").Not.Nullable();
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
