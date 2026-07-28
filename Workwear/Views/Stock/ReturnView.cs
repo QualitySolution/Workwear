@@ -54,6 +54,10 @@ namespace Workwear.Views.Stock {
 			ybuttonAddClaim.Binding.AddSource(ViewModel)
 				.AddBinding(vm=>vm.ClaimVisible,w=>w.Visible)
 				.AddBinding(vm=>vm.CanAddClaim, w=>w.Sensitive).InitializeFromSource();
+			buttonAddScan.Binding.AddSource(ViewModel)
+				.AddBinding(vm=>vm.ClaimVisible,w=>w.Visible)
+				.AddBinding(vm=>vm.CanAddClaim, w=>w.Sensitive).InitializeFromSource();
+			buttonAddScan.Clicked += (sender, args) => ViewModel.AddFromScan();
 		}
 		
 		private void ConfigureItems() {

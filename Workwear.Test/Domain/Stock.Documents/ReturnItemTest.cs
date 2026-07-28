@@ -51,7 +51,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			var issuedOperation = CreateEmployeeIssueOperation(selectedBarcode, otherBarcode);
 			var document = new Return();
 
-			var item = new ReturnItem(document, issuedOperation, 1, new[] { selectedBarcode });
+			var item = new ReturnItem(document, issuedOperation, 1, barcodes: new[] { selectedBarcode });
 
 			Assert.That(item.ReturnFromEmployeeOperation.BarcodeOperations, Has.Count.EqualTo(1));
 			Assert.That(
@@ -74,7 +74,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			var issuedOperation = CreateDutyNormIssueOperation(selectedBarcode, otherBarcode);
 			var document = new Return();
 
-			var item = new ReturnItem(document, issuedOperation, 1, new[] { selectedBarcode });
+			var item = new ReturnItem(document, issuedOperation, 1, barcodes: new[] { selectedBarcode });
 
 			Assert.That(item.ReturnFromDutyNormOperation.BarcodeOperations, Has.Count.EqualTo(1));
 			Assert.That(
@@ -150,7 +150,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			var selectedBarcode = new Barcode { Title = "100001" };
 			var issuedOperation = CreateEmployeeIssueOperation(selectedBarcode);
 			var document = new Return();
-			var item = new ReturnItem(document, issuedOperation, 1, new[] { selectedBarcode }) {
+			var item = new ReturnItem(document, issuedOperation, 1, barcodes: new[] { selectedBarcode }) {
 				Nomenclature = new Nomenclature()
 			};
 			item.Amount = 2;

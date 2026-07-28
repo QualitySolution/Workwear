@@ -28,6 +28,7 @@ namespace Workwear.ViewModels.ClothingService {
 		private readonly Dictionary<string, (string title, Action<object> action)> actionBarcodes;
 		private readonly PostomatDocumentViewModel postomatDocVM;
 		private readonly OverNormViewModel overNormDocVM;
+		private readonly ReturnViewModel returnDocVM;
 		private readonly OverNormItem overNormItem;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 		
@@ -40,15 +41,17 @@ namespace Workwear.ViewModels.ClothingService {
 			string UoWTitle = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			PostomatDocumentViewModel postomatDocVm = null,
-			OverNormViewModel overNormDocVm = null) 
+			OverNormViewModel overNormDocVm = null,
+			ReturnViewModel returnDocVm = null)
 			: base(unitOfWorkFactory, navigation, validator, UoWTitle, unitOfWorkProvider)
 		{
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			barcodeInfoViewModel.ActionBarcodes = SetActionBarcodes();
-			
+
 			this.postomatDocVM = postomatDocVm;
 			this.overNormDocVM = overNormDocVm;
+			this.returnDocVM = returnDocVm;
 			overNormItem = overNormDocVm?.SelectedItem;
 			_ = UoW; //Дёргаем, чтобы заполнился провайдер
 			Title = "Добавить в документ";
@@ -73,7 +76,9 @@ namespace Workwear.ViewModels.ClothingService {
 		public virtual IEnumerable<ServiceClaim> Claims =>
 			Items.OfType<AddMarkServiceClaimNode>().Where(x => x.Add).Select(x => x.Claim);
 		public virtual IEnumerable<ServiceClaim> InDocClaims =>
-			postomatDocVM?.Entity.Items.Select(x => x.ServiceClaim).ToList() ?? Enumerable.Empty<ServiceClaim>();
+			postomatDocVM?.Entity.Items.Select(x => x.ServiceClaim).ToList()
+			?? returnDocVM?.Entity.Items.Where(x => x.ServiceClaim != null).Select(x => x.ServiceClaim).ToList()
+			?? Enumerable.Empty<ServiceClaim>();
 		public virtual IEnumerable<Barcode> ScannedBarcodes =>
 			Items.OfType<AddMarkBarcodeNode>().Where(x => x.Add).Select(x => x.Barcode);
 		public virtual bool AutoAdd { get; set; } = true;
@@ -83,7 +88,7 @@ namespace Workwear.ViewModels.ClothingService {
 					return BarcodeInfoViewModel.Barcode != null
 					       && string.IsNullOrEmpty(BarcodeInfoViewModel.LabelInfo)
 					       && !Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == BarcodeInfoViewModel.Barcode.Id);
-				if(postomatDocVM != null)
+				if(postomatDocVM != null || returnDocVM != null)
 					return ActiveClaim != null
 					       && !Claims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim))
 					       && !InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim));
@@ -125,11 +130,11 @@ namespace Workwear.ViewModels.ClothingService {
 				return;
 			}
 
-			if(overNormDocVM != null) {
+			if(postomatDocVM != null || returnDocVM != null) {
 				ActiveClaim = barcodeRepository.GetActiveServiceClaimFor(barcode);
 				if(ActiveClaim == null)
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда не была принята в стирку.";
-				
+
 				else if(!Claims.Contains(ActiveClaim) && InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim)))
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда уже добавлена.";
 				else if(AutoAdd) {
@@ -140,6 +145,7 @@ namespace Workwear.ViewModels.ClothingService {
 
 		public void Accept() {
 			postomatDocVM?.AddItems(Claims);
+			returnDocVM?.AddItems(Claims);
 			foreach(var barcode in ScannedBarcodes.ToList())
 				overNormDocVM?.AddBarcode(overNormItem, barcode);
 			Close(false, CloseSource.Save);

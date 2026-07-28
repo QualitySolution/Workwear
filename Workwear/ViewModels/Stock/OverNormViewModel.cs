@@ -379,7 +379,7 @@ namespace Workwear.ViewModels.Stock
 		
 		public void AddFromScan() =>
 			//FIXME Явно можно без PostomatDocumentViewModel сделать
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel>(this, null, this);
+			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(this, null, this, null);
 
 		public string ValidateBarcodeForScan(Barcode barcode) {
 			if(barcode == null)

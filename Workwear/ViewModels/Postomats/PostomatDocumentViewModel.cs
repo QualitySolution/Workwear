@@ -126,7 +126,7 @@ namespace Workwear.ViewModels.Postomats {
 
 		public void AddFromScan() {
 			//FIXME Явно можно без OverNormViewModel сделать
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel>(this, this, null);
+			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(this, this, null, null);
 		}
 		
 		public void AddItems(IEnumerable<ServiceClaim> claims) {
