@@ -264,14 +264,11 @@ namespace Workwear.ViewModels.Stock {
 			selectJournal.ViewModel.Filter.SensitiveShowClosed = false;
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromClaimNodes(
-				e.GetSelectedObjects<ClaimsJournalNode>().ToDictionary(
-					k=>k.Id,
-					v=>v.Balance
-					));
+				e.GetSelectedObjects<ClaimsJournalNode>().Select(x => x.Id));
 		}
 
-		public void AddFromClaimNodes(Dictionary<int, int> returningOperation) =>
-			AddClaims(LoadClaims(returningOperation.Keys));
+		public void AddFromClaimNodes(IEnumerable<int> claimIds) =>
+			AddClaims(LoadClaims(claimIds));
 
 		public void AddFromScan() {
 			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(
