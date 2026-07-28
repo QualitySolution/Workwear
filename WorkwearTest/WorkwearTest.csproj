@@ -50,6 +50,7 @@
     <Compile Include="Testing\WorkwearMariaDbTestFixtureBase.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItemTest.cs" />
     <Compile Include="ViewModels\Company\EmployeeViewModelTest.cs" />
+    <Compile Include="ViewModels\ClothingService\ClothingAddViewModelTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
     <Compile Include="ViewModels\Regulations\NormViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\CollectiveExpenseViewModelTest.cs" />
