@@ -45,7 +45,7 @@ namespace WorkwearTest.ViewModels.Stock
 		}
 
 		[Test(Description = "Проверяем что при списании обновляем дату следующей выдачи в карточке сотрудника.")]
-		[Timeout(3000)] //Так как ожидаем работу в потоке, и может что-то поломаться.
+		[Timeout(30000)] //Тест использует MariaDB в контейнере, запуск базы может занимать несколько секунд.
 		[Category("Integrated")]
 		public void Employee_UpdateNextIssueDate()
 		{
