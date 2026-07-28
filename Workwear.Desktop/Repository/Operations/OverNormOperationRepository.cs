@@ -142,18 +142,23 @@ namespace Workwear.Repository.Operations {
 				.Distinct()
 				.ToList();
 
-			var operationIds = operations.Select(x => x.Id).ToArray();
 			OverNormOperation resultAlias = null;
-			var returnedFromIds = new HashSet<int>((uow ?? RepoUow).Session.QueryOver(() => resultAlias)
-				.WhereRestrictionOn(() => resultAlias.ReturnFromOperation.Id).IsIn(operationIds)
-				.Select(Projections.Property(() => resultAlias.ReturnFromOperation.Id))
-				.List<int>());
+			BarcodeOperation resultBarcodeAlias = null;
+			var resultPairs = new HashSet<(int OperationId, int BarcodeId)>(
+				(uow ?? RepoUow).Session.QueryOver(() => resultBarcodeAlias)
+					.JoinAlias(() => resultBarcodeAlias.OverNormOperation, () => resultAlias)
+					.WhereRestrictionOn(() => resultBarcodeAlias.Barcode.Id).IsIn(barcodeIds)
+					.Where(() => resultAlias.ReturnFromOperation != null)
+					.Fetch(SelectMode.Fetch, x => x.Barcode)
+					.Fetch(SelectMode.Fetch, x => x.OverNormOperation.ReturnFromOperation)
+					.List()
+					.Select(bo => (bo.OverNormOperation.ReturnFromOperation.Id, bo.Barcode.Id)));
 
 			var result = new Dictionary<int, OverNormOperation>();
 			foreach(var claim in claimsList) {
 				var operation = operations
 					.Where(op => op.BarcodeOperations.Any(bo => bo.Barcode.Id == claim.Barcode.Id))
-					.Where(op => !returnedFromIds.Contains(op.Id))
+					.Where(op => !resultPairs.Contains((op.Id, claim.Barcode.Id)))
 					.OrderByDescending(op => op.OperationTime)
 					.FirstOrDefault();
 				if(operation != null)

@@ -7,6 +7,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Testing.DB;
 using Workwear.Domain.ClothingService;
+using Workwear.Domain.Company;
 using Workwear.Domain.Postomats;
 using Workwear.Domain.Stock;
 using Workwear.Repository.Stock;
@@ -36,13 +37,19 @@ namespace WorkwearTest.ViewModels.ClothingService {
 						Type = new ItemsType { Name = "Одежда" }
 					}
 				};
+				var employee = new EmployeeCard {
+					FirstName = "Иван",
+					LastName = "Иванов"
+				};
 				var claim = new ServiceClaim {
+					Employee = employee,
 					Barcode = barcode,
 					IsClosed = false
 				};
 				uow.Save(barcode.Nomenclature.Type);
 				uow.Save(barcode.Nomenclature);
 				uow.Save(barcode);
+				uow.Save(employee);
 				uow.Save(claim);
 				uow.Commit();
 
