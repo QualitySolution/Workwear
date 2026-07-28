@@ -126,21 +126,23 @@ SELECT
        ) AS DailyConsumption";
 ////Возможно, стоит завязать на фильтр
 	if(FeaturesService.Available(WorkwearFeature.Barcodes))
-		//TODO не учитывает возврат на склад штрихкода
 				sql += @",
 		(SELECT COUNT(*)
 		 FROM barcodes b
 		 JOIN operation_barcodes ob ON ob.barcode_id = b.id
 		 JOIN operation_warehouse opwh ON ob.warehouse_operation_id = opwh.id
+		 LEFT JOIN operation_issued_by_employee opie ON ob.employee_issue_operation_id = opie.id
+		 LEFT JOIN operation_issued_by_duty_norm opdn ON ob.duty_norm_issue_operation_id = opdn.id
+		 LEFT JOIN operation_over_norm opon ON ob.over_norm_operation_id = opon.id
 		 WHERE b.nomenclature_id = stock.NomenclatureId
 		   AND opwh.size_id <=> stock.SizeId
 		   AND opwh.height_id <=> stock.HeightId
 		   AND opwh.owner_id <=> stock.OwnerId
 		   AND opwh.wear_percent = stock.WearPercent
 		   AND opwh.warehouse_receipt_id = @warehouse_id
-		   AND ob.employee_issue_operation_id IS NULL
-		   AND ob.over_norm_operation_id IS NULL
-		   AND ob.duty_norm_issue_operation_id IS NULL
+		   AND (ob.employee_issue_operation_id IS NULL OR opie.issued = 0)
+		   AND (ob.duty_norm_issue_operation_id IS NULL OR opdn.issued = 0)
+		   AND (ob.over_norm_operation_id IS NULL OR opon.return_from_operation IS NOT NULL)
 		   AND ob.id = (
 		       SELECT MAX(ob2.id)
 		       FROM operation_barcodes ob2
