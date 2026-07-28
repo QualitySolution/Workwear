@@ -45,11 +45,13 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual string Title => $"Выдача вне нормы ({Type.GetEnumTitle()}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetEnumTitle()}) от {Date:d}";
 		
-		public virtual void AddItem(OverNormOperation operation)
+		public virtual OverNormItem AddItem(OverNormOperation operation)
 		{
 			if (operation == null) 
 				throw new ArgumentNullException(nameof(operation));
-			Items.Add(new OverNormItem(this, operation));
+			var item = (new OverNormItem(this, operation));
+			Items.Add(item);
+			return item;
 		}
 
 

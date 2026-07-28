@@ -79,6 +79,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 					.Select(() => warehouseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
 					.Select(() => warehouseOperationAlias.Amount).WithAlias (() => resultAlias.Added)
 					.Select(() => warehouseOperationAlias.OperationTime).WithAlias (() => resultAlias.Date)
+					.Select(() => overNormOperationAlias.Comment).WithAlias (() => resultAlias.Comment)
 					.Select(barcodesProjection).WithAlias (() => resultAlias.BarcodesString)
 				);
 
@@ -133,5 +134,6 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		public string BalanceText => $"{Balance} {NomenclatureUnitsName}";
 		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString(AvgCost) : String.Empty;
 		public string BarcodesString { get; set; }
+		public string Comment { get; set; }
 	}
 }

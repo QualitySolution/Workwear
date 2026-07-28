@@ -309,6 +309,7 @@ namespace Workwear.ViewModels.Stock
 				var barcodeOperation = new BarcodeOperation() {
 					Barcode = barcode,
 					EmployeeIssueOperation = item.EmployeeIssueOperation,
+					WarehouseOperation = item.EmployeeIssueOperation.WarehouseOperation,
 					KitNumber = barcodeService.GetNextKitNumber(UoW, item.EmployeeIssueOperation)
 				};
 				barcode.BarcodeOperations.Add(barcodeOperation);

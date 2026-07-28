@@ -42,6 +42,7 @@ namespace Workwear.Test.Models.OverNorms {
 			Assert.That(operation.WarehouseOperation.Amount, Is.EqualTo(2));
 			Assert.That(operation.BarcodeOperations, Has.Count.EqualTo(2));
 			Assert.That(operation.BarcodeOperations.Select(x => x.Barcode), Is.EquivalentTo(new[] { barcode1, barcode2 }));
+			Assert.That(operation.BarcodeOperations.Select(x => x.WarehouseOperation), Is.All.SameAs(operation.WarehouseOperation));
 			Assert.That(barcode1.BarcodeOperations, Has.Count.EqualTo(1));
 			Assert.That(barcode2.BarcodeOperations, Has.Count.EqualTo(1));
 		}

@@ -29,6 +29,7 @@ namespace Workwear.Views.Company.EmployeeChildren {
 				.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
 				.AddColumn ("Стоимость").AddTextRenderer (e => e.AvgCostText)
 				.AddColumn ("Износ при выдаче").AddTextRenderer (e => e.WearPercent.ToString("P0"))
+				.AddColumn("Комментарий").AddTextRenderer(e => e.Comment)
 				.AddColumn("") //Заглушка, чтобы не расширялось
 				.Finish();
 			ytreeviewOverNorm.Binding.AddBinding(ViewModel, v => v.ObservableItems, w => w.ItemsDataSource);

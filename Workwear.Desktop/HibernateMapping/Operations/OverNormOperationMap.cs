@@ -17,14 +17,15 @@ namespace Workwear.HibernateMapping.Stock
 			Map(x => x.OperationTime).Column("operation_time").Not.Nullable();
 			Map(x => x.LastUpdate).Column("last_update").Not.Nullable();
 			Map(x => x.Type).Column("type").Not.Nullable();
+			Map(x => x.Comment).Column("comment").Nullable();
 
 			References(x => x.Employee).Column("employee_id").Not.Nullable();
 			References(x => x.Nomenclature).Column("nomenclature_id").Not.Nullable();
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
-			References(x => x.WarehouseOperation).Column("operation_warehouse_id").Not.Nullable().Cascade.All();
+			References(x => x.WarehouseOperation).Column("operation_warehouse_id").Not.Nullable();
 			References(x => x.SubstitutedIssueOperation).Column("substituted_issue_operation_id").Nullable();
-            References(x => x.ReturnFromOperation).Column("return_from_operation").Nullable().Cascade.All();
+			References(x => x.ReturnFromOperation).Column("return_from_operation").Nullable();
             
 			HasMany(x => x.BarcodeOperations)
 				.KeyColumn("over_norm_operation_id").Inverse()

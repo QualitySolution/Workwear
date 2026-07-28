@@ -89,7 +89,10 @@ namespace Workwear.Tools.OverNorms.Models
 		{
 			foreach(var barcodeOperation in overNormOperation.BarcodeOperations.ToList()) {
 				if(barcodes.Any(x => SameBarcode(x, barcodeOperation.Barcode)))
+				{
+					barcodeOperation.WarehouseOperation = overNormOperation.WarehouseOperation;
 					continue;
+				}
 
 				barcodeOperation.Barcode?.BarcodeOperations.Remove(barcodeOperation);
 				overNormOperation.BarcodeOperations.Remove(barcodeOperation);
@@ -107,6 +110,7 @@ namespace Workwear.Tools.OverNorms.Models
 		{
 			var barcodeOperation = new BarcodeOperation {
 				Barcode = barcode,
+				WarehouseOperation = overNormOperation.WarehouseOperation,
 				OverNormOperation = overNormOperation
 			};
 			barcode.BarcodeOperations.Add(barcodeOperation);

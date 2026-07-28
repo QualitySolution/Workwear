@@ -39,6 +39,12 @@ namespace WorkwearTest
 			NhConfigered = true;
 		}
 
+		public static void ResetNhConfiguration()
+		{
+			OrmConfig.ResetForTesting();
+			NhConfigered = false;
+		}
+
 		public static void ConfigureDeletion()
 		{
 			if(DeletionConfigured)

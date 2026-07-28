@@ -20,12 +20,14 @@ namespace Workwear.HibernateMapping.Stock.Documents
 			References(x => x.Document).Column("stock_return_id");
 			References (x => x.Nomenclature).Column ("nomenclature_id");
 			References(x => x.ReturnFromEmployeeOperation).Column("employee_issue_operation_id").Cascade.All();
-			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Cascade.All().Not.Nullable();
+			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Not.Nullable();
 			References(x => x.WearSize).Column("size_id");
 			References(x => x.Height).Column("height_id");
 			References(x => x.EmployeeCard).Column("employee_id");
 			References(x => x.DutyNorm).Column("duty_norm_id");
 			References(x=>x.ReturnFromDutyNormOperation).Column("duty_norm_issue_operation_id").Cascade.All();
+			References(x => x.ReturnFromOverNormOperation).Column("over_norm_operation_id");
+			References(x => x.ServiceClaim).Column("claim_id");
 		}
 	}
 }

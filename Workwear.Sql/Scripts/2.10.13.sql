@@ -21,6 +21,7 @@ create table `operation_over_norm`
 	`operation_warehouse_id`          int unsigned                           not null,
 	`substituted_issue_operation_id`  int unsigned                           null     default null,
 	`return_from_operation`           int unsigned                           null     default null,
+	`comment`                         text                                   null,
 	constraint `FK_over_norm_substituted_issued`
 	foreign key (`substituted_issue_operation_id`) references `operation_issued_by_employee` (`id`)
 	                                                                                                                       on update cascade
@@ -156,3 +157,24 @@ CREATE TABLE `stock_barcoding_items`
 	)
 	ENGINE = InnoDB
 	DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Возврат с обслуживания
+ALTER TABLE stock_return_items
+	ADD COLUMN over_norm_operation_id int(10) unsigned NULL DEFAULT NULL AFTER duty_norm_issue_operation_id,
+	ADD COLUMN claim_id int(10) unsigned NULL DEFAULT NULL AFTER over_norm_operation_id;
+
+ALTER TABLE stock_return_items
+	ADD CONSTRAINT stock_return_items_over_norm_operation_id_fk FOREIGN KEY (over_norm_operation_id) REFERENCES operation_over_norm(id)
+		ON UPDATE NO ACTION
+		ON DELETE NO ACTION;
+
+ALTER TABLE stock_return_items
+	ADD CONSTRAINT stock_return_items_claim_id_fk FOREIGN KEY (claim_id) REFERENCES clothing_service_claim(id)
+		ON UPDATE NO ACTION
+		ON DELETE NO ACTION;
+
+CREATE INDEX stock_return_items_over_norm_operation_id_index
+	ON stock_return_items(over_norm_operation_id ASC);
+
+CREATE INDEX stock_return_items_claim_id_index
+	ON stock_return_items(claim_id ASC);

@@ -51,6 +51,7 @@ namespace Workwear.Tools.Barcodes
 						var barcodeOperation = new BarcodeOperation {
 							Barcode = barcode,
 							EmployeeIssueOperation = operation,
+							WarehouseOperation = operation.WarehouseOperation,
 							KitNumber = kitNumber
 						};
 						operation.BarcodeOperations.Add(barcodeOperation);

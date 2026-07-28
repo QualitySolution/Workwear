@@ -55,6 +55,10 @@ namespace Workwear.Views.Stock
 			buttonAddNomenclature.Binding
 				.AddBinding(ViewModel, wm => wm.CanChoiceForActiveItem, w => w.Sensitive)
 				.InitializeFromSource();
+			buttonAddScan.Binding
+				.AddBinding(ViewModel, v => v.CanChoiceForActiveItem, w => w.Sensitive)
+				.InitializeFromSource();
+			buttonAddScan.Clicked += (sender, args) => ViewModel.AddFromScan();
 			
 			enumTypesComboBox.ItemsEnum = typeof(OverNormType);
 			enumTypesComboBox.AddEnumToHideList(ViewModel.HiddenOverNormTypes.ToArray());
@@ -116,6 +120,10 @@ namespace Workwear.Views.Stock
 				.Tag(BarcodesColumn)
 				.Visible(ViewModel.OverNormModel.CanUseWithBarcodes)
 				.AddReadOnlyTextRenderer(x =>  string.Join("\n", x.Barcodes.Select(b => b.Title)))
+			.AddColumn("Комментарий")
+				.Resizable()
+				.AddTextRenderer(x => x.Comment)
+				.Editable(ViewModel.CanEdit)
 				.Finish();
 			
 			ytreeItems.ItemsDataSource = Entity.Items;

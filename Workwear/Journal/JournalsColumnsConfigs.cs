@@ -226,6 +226,9 @@ namespace workwear.Journal
 					.AddColumn ("Размер").Resizable().AddTextRenderer (e => e.WearSize).SearchHighlight()
 					.AddColumn ("Рост").Resizable().AddTextRenderer (e => e.Height).SearchHighlight()
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
+					.AddColumn("Штрихкоды").Resizable()
+						.Visible(jwm.FeaturesService.Available(WorkwearFeature.Barcodes))
+						.AddTextRenderer(e => e.Barcodes).SearchHighlight()
 					.AddColumn ("Стоимость").AddTextRenderer (e => e.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 						.AddSetter ((w, e) => w.Text = (e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : "до износа"))
@@ -321,6 +324,9 @@ namespace workwear.Journal
 					.AddColumn("Размер").AddTextRenderer(node=>node.WearSize)
 					.AddColumn("Рост").AddTextRenderer(node=>node.Height)
 					.AddColumn("Количество").AddTextRenderer(node=>node.BalanceText)
+					.AddColumn("Штрихкоды").Resizable()
+						.Visible(jwm.FeaturesService.Available(WorkwearFeature.Barcodes))
+						.AddTextRenderer(node=>node.Barcodes).SearchHighlight()
 					.AddColumn("Стоимость").AddTextRenderer(node=>node.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 						.AddSetter ((w, e) => w.Text = (e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : "до износа"))
@@ -474,6 +480,21 @@ namespace workwear.Journal
 					.AddColumn("Собственник").Resizable().Visible(jvm.FeaturesService.Available(WorkwearFeature.Owners)).AddTextRenderer(e => e.OwnerName)
 					.AddColumn("Процент износа").AddTextRenderer(e => e.WearPercentText)
 					.AddColumn("Поступление\\расход").AddTextRenderer(node => node.AmountText, useMarkup: true)
+					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<OverNormIssuedJournalViewModel>(
+				() => FluentColumnsConfig<OverNormIssuedJournalNode>.Create()
+					.AddColumn("Дата").AddTextRenderer(node => node.DateText)
+					.AddColumn("Тип").AddTextRenderer(node => node.TypeText)
+					.AddColumn("Табельный").AddTextRenderer(node => node.PersonnelNumber).SearchHighlight()
+					.AddColumn("Сотрудник").Resizable().AddTextRenderer(node => node.EmployeeName).SearchHighlight()
+					.AddColumn("Номенклатура").Resizable().AddTextRenderer(node => node.NomenclatureName).SearchHighlight().WrapWidth(700)
+					.AddColumn("Размер").AddTextRenderer(node => node.WearSize)
+					.AddColumn("Рост").AddTextRenderer(node => node.Height)
+					.AddColumn("Количество").AddTextRenderer(node => node.Amount.ToString())
+					.AddColumn("Износ").AddTextRenderer(node => node.WearPercentText)
+					.AddColumn("Штрихкоды").Resizable().AddTextRenderer(node => node.Barcodes).SearchHighlight()
 					.Finish()
 			);
 

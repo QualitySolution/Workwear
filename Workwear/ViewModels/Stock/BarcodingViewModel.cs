@@ -230,6 +230,7 @@ namespace Workwear.ViewModels.Stock {
 						KitNumber = ++lastKitNumber 
 					};
 					barcodeOperations.Add(barcodeOperation);
+					barcode.BarcodeOperations.Add(barcodeOperation);
 					UoW.Save(barcodeOperation, false);
 				}
 				Entity.AddItem(operationExpanse, operationReceipt, barcodes);
