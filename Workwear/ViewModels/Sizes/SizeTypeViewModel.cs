@@ -58,6 +58,9 @@ namespace Workwear.ViewModels.Sizes
 				.OpenViewModel<SizeViewModel, IEntityUoWBuilder, SizeType>(
 					this, EntityUoWBuilder.ForCreate(), Entity);
 			page.PageClosed += (sender, args) => {
+				if(args.CloseSource != CloseSource.Save)
+					return;
+
 				sizeService.RefreshSizes(UoW);
 				Sizes = new ObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
 			};
