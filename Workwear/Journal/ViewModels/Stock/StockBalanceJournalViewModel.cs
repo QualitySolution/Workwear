@@ -94,6 +94,9 @@ namespace workwear.Journal.ViewModels.Stock
 				
 				if(Filter.ShowWithBarcodes)
 					conductions.Add("nomenclature.use_barcode = 1");
+
+				if(Filter.ItemsType != null)
+					conductions.Add($"item_types.id = {Filter.ItemsType.Id}");
 				
 				var search = new SqlSearchCriterion(Search)
 					.WithLikeMode(LikeMatchMode.UnsignedNumberEqual)

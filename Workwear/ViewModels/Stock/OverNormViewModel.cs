@@ -258,6 +258,7 @@ namespace Workwear.ViewModels.Stock
 							filter.AddAmount = AddedAmount.One;
 							filter.Warehouse = Entity.Warehouse;
 							filter.SensetiveWarehouse = false;
+							filter.ItemsType = item.OverNormOperation?.SubstitutedIssueOperation?.Nomenclature?.Type;
 						});
 				});
 			selectJournal.Tag = item;
@@ -290,6 +291,8 @@ namespace Workwear.ViewModels.Stock
 			else if(OverNormModel.CanUseWithoutBarcodes) {
 				var selectVM = sender as StockBalanceJournalViewModel;
 				var addedAmount = selectVM.Filter.AddAmount;
+				if(!ValidateSubstituteItemsType(item, stockPosition.Nomenclature))
+					return;
 				var addedParam = new OverNormParam(
 					item.Employee,
 					stockPosition.Nomenclature,
@@ -339,6 +342,8 @@ namespace Workwear.ViewModels.Stock
 
 			if(addedItems.Count == 1) {
 				var addedItem = addedItems.First();
+				if(!ValidateSubstituteItemsType(item, addedItem.Key.Nomenclature))
+					return;
 				var addedParam = new OverNormParam(
 					item.Employee,
 					addedItem.Key.Nomenclature,
@@ -391,6 +396,9 @@ namespace Workwear.ViewModels.Stock
 			if(lastWarehouseOperation?.ReceiptWarehouse?.Id != Entity.Warehouse?.Id)
 				return $"{barcode.Title} сейчас не числится на {Entity.Warehouse?.Name}.";
 
+			if(SelectedItem != null && !IsSubstituteItemsTypeMatch(SelectedItem, barcode.Nomenclature))
+				return $"{barcode.Title} относится к другой группе номенклатур, чем заменяемая вещь сотрудника.";
+
 			bool alreadyInDocument = Entity.Items
 				.SelectMany(x => x.OverNormOperation?.BarcodeOperations ?? Enumerable.Empty<BarcodeOperation>())
 				.Any(x => x.Barcode?.Id == barcode.Id);
@@ -406,6 +414,8 @@ namespace Workwear.ViewModels.Stock
 
 			barcode = UoW.GetById<Barcode>(barcode.Id);
 			var lastWarehouseOperation = barcode.LastOperation.WarehouseOperation;
+			if(!ValidateSubstituteItemsType(item, barcode.Nomenclature))
+				return;
 
 			var targetItem = item.OverNormOperation?.WarehouseOperation == null ? item :
 					Entity.AddItem(new OverNormOperation { Employee = item.Employee, SubstitutedIssueOperation = item.OverNormOperation?.SubstitutedIssueOperation });
@@ -421,6 +431,22 @@ namespace Workwear.ViewModels.Stock
 				owner: lastWarehouseOperation.Owner);
 			OverNormModel.UseBarcodes = true;
 			AddOrUpdateItem(targetItem, addedParam);
+		}
+
+		private bool ValidateSubstituteItemsType(OverNormItem item, Nomenclature nomenclature) {
+			if(IsSubstituteItemsTypeMatch(item, nomenclature))
+				return true;
+
+			interactive.ShowMessage(
+				ImportanceLevel.Warning,
+				"Группа номенклатур подменных вещей не соответствует заменяемой у сотрудника.");
+			return false;
+		}
+
+		private bool IsSubstituteItemsTypeMatch(OverNormItem item, Nomenclature nomenclature) {
+			var substitutedNomenclature = item?.OverNormOperation?.SubstitutedIssueOperation?.Nomenclature;
+			return substitutedNomenclature == null
+				|| nomenclature?.Type?.Id == substitutedNomenclature.Type?.Id;
 		}
 		#endregion
 
