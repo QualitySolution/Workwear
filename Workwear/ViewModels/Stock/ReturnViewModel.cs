@@ -271,6 +271,7 @@ namespace Workwear.ViewModels.Stock {
 			AddClaims(LoadClaims(claimIds));
 
 		public void AddFromScan() {
+			//Здесь зануления других моделей обязательно чтобы их не создавал DI
 			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(
 				this, null, null, this);
 		}

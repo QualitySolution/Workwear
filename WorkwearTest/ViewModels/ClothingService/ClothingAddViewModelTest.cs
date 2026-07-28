@@ -64,8 +64,11 @@ namespace WorkwearTest.ViewModels.ClothingService {
 					barcodeInfoViewModel,
 					UnitOfWorkFactory,
 					Substitute.For<INavigationManager>(),
-					unitOfWorkProvider: unitOfWorkProvider,
-					postomatDocVm: postomatDocumentViewModel);
+					postomatDocVm: postomatDocumentViewModel,
+					null,
+					null,
+					unitOfWorkProvider: unitOfWorkProvider
+					);
 
 				barcodeInfoViewModel.Barcode = viewModel.UoW.GetById<Barcode>(barcode.Id);
 

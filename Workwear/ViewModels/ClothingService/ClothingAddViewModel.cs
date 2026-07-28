@@ -37,12 +37,13 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
+			//Следующие 3 модели по сути являются обязательными, вернее обязательна одна из них, но стальные должны быть принудительно переданы как null чтобы их не сознавал DI
+			PostomatDocumentViewModel postomatDocVm,
+			OverNormViewModel overNormDocVm,
+			ReturnViewModel returnDocVm,
 			IValidator validator = null,
 			string UoWTitle = null,
-			UnitOfWorkProvider unitOfWorkProvider = null,
-			PostomatDocumentViewModel postomatDocVm = null,
-			OverNormViewModel overNormDocVm = null,
-			ReturnViewModel returnDocVm = null)
+			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(unitOfWorkFactory, navigation, validator, UoWTitle, unitOfWorkProvider)
 		{
 			BarcodeInfoViewModel = barcodeInfoViewModel ?? throw new ArgumentNullException(nameof(barcodeInfoViewModel));
