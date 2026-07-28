@@ -28,6 +28,8 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using Workwear.ViewModels.ClothingService;
+using Workwear.ViewModels.Postomats;
 using workwear.Journal.Filter.ViewModels.Company;
 using workwear.Journal.ViewModels.ClothingService;
 using Workwear.Journal.Filter.ViewModels.Regulations;
@@ -268,17 +270,30 @@ namespace Workwear.ViewModels.Stock {
 					));
 		}
 
-		public void AddFromClaimNodes(Dictionary<int, int> returningOperation) {
+		public void AddFromClaimNodes(Dictionary<int, int> returningOperation) =>
+			AddClaims(LoadClaims(returningOperation.Keys));
+
+		public void AddFromScan() {
+			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(
+				this, null, null, this);
+		}
+
+		public void AddItems(IEnumerable<ServiceClaim> claims) =>
+			AddClaims(LoadClaims(claims.Select(c => c.Id)));
+
+		private IList<ServiceClaim> LoadClaims(IEnumerable<int> claimIds) {
 			Barcode barcodeAlias = null;
-			var claims = UoW.Session.QueryOver<ServiceClaim>()
-				.Where(x=>x.Id.IsIn(returningOperation.Select(i=>i.Key).ToList()))
+			return UoW.Session.QueryOver<ServiceClaim>()
+				.Where(x => x.Id.IsIn(claimIds.ToList()))
 				.JoinAlias(x=>x.Barcode,  () => barcodeAlias)
 				.Fetch(SelectMode.Fetch, x => x.Employee)
 				.Fetch(SelectMode.Fetch, () => barcodeAlias.Nomenclature)
 				.Fetch(SelectMode.Fetch, () => barcodeAlias.Size)
 				.Fetch(SelectMode.Fetch,() => barcodeAlias.Height)
 				.List();
+		}
 
+		private void AddClaims(IList<ServiceClaim> claims) {
 			var overNormOperations = overNormOperationRepository.GetActualIssuedOperations(claims, UoW);
 			var employeeOperations = employeeIssueRepository.GetActualIssuedOperations(claims, UoW);
 			var dutyNormOperations = dutyNormRepository.GetActualIssuedOperations(claims, UoW);
@@ -290,7 +305,7 @@ namespace Workwear.ViewModels.Stock {
 					continue;
 				}
 				if(employeeOperations.TryGetValue(claim.Id, out var employeeOperation)) {
-					Entity.AddItem(employeeOperation, 1, barcodes:new[] { claim.Barcode }, claim:claim);
+					Entity.AddItem(employeeOperation, 1, claim, new[] { claim.Barcode });
 					continue;
 				}
 				if(dutyNormOperations.TryGetValue(claim.Id, out var dutyNormOperation)) {

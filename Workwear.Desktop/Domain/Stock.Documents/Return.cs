@@ -8,9 +8,7 @@ using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using Workwear.Domain.ClothingService;
-using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
-using Workwear.Domain.Sizes;
 using Workwear.Repository.Operations;
 
 namespace Workwear.Domain.Stock.Documents
@@ -117,7 +115,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		#region Строки документа
-		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count, IEnumerable<Barcode> barcodes = null, ServiceClaim claim = null) {
+		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
