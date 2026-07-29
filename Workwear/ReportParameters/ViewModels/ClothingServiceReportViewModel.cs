@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
 using QS.DomainModel.Entity;
 
@@ -16,11 +15,9 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		private Dictionary<string, object> SetParameters() {
 			var parameters = new Dictionary<string, object>();
-			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
-				parameters.Add("show_closed", showClosed);
-				parameters.Add("start_date", StartDate ?? DateTime.MinValue);
-				parameters.Add("end_date", EndDate ?? DateTime.MaxValue);
-			}
+			parameters.Add("show_closed", showClosed);
+			parameters.Add("start_date", StartDate ?? DateTime.MinValue);
+			parameters.Add("end_date", EndDate ?? DateTime.MaxValue);
 			return parameters;
 		}
 		

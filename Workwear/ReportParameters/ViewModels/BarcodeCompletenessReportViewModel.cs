@@ -8,14 +8,12 @@ using QS.Report;
 using QS.Report.ViewModels;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class BarcodeCompletenessReportViewModel : ReportParametersViewModelBase {
+	public class BarcodeCompletenessReportViewModel : ReportParametersUowViewModelBase {
 		
 		public BarcodeCompletenessReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory)
-			: base(rdlViewerViewModel) {
-			UoW = uowFactory.CreateWithoutRoot();
-			
+			: base(rdlViewerViewModel, uowFactory) {
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			ChoiceProtectionToolsViewModel.UnSelectAll();
@@ -45,7 +43,6 @@ namespace Workwear.ReportParameters.ViewModels {
 		};
 
 		#region Параметры
-		IUnitOfWork UoW;
 		public override string Title => $"Отчёт по маркированной спецодежде от {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;

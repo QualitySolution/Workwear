@@ -10,11 +10,12 @@ using Gamma.Utilities;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class ListBySizeViewModel : ReportParametersViewModelBase
+	public class ListBySizeViewModel : ReportParametersUowViewModelBase
 	{
 		private readonly SizeService sizeService;
 
-		public ListBySizeViewModel(RdlViewerViewModel rdlViewerViewModel, SizeService sizeService) : base(rdlViewerViewModel)
+		public ListBySizeViewModel(RdlViewerViewModel rdlViewerViewModel, SizeService sizeService, IUnitOfWorkFactory uowFactory)
+			: base(rdlViewerViewModel, uowFactory)
 		{
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			Title = "Список по размерам";
@@ -22,20 +23,18 @@ namespace workwear.ReportParameters.ViewModels
 		protected override Dictionary<string, object> Parameters => SetParameters();
 		private Dictionary<string, object> SetParameters() {
 			var parameters = new Dictionary<string, object>();
-			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
-				var sizes = sizeService.GetSizeType(unitOfWork, onlyUseInEmployee: true).Take(6).ToList();
-				parameters.Add($"group_by_subdivision", GroupBySubdivision);
-				for (var count = 0; count < sizes.Count; count++)
-				{
-					parameters.Add($"type_id_{count}", sizes[count].Id);
-					parameters.Add($"type_name_{count}", sizes[count].Name);
-				}
-				
-				var sizesData = sizeService.GetSizeType(unitOfWork, onlyUseInEmployee: false).Take(12).ToList();
-				for(var count = 0; count < sizesData.Count; count++) {
-					parameters.Add($"size_id_{count}", sizesData[count].Id);
-					parameters.Add($"size_name_{count}", sizesData[count].Name);
-				}
+			var sizes = sizeService.GetSizeType(UoW, onlyUseInEmployee: true).Take(6).ToList();
+			parameters.Add($"group_by_subdivision", GroupBySubdivision);
+			for (var count = 0; count < sizes.Count; count++)
+			{
+				parameters.Add($"type_id_{count}", sizes[count].Id);
+				parameters.Add($"type_name_{count}", sizes[count].Name);
+			}
+
+			var sizesData = sizeService.GetSizeType(UoW, onlyUseInEmployee: false).Take(12).ToList();
+			for(var count = 0; count < sizesData.Count; count++) {
+				parameters.Add($"size_id_{count}", sizesData[count].Id);
+				parameters.Add($"size_name_{count}", sizesData[count].Name);
 			}
 			return parameters;
 		}

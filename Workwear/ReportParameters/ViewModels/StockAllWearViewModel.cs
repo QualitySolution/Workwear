@@ -11,20 +11,18 @@ using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class StockAllWearViewModel : ReportParametersViewModelBase{
+	public class StockAllWearViewModel : ReportParametersUowViewModelBase {
 		public StockAllWearViewModel(RdlViewerViewModel rdlViewerViewModel,
 		IUnitOfWorkFactory unitOfWorkFactory,
 		FeaturesService featuresService)
-		: base(rdlViewerViewModel)
+		: base(rdlViewerViewModel, unitOfWorkFactory)
 		{
-			UoW = unitOfWorkFactory.CreateWithoutRoot();
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			base.Title = "Складская ведомость";
 			//warehouse 
 			Warehouses=UoW.GetAll<Warehouse>().ToList();
 		}
 		
-		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
 		public bool VisibleSumm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.Selling);

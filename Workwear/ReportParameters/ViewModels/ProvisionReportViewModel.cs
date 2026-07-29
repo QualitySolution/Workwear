@@ -9,7 +9,7 @@ using QS.Report.ViewModels;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ProvisionReportViewModel : ReportParametersViewModelBase {
+	public class ProvisionReportViewModel : ReportParametersUowViewModelBase {
 		
 		private readonly FeaturesService featuresService;
 		
@@ -17,9 +17,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory,
 			FeaturesService featuresService)
-			: base(rdlViewerViewModel) {
-			UoW = uowFactory.CreateWithoutRoot();
-			
+			: base(rdlViewerViewModel, uowFactory) {
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
 			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
@@ -56,7 +54,6 @@ namespace Workwear.ReportParameters.ViewModels {
 		};
 
 		#region Параметры
-		IUnitOfWork UoW;
 		public override string Title => $"Отчёт по обеспеченности сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;

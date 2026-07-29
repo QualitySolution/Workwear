@@ -13,19 +13,16 @@ using System.ComponentModel;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class AverageAnnualNeedViewModel : ReportParametersViewModelBase, IDisposable
+	public class AverageAnnualNeedViewModel : ReportParametersUowViewModelBase
 	{
-		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;
 
-		public AverageAnnualNeedViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService) : base(rdlViewerViewModel)
+		public AverageAnnualNeedViewModel(RdlViewerViewModel rdlViewerViewModel, IUnitOfWorkFactory uowFactory, INavigationManager navigation, ILifetimeScope autofacScope, FeaturesService featuresService) : base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			Title = "Среднегодовая потребность";
 			Identifier = "AverageAnnualNeed";
-
-			UoW = uowFactory.CreateWithoutRoot();
 
 			var builder = new CommonEEVMBuilderFactory(rdlViewerViewModel, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForEntity<Subdivision>().MakeByType().Finish();
@@ -75,10 +72,5 @@ namespace workwear.ReportParameters.ViewModels
 		public EntityEntryViewModel<Subdivision> SubdivisionEntry;
 		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		#endregion
-
-		public void Dispose()
-		{
-			UoW.Dispose();
-		}
 	}
 }

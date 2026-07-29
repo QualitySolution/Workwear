@@ -19,22 +19,19 @@ using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class NotIssuedSheetViewModel : ReportParametersViewModelBase, IDisposable
+	public class NotIssuedSheetViewModel : ReportParametersUowViewModelBase
 	{
-		IUnitOfWork UoW;
-
 		public NotIssuedSheetViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory, 
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService)
-			: base(rdlViewerViewModel)
+			: base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 
 			Title = "Справка по невыданному (Детально)";
-			UoW = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<NotIssuedSheetViewModel>(rdlViewerViewModel, this, UoW, navigation, autofacScope);
 			
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
@@ -201,11 +198,6 @@ namespace workwear.ReportParameters.ViewModels
 		public ChoiceEmployeeGroupViewModel ChoiceEmployeeGroupViewModel;
 		private readonly FeaturesService featuresService;
 		#endregion
-
-		public void Dispose()
-		{
-			UoW.Dispose();
-		}
 	}
 
 	public enum NotIssuedSheetReportType {

@@ -16,7 +16,7 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels {
-	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable
+	public class RequestSheetViewModel : ReportParametersUowViewModelBase
 	{
 		private readonly FeaturesService featuresService;
 
@@ -26,16 +26,15 @@ namespace workwear.ReportParameters.ViewModels {
 			INavigationManager navigation,
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService)
-			: base(rdlViewerViewModel)
+			: base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			
 			Title = "Заявка на спецодежду";
 			Identifier = "RequestSheet";
 
-			uow = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<RequestSheetViewModel>
-				(rdlViewerViewModel, this, uow, navigation, autofacScope);
+				(rdlViewerViewModel, this, UoW, navigation, autofacScope);
 
 			EntrySubdivisionViewModel = builder.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
@@ -50,13 +49,12 @@ namespace workwear.ReportParameters.ViewModels {
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
 
-			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(uow);
+			ChoiceProtectionToolsViewModel = new ChoiceProtectionToolsViewModel(UoW);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
-			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(uow);
+			ChoiceEmployeeGroupViewModel = new ChoiceEmployeeGroupViewModel(UoW);
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
-		private readonly IUnitOfWork uow;
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensitiveRunReport));
@@ -167,11 +165,6 @@ namespace workwear.ReportParameters.ViewModels {
 					{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected},
 					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod}
 					};
-
-		public void Dispose()
-		{
-			uow.Dispose();
-		}
 
 		private int[] SelectSubdivisions() {
 			if(EntrySubdivisionViewModel.Entity is null) 
