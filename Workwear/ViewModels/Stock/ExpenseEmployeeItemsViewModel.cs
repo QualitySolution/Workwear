@@ -39,7 +39,7 @@ namespace Workwear.ViewModels.Stock
 		public readonly ExpenseEmployeeViewModel expenseEmployeeViewModel;
 		public readonly FeaturesService featuresService;
 		private readonly INavigationManager navigation;
-		private readonly IInteractiveQuestion interactive;
+		private readonly IInteractiveService interactive;
 		private readonly ICurrentPermissionService permissionService;
 		private readonly IDeleteEntityService deleteService;
 		private readonly EmployeeIssueRepository employeeRepository;
@@ -53,7 +53,7 @@ namespace Workwear.ViewModels.Stock
 			ExpenseEmployeeViewModel expenseEmployeeViewModel, 
 			FeaturesService featuresService, 
 			INavigationManager navigation,
-			IInteractiveQuestion interactive,
+			IInteractiveService interactive,
 			ICurrentPermissionService permissionService,
 			SizeService sizeService, 
 			IDeleteEntityService deleteService,
@@ -289,6 +289,11 @@ namespace Workwear.ViewModels.Stock
 		}	
 		
 		public void AddBarcodeFromScan(ExpenseItem item) {
+			if(Entity.IssueDate == null) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Для добавления маркировки необходимо указать дату выдачи.");
+				return;
+			}
+
 			expenseEmployeeViewModel.SkipBarcodeCheck = true;
 			var saveResult = expenseEmployeeViewModel.Save();
 			expenseEmployeeViewModel.SkipBarcodeCheck = false;
