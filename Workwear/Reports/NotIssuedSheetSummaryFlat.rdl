@@ -622,7 +622,7 @@
         <CommandText>SELECT tabel.*,
        IF(@show_stock, SUM(stock.SUM), null) AS in_stock
 FROM (SELECT protection_tools.name                                                                     AS protection_tools_name,
-             protection_tools.assessed_cost * SUM(norms_item.amount)                                   AS protection_tools_assessed_cost,
+             protection_tools.assessed_cost * SUM(IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0)) AS protection_tools_assessed_cost,
              wear_cards_item.protection_tools_id,
              objects.code                                                                              as subdivision_code,
              objects.id                                                                                as subdivision_id,
@@ -718,6 +718,7 @@ FROM (SELECT protection_tools.name                                              
                IF(@show_sex, wear_cards.sex, NULL),
                sizeId,
                heightId
+      HAVING need &gt; 0
                ) as tabel
          #Остатки на складе
          LEFT JOIN (SELECT sex_b.ptid,
