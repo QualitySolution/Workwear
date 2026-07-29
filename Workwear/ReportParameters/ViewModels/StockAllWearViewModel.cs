@@ -14,13 +14,12 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class StockAllWearViewModel : ReportParametersViewModelBase, IDialogDocumentation{
+	public class StockAllWearViewModel : ReportParametersUowViewModelBase, IDialogDocumentation {
 		public StockAllWearViewModel(RdlViewerViewModel rdlViewerViewModel,
 		IUnitOfWorkFactory unitOfWorkFactory,
 		FeaturesService featuresService)
-		: base(rdlViewerViewModel)
+		: base(rdlViewerViewModel, unitOfWorkFactory)
 		{
-			UoW = unitOfWorkFactory.CreateWithoutRoot();
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			base.Title = "Складская ведомость";
 			Warehouses=UoW.GetAll<Warehouse>().ToList();
@@ -36,7 +35,6 @@ namespace Workwear.ReportParameters.ViewModels {
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
 		
-		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;
 		public IList<Owner> Owners { get; } = new List<Owner>();
 		public bool ShowOwners { get; }
@@ -121,6 +119,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			set => SetField(ref warehouses, value); 
 		}
 		public bool SensitiveLoad=>ReportDate!=null;
+
 	}
 	
 	public enum StockAllWearReportType {

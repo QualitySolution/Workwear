@@ -27,7 +27,7 @@ using Workwear.Tools;
 
 namespace Workwear.ViewModels.Communications 
 {
-	public class SendMessangeViewModel : WindowDialogViewModelBase, IDialogDocumentation
+	public class SendMessangeViewModel : WindowDialogViewModelBase, IDialogDocumentation, IDisposable
 	{
 		private readonly IList<EmployeeCard> employees;
 		private readonly int? warehouseId;
@@ -411,6 +411,11 @@ namespace Workwear.ViewModels.Communications
 		private string EmployeesToText(int count) 
 		{
 			return NumberToTextRus.FormatCase(count, "{0} сотруднику", "{0} сотрудникам", "{0} сотрудникам");
+		}
+
+		public void Dispose()
+		{
+			uow.Dispose();
 		}
 
 		private IList<EmployeeCard> GetAvailableEmployeeWithPush() 

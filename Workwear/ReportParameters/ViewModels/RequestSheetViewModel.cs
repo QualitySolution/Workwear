@@ -20,7 +20,7 @@ using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels {
-	public class RequestSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
+	public class RequestSheetViewModel : ReportParametersUowViewModelBase, IDialogDocumentation
 	{
 		private readonly FeaturesService featuresService;
 		private readonly ProtectionToolsRepository protectionToolsRepository;
@@ -32,7 +32,7 @@ namespace workwear.ReportParameters.ViewModels {
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
 			ProtectionToolsRepository protectionToolsRepository)
-			: base(rdlViewerViewModel)
+			: base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
@@ -40,9 +40,8 @@ namespace workwear.ReportParameters.ViewModels {
 			Title = "Заявка на спецодежду";
 			Identifier = "RequestSheet";
 
-			uow = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<RequestSheetViewModel>
-				(rdlViewerViewModel, this, uow, navigation, autofacScope);
+				(rdlViewerViewModel, this, UoW, navigation, autofacScope);
 
 			EntrySubdivisionViewModel = builder.ForProperty(x => x.Subdivision)
 				.UseViewModelJournalAndAutocompleter<SubdivisionJournalViewModel>()
@@ -57,11 +56,11 @@ namespace workwear.ReportParameters.ViewModels {
 			BeginMonth = EndMonth = defaultMonth.Month;
 			BeginYear = EndYear = defaultMonth.Year;
 
-			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(uow);
+			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(UoW);
 			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
 			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 			
-			var employeeGroupsList = uow.GetAll<EmployeeGroup>().ToList();
+			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
 			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
 			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
 			ChoiceEmployeeGroupViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
@@ -72,7 +71,6 @@ namespace workwear.ReportParameters.ViewModels {
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
 
-		private readonly IUnitOfWork uow;
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensitiveRunReport));
@@ -190,11 +188,6 @@ namespace workwear.ReportParameters.ViewModels {
 					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 					{"show_size", ShowSize},
 					};
-
-		public void Dispose()
-		{
-			uow.Dispose();
-		}
 
 		private int[] SelectSubdivisions() {
 			if(EntrySubdivisionViewModel.Entity is null) 

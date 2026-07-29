@@ -8,11 +8,10 @@ using Workwear.Domain.Stock;
 using Workwear.Repository.Stock;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class IssuedSizesViewModel: ReportParametersViewModelBase {
+	public class IssuedSizesViewModel : ReportParametersUowViewModelBase {
 		public IssuedSizesViewModel(RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory)
-			: base(rdlViewerViewModel) {
-			var UoW = uowFactory.CreateWithoutRoot();
+			: base(rdlViewerViewModel, uowFactory) {
 			Title = "Отчёт по выданным размерам";
 			Identifier = "IssuedSizes";
 
@@ -47,5 +46,6 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool SensitiveLoad => StartDate != null && EndDate != null && !ChoiceNomenclatureViewModel.AllUnSelected;
 
 		public ChoiceListViewModel<Nomenclature> ChoiceNomenclatureViewModel;
+
 	}
 }

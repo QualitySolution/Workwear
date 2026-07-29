@@ -47,8 +47,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				}
 				else {
 					logger.Info("Конвертация в jpg ...");
-					Gdk.Pixbuf image = new Gdk.Pixbuf(fs);
-					Entity.Photo = image.SaveToBuffer("jpeg");
+					using(Gdk.Pixbuf image = new Gdk.Pixbuf(fs)) {
+						Entity.Photo = image.SaveToBuffer("jpeg");
+					}
 				}
 			}
 			OnPropertyChanged(nameof(SensetiveSavePhoto));

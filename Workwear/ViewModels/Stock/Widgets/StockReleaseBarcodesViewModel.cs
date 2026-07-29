@@ -23,15 +23,22 @@ namespace Workwear.ViewModels.Stock.Widgets
 			Warehouse warehouse
 			) : base(navigation) 
 		{
-			var uow = unitOfWorkFactory?.CreateWithoutRoot() ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
+			if(unitOfWorkFactory == null)
+				throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.balanceNode = node ?? throw new ArgumentNullException(nameof(node));
 
-			StockPosition stockPosition = node.GetStockPosition(uow);
-			
+			using(var uow = unitOfWorkFactory.CreateWithoutRoot()) {
+				StockPosition stockPosition = node.GetStockPosition(uow);
+				WithBarcodesAmount = barcodeService.CountBarcodesOnWarehouse(uow, stockPosition, warehouse);
+				Labels = uow.Session.QueryOver<Barcode>()
+					.Where(b => b.Label != null)
+					.SelectList(list => list.SelectGroup(b => b.Label))
+					.List<string>();
+			}
+
 			NomenclatureAmount = node.Amount;
-			WithBarcodesAmount = barcodeService.CountBarcodesOnWarehouse(uow, stockPosition, warehouse);
-			WithoutBarcodesAmount = node.Amount - WithBarcodesAmount;
+			WithoutBarcodesAmount = NomenclatureAmount - WithBarcodesAmount;
 			WarehouseId = warehouse.Id;
 				
 			Title = "Создать штрихкоды";
@@ -41,11 +48,6 @@ namespace Workwear.ViewModels.Stock.Widgets
 				Description += $" размером {node.SizeName}";
 			if (!string.IsNullOrEmpty(node.HeightName)) 
 				Description += $" ростом {node.HeightName}";
-			
-			Labels = uow.Session.QueryOver<Barcode>()
-				.Where(b => b.Label != null)
-				.SelectList(list => list.SelectGroup(b => b.Label))
-				.List<string>();
 		}
 
 		#region View Properties
