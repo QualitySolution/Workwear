@@ -78,7 +78,7 @@ namespace Workwear.ViewModels.Operations
 				throw new ArgumentNullException(String.Join(" or ", nameof(selectOperation), nameof(cardItem), nameof(protectionTools), nameof(employee)));
 			
 			if(EmployeeCardItem == null)
-				EmployeeCardItem = this.employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(protectionTools));
+				EmployeeCardItem = this.employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(this.protectionTools));
 			
 			Title = $"Ручные операции для {this.protectionTools.Name}";
 			
@@ -91,7 +91,7 @@ namespace Workwear.ViewModels.Operations
 				AutofacScope = autofacScope
 			};
 			NomenclatureEntryViewModel = entryBuilder.ForProperty(x => x.Nomenclature)
-				.UseViewModelJournalAndAutocompleter<NomenclatureJournalViewModel, NomenclatureFilterViewModel>(f => f.ProtectionTools = protectionTools)
+				.UseViewModelJournalAndAutocompleter<NomenclatureJournalViewModel, NomenclatureFilterViewModel>(f => f.ProtectionTools = this.protectionTools)
 				.UseViewModelDialog<NomenclatureViewModel>()
 				.Finish();
 			NomenclatureEntryViewModel.IsEditable = false;
