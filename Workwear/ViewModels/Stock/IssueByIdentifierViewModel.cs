@@ -30,7 +30,7 @@ using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class IssueByIdentifierViewModel : WindowDialogViewModelBase, IDialogDocumentation
+	public class IssueByIdentifierViewModel : WindowDialogViewModelBase, IDialogDocumentation, IDisposable
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWorkFactory unitOfWorkFactory;
@@ -456,6 +456,18 @@ namespace Workwear.ViewModels.Stock
 			return null;
 		}
 		#endregion
+
+		public void Dispose()
+		{
+			if(cardReaderService != null) {
+				cardReaderService.CardStatusRead -= RusGuardService_CardStatusRead;
+				cardReaderService.CardFamilies.ListChanged -= CardFamilies_ListChanged;
+			}
+
+			timerCleanSuccessfullyText?.Dispose();
+			uow?.Dispose();
+			UowOfDialog?.Dispose();
+		}
 	}
 }
 	
