@@ -878,7 +878,7 @@ SELECT
             NULL
     ) AS delay,
     protection_tools.name AS protection_tools_name,
-    protection_tools.assessed_cost * norms_item.amount AS protection_tools_assessed_cost,
+    protection_tools.assessed_cost * IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0) AS protection_tools_assessed_cost,
     wear_cards_item.protection_tools_id,
     objects.id as subdivision_id,
     objects.name as subdivision_name,
@@ -996,6 +996,7 @@ GROUP BY
     wear_cards_item.protection_tools_id
 HAVING
     (@exclude_zero_stock = false OR in_stock &gt; 0)
+    AND need &gt; 0
 ORDER BY
     employee,
     protection_tools_name</CommandText>
