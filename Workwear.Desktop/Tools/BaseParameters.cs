@@ -133,6 +133,14 @@ namespace Workwear.Tools
 			get => Dynamic.ClothingMarkingType(typeof(BarcodeTypes)) ?? BarcodeTypes.EAN13;
 			set => Dynamic[nameof(ClothingMarkingType)] = value;
 		}
+
+		/// <summary>
+		/// Тип нумерации комплектов при маркировке на складе.
+		/// </summary>
+		public virtual KitNumberingMode KitNumberingMode {
+			get => Dynamic.KitNumberingMode(typeof(KitNumberingMode)) ?? KitNumberingMode.PerNomenclature;
+			set => Dynamic[nameof(KitNumberingMode)] = value;
+		}
 		#endregion
 	}
 	
@@ -143,5 +151,12 @@ namespace Workwear.Tools
 		Yes,
 		[Display(Name = "Всегда нет")]
 		No
+	}
+
+	public enum KitNumberingMode {
+		[Display(Name = "По складу и номенклатуре")]
+		PerNomenclature,
+		[Display(Name = "Сквозная по складу")]
+		ThroughWarehouse
 	}
 }
