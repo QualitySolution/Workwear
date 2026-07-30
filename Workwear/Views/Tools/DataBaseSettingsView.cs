@@ -59,7 +59,14 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.ClothingMarkingType, w => w.SelectedItem)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
-		    
+
+		    Combo_markingKitNuberType.Visible = ylabel_markingKitNuberType.Visible = ViewModel.MarkingVisible;
+		    Combo_markingKitNuberType.ItemsEnum = typeof(KitNumberingMode);
+		    Combo_markingKitNuberType.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.KitNumberingMode, w => w.SelectedItem)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+
 		    yentryCurrency.Binding.AddSource(ViewModel)
 			    .AddBinding(v => v.UsedCurrency, w => w.Text)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)

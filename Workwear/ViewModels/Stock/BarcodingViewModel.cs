@@ -43,6 +43,7 @@ namespace Workwear.ViewModels.Stock {
 			BarcodeService barcodeService,
 			FeaturesService featuresService,
 			StockRepository stockRepository,
+			BaseParameters baseParameters,
 			Warehouse warehouse = null,
 			StockBalanceJournalNode  stockBalanceJournalNode = null,
 			IValidator validator = null,
@@ -51,6 +52,7 @@ namespace Workwear.ViewModels.Stock {
 			this.interactive = interactive;
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 				
 			var builder = new CommonEEVMBuilderFactory<Barcoding>(this, Entity, UoW, NavigationManager, autofacScope);
 			EntryWarehouseViewModel = builder.ForProperty(x => x.Warehouse)
@@ -73,9 +75,10 @@ namespace Workwear.ViewModels.Stock {
 				OpenReleaseBarcodesWindow(Entity.Warehouse,stockBalanceJournalNode);
 		}
 		
-		private readonly IInteractiveService interactive; 
+		private readonly IInteractiveService interactive;
 		private readonly FeaturesService featuresService;
 		private readonly BarcodeService barcodeService;
+		private readonly BaseParameters baseParameters;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		
 		public readonly EntityEntryViewModel<Warehouse> EntryWarehouseViewModel;
@@ -196,15 +199,13 @@ namespace Workwear.ViewModels.Stock {
 					OperationTime = Entity.Date
 				};
 				
-				BarcodeOperation barcodeOperationAlias = null;
-				WarehouseOperation warehouseOperationAlias = null;
-				var lastKitNumber = UoW.Session.QueryOver(() => barcodeOperationAlias)
-					.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
-					.Where(() => warehouseOperationAlias.Nomenclature.Id == stockPosition.Nomenclature.Id)
-					.Where(() => warehouseOperationAlias.ReceiptWarehouse.Id == warehouse.Id)
-					.SelectList(list => list.SelectMax(() => barcodeOperationAlias.KitNumber))
-					.SingleOrDefault<int?>() ?? 0;
-				
+				var kitNumbers = barcodeService.GetNextKitNumbers(
+					UoW,
+					warehouse,
+					stockPosition.Nomenclature,
+					widgetVm.SelectedAmount,
+					baseParameters.KitNumberingMode);
+
 				var operationReceipt = new WarehouseOperation() {
 					StockPosition = stockPosition,
 					ReceiptWarehouse = warehouse,
@@ -221,13 +222,13 @@ namespace Workwear.ViewModels.Stock {
 					);
 				
 				var barcodeOperations = new List<BarcodeOperation>();
-				foreach(Barcode barcode in barcodes) {
+				for(var i = 0; i < barcodes.Count; i++) {
+					var barcode = barcodes[i];
 					barcode.Label = widgetVm.Label;
 					BarcodeOperation barcodeOperation = new BarcodeOperation() {
 						Barcode = barcode,
 						WarehouseOperation = operationReceipt,
-						//Нумерация по порядку в рамках склада и номенклатуры
-						KitNumber = ++lastKitNumber 
+						KitNumber = kitNumbers[i]
 					};
 					barcodeOperations.Add(barcodeOperation);
 					barcode.BarcodeOperations.Add(barcodeOperation);
