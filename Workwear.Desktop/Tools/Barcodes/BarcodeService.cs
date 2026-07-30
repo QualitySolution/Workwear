@@ -100,7 +100,41 @@ namespace Workwear.Tools.Barcodes
 
 		private static int GetProtectionToolsId(EmployeeIssueOperation operation) =>
 			operation.ProtectionTools?.Id ?? operation.NormItem?.ProtectionTools?.Id ?? 0;
-		
+
+		/// <summary>
+		/// Возвращает <paramref name="count"/> свободных номеров комплектов для маркировки на складе.
+		/// </summary>
+		public IList<int> GetNextKitNumbers(
+			IUnitOfWork unitOfWork,
+			Warehouse warehouse,
+			Nomenclature nomenclature,
+			int count,
+			KitNumberingMode kitNumberingMode)
+		{
+			BarcodeOperation barcodeOperationAlias = null;
+			WarehouseOperation warehouseOperationAlias = null;
+			var query = unitOfWork.Session.QueryOver(() => barcodeOperationAlias)
+				.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
+				.Where(() => warehouseOperationAlias.ReceiptWarehouse.Id == warehouse.Id)
+				.Where(() => barcodeOperationAlias.KitNumber != null);
+			if(kitNumberingMode == KitNumberingMode.PerNomenclature)
+				query = query.Where(() => warehouseOperationAlias.Nomenclature.Id == nomenclature.Id);
+
+			var usedNumbers = new HashSet<int>(query
+				.SelectList(list => list.Select(() => barcodeOperationAlias.KitNumber))
+				.List<int?>()
+				.Select(x => x.Value));
+
+			var result = new List<int>();
+			for(var n = 1; result.Count < count; n++) {
+				if(usedNumbers.Contains(n))
+					continue;
+				result.Add(n);
+				usedNumbers.Add(n);
+			}
+			return result;
+		}
+
 		/// <summary>
 		/// Сгенерировать набор штрихкодов
 		/// </summary>
