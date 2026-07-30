@@ -170,8 +170,8 @@ ALTER TABLE stock_return_items
 
 ALTER TABLE stock_return_items
 	ADD CONSTRAINT stock_return_items_claim_id_fk FOREIGN KEY (claim_id) REFERENCES clothing_service_claim(id)
-		ON UPDATE NO ACTION
-		ON DELETE NO ACTION;
+		ON UPDATE CASCADE
+		ON DELETE RESTRICT;
 
 CREATE INDEX stock_return_items_over_norm_operation_id_index
 	ON stock_return_items(over_norm_operation_id ASC);

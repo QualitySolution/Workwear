@@ -751,6 +751,8 @@ create table stock_return_items
 		on delete restrict,
 	constraint stock_return_items_claim_id_fk
 		foreign key (claim_id) references clothing_service_claim(id)
+			on update cascade
+			on delete restrict
 )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
