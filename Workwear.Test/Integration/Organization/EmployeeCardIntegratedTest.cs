@@ -95,7 +95,7 @@ namespace Workwear.Test.Integration.Organization
 				var uowProvider = new UnitOfWorkProvider(uow);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
-				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository(uowProvider));
 				stockModel.Warehouse = warehouse;
 				stockModel.OnDate = today;
 				issueModel.FillWearInStockInfo(employee, stockModel);
@@ -202,7 +202,7 @@ namespace Workwear.Test.Integration.Organization
 				var uowProvider = new UnitOfWorkProvider(uow);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
-				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository(uowProvider));
 				stockModel.Warehouse = warehouse;
 				stockModel.OnDate = today;
 				issueModel.FillWearInStockInfo(employee, stockModel);
@@ -338,7 +338,7 @@ namespace Workwear.Test.Integration.Organization
 				var uowProvider = new UnitOfWorkProvider(uow);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
-				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository(uowProvider));
 				stockModel.Warehouse = warehouse;
 				stockModel.OnDate = today;
 				issueModel.FillWearInStockInfo(employee, stockModel);

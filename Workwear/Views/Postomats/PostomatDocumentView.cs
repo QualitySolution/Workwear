@@ -61,7 +61,9 @@ namespace Workwear.Views.Postomats {
 				.AddBinding(ViewModel, v => v.CanAddItem, w => w.Sensitive).InitializeFromSource();
 			buttonAdd.Clicked += (sender, args) => ViewModel.ReturnFromService();
 			buttonDel.Clicked += (sender, args) => ViewModel.RemoveItem(treeItems.GetSelectedObject<PostomatDocumentItem>());
-
+			
+			labelSum.Binding
+				.AddBinding(ViewModel, vm => vm.TotalText, w => w.LabelProp) .InitializeFromSource();
 		}
 
 		private void SelectionOnChanged(object sender, EventArgs e) {

@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.Entity;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
@@ -30,10 +30,10 @@ namespace Workwear.Domain.Stock
 			set => SetField (ref name, value?.Trim());
 		}
 
-		private MeasurementUnits units;
+		private MeasurementUnit units;
 		[Display (Name = "Единица измерения")]
 		[Required(ErrorMessage = "Единица измерения должна быть указана.")]
-		public virtual MeasurementUnits Units {
+		public virtual MeasurementUnit Units {
 			get => units;
 			set => SetField (ref units, value);
 		}

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -28,7 +28,7 @@ namespace Workwear.Models.Import
 
 		#region Создание типов
 		private void makeTypes(IUnitOfWork uow) {
-			var units = uow.GetAll<MeasurementUnits>();
+			var units = uow.GetAll<MeasurementUnit>();
 			var sht = units.First(x => x.OKEI == "796");
 			var pair = units.First(x => x.OKEI == "715");
 
@@ -83,7 +83,7 @@ namespace Workwear.Models.Import
 			AddType("Защита от поражения электрическим током", ClothesType.PPE, sht, new[] { "Диэлектрический" });
 			AddType("Неизвестный тип", ClothesType.PPE, sht, new string[] { });
 		}
-		private void AddType(string name, ClothesType category, MeasurementUnits units, string[] keyWords, ClothesType? category2 = null, string[] keywords2 = null)
+		private void AddType(string name, ClothesType category, MeasurementUnit units, string[] keyWords, ClothesType? category2 = null, string[] keywords2 = null)
 		{
 			var type = ItemsTypes.FirstOrDefault(x => x.Name == name);
 			if(type == null) {

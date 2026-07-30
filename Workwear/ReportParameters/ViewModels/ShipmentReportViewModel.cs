@@ -10,16 +10,14 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Supply;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ShipmentReportViewModel : ReportParametersViewModelBase {
-		IUnitOfWork UoW;
+	public class ShipmentReportViewModel : ReportParametersUowViewModelBase {
 		public ShipmentReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory) : 
-			base(rdlViewerViewModel) {
+			base(rdlViewerViewModel, uowFactory) {
 
 			Title = "Отчет по планируемым поставкам";
 			Identifier = "ShipmentReportFlat";
-			UoW = uowFactory.CreateWithoutRoot();
 
 			var nomenclatureList = UoW.GetAll<Nomenclature>().ToList();
 			ChoiceNormViewModel = new ChoiceListViewModel<Nomenclature>(nomenclatureList,
@@ -53,6 +51,6 @@ namespace Workwear.ReportParameters.ViewModels {
 				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		#endregion
+
 	}
 }
-

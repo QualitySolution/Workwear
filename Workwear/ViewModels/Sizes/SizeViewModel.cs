@@ -36,7 +36,7 @@ namespace Workwear.ViewModels.Sizes
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWork), UoW} })));
-			if (UoW.IsNew) {
+			if (Entity.Id == 0) {
 				Entity.SizeType = sizeType;
 				IsNew = true;
 			}

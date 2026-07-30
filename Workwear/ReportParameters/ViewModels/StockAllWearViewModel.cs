@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Gamma.Utilities;
 using Gamma.Widgets;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
@@ -13,16 +14,14 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class StockAllWearViewModel : ReportParametersViewModelBase, IDialogDocumentation{
+	public class StockAllWearViewModel : ReportParametersUowViewModelBase, IDialogDocumentation {
 		public StockAllWearViewModel(RdlViewerViewModel rdlViewerViewModel,
 		IUnitOfWorkFactory unitOfWorkFactory,
 		FeaturesService featuresService)
-		: base(rdlViewerViewModel)
+		: base(rdlViewerViewModel, unitOfWorkFactory)
 		{
-			UoW = unitOfWorkFactory.CreateWithoutRoot();
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			base.Title = "Складская ведомость";
-			//warehouse 
 			Warehouses=UoW.GetAll<Warehouse>().ToList();
 			
 			if(featuresService.Available(WorkwearFeature.Owners)) {
@@ -36,11 +35,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
 		
-		IUnitOfWork UoW;
 		private readonly FeaturesService featuresService;
 		public IList<Owner> Owners { get; } = new List<Owner>();
 		public bool ShowOwners { get; }
 		public bool VisibleWarehouse => featuresService.Available(WorkwearFeature.Warehouses);
+		
+		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes) && ReportType == StockAllWearReportType.Flat;
 		public bool VisibleSumm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.Selling);
 		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
@@ -53,6 +53,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"ownerId", (SelectOwner as Owner)?.Id ?? -1},
 			{"showSumm", ShowSumm},
 			{"showSex", ShowSex},
+			{"show_barcode", ShowBarcodes},
 			{"warehouse_name", (SelectWarehouse as Warehouse)?.Name ?? " "},
 		};
 		
@@ -80,6 +81,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
  
 		private StockAllWearReportType reportType;
+		[PropertyChangedAlso(nameof(VisibleBarcodes))]
 		public virtual StockAllWearReportType ReportType {
 			get => reportType;
 			set {
@@ -101,7 +103,11 @@ namespace Workwear.ReportParameters.ViewModels {
 			get=> showSumm;
 			set=> SetField(ref showSumm, value);
 		}
-
+		private bool showBarcodes;
+		public virtual bool ShowBarcodes {
+			get=> showBarcodes;
+			set=> SetField(ref showBarcodes, value);
+		}
 		private bool showSex;
 		public virtual bool ShowSex {
 			get => showSex;
@@ -113,6 +119,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			set => SetField(ref warehouses, value); 
 		}
 		public bool SensitiveLoad=>ReportDate!=null;
+
 	}
 	
 	public enum StockAllWearReportType {

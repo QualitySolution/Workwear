@@ -61,7 +61,7 @@ namespace Workwear.ViewModels.Stock
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			SetDocumentDateProperty(e => e.Date);
 			
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.Organization =
 					organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);

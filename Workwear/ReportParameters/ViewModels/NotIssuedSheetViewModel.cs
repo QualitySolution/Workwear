@@ -23,9 +23,8 @@ using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class NotIssuedSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
+	public class NotIssuedSheetViewModel : ReportParametersUowViewModelBase, IDialogDocumentation
 	{
-		IUnitOfWork UoW;
 		private readonly ProtectionToolsRepository protectionToolsRepository;
 
 		public NotIssuedSheetViewModel(
@@ -35,13 +34,12 @@ namespace workwear.ReportParameters.ViewModels
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
 			ProtectionToolsRepository protectionToolsRepository)
-			: base(rdlViewerViewModel)
+			: base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 
 			Title = "Справка по невыданному (Детально)";
-			UoW = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<NotIssuedSheetViewModel>(rdlViewerViewModel, this, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
 				.MakeByType()
@@ -218,10 +216,6 @@ namespace workwear.ReportParameters.ViewModels
 		private readonly FeaturesService featuresService;
 		#endregion
 
-		public void Dispose()
-		{
-			UoW.Dispose();
-		}
 	}
 
 	public enum NotIssuedSheetReportType {

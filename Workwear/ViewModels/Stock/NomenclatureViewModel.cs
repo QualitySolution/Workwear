@@ -167,12 +167,13 @@ namespace Workwear.ViewModels.Stock
 			if(!Validate())
 				return false;
 			//Обрабатываем размеры
-			if(!UoW.IsNew && ((lastSizeType != null && !lastSizeType.IsSame(Entity.Type.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.Type.HeightType)))) {
+			if(Entity.Id != 0 && ((lastSizeType != null && !lastSizeType.IsSame(Entity.Type.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.Type.HeightType)))) {
 				if(!sizeTypeReplaceModel.TryReplaceSizes(UoW, interactive, progressCreator, new []{Entity}, Entity.Type.SizeType, Entity.Type.HeightType))
 					return false;
 			}
 			
-			UoW.Save();
+			UoW.Save(Entity);
+			UoW.Commit();
 			lastSizeType = Entity.Type.SizeType;
 			lastHeightType = Entity.Type.HeightType;
 			return true;

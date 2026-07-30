@@ -5,8 +5,9 @@ using System.IO;
 using Autofac;
 using NHibernate.Driver.MySqlConnector;
 using QS.BaseParameters;
-using QS.BusinessCommon.Domain;
-using QS.BusinessCommon;
+using QS.Measurement.Domain;
+using QS.Measurement.Views;
+using QS.Measurement.ViewModels;
 using QS.Cloud.Client;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.WearLk.Client;
@@ -63,9 +64,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using Workwear.Sql;
 using Workwear.Tools;
-using workwear.Dialogs.Regulations;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using workwear.Journal;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -92,6 +91,7 @@ using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Permissions;
 using Workwear.Tools.Sizes;
+using Workwear.Tools.OverNorms;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Import;
 using Connection = QS.Project.DB.Connection;
@@ -100,13 +100,16 @@ namespace workwear
 {
 	static partial class MainClass
 	{
-		public static void CreateBaseConfig (ProgressPerformanceHelper progress)
-		{
-			logger.Info ("Настройка параметров базы...");
+			public static void CreateBaseConfig (ProgressPerformanceHelper progress)
+			{
+				logger.Info ("Настройка параметров базы...");
 
-			// Настройка ORM
-			progress.CheckPoint("Настройка подключения к базе");
-			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
+				progress.CheckPoint("Инициализация переходных мостов QS.Project");
+				OrmMain.Init();
+
+				// Настройка ORM
+				progress.CheckPoint("Настройка подключения к базе");
+				var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
 				.Driver<MySqlConnectorDriver>()
 				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
@@ -118,7 +121,7 @@ namespace workwear
 			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
-				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
+				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnit)),
 				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
 				System.Reflection.Assembly.GetAssembly (typeof(HistoryMain)),
 
@@ -136,14 +139,6 @@ namespace workwear
 			#if DEBUG
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
 			#endif
-
-			progress.CheckPoint("Антикварные объекты");
-			//Настраиваем классы сущностей
-			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
-			//Спецодежда
-			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
-			//Общее
-			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 
 			progress.CheckPoint("Включение уведомлений об изменениях");
 			NotifyConfiguration.Enable();
@@ -260,6 +255,7 @@ namespace workwear
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterType<FileDialogService>().As<IFileDialogService>();
             builder.RegisterType<ObjectValidator>().As<IValidator>();
+			builder.RegisterType<OverNormFactory>().As<IOverNormFactory>();
 			#endregion
 
 			#region Навигация
@@ -284,7 +280,8 @@ namespace workwear
 				typeof(NewVersionView),
 				typeof(UpdateProcessView),
 				typeof(SerialNumberView),
-				typeof(HistoryView)
+				typeof(HistoryView),
+				typeof(MeasurementUnitView)
 			)).As<IGtkViewResolver>();
 			builder.RegisterDecorator<IGtkViewResolver>((c, p, i) => 
 				 new RegisteredGtkViewResolver(c.Resolve<IGtkViewFactory>(), i)
@@ -332,6 +329,9 @@ namespace workwear
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(HistoryViewModel)))
+				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
+				.AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(MeasurementUnitViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
 			#endregion

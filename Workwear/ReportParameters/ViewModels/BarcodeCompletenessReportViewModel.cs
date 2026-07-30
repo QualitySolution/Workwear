@@ -15,13 +15,12 @@ using Workwear.Domain.Stock;
 using Workwear.Tools;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class BarcodeCompletenessReportViewModel : ReportParametersViewModelBase, IDialogDocumentation {
+	public class BarcodeCompletenessReportViewModel : ReportParametersUowViewModelBase, IDialogDocumentation {
 		
 		public BarcodeCompletenessReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory)
-			: base(rdlViewerViewModel) {
-			UoW = uowFactory.CreateWithoutRoot();
+			: base(rdlViewerViewModel, uowFactory) {
 
 			ProtectionToolsNomenclature protectionToolsNomenclatureAlias = null;
 			Nomenclature nomenclatureAlias = null;
@@ -39,7 +38,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			
 			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
 			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
-			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
+			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подразделения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 		}
 
@@ -69,7 +68,6 @@ namespace Workwear.ReportParameters.ViewModels {
 		};
 
 		#region Параметры
-		IUnitOfWork UoW;
 		public override string Title => $"Отчёт по покрытию маркировкой от {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
@@ -140,7 +138,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			set => SetField(ref showEmployees, value);
 		}
 		#endregion
-		
+
 		public enum BarcodeCompletenessType {
 			[ReportIdentifier("BarcodeCompletenessReport")]
 			[Display(Name = "Форматировано")]

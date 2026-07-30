@@ -218,7 +218,7 @@ namespace Workwear.Domain.Company
 				? NumberToTextRus.FormatCase((int)(DateTime.Today - NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
 				: String.Empty;
 		public virtual string NextIssueText => ProtectionTools?.Dispenser ?? false ? String.Empty : $"{NextIssue:d}";
-		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
+		public virtual string TonText => ActiveNormItem?.NormParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 		#endregion
 		public EmployeeCardItem () { }
@@ -412,4 +412,3 @@ namespace Workwear.Domain.Company
 		}
 	}
 }
-

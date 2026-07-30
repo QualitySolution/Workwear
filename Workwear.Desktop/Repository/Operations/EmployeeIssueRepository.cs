@@ -7,6 +7,7 @@ using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using NHibernate;
 using QS.DomainModel.UoW;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
@@ -230,6 +231,59 @@ namespace Workwear.Repository.Operations
 			makeEager?.Invoke(query);
 			return query.List();
 		}
+		/// <summary>
+		/// Ищем действующие операции выдачи сотрудникам, на которые ссылаются заявки на обслуживание (по их штрихкодам).
+		/// </summary>
+		public virtual Dictionary<int, EmployeeIssueOperation> GetActualIssuedOperations(IEnumerable<ServiceClaim> claims, IUnitOfWork uow = null) {
+			var claimsList = claims.Where(c => c.Barcode != null).ToList();
+			var barcodeIds = claimsList.Select(c => c.Barcode.Id).Distinct().ToArray();
+			if(!barcodeIds.Any())
+				return new Dictionary<int, EmployeeIssueOperation>();
+
+			EmployeeIssueOperation issueAlias = null;
+			BarcodeOperation issuedBarcodeAlias = null;
+
+			var operations = (uow ?? RepoUow).Session.QueryOver(() => issueAlias)
+				.JoinAlias(() => issueAlias.BarcodeOperations, () => issuedBarcodeAlias)
+				.WhereRestrictionOn(() => issuedBarcodeAlias.Barcode.Id).IsIn(barcodeIds)
+				.Where(() => issueAlias.Issued > 0)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.WearSize)
+				.Fetch(SelectMode.Fetch, x => x.Height)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
+				.OrderBy(() => issueAlias.OperationTime).Desc
+				.List()
+				.Distinct()
+				.ToList();
+
+			EmployeeIssueOperation resultIssueAlias = null;
+			BarcodeOperation resultBarcodeAlias = null;
+			var resultPairs = new HashSet<(int OperationId, int BarcodeId)>(
+				(uow ?? RepoUow).Session.QueryOver(() => resultBarcodeAlias)
+					.JoinAlias(() => resultBarcodeAlias.EmployeeIssueOperation, () => resultIssueAlias)
+					.WhereRestrictionOn(() => resultBarcodeAlias.Barcode.Id).IsIn(barcodeIds)
+					.Where(() => resultIssueAlias.IssuedOperation != null)
+					.Fetch(SelectMode.Fetch, x => x.Barcode)
+					.Fetch(SelectMode.Fetch, x => x.EmployeeIssueOperation.IssuedOperation)
+					.List()
+					.Select(bo => (bo.EmployeeIssueOperation.IssuedOperation.Id, bo.Barcode.Id)));
+
+			var result = new Dictionary<int, EmployeeIssueOperation>();
+			foreach(var claim in claimsList) {
+				var operation = operations
+					.Where(op => op.BarcodeOperations.Any(bo => bo.Barcode.Id == claim.Barcode.Id))
+					.Where(op => !resultPairs.Contains((op.Id, claim.Barcode.Id)))
+					.OrderByDescending(op => op.OperationTime)
+					.FirstOrDefault();
+				if(operation != null)
+					result[claim.Id] = operation;
+			}
+			return result;
+		}
+
 		public IList<OperationToDocumentReference> GetReferencedDocuments(params int[] operationsIds)
 		{
 			OperationToDocumentReference docAlias = null;

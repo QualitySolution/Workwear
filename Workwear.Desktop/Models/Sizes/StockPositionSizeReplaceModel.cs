@@ -62,7 +62,7 @@ namespace Workwear.Models.Sizes {
 				return false;
 			}
 
-			int steps = (replaceSize ? 10 : 0) + (replaceHeight ? 10 : 0);
+			int steps = (replaceSize ? 11 : 0) + (replaceHeight ? 11 : 0);
 			progress.Start(steps, text: "Замена размеров в операциях…");
 
 			var nomenclatureId = nomenclature.Id;
@@ -122,6 +122,11 @@ namespace Workwear.Models.Sizes {
 				.Where(x => x.Nomenclature.Id == nomenclatureId && x.WearSize.Id == oldSize.Id)
 				.UpdateBuilder().Set(x => x.WearSize, newSize).Update();
 
+			progress.Add(text: $"Операции выдачи вне нормы…");
+			uow.GetAll<OverNormOperation>()
+				.Where(x => x.Nomenclature.Id == nomenclatureId && x.WearSize.Id == oldSize.Id)
+				.UpdateBuilder().Set(x => x.WearSize, newSize).Update();
+
 			progress.Add(text: $"Строки возврата…");
 			uow.GetAll<ReturnItem>()
 				.Where(x => x.Nomenclature.Id == nomenclatureId && x.WearSize.Id == oldSize.Id)
@@ -174,6 +179,11 @@ namespace Workwear.Models.Sizes {
 				.Where(x => x.Nomenclature.Id == nomenclatureId && x.Height.Id == oldHeight.Id)
 				.UpdateBuilder().Set(x => x.Height, newHeight).Update();
 
+			progress.Add(text: $"Операции выдачи вне нормы (рост)…");
+			uow.GetAll<OverNormOperation>()
+				.Where(x => x.Nomenclature.Id == nomenclatureId && x.Height.Id == oldHeight.Id)
+				.UpdateBuilder().Set(x => x.Height, newHeight).Update();
+
 			progress.Add(text: $"Строки возврата (рост)…");
 			uow.GetAll<ReturnItem>()
 				.Where(x => x.Nomenclature.Id == nomenclatureId && x.Height.Id == oldHeight.Id)
@@ -186,4 +196,3 @@ namespace Workwear.Models.Sizes {
 		}
 	}
 }
-

@@ -72,8 +72,8 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(income);
 				uow.Commit();
 
-				var stock = new StockRepository()
-					.StockBalances(uow, warehouse, new List<Nomenclature> { nomenclature }, new DateTime(2017, 1,2));
+				var stock = new StockRepository(uow)
+					.StockBalances(warehouse, new List<Nomenclature> { nomenclature }, new DateTime(2017, 1,2));
 				Assert.That(stock.Count, Is.EqualTo(2));
 			}
 		}
@@ -120,8 +120,8 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(income);
 				uow.Commit();
 
-				var stock = new StockRepository()
-					.StockBalances(uow, warehouse, new List<Nomenclature> { nomenclature }, DateTime.Now);
+				var stock = new StockRepository(uow)
+					.StockBalances(warehouse, new List<Nomenclature> { nomenclature }, DateTime.Now);
 				var stockItem = stock.First();
 				Assert.That(stockItem.Amount, Is.EqualTo(10));
 				Assert.That(stockItem.WearPercent, Is.EqualTo(0.8m));
@@ -180,7 +180,7 @@ namespace Workwear.Test.Integration.Stock
 				var uowProvider = new UnitOfWorkProvider(uow);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
-				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository(uowProvider));
 				stockModel.Warehouse = warehouse;
 				stockModel.OnDate = new DateTime(2018, 10, 22);
 				issueModel.FillWearInStockInfo(employee, stockModel);
@@ -286,10 +286,10 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(income2);
 				
 				uow.Commit();
-				var stockRepository = new StockRepository();
-				var stock1 = stockRepository.StockBalances(uow, warehouse, new List<Nomenclature> { nomenclature }, new DateTime(2017, 1, 2));
+				var stockRepository = new StockRepository(uow);
+				var stock1 = stockRepository.StockBalances(warehouse, new List<Nomenclature> { nomenclature }, new DateTime(2017, 1, 2));
 				Assert.That(stock1.Sum(x => x.Amount), Is.EqualTo(15));
-				var stock2 = stockRepository.StockBalances(uow, warehouse2, new List<Nomenclature> { nomenclature }, new DateTime(2017, 1, 2));
+				var stock2 = stockRepository.StockBalances(warehouse2, new List<Nomenclature> { nomenclature }, new DateTime(2017, 1, 2));
 				Assert.That(stock2.Sum(x => x.Amount), Is.EqualTo(7));
 			}
 		}
@@ -323,8 +323,8 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(income);
 				uow.Commit();
 
-				var stockRepository = new StockRepository();
-				var stock1 = stockRepository.StockBalances(uow, warehouse, 
+				var stockRepository = new StockRepository(uow);
+				var stock1 = stockRepository.StockBalances(warehouse,
 											new List<Nomenclature> { nomenclature1, nomenclature2}, 
 											new DateTime(2017, 1,2));
 				Assert.That(stock1.Count(), Is.EqualTo(2));
@@ -334,7 +334,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(income);
 				uow.Commit();
 
-				var stock2 = stockRepository.StockBalances(uow, warehouse,
+				var stock2 = stockRepository.StockBalances(warehouse,
 											new List<Nomenclature> { nomenclature1, nomenclature2 },
 											new DateTime(2017, 1, 2));
 

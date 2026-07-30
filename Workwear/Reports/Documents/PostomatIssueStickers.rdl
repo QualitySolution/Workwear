@@ -2,12 +2,12 @@
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <Description></Description>
   <Author></Author>
-  <PageHeight>60mm</PageHeight>
-  <PageWidth>57mm</PageWidth>
+  <PageHeight>56mm</PageHeight>
+  <PageWidth>56mm</PageWidth>
   <Width>7.5in</Width>
-  <TopMargin>1mm</TopMargin>
-  <LeftMargin>1mm</LeftMargin>
-  <RightMargin>1mm</RightMargin>
+  <TopMargin>5 mm</TopMargin>
+  <LeftMargin>5 mm</LeftMargin>
+  <RightMargin>5 mm</RightMargin>
   <BottomMargin>1mm</BottomMargin>
   <PageHeader>
     <Height>0.0pt</Height>
@@ -18,7 +18,7 @@
     <Height>377.1pt</Height>
     <Columns>1</Columns>
     <ReportItems>
-      <Table Name="Table1" >
+      <Table Name="Table1">
         <DataSetName>Data</DataSetName>
         <NoRows>Query returned no rows!</NoRows>
         <Style>
@@ -30,14 +30,14 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>120.3pt</Width>
+            <Width>102.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>30.3pt</Width>
+            <Width>29.0pt</Width>
           </TableColumn>
         </TableColumns>
-        <Left>0.0pt</Left>
-        <Top>5.6pt</Top>
+        <Left>0.7pt</Left>
+        <Top>3.2pt</Top>
         <Details>
           <TableRows>
             <TableRow>
@@ -61,7 +61,7 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>.2in</Height>
+              <Height>12.1pt</Height>
               <TableCells>
                 <TableCell>
                   <ColSpan>2</ColSpan>
@@ -73,7 +73,7 @@
                         <BorderStyle />
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize>16pt</FontSize>
+                        <FontSize>14pt</FontSize>
                         <FontWeight>Normal</FontWeight>
                       </Style>
                     </Textbox>
@@ -104,7 +104,7 @@
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>18.4pt</Height>
+              <Height>32.4pt</Height>
               <TableCells>
                 <TableCell>
                   <ColSpan>2</ColSpan>
@@ -117,17 +117,17 @@
                         <BorderColor />
                         <BorderWidth />
                         <FontWeight>Normal</FontWeight>
-                        <FontSize>10pt</FontSize>
+                        <FontSize>9pt</FontSize>
                         <VerticalAlign>Top</VerticalAlign>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>false</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>20.0pt</Height>
+              <Height>28.5pt</Height>
               <TableCells>
                 <TableCell>
                   <ColSpan>2</ColSpan>
@@ -140,18 +140,18 @@
                         <BorderColor />
                         <BorderWidth />
                         <FontWeight>Normal</FontWeight>
-                        <FontSize>16pt</FontSize>
+                        <FontSize>14pt</FontSize>
                         <VerticalAlign>Middle</VerticalAlign>
                         <BackgroundColor>White</BackgroundColor>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>false</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
               </TableCells>
             </TableRow>
             <TableRow>
-              <Height>27.3pt</Height>
+              <Height>32.1pt</Height>
               <TableCells>
                 <TableCell>
                   <ReportItems>
@@ -169,7 +169,7 @@
                         <BackgroundColor>White</BackgroundColor>
                         <TextAlign>Left</TextAlign>
                       </Style>
-                      <CanShrink >false</CanShrink>
+                      <CanShrink>false</CanShrink>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -256,7 +256,7 @@ WHERE postomat.id = @id;
       </Fields>
     </DataSet>
   </DataSets>
-  <EmbeddedImages >
+  <EmbeddedImages>
     <EmbeddedImage Name="logo">
       <MIMEType>image/png</MIMEType>
       <ImageData>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</ImageData>

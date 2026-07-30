@@ -38,13 +38,14 @@ namespace Workwear.ViewModels.Import
 			IUserService userService,
 			ILifetimeScope autofacScope,
 			SizeService sizeService,
-			IProgressBarDisplayable progressBar) : base(unitOfWorkFactory, navigation) {
+			IProgressBarDisplayable progressBar,
+			UnitOfWorkProvider unitOfWorkProvider = null) : base(unitOfWorkFactory, navigation, unitOfWorkProvider: unitOfWorkProvider) {
 			this.userService = userService;
 			this.interactiveService = interactiveService;
 			this.parser = parser;
 			SelectFileVisible = true;
 			Title = "Загрузка поступлений";
-			Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			Warehouse = stockRepository.GetDefaultWarehouse(featuresService, userService.CurrentUserId);
 			this.featuresService = featuresService;
 			this.sizeService = sizeService;
 			this.progressBar = progressBar;

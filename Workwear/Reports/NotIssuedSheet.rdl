@@ -897,7 +897,7 @@ SELECT
             NULL
     ) AS delay,
     protection_tools.name AS protection_tools_name,
-    protection_tools.assessed_cost * norms_item.amount AS protection_tools_assessed_cost,
+    protection_tools.assessed_cost * IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0) AS protection_tools_assessed_cost,
     employee_cards_item.protection_tools_id,
     subdivisions.id as subdivision_id,
     subdivisions.name as subdivision_name,
@@ -927,22 +927,20 @@ SELECT
 FROM employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
+        LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
         LEFT JOIN (
-            SELECT DISTINCT protection_tools_nomenclature.protection_tools_id, nomenclature.type_id, item_types.units_id,
-                            item_types.size_type_id, item_types.height_type_id, item_types.issue_type
+            SELECT DISTINCT protection_tools_nomenclature.protection_tools_id, protection_tools.item_types_id as type_id
             FROM protection_tools_nomenclature
-                LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
-                LEFT JOIN item_types ON item_types.id = nomenclature.type_id
-            )as nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
-        LEFT JOIN measurement_units ON nomenclatureTypes.units_id = measurement_units.id
+                LEFT JOIN protection_tools ON protection_tools.id = protection_tools_nomenclature.protection_tools_id
+            ) as nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
+        LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
         JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
         LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
         LEFT JOIN departments ON employees.department_id = departments.id
         LEFT JOIN posts ON employees.post_id = posts.id
-        LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
         LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
-        LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = nomenclatureTypes.size_type_id
-        LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = nomenclatureTypes.height_type_id
+        LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
+        LEFT JOIN size_types AS heightTypeAlias ON heightTypeAlias.id = item_types.height_type_id
         LEFT JOIN employees_sizes AS employeeSizeAlias ON (employeeSizeAlias.employee_id = employee_cards_item.employee_id AND employeeSizeAlias.size_type_id = sizeTypeAlias.id)
         LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = employeeSizeAlias.size_id
         LEFT JOIN employees_sizes AS employeeHeightAlias ON (employeeHeightAlias.employee_id = employee_cards_item.employee_id AND employeeHeightAlias.size_type_id = heightTypeAlias.id)
@@ -1025,7 +1023,7 @@ WHERE
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
           DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6),
           DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
-  AND( @issue_type = '' OR nomenclatureTypes.issue_type = @issue_type )
+  AND( @issue_type = '' OR item_types.issue_type = @issue_type )
   AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
   AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; employee_cards_item.next_issue)
 GROUP BY
@@ -1033,6 +1031,7 @@ GROUP BY
     employee_cards_item.protection_tools_id
 HAVING
     (@exclude_zero_stock = false OR in_stock &gt; 0)
+    AND need &gt; 0
 ORDER BY
     employee,
     protection_tools_name</CommandText>

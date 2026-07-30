@@ -25,20 +25,11 @@ namespace Workwear.Views.Regulations
 		{
 			ylabelId.Binding.AddBinding (Entity, e => e.Id, w => w.LabelProp, new Gamma.Binding.Converters.IdToStringConverter()).InitializeFromSource ();
 
-			ycomboAnnex.SetRenderTextFunc<RegulationDocAnnex>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
-			yentryRegulationDoc.SetRenderTextFunc<RegulationDoc>(x => StringManipulationHelper.EllipsizeMiddle(x.Title,160));
-			yentryRegulationDoc.ItemsList = ViewModel.RegulationDocs;
-			yentryRegulationDoc.WidthRequest = 1; //Минимальное не нулевое значение, чтобы элемент не участвовал в расчёте минимальной ширины окна
-			ycomboAnnex.WidthRequest = 1;  
-			yentryRegulationDoc.Binding.AddBinding(Entity, e => e.Document, w => w.SelectedItem).InitializeFromSource();
-			yentryRegulationDoc.Changed += OnYentryRegulationDocChanged;
-			ycomboAnnex.Binding.AddBinding(Entity, e => e.Annex, w => w.SelectedItem).InitializeFromSource();
 			datefrom.Binding.AddBinding(Entity, e => e.DateFrom, w => w.DateOrNull).InitializeFromSource();
 			dateto.Binding.AddBinding(Entity, e => e.DateTo, w => w.DateOrNull).InitializeFromSource();
 			ylabellastupdate.Binding.AddBinding(ViewModel, e=>e.LastUpdate, w=>w.LabelProp).InitializeFromSource();
 			ycheckArchival.Binding.AddBinding(Entity, e => e.Archival, w => w.Active).InitializeFromSource();
 			
-			yentryTonParagraph.Binding.AddBinding (Entity, e => e.TONParagraph, w => w.Text).InitializeFromSource ();
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 			ytextComment.Binding.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 
@@ -109,12 +100,6 @@ namespace Workwear.Views.Regulations
 		}
 		#endregion
 
-		protected void OnYentryRegulationDocChanged(object sender, EventArgs e)
-		{
-			ycomboAnnex.ItemsList = Entity.Document?.Annexes;
-			ycomboAnnex.Sensitive = Entity.Document?.Annexes.Count > 0;
-		}
-		
 		#region PopupMenu
 
 		private void TreeItems_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
@@ -165,4 +150,3 @@ namespace Workwear.Views.Regulations
 		}
 	}
 }
-

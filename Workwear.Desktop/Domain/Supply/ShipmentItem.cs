@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Sizes;
@@ -144,7 +144,7 @@ namespace Workwear.Domain.Supply{
 		public virtual SizeType WearSizeType => nomenclature?.Type.SizeType;
 
 		[Display(Name = "Единица измерения")]
-		public virtual MeasurementUnits Units => nomenclature?.Type.Units;
+		public virtual MeasurementUnit Units => nomenclature?.Type.Units;
 
 		#endregion
 		public ShipmentItem(){ }

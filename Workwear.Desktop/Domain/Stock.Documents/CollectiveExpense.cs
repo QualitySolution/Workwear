@@ -101,13 +101,13 @@ namespace Workwear.Domain.Stock.Documents
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if (baseParameters.CheckBalances)
 			{
-				var repository = new StockRepository();
+				var repository = new StockRepository(UoW);
 				var nomenclatures =
 					Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
 				var excludeOperations =
 					Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
 				var balance =
-					repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+					repository.StockBalances(Warehouse, nomenclatures, Date, excludeOperations);
 
 				var positionGroups =
 					Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
@@ -243,4 +243,3 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 	}
 }
-

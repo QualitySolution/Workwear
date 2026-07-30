@@ -165,13 +165,18 @@ namespace workwear.Tools.IdentityCards
 		public void StopAutoPoll()
 		{
 			IsAutoPoll = false;
-			AutoPollTimer.Enabled = false;
+			if(AutoPollTimer == null)
+				return;
+
+			AutoPollTimer.Stop();
+			AutoPollTimer.Elapsed -= AutoPollTimer_Elapsed;
+			AutoPollTimer.Dispose();
+			AutoPollTimer = null;
 		}
 
 		public void Dispose()
 		{
-			if(IsAutoPoll)
-				StopAutoPoll();
+			StopAutoPoll();
 		}
 
 		#endregion

@@ -79,6 +79,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<EmployeeListedItemsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeMovementsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeNormsViewModel>().AsSelf();
+			builder.RegisterType<EmployeeOverNormViewModel>().AsSelf();
 			builder.RegisterType<EmployeePhotoViewModel>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
 			builder.RegisterType<EmployeeVacationsViewModel>().AsSelf();
@@ -96,6 +97,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.Register(x => baseParameters).As<BaseParameters>();
 			builder.Register(x => commonMessages).As<CommonMessages>();
 			builder.Register(x => deleteEntityService).As<IDeleteEntityService>();
+			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.Register(x => featureService).As<FeaturesService>();
 			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>().As<IInteractiveQuestion>();
 			builder.Register(x => lkSpecCoinManagerService).As<SpecCoinManagerService>();

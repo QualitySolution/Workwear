@@ -24,6 +24,7 @@ using Workwear.Domain.Postomats;
 using Workwear.Journal.Filter.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.ClothingService;
 using Workwear.ViewModels.ClothingService;
+using Workwear.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using CellLocation = Workwear.Domain.Postomats.CellLocation;
@@ -117,12 +118,15 @@ namespace Workwear.ViewModels.Postomats {
 		public bool CanChangePostomat => Entity.Items.Count == 0;
 		public bool CanUseBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 
+		public string TotalText => $"Позиций в документе: {Entity.Items.Count}";
+
 		#endregion
 
 		#region Команды View
 
 		public void AddFromScan() {
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel>(this, this);
+			//Здесь зануления других моделей обязательно чтобы их не создавал DI
+			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(this, this, null, null);
 		}
 		
 		public void AddItems(IEnumerable<ServiceClaim> claims) {
@@ -131,6 +135,7 @@ namespace Workwear.ViewModels.Postomats {
 				.List();
 			foreach(var i in items) 
 				Entity.AddItem(i, AvailableCells().FirstOrDefault(), userService.GetCurrentUser());
+			OnPropertyChanged(nameof(TotalText));
 		}
 
 		public void ReturnFromService() {
@@ -179,6 +184,7 @@ namespace Workwear.ViewModels.Postomats {
 				UoW.Save(Entity);
 				UoW.Commit();
 			}
+			OnPropertyChanged(nameof(TotalText));
 		}
 		#endregion
 
@@ -204,7 +210,8 @@ namespace Workwear.ViewModels.Postomats {
 				return;
 			}
 			
-			Save();
+			if(!Save())
+				return;
 			switch(type) 
 			{
 				case PostomatPrintType.Document: PrintDocument(type);

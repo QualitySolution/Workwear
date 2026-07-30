@@ -29,6 +29,7 @@ namespace Workwear.Test.Deletion
 			AddIgnoredProperty<EmployeeCardItem>(x => x.ActiveNormItem, "Должно удалятся более сложным способом, а именно через обновление потребностей.");
 			AddIgnoredProperty<DutyNormIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
 			AddIgnoredProperty<EmployeeIssueOperation>(x => x.IssuedOperation, "Потому что если мы удаляем операцию списания, мы не должны при этом удалять операцию выдачи.");
+			AddIgnoredProperty<OverNormOperation>(x => x.SubstitutedIssueOperation, "Потому что если мы удаляем операцию выдачи вне нормы, мы не должны при этом удалять заменяемую операцию выдачи.");
 			AddIgnoredProperty<DutyNormIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной ссылкой на операцию. Удаляется при удалении выдачи.");
 			AddIgnoredProperty<EmployeeIssueOperation>(x => x.WarehouseOperation, "Является лиш дополнительной ссылкой на операцию. И скорей всего и так вместе будет удалятся за счет других ссылок.");
 			AddIgnoredProperty<InspectionItem>(x => x.OperationIssue, "Потому что если мы удаляем строку переоценки, мы не должны при этом удалять исходную операцию выдачи.");

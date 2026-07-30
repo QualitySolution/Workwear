@@ -1855,7 +1855,7 @@
     nomenclature.name as nomenclature_name,
     nomenclature.number as nomenclature_number,
     measurement_units.name as units,
-    COALESCE(this_issuse.returned, this_duty_issued.returned) as amount_return,
+    return_warehouse.amount as amount_return,
     sizeAlias.name as size,
     heightAlias.name as growth,
     stock_return.comment,
@@ -1863,13 +1863,12 @@
 FROM stock_return_items
          LEFT JOIN stock_return ON stock_return.id = stock_return_items.stock_return_id
          LEFT JOIN employees ON employees.id = stock_return_items.employee_id
-         LEFT JOIN nomenclature on nomenclature.id = stock_return_items.nomenclature_id
-         LEFT JOIN operation_issued_by_employee as this_issuse on this_issuse.id = stock_return_items.employee_issue_operation_id
-         LEFT JOIN operation_issued_by_duty_norm as this_duty_issued ON this_duty_issued.id = stock_return_items.duty_norm_issue_operation_id
+         LEFT JOIN operation_warehouse as return_warehouse on return_warehouse.id = stock_return_items.warehouse_operation_id
+         LEFT JOIN nomenclature on nomenclature.id = return_warehouse.nomenclature_id
          LEFT JOIN item_types ON nomenclature.type_id = item_types.id
          LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
-         LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = stock_return_items.size_id
-         LEFT JOIN sizes AS heightAlias ON heightAlias.id = stock_return_items.height_id
+         LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = return_warehouse.size_id
+         LEFT JOIN sizes AS heightAlias ON heightAlias.id = return_warehouse.height_id
 WHERE stock_return_items.stock_return_id = @id</CommandText>
         <QueryParameters>
           <QueryParameter Name="id">

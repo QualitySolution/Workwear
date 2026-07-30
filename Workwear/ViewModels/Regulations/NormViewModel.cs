@@ -74,13 +74,8 @@ namespace Workwear.ViewModels.Regulations
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
 				.Future();
 
-			var regulationQuery = UoW.Session.QueryOver<RegulationDoc>()
-				.Fetch(SelectMode.Fetch, x => x.Annexes)
-				.Future();
-			
 			NormConditions = normConditionQuery.ToList();
 			NormConditions.Insert(0, null);
-			RegulationDocs = regulationQuery.ToList();
 			if(Entity.Id == 0)
 				LastUpdate = "Новая норма";
 			else {
@@ -162,7 +157,6 @@ namespace Workwear.ViewModels.Regulations
 
 		#region Свойства
 		public List<NormCondition> NormConditions { get; set; }
-		public List<RegulationDoc> RegulationDocs { get; set; }
 		
 		private NormItem selectedItem;
 		public virtual NormItem SelectedItem {

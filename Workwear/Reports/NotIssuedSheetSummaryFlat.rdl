@@ -761,7 +761,7 @@
         <CommandText>SELECT tabel.*,
        IF(@show_stock, SUM(stock.SUM), null) AS in_stock
 FROM (SELECT protection_tools.name                                                                     AS protection_tools_name,
-             protection_tools.assessed_cost * SUM(norms_item.amount)                                   AS protection_tools_assessed_cost,
+             protection_tools.assessed_cost * SUM(IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0)) AS protection_tools_assessed_cost,
              employee_cards_item.protection_tools_id,
              subdivisions.code                                                                              as subdivision_code,
              subdivisions.id                                                                                as subdivision_id,
@@ -790,46 +790,53 @@ FROM (SELECT protection_tools.name                                              
              SUM(norms_item.amount)                                                                    AS amount_by_norm,
              SUM(IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0),
                     0)) AS need,
-             GROUP_CONCAT(DISTINCT NULLIF(diff.diff_causes, '') SEPARATOR ', ') AS diff_causes,
-             GROUP_CONCAT(DISTINCT IFNULL(period,
-                            IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,
-                               CONCAT(
-                                 CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%Y'),
-                                           NULLIF(
-                                             DATE_FORMAT(diff.end_period, '%d.%m.%Y'),
-                                             DATE_FORMAT(diff.start_period, '%d.%m.%Y')
-                                           )
-                                 ),
-                                ' (№', diff.shipment_id, ')'
-                               )))
-                         SEPARATOR ', ') AS shipment_periods
+             diff.diff_causes AS diff_causes,
+             diff.shipment_periods AS shipment_periods
       FROM employee_cards_item
                JOIN employees ON employees.id = employee_cards_item.employee_id
                LEFT JOIN posts ON employees.post_id = posts.id
                LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR
                                     employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
                JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
-               LEFT JOIN (SELECT protection_tools_nomenclature.protection_tools_id as prt_id,
-                                 shipment.id as shipment_id,
-                                 shipment.start_period,
-                                 shipment.end_period,
-                                 GROUP_CONCAT(DISTINCT NULLIF(shipment_items.diff_cause, '') SEPARATOR ', ') AS diff_causes,
-                                 IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL,
-                                    CONCAT(
-                                            CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y'),
-                                                      NULLIF(
-                                                              DATE_FORMAT(MAX(shipment_items.end_period), '%d.%m.%Y'),
-                                                              DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y')
-                                                      )),
-                                            ' (№', shipment.id, ')'
-                                    )) AS period
-                          FROM nomenclature
-                            LEFT JOIN protection_tools_nomenclature  ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
-                            LEFT JOIN shipment_items ON nomenclature.id = shipment_items.nomenclature_id
-                            LEFT JOIN shipment ON shipment_items.shipment_id = shipment.id
-                          WHERE shipment.status NOT LIKE 'Received'
-                          GROUP BY nomenclature.id, shipment.id) AS diff
-               ON diff.prt_id = protection_tools.id
+               LEFT JOIN (
+                   SELECT protection_tools_nomenclature.protection_tools_id as prt_id,
+                          GROUP_CONCAT(DISTINCT NULLIF(diff.diff_causes, '') SEPARATOR ', ') AS diff_causes,
+                          GROUP_CONCAT(DISTINCT IFNULL(period,
+                                         IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,
+                                            CONCAT(
+                                              CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%Y'),
+                                                        NULLIF(
+                                                          DATE_FORMAT(diff.end_period, '%d.%m.%Y'),
+                                                          DATE_FORMAT(diff.start_period, '%d.%m.%Y')
+                                                        )
+                                              ),
+                                             ' (№', diff.shipment_id, ')'
+                                            )))
+                                      SEPARATOR ', ') AS shipment_periods
+                   FROM protection_tools_nomenclature
+                       LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
+                       LEFT JOIN (SELECT nomenclature.id AS nom_id,
+                                         shipment.id as shipment_id,
+                                         shipment.start_period,
+                                         shipment.end_period,
+                                         GROUP_CONCAT(DISTINCT NULLIF(shipment_items.diff_cause, '') SEPARATOR ', ') AS diff_causes,
+                                         IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL,
+                                            CONCAT(
+                                                    CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y'),
+                                                              NULLIF(
+                                                                      DATE_FORMAT(MAX(shipment_items.end_period), '%d.%m.%Y'),
+                                                                      DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y')
+                                                              )),
+                                                    ' (№', shipment.id, ')'
+                                            )) AS period
+                                  FROM nomenclature
+                                        LEFT JOIN shipment_items ON nomenclature.id = shipment_items.nomenclature_id
+                                        LEFT JOIN shipment ON shipment_items.shipment_id = shipment.id
+                                  WHERE shipment.status NOT LIKE 'Received'
+                                  GROUP BY nomenclature.id, shipment.id) AS diff
+                       ON diff.nom_id = nomenclature.id
+                   GROUP BY protection_tools_nomenclature.protection_tools_id
+               ) AS diff ON diff.prt_id = protection_tools.id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
                LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
@@ -891,6 +898,7 @@ FROM (SELECT protection_tools.name                                              
                IF(@show_sex, employees.sex, NULL),
                sizeId,
                heightId
+      HAVING need &gt; 0
                ) as tabel
          #Остатки на складе
          LEFT JOIN (SELECT sex_b.ptid,

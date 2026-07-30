@@ -16,6 +16,8 @@ namespace Workwear.Models.Import.Employees
 		NewDepartments,
 		[Display(Name = "Новых должностей")]
 		NewPosts,
+		[Display(Name = "Новых МВЗ")]
+		NewCostCenters,
 		[Display(Name = "Пропущено строк")]
 		SkipRows,
 		[Display(Name = "Несколько соответствий")]

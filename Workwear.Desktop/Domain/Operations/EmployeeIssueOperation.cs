@@ -412,20 +412,20 @@ namespace Workwear.Domain.Operations
 		private bool CheckRecalculateCondition() {
 			if(FixedOperation) {
 				logger.Error(
-					$"Операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} помечена как непересчитываемая.");
+					$"Операция id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} помечена как непересчитываемая.");
 				return false;
 			}
 			
 			if(ProtectionTools == null) {
 				logger.Error(
-					$"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
-					$"'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
+					$"Для операция id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
+					$"'Номенклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
 				return false;
 			}
 
 			if(NormItem == null) {
 				logger.Error(
-					$"Для операциия id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} " +
+					$"Для операция id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} " +
 					$"от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
 				return false;
 			}

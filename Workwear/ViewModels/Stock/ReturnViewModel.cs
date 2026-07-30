@@ -21,18 +21,25 @@ using QS.Validation;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
+using Workwear.ViewModels.ClothingService;
+using Workwear.ViewModels.Postomats;
 using workwear.Journal.Filter.ViewModels.Company;
+using workwear.Journal.ViewModels.ClothingService;
 using Workwear.Journal.Filter.ViewModels.Regulations;
+using Workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
+using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -51,18 +58,24 @@ namespace Workwear.ViewModels.Stock {
 			StockBalanceModel stockBalanceModel,
 			IInteractiveService interactiveService,
 			DutyNormRepository dutyNormRepository,
+			OverNormOperationRepository overNormOperationRepository,
+			EmployeeIssueRepository employeeIssueRepository,
+			BarcodeOperationRepository barcodeOperationRepository,
 			ICurrentPermissionService permissionService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
 			Warehouse warehouse = null,
-      DutyNorm dutyNorm = null
+			DutyNorm dutyNorm = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactiveService, validator, unitOfWorkProvider)
 		{
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactiveService = interactiveService;
 			this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
+			this.overNormOperationRepository = overNormOperationRepository ?? throw new ArgumentNullException(nameof(overNormOperationRepository));
+			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
+			this.barcodeOperationRepository = barcodeOperationRepository ?? throw new ArgumentNullException(nameof(barcodeOperationRepository));
 			DutyNorm = UoW.GetInSession(dutyNorm);
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			SetDocumentDateProperty(e => e.Date);
@@ -73,7 +86,7 @@ namespace Workwear.ViewModels.Stock {
 				logger.Info("Создание Нового документа выдачи");
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				EmployeeCard = UoW.GetInSession(employee);
-				Entity.Warehouse = UoW.GetInSession(warehouse) ?? stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+				Entity.Warehouse = UoW.GetInSession(warehouse) ?? stockRepository.GetDefaultWarehouse(featuresService, userService.CurrentUserId);
 			} 
 			else 
 				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
@@ -124,8 +137,11 @@ namespace Workwear.ViewModels.Stock {
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
-		private IInteractiveService interactiveService;
-		private DutyNormRepository dutyNormRepository;
+		private readonly IInteractiveService interactiveService;
+		private readonly DutyNormRepository dutyNormRepository;
+		private readonly OverNormOperationRepository overNormOperationRepository;
+		private readonly EmployeeIssueRepository employeeIssueRepository;
+		private readonly BarcodeOperationRepository barcodeOperationRepository;
 		
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -144,6 +160,7 @@ namespace Workwear.ViewModels.Stock {
 			set => SetField(ref total, value);
 		}
 		public DutyNorm DutyNorm { get; }
+		public ServiceClaim ServiceClaim { get; }
 
 		#endregion 
 		
@@ -151,11 +168,14 @@ namespace Workwear.ViewModels.Stock {
 		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public virtual bool CanAddEmployee => CanEdit;
 		public virtual bool CanAddDutyNorms => CanEdit;
+		public virtual bool CanAddOverNorm => CanEdit && featuresService.Available(WorkwearFeature.OverNorm);
+		public virtual bool CanAddClaim => CanEdit;
 		public virtual bool CanRemoveItem => CanEdit && SelectedItem != null;
 		public virtual bool CanSetNomenclature => CanEdit && SelectedItem != null;
-		public virtual bool CanEditItems => CanEdit && EmployeeCard != null;
 		public virtual bool OwnersVisible => featuresService.Available(WorkwearFeature.Owners);
 		public virtual bool WarehouseVisible => featuresService.Available(WorkwearFeature.Warehouses);
+		public virtual bool BarcodesVisible => featuresService.Available(WorkwearFeature.Barcodes);
+		public virtual bool ClaimVisible => featuresService.Available(WorkwearFeature.ClothingService);
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
 		
 		private bool autoDocNumber = true;
@@ -224,6 +244,81 @@ namespace Workwear.ViewModels.Stock {
 					v => v.Balance));
 		}
 
+		public void AddFromOverNorm() {
+			var selectJournal = NavigationManager.OpenViewModel<OverNormIssuedJournalViewModel>(
+				this,
+				OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.Employee = EmployeeCard;
+			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromOverNormNodes(
+				e.GetSelectedObjects<OverNormIssuedJournalNode>());
+		}
+
+		public void AddFromClaim() {
+			var selectJournal =
+				NavigationManager.OpenViewModel<ClaimsJournalViewModel, ServiceClaim>(
+					this,
+					ServiceClaim,
+					OpenPageOptions.AsSlave
+				);
+			selectJournal.ViewModel.Filter.ShowClosed = false;
+			selectJournal.ViewModel.Filter.SensitiveShowClosed = false;
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			selectJournal.ViewModel.OnSelectResult += (sender, e) => AddFromClaimNodes(
+				e.GetSelectedObjects<ClaimsJournalNode>().Select(x => x.Id));
+		}
+
+		public void AddFromClaimNodes(IEnumerable<int> claimIds) =>
+			AddClaims(LoadClaims(claimIds));
+
+		public void AddFromScan() {
+			//Здесь зануления других моделей обязательно чтобы их не создавал DI
+			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(
+				this, null, null, this);
+		}
+
+		public void AddItems(IEnumerable<ServiceClaim> claims) =>
+			AddClaims(LoadClaims(claims.Select(c => c.Id)));
+
+		private IList<ServiceClaim> LoadClaims(IEnumerable<int> claimIds) {
+			Barcode barcodeAlias = null;
+			return UoW.Session.QueryOver<ServiceClaim>()
+				.Where(x => x.Id.IsIn(claimIds.ToList()))
+				.JoinAlias(x=>x.Barcode,  () => barcodeAlias)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, () => barcodeAlias.Nomenclature)
+				.Fetch(SelectMode.Fetch, () => barcodeAlias.Size)
+				.Fetch(SelectMode.Fetch,() => barcodeAlias.Height)
+				.List();
+		}
+
+		private void AddClaims(IList<ServiceClaim> claims) {
+			var overNormOperations = overNormOperationRepository.GetActualIssuedOperations(claims, UoW);
+			var employeeOperations = employeeIssueRepository.GetActualIssuedOperations(claims, UoW);
+			var dutyNormOperations = dutyNormRepository.GetActualIssuedOperations(claims, UoW);
+
+			var notAddedClaims = new List<int>();
+			foreach(var claim in claims) {
+				if(overNormOperations.TryGetValue(claim.Id, out var overNormOperation)) {
+					Entity.AddItem(overNormOperation, 1, claim, new[] { claim.Barcode });
+					continue;
+				}
+				if(employeeOperations.TryGetValue(claim.Id, out var employeeOperation)) {
+					Entity.AddItem(employeeOperation, 1, claim, new[] { claim.Barcode });
+					continue;
+				}
+				if(dutyNormOperations.TryGetValue(claim.Id, out var dutyNormOperation)) {
+					Entity.AddItem(dutyNormOperation, 1, claim, new[] { claim.Barcode });
+					continue;
+				}
+				notAddedClaims.Add(claim.Id);
+			}
+			if(notAddedClaims.Any())
+				interactiveService.ShowMessage(
+					ImportanceLevel.Warning,
+					$"Заявки №{String.Join(", ", notAddedClaims)} не добавлены. Для их штрихкодов не найдена действующая выдача.");
+			CalculateTotal();
+		}
+
 		/// <param name="returningOperation">Dictionary(operationId,amount)</param>
 		public void AddFromDictionary(Dictionary<int, int> returningOperation) {
 			var operations = UoW.Session.QueryOver<EmployeeIssueOperation>()
@@ -236,7 +331,7 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch, x => x.Height)
 				.List(); 
 			foreach(var operation in operations) {
-				Entity.AddItem(operation, returningOperation[operation.Id]);
+				AddEmployeeOperation(operation, returningOperation[operation.Id]);
 			}
 			CalculateTotal();
 		}
@@ -251,9 +346,109 @@ namespace Workwear.ViewModels.Stock {
 				.Fetch(SelectMode.Fetch, x => x.Height)
 				.List(); 
 			foreach(var operation in operations) {
+				AddDutyNormOperation(operation, returningOperation[operation.Id]);
+			}
+			CalculateTotal();
+		}
+
+		public void AddFromOverNormDictionary(Dictionary<int, int> returningOperation) {
+			var operations = overNormOperationRepository.GetIssuedOperations(returningOperation.Keys, UoW);
+			foreach(var operation in operations) {
 				Entity.AddItem(operation, returningOperation[operation.Id]);
 			}
 			CalculateTotal();
+		}
+
+		private void AddFromOverNormNodes(IList<OverNormIssuedJournalNode> nodes) {
+			foreach(var node in nodes) {
+				var operation = overNormOperationRepository.GetIssuedOperation(node.Id, UoW);
+				var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
+				if(availableBarcodeIds.Count > 1) {
+					OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedOverNormBarcodes);
+					continue;
+				}
+
+				var barcodes = availableBarcodeIds.Count == 1
+					? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
+					: null;
+				Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : node.Amount, barcodes: barcodes);
+			}
+			CalculateTotal();
+		}
+
+		private void AddEmployeeOperation(EmployeeIssueOperation operation, int amount) {
+			var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
+			if(availableBarcodeIds.Count > 1) {
+				OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedEmployeeBarcodes);
+				return;
+			}
+
+			var barcodes = availableBarcodeIds.Count == 1
+				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
+				: null;
+			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes: barcodes);
+		}
+
+		private void AddDutyNormOperation(DutyNormIssueOperation operation, int amount) {
+			var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
+			if(availableBarcodeIds.Count > 1) {
+				OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedDutyNormBarcodes);
+				return;
+			}
+
+			var barcodes = availableBarcodeIds.Count == 1
+				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
+				: null;
+			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes: barcodes);
+		}
+
+		private void OpenBarcodeSelector<T>(T operation, IList<int> availableBarcodeIds, EventHandler<JournalSelectedEventArgs> selectHandler) {
+			var barcodeJournal = NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
+				this,
+				OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<BarcodeJournalFilterViewModel>>(filter => {
+						filter.CanUseFilter = false;
+						filter.AllowedBarcodeIds = availableBarcodeIds;
+					});
+				});
+			barcodeJournal.Tag = operation;
+			barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+			barcodeJournal.ViewModel.OnSelectResult += selectHandler;
+		}
+
+		private void AddSelectedEmployeeBarcodes(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
+			var operation = (EmployeeIssueOperation)page.Tag;
+			var barcodes = GetSelectedBarcodes(e);
+
+			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			CalculateTotal();
+		}
+
+		private void AddSelectedDutyNormBarcodes(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
+			var operation = (DutyNormIssueOperation)page.Tag;
+			var barcodes = GetSelectedBarcodes(e);
+
+			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			CalculateTotal();
+		}
+
+		private void AddSelectedOverNormBarcodes(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
+			var operation = (OverNormOperation)page.Tag;
+			var barcodes = GetSelectedBarcodes(e);
+
+			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			CalculateTotal();
+		}
+
+		private IList<Barcode> GetSelectedBarcodes(JournalSelectedEventArgs e) {
+			var barcodeIds = e.GetSelectedObjects<BarcodeJournalNode>()
+				.Select(x => x.Id)
+				.ToArray();
+			return barcodeOperationRepository.GetBarcodes(barcodeIds, UoW);
 		}
 
 		public void FillMaxAmount(DateTime? date = null) {
@@ -281,6 +476,17 @@ namespace Workwear.ViewModels.Stock {
 				foreach(var item in itemsDutyNorm) {
 					var operation = item.ReturnFromDutyNormOperation.IssuedOperation;
 					item.MaxAmount = operation.Issued - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
+				}
+			}
+			var itemsOverNorm = Entity.Items.Where(i => i.ReturnFrom == ReturnFrom.OverNorm).ToList();
+			if(itemsOverNorm.Any()) {
+				var operations = itemsOverNorm
+					.Select(i => i.IssuedOverNormOperation)
+					.ToArray();
+				var writtenOff = CalculateOverNormReturned(operations);
+				foreach(var item in itemsOverNorm) {
+					var operation = item.IssuedOverNormOperation;
+					item.MaxAmount = operation.WarehouseOperation.Amount - (writtenOff.ContainsKey(operation.Id) ? writtenOff[operation.Id] : 0);
 				}
 			}
 		}
@@ -315,7 +521,33 @@ namespace Workwear.ViewModels.Stock {
 			Entity.UpdateOperations(UoW);
 			if (Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
+			
+			if (Entity.Id != 0)
+			{
+				var oldReturnClaims = UoW.Session.QueryOver<ReturnItem>()
+					.Where(x => x.Document.Id == Entity.Id)
+					.List();
 
+				var currentReturnClaims = Entity.Items.Select(x => x.Id);
+
+				var removedReturnClaims = oldReturnClaims
+					.Where(x => !currentReturnClaims.Contains(x.Id) && x.ServiceClaim != null)
+					.ToList();
+
+				if (removedReturnClaims.Any())
+				{
+					logger.Info("Обнаружены удалённые строки возврата со стирки, обновляем статус...");
+
+					foreach (var removedReturnClaim in removedReturnClaims)
+					{
+						removedReturnClaim.ServiceClaim.IsClosed = false;
+						removedReturnClaim.ServiceClaim.ChangeState(ClaimState.AwaitIssue);
+
+					}
+					UoW.Commit();
+				}
+			}
+			
 			if(!base.Save()) {
             	logger.Info("Не Ок.");
             	return false;
@@ -334,6 +566,17 @@ namespace Workwear.ViewModels.Stock {
 			logger.Info ("Ok");
 			return true;
 		}
+
+		private Dictionary<int, int> CalculateOverNormReturned(OverNormOperation[] operations) {
+			var currentReturnOperationIds = Entity.Items
+				.Where(i => i.ReturnFrom == ReturnFrom.OverNorm)
+				.Select(i => i.ReturnFromOverNormOperation?.Id ?? 0)
+				.Where(id => id > 0)
+				.ToArray();
+
+			return overNormOperationRepository.GetReturnedAmounts(operations, currentReturnOperationIds, UoW);
+		}
+
 		public void PrintReturnDoc(ReturnDocReportEnum doc) 
 		{
 			

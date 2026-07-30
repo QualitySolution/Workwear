@@ -30,7 +30,7 @@ using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class IssueByIdentifierViewModel : WindowDialogViewModelBase, IDialogDocumentation
+	public class IssueByIdentifierViewModel : WindowDialogViewModelBase, IDialogDocumentation, IDisposable
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWorkFactory unitOfWorkFactory;
@@ -94,7 +94,7 @@ namespace Workwear.ViewModels.Stock
 
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
-			Warehouse = stockRepository.GetDefaultWarehouse(UowOfDialog, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId, UowOfDialog);
 			stockBalanceModel.Warehouse = Warehouse;
 
 			//Настройка таймера сброса
@@ -456,6 +456,18 @@ namespace Workwear.ViewModels.Stock
 			return null;
 		}
 		#endregion
+
+		public void Dispose()
+		{
+			if(cardReaderService != null) {
+				cardReaderService.CardStatusRead -= RusGuardService_CardStatusRead;
+				cardReaderService.CardFamilies.ListChanged -= CardFamilies_ListChanged;
+			}
+
+			timerCleanSuccessfullyText?.Dispose();
+			uow?.Dispose();
+			UowOfDialog?.Dispose();
+		}
 	}
 }
 	

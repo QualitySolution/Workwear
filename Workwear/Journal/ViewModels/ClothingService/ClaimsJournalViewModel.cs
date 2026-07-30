@@ -215,7 +215,6 @@ namespace workwear.Journal.ViewModels.ClothingService {
 		public string Defect { get; set; }
 		public uint ReferredTerminalId { get; set; }
 		public string Comment { get; set; }
-
 		public string Employee => PersonHelper.PersonFullName(EmployeeLastName, EmployeeFirstName, EmployeePatronymic);
 		public string RowColor => IsClosed ? "grey" : null;
 	}

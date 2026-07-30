@@ -8,11 +8,10 @@ using Workwear.Domain.Stock;
 using Workwear.Tools;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class RentMovementsViewModel : ReportParametersViewModelBase {
+	public class RentMovementsViewModel : ReportParametersUowViewModelBase {
 		public RentMovementsViewModel(RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory)
-			: base(rdlViewerViewModel) {
-			var UoW = uowFactory.CreateWithoutRoot();
+			: base(rdlViewerViewModel, uowFactory) {
 			Title = "Движения спецодежды";
 			Identifier = "Rent.RentMovements";
 
@@ -47,7 +46,6 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool SensitiveLoad => StartDate != null && EndDate != null && !ChoiceNomenclatureViewModel.AllUnSelected;
 
 		public ChoiceListViewModel<Nomenclature> ChoiceNomenclatureViewModel;
+
 	}
 }
-
-

@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.Stock {
 				owners = UoW.GetAll<Owner>().ToList();
 			
 			if(Entity.Warehouse == null)
-				Entity.Warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+				Entity.Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			
 			var entryEntityBuilder = new CommonEEVMBuilderFactory<Income>(this, Entity, UoW, navigation, autofacScope);
 			var entryVmBuilder = new CommonEEVMBuilderFactory<IncomeViewModel>(this, this, UoW, navigation, autofacScope);
@@ -275,10 +275,11 @@ namespace Workwear.ViewModels.Stock {
 			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Now;
 			
-			UoWGeneric.Save ();
+			UoW.Save(Entity);
+			UoW.Commit();
 			
 			if(Entity.Shipment != null)
-				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id, UoWGeneric);
+				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id, UoW);
 
 			logger.Info ("Документ сохранён.");
 			return true;

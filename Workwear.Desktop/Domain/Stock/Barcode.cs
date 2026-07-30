@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Operations;
@@ -15,6 +16,8 @@ namespace Workwear.Domain.Stock {
 	)]
 	[HistoryTrace]
 	public class Barcode : PropertyChangedBase, IDomainObject {
+		public const int LabelMaxLength = 50;
+
 		public virtual int Id { get; }
 
 		private DateTime createDate = DateTime.Today;
@@ -39,7 +42,6 @@ namespace Workwear.Domain.Stock {
 			set => SetField(ref type, value);
 		}
 
-
 		private Nomenclature nomenclature;
 
 		[Display(Name = "Номенклатура")]
@@ -62,6 +64,15 @@ namespace Workwear.Domain.Stock {
 			set => SetField(ref height, value);
 		}
 		
+		private string label;
+		[Display(Name = "Название")]
+		[StringLength(LabelMaxLength)]
+		public virtual string Label 
+		{
+			get => label;
+			set => SetField(ref label, value, () => Label);
+		}
+		
 		private string comment;
 		[Display(Name = "Комментарий")]
 		public virtual string Comment {
@@ -76,6 +87,15 @@ namespace Workwear.Domain.Stock {
 		public virtual IList<BarcodeOperation> BarcodeOperations {
 			get => barcodeOperations;
 			set => SetField(ref barcodeOperations, value);
+		}
+		
+		//Предварительно нужно загрузить все BarcodeOperation и связанные с ними операции иначе будет много запросов в базу
+		public virtual IList<BarcodeOperation> SortedOperations => BarcodeOperations.OrderBy(x => x.OperationDate).ToList();
+		public virtual BarcodeOperation LastOperation => SortedOperations.Last();
+		public virtual DateTime LastOperationTime => BarcodeOperations.Max(x => x.OperationDate);
+		public virtual string GetKitNumberText(WarehouseOperation warehouseOperation) {
+			var kitNumber = BarcodeOperations.FirstOrDefault(x => x.WarehouseOperation?.Id == warehouseOperation?.Id)?.KitNumber;
+			return kitNumber > 0 ? kitNumber.ToString() : "";
 		}
 
 		#endregion

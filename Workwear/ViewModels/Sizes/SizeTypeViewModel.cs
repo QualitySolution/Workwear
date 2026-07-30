@@ -33,7 +33,7 @@ namespace Workwear.ViewModels.Sizes
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWork), UoW} })));
-			if (UoW.IsNew) {
+			if (Entity.Id == 0) {
 				IsNew = true;
 				Sizes = new ObservableList<Size>();
 			}
@@ -65,6 +65,9 @@ namespace Workwear.ViewModels.Sizes
 				.OpenViewModel<SizeViewModel, IEntityUoWBuilder, SizeType>(
 					this, EntityUoWBuilder.ForCreate(), Entity);
 			page.PageClosed += (sender, args) => {
+				if(args.CloseSource != CloseSource.Save)
+					return;
+
 				sizeService.RefreshSizes(UoW);
 				Sizes = new ObservableList<Size>(sizeService.GetSize(UoW, Entity).ToList());
 			};

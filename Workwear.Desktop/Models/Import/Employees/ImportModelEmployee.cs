@@ -63,6 +63,7 @@ namespace Workwear.Models.Import.Employees
 			toSave.AddRange(SavedSubdivisions);
 			toSave.AddRange(SavedDepartments);
 			toSave.AddRange(SavedPosts);
+			toSave.AddRange(SavedCostCenters);
 			foreach(var row in rows) {
 				toSave.AddRange(row.PrepareToSave());
 			}
@@ -92,7 +93,8 @@ namespace Workwear.Models.Import.Employees
 				|| CountersViewModel.GetCount(CountersEmployee.NewEmployee) > 0
 				|| CountersViewModel.GetCount(CountersEmployee.NewPosts) > 0
 				|| CountersViewModel.GetCount(CountersEmployee.NewDepartments) > 0
-				|| CountersViewModel.GetCount(CountersEmployee.NewSubdivisions) > 0;
+				|| CountersViewModel.GetCount(CountersEmployee.NewSubdivisions) > 0
+				|| CountersViewModel.GetCount(CountersEmployee.NewCostCenters) > 0;
 		}
 
 		public void CleanMatch()
@@ -122,6 +124,13 @@ namespace Workwear.Models.Import.Employees
 			.Where(x => x?.Id == 0)
 			.Distinct();
 
+		private IEnumerable<CostCenter> SavedCostCenters => UsedRows
+			.Where(x => !x.Skipped)
+			.SelectMany(x => x.EditingEmployee.CostCenters)
+			.Select(x => x.CostCenter)
+			.Where(x => x?.Id == 0)
+			.Distinct();
+
 		private IEnumerable<Subdivision> SavedSubdivisions => UsedRows
 			.Where(x => !x.Skipped)
 			.Select(x => x.EditingEmployee)
@@ -144,6 +153,7 @@ namespace Workwear.Models.Import.Employees
 			CountersViewModel.SetCount(CountersEmployee.NewPosts, SavedPosts.Count());
 			CountersViewModel.SetCount(CountersEmployee.NewDepartments,  SavedDepartments.Count());
 			CountersViewModel.SetCount(CountersEmployee.NewSubdivisions, SavedSubdivisions.Count());
+			CountersViewModel.SetCount(CountersEmployee.NewCostCenters, SavedCostCenters.Count());
 		}
 	}
 }
