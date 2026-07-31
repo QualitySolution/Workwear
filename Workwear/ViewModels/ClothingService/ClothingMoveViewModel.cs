@@ -102,17 +102,22 @@ namespace Workwear.ViewModels.ClothingService {
 		
 		private void ServicesListOnContentChanged(object sender, EventArgs e) {
 			if(sender is SelectableEntity<ProvidedService> item) {
+			if(!(sender is SelectableProvidedService item))
+				return;
+
+			if(e is PropertyChangedEventArgs propertyChangedArgs && propertyChangedArgs.PropertyName == nameof(SelectableProvidedService.Select)) {
 				if(item.Select) {
 					item.Entity.Id = 0; //Отмечаем как новый, чтобы  пересоздался. Так коректно работает журналирование
+					item.Entity.Amount = 1;
 					item.Entity.Cost = item.Entity.Service.Cost;
 					item.Entity.ServiceDate = DateTime.Now;
 					Claim.ProvidedServices.Add(item.Entity);
 				} else
 					Claim.ProvidedServices.RemoveAll(x => DomainHelper.EqualDomainObjects(item.Entity, x));
-
-				UoW.Save(claim);
-				UoW.Commit();
 			}
+
+			UoW.Save(claim);
+			UoW.Commit();
 		}
 
 		#region Cвойства модели
@@ -132,7 +137,7 @@ namespace Workwear.ViewModels.ClothingService {
 					foreach(var service in claim.Barcode.Nomenclature.UseServices) { //Все услуги оказываемые для номенклатуры
 						ProvidedService provServ = Claim.ProvidedServices.FirstOrDefault(x => DomainHelper.EqualDomainObjects(service, x.Service))
 								?? new ProvidedService(claim, service); // Заготовка не сохранённая в UoW, при выборе пользователем надо сохранять
-						servicesList.Add(new SelectableEntity<ProvidedService>(service.Id, service.Name, entity: provServ)
+						servicesList.Add(new SelectableProvidedService(service.Id, service.Name, entity: provServ)
 							{ Select = provServ.Id != 0 }); //Если в базе есть, значит уже выбран
 					}
 
@@ -185,8 +190,8 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 		}
 
-		private IObservableList<SelectableEntity<ProvidedService>> servicesList = new ObservableList<SelectableEntity<ProvidedService>>();
-		public virtual IObservableList<SelectableEntity<ProvidedService>> ServicesList {
+		private IObservableList<SelectableProvidedService> servicesList = new ObservableList<SelectableProvidedService>();
+		public virtual IObservableList<SelectableProvidedService> ServicesList {
 			get => servicesList;
 			set => SetField(ref servicesList, value);
 		}

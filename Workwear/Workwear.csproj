@@ -190,6 +190,7 @@
     <Compile Include="ViewModels\ClothingService\ClothingAddViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingMoveViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ServiceClaimViewModel.cs" />
+    <Compile Include="ViewModels\ClothingService\SelectableProvidedService.cs" />
     <Compile Include="ViewModels\ClothingService\ClothingReceiptViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\ServiceViewModel.cs" />
     <Compile Include="ViewModels\Communications\DeductSpecCoinsViewModel.cs" />

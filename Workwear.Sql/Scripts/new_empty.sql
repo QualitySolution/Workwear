@@ -2868,6 +2868,7 @@ create table clothing_service_services_claim
 	service_id int unsigned not null,
 	claim_id   int unsigned not null,
 	`cost` 		DECIMAL DEFAULT 0 NULL,
+	`amount`    DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 1.00 COMMENT 'Количество (кг/шт/м и т.д.), используется для расчёта стоимости услуги',
 	service_date datetime null comment 'Время последней активации услуги для заявки',
 	constraint clothing_service_services_claim_pk
 		primary key (id),
