@@ -101,13 +101,12 @@ namespace Workwear.ViewModels.ClothingService {
 		}
 		
 		private void ServicesListOnContentChanged(object sender, EventArgs e) {
-			if(sender is SelectableEntity<ProvidedService> item) {
 			if(!(sender is SelectableProvidedService item))
 				return;
 
 			if(e is PropertyChangedEventArgs propertyChangedArgs && propertyChangedArgs.PropertyName == nameof(SelectableProvidedService.Select)) {
 				if(item.Select) {
-					item.Entity.Id = 0; //Отмечаем как новый, чтобы  пересоздался. Так коректно работает журналирование
+					item.Entity.Id = 0; //Отмечаем как новый, чтобы пересоздался. Так коректно работает журналирование
 					item.Entity.Amount = 1;
 					item.Entity.Cost = item.Entity.Service.Cost;
 					item.Entity.ServiceDate = DateTime.Now;

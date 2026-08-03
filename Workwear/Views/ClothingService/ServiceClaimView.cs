@@ -53,6 +53,7 @@ namespace Workwear.Views.ClothingService {
 					.Digits(2).WidthChars(8)
 					.Adjustment(new Adjustment(0, 0, 100000, 0.1, 1, 1))
 					.Editing(x => x.Select)
+					.AddSetter((c, n) => { if(!n.Select) c.Text = String.Empty; })
 				.AddColumn("Стоимость").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.Cost.ToString(CultureInfo.InvariantCulture) : String.Empty)
 				.AddColumn("Дата оказания").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.ServiceDate.ToShortDateString().ToString(CultureInfo.InvariantCulture) : String.Empty)
 				.Finish();
