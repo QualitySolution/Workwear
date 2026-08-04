@@ -22,44 +22,45 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    mvz_code,
-    mvz_name,
-    fio,
-    tabel,
-    barcode,
-    nomenclature,
-    type,
-    COUNT(*) as s,
-    1 as amount,
-    CAST(SUM(n_weight) / 1000.0 AS DECIMAL(10,3)) AS weight,
-    SUM(cost) as cost,
-    IF(@sum_cost, SUM(cost), cost) as sum_cost,
-    date
+	mvz_code,
+	mvz_name,
+	fio,
+	tabel,
+	barcode,
+	nomenclature,
+	type,
+	COUNT(*) as s,
+	table1.amount as amount,
+	CAST(SUM(n_weight) / 1000.0 AS DECIMAL(10,3)) AS weight,
+	SUM(cost) as cost,
+	IF(@sum_cost, SUM(cost), cost) as sum_cost,
+	date
 FROM (
-    SELECT
-        IF(@use_subdivision, subdivisions.code, cost_center.code) as mvz_code,
-        IF(@use_subdivision, subdivisions.name, cost_center.name) as mvz_name,
-        CONCAT_WS(' ' ,employees.last_name, employees.first_name, employees.patronymic_name) as fio,
-        employees.personnel_number as tabel,
-        barcodes.title as barcode,
-        nomenclature.name as nomenclature,
-        nomenclature.weight as n_weight,
-        IF(@show_alternative_name, COALESCE(clothing_service_services.alternative_name, clothing_service_services.name), clothing_service_services.name) as type,
-        clothing_service_services_claim.cost as cost,
-        clothing_service_services_claim.id as claim_row_id,
-        clothing_service_services_claim.claim_id as claim_id,
-        DATE_FORMAT(clothing_service_services_claim.service_date, '%d.%m.%Y') as date
-    FROM clothing_service_services_claim
-             LEFT JOIN clothing_service_claim on clothing_service_services_claim.claim_id = clothing_service_claim.id
-             LEFT JOIN clothing_service_services on clothing_service_services_claim.service_id = clothing_service_services.id
-             LEFT JOIN employees on clothing_service_claim.employee_id = employees.id
-             LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
-             LEFT JOIN employees_cost_allocation on (employees.id = employees_cost_allocation.employee_id AND employees_cost_allocation.percent = 1)
-             LEFT JOIN cost_center on employees_cost_allocation.cost_center_id = cost_center.id
-             LEFT JOIN barcodes on clothing_service_claim.barcode_id = barcodes.id
-             LEFT JOIN nomenclature on barcodes.nomenclature_id = nomenclature.id
-    WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothing_service_services_claim.service_date &lt; @end_date
-) AS table1
+		 SELECT
+			 IF(@use_subdivision, subdivisions.code, cost_center.code) as mvz_code,
+		     IF(@use_subdivision, subdivisions.name, cost_center.name) as mvz_name,
+		     CONCAT_WS(' ' ,employees.last_name, employees.first_name, employees.patronymic_name) as fio,
+		     employees.personnel_number as tabel,
+		     barcodes.title as barcode,
+		     nomenclature.name as nomenclature,
+		     nomenclature.weight as n_weight,
+		     IF(@show_alternative_name, COALESCE(clothing_service_services.alternative_name, clothing_service_services.name), clothing_service_services.name) as type,
+		     clothing_service_services_claim.cost as cost,
+		     clothing_service_services_claim.amount as amount,
+			 clothing_service_services_claim.id as claim_row_id,
+		     clothing_service_services_claim.claim_id as claim_id,
+		     DATE_FORMAT(clothing_service_services_claim.service_date, '%d.%m.%Y') as date
+	     FROM clothing_service_services_claim
+				  LEFT JOIN clothing_service_claim on clothing_service_services_claim.claim_id = clothing_service_claim.id
+		          LEFT JOIN clothing_service_services on clothing_service_services_claim.service_id = clothing_service_services.id
+		          LEFT JOIN employees on clothing_service_claim.employee_id = employees.id
+		          LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
+		          LEFT JOIN employees_cost_allocation on (employees.id = employees_cost_allocation.employee_id AND employees_cost_allocation.percent = 1)
+		          LEFT JOIN cost_center on employees_cost_allocation.cost_center_id = cost_center.id
+		          LEFT JOIN barcodes on clothing_service_claim.barcode_id = barcodes.id
+		          LEFT JOIN nomenclature on barcodes.nomenclature_id = nomenclature.id
+	     WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothing_service_services_claim.service_date &lt; @end_date
+	 ) AS table1
 GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
@@ -145,8 +146,8 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
-          <BorderColor  />
-          <BorderWidth  />
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
@@ -185,7 +186,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
           <TableColumn>
             <Width>64.1pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>29.6pt</Width>
           </TableColumn>
         </TableColumns>
@@ -377,7 +378,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox25">
                       <Value>Вес</Value>
@@ -600,7 +601,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox26">
                       <Value>кг.</Value>
@@ -814,7 +815,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox27">
                       <Value>13</Value>
@@ -1050,7 +1051,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
                       <Value>=Fields!weight.Value</Value>
@@ -1062,7 +1063,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                         <FontSize>9pt</FontSize>
                         <BorderColor />
                         <BorderWidth />
-                        <Format >0.000</Format>
+                        <Format>0.000</Format>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1073,7 +1074,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
         </Details>
         <Left>0.0pt</Left>
         <Top>22.8pt</Top>
-        <Footer >
+        <Footer>
           <TableRows>
             <TableRow>
               <Height>.2in</Height>

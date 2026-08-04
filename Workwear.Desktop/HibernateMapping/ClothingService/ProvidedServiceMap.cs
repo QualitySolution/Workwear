@@ -8,6 +8,7 @@ namespace Workwear.HibernateMapping.ClothingService {
 			Table("clothing_service_services_claim");
 			Id(x => x.Id).Column("id").GeneratedBy.Native();
 			Map(x => x.Cost).Column("cost");
+			Map(x => x.Amount).Column("amount");
 			Map(x => x.ServiceDate).Column("service_date");
 
 			References(x => x.Claim).Column("claim_id").Not.Nullable();
