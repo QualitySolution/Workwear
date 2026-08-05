@@ -701,41 +701,60 @@ namespace workwear.Journal.ViewModels.Stock
 			NodeActionsList.Add(deleteAction);
 		}
 
-		private static readonly StockDocumentType[] TransferableToDutyNormDocTypes = {
-			StockDocumentType.ExpenseEmployeeDoc, StockDocumentType.CollectiveExpense
-		};
-
 		protected override void CreatePopupActions() {
 			PopupActionsList.Add(new JournalAction("Перенести на дежурную норму",
 				arg => true,
 				arg => FeaturesService.Available(WorkwearFeature.DutyNorms) &&
 					arg.Length == 1 &&
-					TransferableToDutyNormDocTypes.Contains(((StockDocumentsJournalNode)arg[0]).DocTypeEnum),
-				TransferToDutyNorm));
+					((StockDocumentsJournalNode)arg[0]).DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc,
+				TransferExpenseToDutyNorm));
+
+			PopupActionsList.Add(new JournalAction("Перенести на дежурную норму",
+				arg => true,
+				arg => FeaturesService.Available(WorkwearFeature.DutyNorms) &&
+					arg.Length == 1 &&
+					((StockDocumentsJournalNode)arg[0]).DocTypeEnum == StockDocumentType.CollectiveExpense,
+				TransferCollectiveExpenseToDutyNorm));
 		}
 
-		private void TransferToDutyNorm(object[] nodes) {
+		private void TransferExpenseToDutyNorm(object[] nodes) {
 			if(nodes.Length != 1)
 				return;
-			var node = (StockDocumentsJournalNode)nodes[0];
+			int expenseId = ((StockDocumentsJournalNode)nodes[0]).Id;
 
 			var selectJournal = NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
-			selectJournal.Tag = (node.Id, node.DocTypeEnum);
-			selectJournal.ViewModel.OnSelectResult += TransferToDutyNorm_OnSelectResult;
+			selectJournal.Tag = expenseId;
+			selectJournal.ViewModel.OnSelectResult += TransferExpenseToDutyNorm_OnSelectResult;
 		}
 
-		private void TransferToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+		private void TransferExpenseToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var page = NavigationManager.FindPage((QS.ViewModels.Dialog.DialogViewModelBase)sender);
-			var (docId, docType) = ((int Id, StockDocumentType DocType))page.Tag;
+			var expenseId = (int)page.Tag;
 			var node = e.GetSelectedObjects<DutyNormsJournalNode>().FirstOrDefault();
 			if(node == null)
 				return;
+			normToDutyNormModel.CopyExpenseToDutyNorm(expenseId, node.Id);
+		}
 
-			if(docType == StockDocumentType.CollectiveExpense)
-				normToDutyNormModel.CopyCollectiveExpenseToDutyNorm(docId, node.Id);
-			else
-				normToDutyNormModel.CopyExpenseToDutyNorm(docId, node.Id);
+		private void TransferCollectiveExpenseToDutyNorm(object[] nodes) {
+			if(nodes.Length != 1)
+				return;
+			int collectiveExpenseId = ((StockDocumentsJournalNode)nodes[0]).Id;
+
+			var selectJournal = NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.Tag = collectiveExpenseId;
+			selectJournal.ViewModel.OnSelectResult += TransferCollectiveExpenseToDutyNorm_OnSelectResult;
+		}
+
+		private void TransferCollectiveExpenseToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((QS.ViewModels.Dialog.DialogViewModelBase)sender);
+			var collectiveExpenseId = (int)page.Tag;
+			var node = e.GetSelectedObjects<DutyNormsJournalNode>().FirstOrDefault();
+			if(node == null)
+				return;
+			normToDutyNormModel.CopyCollectiveExpenseToDutyNorm(collectiveExpenseId, node.Id);
 		}
 
 		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes) {
