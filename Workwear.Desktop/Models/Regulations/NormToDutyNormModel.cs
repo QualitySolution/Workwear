@@ -340,6 +340,62 @@ namespace Workwear.Models.Regulations {
 			progressBar.Close();
 		}
 
+		public virtual void CopyCollectiveExpenseToDutyNorm(int collectiveExpenseId, int dutyNormId) {
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Перенос документа коллективной выдачи на дежурную норму")) {
+				employeeIssueRepository.RepoUow = uow;
+				var collectiveExpenseDoc = uow.GetById<CollectiveExpense>(collectiveExpenseId);
+				var dutyNorm = uow.GetById<DutyNorm>(dutyNormId);
+
+				//Переносим строки, для которых в дежурной норме есть потребность. Остальные строки остаются в исходном документе.
+				var matchingItems = collectiveExpenseDoc.Items
+					.Where(x => x.EmployeeIssueOperation != null && dutyNorm.GetItem(x.EmployeeIssueOperation.ProtectionTools) != null)
+					.ToList();
+				if(matchingItems.IsEmpty()) {
+					interactive.ShowMessage(ImportanceLevel.Error,
+						$"В дежурной норме «{dutyNorm.Name}» нет потребностей, соответствующих строкам документа №{collectiveExpenseDoc.DocNumber ?? collectiveExpenseDoc.Id.ToString()}. Перенос отменён.");
+					return;
+				}
+
+				progressBar.Start(matchingItems.Count + 2,
+					text: $"Переносим документ коллективной выдачи №{collectiveExpenseDoc.DocNumber ?? collectiveExpenseDoc.Id.ToString()} в дежурную норму {dutyNorm.Name}");
+
+				var dutyNormIssueOperationByWarehouseOperation = new Dictionary<int, DutyNormIssueOperation>();
+				var employeeIssueOperations = matchingItems.Select(x => x.EmployeeIssueOperation).Distinct().ToList();
+
+				progressBar.Add(text: $"Создаем операции выдачи по дежурной норме {dutyNorm.Name}");
+				var dutyNormIssueOperationByIssueOperation = CreateDutyNormIssueOperations(
+					employeeIssueOperations,
+					dutyNorm,
+					op => dutyNorm.GetItem(op.ProtectionTools),
+					dutyNormIssueOperationByWarehouseOperation,
+					uow);
+
+				var writeOffOperations = employeeIssueRepository.GetWriteOffOperations(employeeIssueOperations, uow);
+				progressBar.Add(text: $"Создаем операции списания по дежурной норме {dutyNorm.Name}");
+				var dutyNormWriteOffOperationByEmployeeWriteOffOperation = CreateDutyNormWriteOffOperations(
+					writeOffOperations, dutyNorm, dutyNormIssueOperationByIssueOperation, uow);
+
+				UpdateBarcodeOperations(dutyNormIssueOperationByIssueOperation, uow);
+
+				var collectiveExpenseDocs = new Dictionary<ExpenseDutyNorm, CollectiveExpense>();
+				var responsibleEmployee = collectiveExpenseDoc.TransferAgent ?? dutyNorm.ResponsibleEmployee;
+				TransferCollectiveExpenseDoc(collectiveExpenseDoc, matchingItems, responsibleEmployee, dutyNorm, dutyNormIssueOperationByWarehouseOperation, collectiveExpenseDocs, uow);
+
+				UpdateWriteOffDocs(writeOffOperations, dutyNormWriteOffOperationByEmployeeWriteOffOperation, dutyNorm, uow);
+				UpdateReturnfDocs(writeOffOperations, dutyNormWriteOffOperationByEmployeeWriteOffOperation, dutyNorm, uow);
+
+				//Коллективная выдача может затрагивать нескольких сотрудников - пересчитываем потребности у всех.
+				foreach(var employee in matchingItems.Select(x => x.Employee).Where(x => x != null).Distinct()) {
+					progressBar.Add(text: $"Пересчитываем потребности для {employee.ShortName}");
+					employee.UpdateWorkwearItems();
+				}
+
+				UpdateDocsComments(collectiveExpenseDocs);
+				uow.Commit();
+			}
+			progressBar.Close();
+		}
+
 		#region Создание дежурной нормы
 		private void CopyNormData(Norm norm, DutyNorm newDutyNorm, EmployeeCard employee = null, Post post = null) {
 			newDutyNorm.ResponsibleEmployee = employee;

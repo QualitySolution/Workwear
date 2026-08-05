@@ -701,33 +701,41 @@ namespace workwear.Journal.ViewModels.Stock
 			NodeActionsList.Add(deleteAction);
 		}
 
+		private static readonly StockDocumentType[] TransferableToDutyNormDocTypes = {
+			StockDocumentType.ExpenseEmployeeDoc, StockDocumentType.CollectiveExpense
+		};
+
 		protected override void CreatePopupActions() {
 			PopupActionsList.Add(new JournalAction("Перенести на дежурную норму",
 				arg => true,
 				arg => FeaturesService.Available(WorkwearFeature.DutyNorms) &&
-					arg.Length == 1 && 
-					((StockDocumentsJournalNode)arg[0]).DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc,
-				TransferExpenseToDutyNorm));
+					arg.Length == 1 &&
+					TransferableToDutyNormDocTypes.Contains(((StockDocumentsJournalNode)arg[0]).DocTypeEnum),
+				TransferToDutyNorm));
 		}
 
-		private void TransferExpenseToDutyNorm(object[] nodes) {
+		private void TransferToDutyNorm(object[] nodes) {
 			if(nodes.Length != 1)
 				return;
-			int expenseId = ((StockDocumentsJournalNode)nodes[0]).Id;
+			var node = (StockDocumentsJournalNode)nodes[0];
 
 			var selectJournal = NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(this, OpenPageOptions.AsSlave);
 			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
-			selectJournal.Tag = expenseId;
-			selectJournal.ViewModel.OnSelectResult += TransferExpenseToDutyNorm_OnSelectResult;
+			selectJournal.Tag = (node.Id, node.DocTypeEnum);
+			selectJournal.ViewModel.OnSelectResult += TransferToDutyNorm_OnSelectResult;
 		}
 
-		private void TransferExpenseToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+		private void TransferToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 			var page = NavigationManager.FindPage((QS.ViewModels.Dialog.DialogViewModelBase)sender);
-			var expenseId = (int)page.Tag;
+			var (docId, docType) = ((int Id, StockDocumentType DocType))page.Tag;
 			var node = e.GetSelectedObjects<DutyNormsJournalNode>().FirstOrDefault();
 			if(node == null)
 				return;
-			normToDutyNormModel.CopyExpenseToDutyNorm(expenseId, node.Id);
+
+			if(docType == StockDocumentType.CollectiveExpense)
+				normToDutyNormModel.CopyCollectiveExpenseToDutyNorm(docId, node.Id);
+			else
+				normToDutyNormModel.CopyExpenseToDutyNorm(docId, node.Id);
 		}
 
 		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes) {
