@@ -85,7 +85,8 @@ namespace workwear.ReportParameters.ViewModels {
 					{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 					{"byDepartment", ByDepartment},
 					{"departments", ChoiceDepartmentViewModel.SelectedIdsMod},
-					{"withoutDepartment", ChoiceDepartmentViewModel.NullIsSelected}
+					{"withoutDepartment", ChoiceDepartmentViewModel.NullIsSelected},
+					{"showManualOperation", ShowManualOperation}
 		};
 
 		public override string Identifier { 
@@ -198,6 +199,12 @@ namespace workwear.ReportParameters.ViewModels {
         			get => showOnlyWithoutNorm;
         			set => SetField(ref showOnlyWithoutNorm, value);
         		}
+
+		private bool showManualOperation;
+		public virtual bool ShowManualOperation {
+			get => showManualOperation;
+			set => SetField(ref showManualOperation, value);
+		}
 
 		#endregion
 
