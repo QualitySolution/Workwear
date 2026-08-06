@@ -18,17 +18,20 @@ namespace Workwear.Models.Regulations {
 	public class NormToDutyNormModel {
 		private readonly IInteractiveService interactive;
 		private readonly IProgressBarDisplayable progressBar;
+		private readonly IUnitOfWorkFactory unitOfWorkFactory;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly StockDocumentRepository stockDocumentRepository;
 		private readonly BarcodeRepository barcodeRepository;
 		public NormToDutyNormModel(
-			IInteractiveService interactive, 
+			IInteractiveService interactive,
 			IProgressBarDisplayable progressBar,
-			EmployeeIssueRepository employeeIssueRepository, 
+			IUnitOfWorkFactory unitOfWorkFactory,
+			EmployeeIssueRepository employeeIssueRepository,
 			StockDocumentRepository stockDocumentRepository,
 			BarcodeRepository barcodeRepository) {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressBar = progressBar;
+			this.unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.stockDocumentRepository = stockDocumentRepository ?? throw new ArgumentNullException(nameof(stockDocumentRepository));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
@@ -37,7 +40,7 @@ namespace Workwear.Models.Regulations {
 			Dictionary<int, DutyNormIssueOperation> dutyNormIssueOperationByWarehouseOperation = new Dictionary<int, DutyNormIssueOperation>();
 			Dictionary<ExpenseDutyNorm, Expense> expenseDocs = new Dictionary<ExpenseDutyNorm, Expense>();
 			Dictionary<ExpenseDutyNorm, CollectiveExpense> collectiveExpenseDocs = new Dictionary<ExpenseDutyNorm, CollectiveExpense>();
-			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Копирование обычной нормы в дежурную")) {
+			using(var uow = unitOfWorkFactory.CreateWithoutRoot("Копирование обычной нормы в дежурную")) {
 				employeeIssueRepository.RepoUow = uow;
 				var norm = uow.GetById<Norm>(normId);
 				var employees = norm.Employees.ToList();
@@ -137,7 +140,7 @@ namespace Workwear.Models.Regulations {
 		}
 
 		public virtual void CopyExpenseToDutyNorm(int expenseId, int dutyNormId) {
-			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Перенос документа выдачи на дежурную норму")) {
+			using(var uow = unitOfWorkFactory.CreateWithoutRoot("Перенос документа выдачи на дежурную норму")) {
 				employeeIssueRepository.RepoUow = uow;
 				var expenseDoc = uow.GetById<Expense>(expenseId);
 				var dutyNorm = uow.GetById<DutyNorm>(dutyNormId);
@@ -196,7 +199,7 @@ namespace Workwear.Models.Regulations {
 		}
 
 		public virtual void CopyCollectiveExpenseToDutyNorm(int collectiveExpenseId, int dutyNormId) {
-			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Перенос документа коллективной выдачи на дежурную норму")) {
+			using(var uow = unitOfWorkFactory.CreateWithoutRoot("Перенос документа коллективной выдачи на дежурную норму")) {
 				employeeIssueRepository.RepoUow = uow;
 				var collectiveExpenseDoc = uow.GetById<CollectiveExpense>(collectiveExpenseId);
 				var dutyNorm = uow.GetById<DutyNorm>(dutyNormId);
