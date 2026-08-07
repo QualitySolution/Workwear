@@ -18,7 +18,6 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Postomats;
-//FIXME нужен для вызова виджета
 using Workwear.ViewModels.Stock;
 
 namespace Workwear.ViewModels.ClothingService {
@@ -89,10 +88,18 @@ namespace Workwear.ViewModels.ClothingService {
 					return BarcodeInfoViewModel.Barcode != null
 					       && string.IsNullOrEmpty(BarcodeInfoViewModel.LabelInfo)
 					       && !Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == BarcodeInfoViewModel.Barcode.Id);
-				if(postomatDocVM != null || returnDocVM != null)
+				if(postomatDocVM != null)
 					return ActiveClaim != null
 					       && !Claims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim))
 					       && !InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim));
+				if(returnDocVM != null) {
+					if(ActiveClaim != null)
+						return !Claims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim))
+						       && !InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim));
+					return BarcodeInfoViewModel.Barcode != null
+					       && string.IsNullOrEmpty(BarcodeInfoViewModel.LabelInfo)
+					       && !Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == BarcodeInfoViewModel.Barcode.Id);
+				}
 				return false;
 			}
 		}
@@ -133,22 +140,41 @@ namespace Workwear.ViewModels.ClothingService {
 
 			if(postomatDocVM != null || returnDocVM != null) {
 				ActiveClaim = barcodeRepository.GetActiveServiceClaimFor(barcode);
-				if(ActiveClaim == null)
-					BarcodeInfoViewModel.LabelInfo = $"Спецодежда не была принята в стирку.";
-
-				else if(!Claims.Contains(ActiveClaim) && InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim)))
-					BarcodeInfoViewModel.LabelInfo = $"Спецодежда уже добавлена.";
-				else if(AutoAdd) {
-					Items.Add(new AddMarkServiceClaimNode(ActiveClaim));
+				if(ActiveClaim != null) {
+					if(!Claims.Contains(ActiveClaim) && InDocClaims.Any(c => DomainHelper.EqualDomainObjects(c, ActiveClaim)))
+						BarcodeInfoViewModel.LabelInfo = $"Спецодежда уже добавлена.";
+					else if(AutoAdd) {
+						Items.Add(new AddMarkServiceClaimNode(ActiveClaim));
+					}
+					return;
 				}
+
+				if(Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == barcode.Id)) {
+					BarcodeInfoViewModel.LabelInfo = $"Метка {barcode.Title} уже в списке.";
+					return;
+				}
+
+				var error = returnDocVM.ValidateBarcodeForScan(barcode);
+				if(error != null) {
+					BarcodeInfoViewModel.LabelInfo = error;
+					return;
+				}
+
+				BarcodeInfoViewModel.LabelInfo = null;
+				if(AutoAdd)
+					Items.Add(new AddMarkBarcodeNode(barcode, BarcodeInfoViewModel.Employee));
+
+				OnPropertyChanged(nameof(CanAdd));
 			}
 		}
 
 		public void Accept() {
 			postomatDocVM?.AddItems(Claims);
 			returnDocVM?.AddItems(Claims);
-			foreach(var barcode in ScannedBarcodes.ToList())
+			foreach(var barcode in ScannedBarcodes.ToList()) {
 				overNormDocVM?.AddBarcode(overNormItem, barcode);
+				returnDocVM?.AddBarcode(barcode);
+			}
 			Close(false, CloseSource.Save);
 		}
 
@@ -156,6 +182,11 @@ namespace Workwear.ViewModels.ClothingService {
 			if(overNormDocVM != null) {
 				if(BarcodeInfoViewModel.Barcode != null)
 					Items.Add(new AddMarkBarcodeNode(BarcodeInfoViewModel.Barcode, overNormItem?.Employee));
+				return;
+			}
+			if(returnDocVM != null && ActiveClaim == null) {
+				if(BarcodeInfoViewModel.Barcode != null)
+					Items.Add(new AddMarkBarcodeNode(BarcodeInfoViewModel.Barcode, BarcodeInfoViewModel.Employee));
 				return;
 			}
 			Items.Add(new AddMarkServiceClaimNode(ActiveClaim));
