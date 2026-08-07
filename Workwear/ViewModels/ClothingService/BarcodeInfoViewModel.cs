@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using QS.DomainModel.Entity;
 using QS.ViewModels;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -61,23 +62,49 @@ namespace Workwear.ViewModels.ClothingService {
 			get => barcode;
 			set {
 				if(SetField(ref barcode, value)) {
-					Employee = barcode != null ? barcodeRepository.GetLastEmployeeFor(barcode) : null;
+					var lastOperation = barcode != null ? barcodeRepository.GetLastOperationAt(barcode) : null;
+					Employee = lastOperation?.CurrentEmployee;
+					Warehouse = lastOperation?.CurrentWarehouse;
+					DutyNorm = lastOperation?.CurrentDutyNorm;
 				}
 			}
 		}
 
 		private EmployeeCard employee;
-
-		[PropertyChangedAlso(nameof(LabelEmployee))]
+		[PropertyChangedAlso(nameof(LabelCurrent))]
 		public virtual EmployeeCard Employee {
 			get => employee;
 			set { SetField(ref employee, value); }
+		}
+
+		private Warehouse warehouse;
+		[PropertyChangedAlso(nameof(LabelCurrent))]
+		public virtual Warehouse Warehouse {
+			get => warehouse;
+			set { SetField(ref warehouse, value); }
+		}
+
+		private DutyNorm dutyNorm;
+		[PropertyChangedAlso(nameof(LabelCurrent))]
+		public virtual DutyNorm DutyNorm {
+			get => dutyNorm;
+			set { SetField(ref dutyNorm, value); }
 		}
 		#endregion
 
 		#region Свойства View
 
-		public string LabelEmployee => Employee?.FullName;
+		public string LabelCurrent {
+			get {
+				if(Employee != null)
+					return $"{Employee.FullName}";
+				if(Warehouse != null)
+					return $"«{Warehouse.Name}»";
+				if(DutyNorm != null)
+					return $"Дежурная норма №«{DutyNorm.Id}»";
+				return null;
+			}
+		}
 		public string LabelNomenclature => Barcode?.Nomenclature.Name;
 		public string LabelTitle => Barcode?.Title;
 		public string LabelCreateDate => Barcode?.CreateDate.ToShortDateString();

@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Operations {
@@ -66,15 +68,54 @@ namespace Workwear.Domain.Operations {
 		                                          throw new Exception("Нет даты связанной операции");
 		public virtual string OperationTitle {
 			get {
-				if(EmployeeIssueOperation?.Issued > 0)
-					return $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}";
+				if(EmployeeIssueOperation != null)
+					return EmployeeIssueOperation.Issued > 0 && EmployeeIssueOperation.Returned == 0
+						? $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}"
+							: EmployeeIssueOperation.Returned > 0 && EmployeeIssueOperation.Issued == 0 ?
+							//TODO реализовать списание
+								$"Возврат от сотрудника: {EmployeeIssueOperation.Employee.ShortName}"
+									: throw new NotSupportedException();
+				if(DutyNormIssueOperation != null)
+					return DutyNormIssueOperation.Issued > 0 && DutyNormIssueOperation.Returned == 0
+						? $"Выдача по дежурной норме: {DutyNormIssueOperation.DutyNorm.Name}"
+							: DutyNormIssueOperation.Returned > 0 && DutyNormIssueOperation.Issued == 0 ?
+							//TODO реализовать списание
+								$"Возврат с дежурной нормы: {DutyNormIssueOperation.DutyNorm.Name}"
+									: throw new NotSupportedException();
 				if(OverNormOperation != null)
-					return $"{OverNormOperation.Type} выдача сотруднику: {OverNormOperation.Employee.ShortName}";
+					return OverNormOperation.WarehouseOperation?.ExpenseWarehouse != null 
+						? $"{OverNormOperation.Type} выдача сотруднику: {OverNormOperation.Employee.ShortName}"
+							: OverNormOperation.WarehouseOperation?.ReceiptWarehouse != null ?
+								$"Возврат вне нормы от сотрудника: {OverNormOperation.Employee.ShortName}"
+									: throw new NotSupportedException();
 				if(WarehouseOperation != null)
-////1289
-//TODO Отделить маркировку от возврата
-					return $"Маркировка на складе.";
-				return "???";
+					return "Маркировка на складе.";
+				
+				throw new NotSupportedException();
+			}
+		}
+
+		public virtual EmployeeCard CurrentEmployee {
+			get {
+				if(WarehouseOperation?.ReceiptWarehouse != null)
+					return null;
+				if(EmployeeIssueOperation?.Issued > 0)
+					return EmployeeIssueOperation.Employee;
+				if(OverNormOperation != null)
+					return OverNormOperation.Employee;
+				return null;
+			}
+		}
+
+		public virtual Warehouse CurrentWarehouse => WarehouseOperation?.ReceiptWarehouse;
+
+		public virtual DutyNorm CurrentDutyNorm {
+			get {
+				if(WarehouseOperation?.ReceiptWarehouse != null)
+					return null;
+				if(DutyNormIssueOperation?.Issued > 0)
+					return DutyNormIssueOperation.DutyNorm;
+				return null;
 			}
 		}
 		#endregion

@@ -27698,7 +27698,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel12">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes">Сотрудник:</property>
+                        <property name="LabelProp" translatable="yes">Числится:</property>
                       </widget>
                       <packing>
                         <property name="AutoSize">False</property>
