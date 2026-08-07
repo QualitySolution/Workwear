@@ -15926,6 +15926,23 @@
           </packing>
         </child>
         <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckManualOperation">
+            <property name="MemberName" />
+            <property name="Tooltip" translatable="yes">Включать в отчет так же операции, добавленные вручную.</property>
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Включая ручные операции</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">11</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gtk.Expander" id="expander1">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
@@ -15938,7 +15955,7 @@
               </widget>
             </child>
             <child>
-              <widget class="Gtk.Label" id="GtkLabel12">
+              <widget class="Gtk.Label" id="GtkLabel14">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Подразделение:</property>
                 <property name="UseUnderline">True</property>
@@ -15949,7 +15966,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">11</property>
+            <property name="Position">12</property>
             <property name="AutoSize">True</property>
           </packing>
         </child>
@@ -15976,7 +15993,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">12</property>
+            <property name="Position">13</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
           </packing>
@@ -15993,7 +16010,7 @@
               </widget>
             </child>
             <child>
-              <widget class="Gtk.Label" id="GtkLabel14">
+              <widget class="Gtk.Label" id="GtkLabel21">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Группы сотрудников</property>
                 <property name="UseUnderline">True</property>
@@ -16004,7 +16021,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">13</property>
+            <property name="Position">14</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
           </packing>
@@ -16021,7 +16038,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">14</property>
+            <property name="Position">15</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
