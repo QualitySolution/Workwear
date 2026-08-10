@@ -193,6 +193,40 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			Assert.That(item.CanEditAmount, Is.True);
 		}
 
+		[Test(Description = "AddBarcode дозаписывает ещё один отсканированный код в уже существующую строку возврата и увеличивает количество.")]
+		public void AddBarcode_ExistingReturnItem_AddsBarcodeAndIncreasesAmount()
+		{
+			var firstBarcode = new Barcode { Title = "100001" };
+			var secondBarcode = new Barcode { Title = "100002" };
+			var issuedOperation = CreateEmployeeIssueOperation(firstBarcode, secondBarcode);
+			var document = new Return();
+			var item = new ReturnItem(document, issuedOperation, 1, barcodes: new[] { firstBarcode });
+
+			item.AddBarcode(secondBarcode);
+
+			Assert.That(item.Amount, Is.EqualTo(2));
+			Assert.That(item.ReturnFromEmployeeOperation.BarcodeOperations, Has.Count.EqualTo(2));
+			Assert.That(
+				item.ReturnFromEmployeeOperation.BarcodeOperations.Select(x => x.Barcode),
+				Is.EquivalentTo(new[] { firstBarcode, secondBarcode }));
+			Assert.That(item.CanEditAmount, Is.False);
+		}
+
+		[Test(Description = "AddBarcode не добавляет повторно код, уже возвращённый этой же строкой документа.")]
+		public void AddBarcode_AlreadyReturnedBarcode_DoesNotDuplicate()
+		{
+			var barcode = new Barcode { Title = "100001" };
+			var issuedOperation = CreateEmployeeIssueOperation(barcode);
+			var document = new Return();
+			var item = new ReturnItem(document, issuedOperation, 1, barcodes: new[] { barcode });
+
+			item.AddBarcode(barcode);
+
+			Assert.That(item.Amount, Is.EqualTo(1));
+			Assert.That(item.ReturnFromEmployeeOperation.BarcodeOperations.Select(x => x.Barcode), Is.EquivalentTo(new[] {barcode}));
+			Assert.That(item.CanEditAmount, Is.False);
+		}
+
 		private static OverNormOperation CreateOverNormOperation(params Barcode[] barcodes)
 		{
 			var nomenclature = new Nomenclature { Name = "Куртка" };
