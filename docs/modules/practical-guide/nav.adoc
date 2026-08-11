@@ -1,0 +1,4 @@
+.Практическое руководство
+* xref:launch.adoc[Ввод в эксплуатацию]
+** xref:launch-manual.adoc[Ручной ввод данных]
+* xref:accounting.adoc[Оперативный учет]

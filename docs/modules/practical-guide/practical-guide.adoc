@@ -1,0 +1,22 @@
+:title-separator: {sp}|
+= QS: Спецодежда | Практическое руководство
+Quality Solution 2026
+версия 2.10
+:organization: Quality Solution
+:doctype: book
+:sectnums:
+:!chapter-signifier:
+:toc: left
+:icons: font
+:toc-title: Содержание
+:toclevels: 3
+
+:leveloffset: 1
+
+include::pages/launch.adoc[]
+
+include::pages/launch-manual.adoc[]
+
+include::pages/accounting.adoc[]
+
+:leveloffset: 0
