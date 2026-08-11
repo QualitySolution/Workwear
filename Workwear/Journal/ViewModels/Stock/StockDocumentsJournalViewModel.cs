@@ -7,7 +7,6 @@ using NHibernate.Criterion;
 using NHibernate.Dialect.Function;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
-using NPOI.SS.Formula.Functions;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -24,6 +23,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Supply;
 using workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Models.Stock;
@@ -111,6 +111,7 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Income incomeAlias = null;
+			Shipment shipmentAlias = null;
 
 			var incomeQuery = uow.Session.QueryOver<Income>(() => incomeAlias);
 			if(Filter.StartDate.HasValue)
@@ -123,13 +124,16 @@ namespace workwear.Journal.ViewModels.Stock
 			incomeQuery.Where(GetSearchCriterion(
 				() => incomeAlias.Id,
 				() => incomeAlias.DocNumber,
+				() => incomeAlias.Number,
 				() => incomeAlias.Comment,
-				() => authorAlias.Name
+				() => authorAlias.Name,
+				() => shipmentAlias.Id
 			));
 
 			incomeQuery
 				.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => incomeAlias.Shipment, () => shipmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
@@ -140,6 +144,7 @@ namespace workwear.Journal.ViewModels.Stock
 			            .Select(() => StockDocumentType.Income).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 			            .Select(() => incomeAlias.Number).WithAlias(() => resultAlias.IncomeDocNubber)
+			            .Select(() => shipmentAlias.Id).WithAlias(() => resultAlias.ShipmentId)
 					)
 			.OrderBy(() => incomeAlias.Date).Desc
 			.ThenBy(() => incomeAlias.CreationDate).Desc
@@ -788,11 +793,13 @@ namespace workwear.Journal.ViewModels.Stock
 				if(!String.IsNullOrWhiteSpace(EmployeeFio))
 					text += $"Сотрудник: {EmployeeFio} ";
 				if(!String.IsNullOrWhiteSpace(DutyNormName))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"Дежурное: {DutyNormName} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"Дежурное: {DutyNormName}";
 				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $" TН №: {IncomeDocNubber} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $"TН №:{IncomeDocNubber}";
+				if(ShipmentId.HasValue)
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"К поставке №{ShipmentId}";
 				if(DocTypeEnum == StockDocumentType.WriteoffDoc && !String.IsNullOrWhiteSpace(ExpenseWarehouse))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $" Со склада: {ExpenseWarehouse} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $"Со склада: {ExpenseWarehouse}";
 				return text;
 			}
 		}
@@ -807,6 +814,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public DateTime? IssueDate { get; set; }
 		public string Color => DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc && IssueDate == null ? "purple" : "black";
 		public string IncomeDocNubber { get; set; }
+		public int? ShipmentId { get; set; }
 		public string DutyNormName { get; set; }
 		public string Comment { get; set; }
 

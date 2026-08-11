@@ -51,7 +51,8 @@ namespace Workwear.ViewModels.Stock {
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.shipmentCalculateModel = shipmentCalculateModel ?? throw new ArgumentNullException(nameof(shipmentCalculateModel));
 			SetDocumentDateProperty(e => e.Date);
-			
+			originalShipmentId = Entity.Shipment?.Id;
+
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			
@@ -89,6 +90,7 @@ namespace Workwear.ViewModels.Stock {
 		private readonly BaseParameters baseParameters;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		private readonly ShipmentCalculateModel shipmentCalculateModel;
+		private readonly int? originalShipmentId;
 		
 		private string total;
 		public string Total {
@@ -277,9 +279,12 @@ namespace Workwear.ViewModels.Stock {
 			
 			UoW.Save(Entity);
 			UoW.Commit();
-			
-			if(Entity.Shipment != null)
-				shipmentCalculateModel.UpdateShipment(Entity.Shipment.Id, UoW);
+
+			var newShipmentId = Entity.Shipment?.Id;
+			if(newShipmentId != null)
+				shipmentCalculateModel.UpdateShipment(newShipmentId.Value, UoW);
+			if(originalShipmentId != null && originalShipmentId != newShipmentId)
+				shipmentCalculateModel.UpdateShipment(originalShipmentId.Value, UoW);
 
 			logger.Info ("Документ сохранён.");
 			return true;
