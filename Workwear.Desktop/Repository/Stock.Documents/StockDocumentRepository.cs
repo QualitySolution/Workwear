@@ -1,13 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
 using NHibernate.Criterion;
 using QS.DomainModel.UoW;
+using Workwear.Domain.Company;
 using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Repository.Stock.Documents {
-	
+
 	public class StockDocumentRepository {
 		#region Документы выдачи
+		/// <summary>
+		/// Ищем черновые выдачи для сотрудника.
+		/// </summary>
+		public IQueryOver<Expense, Expense> GetDraftExpenseForEmployee(EmployeeCard employee, IUnitOfWork uow) {
+			return uow.Session.QueryOver<Expense>()
+				.Where(x => x.Employee.Id == employee.Id)
+				.Where(x => x.IssueDate == null)
+				.OrderBy(x => x.Date).Desc;
+		}
 		/// <summary>
 		/// Получаем документы выдачи со строками, соответствующими выдачам по норме для текущего сотрудника.
 		/// Т.е. если были выдачи сверх нормы в документе, мы вернем только те строки, где выдачи были по норме.

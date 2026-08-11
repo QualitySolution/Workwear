@@ -18,6 +18,7 @@ using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Stock.Documents;
 using Workwear.ViewModels.Operations;
 using Workwear.ViewModels.Regulations;
 using Workwear.Tools;
@@ -36,6 +37,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
+		private readonly StockDocumentRepository stockDocumentRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
@@ -47,6 +49,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			EmployeeIssueModel issueModel,
 			StockBalanceModel stockBalanceModel,
 			EmployeeIssueRepository employeeIssueRepository,
+			StockDocumentRepository stockDocumentRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
 			INavigationManager navigation,
@@ -59,6 +62,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
+			this.stockDocumentRepository = stockDocumentRepository ?? throw new ArgumentNullException(nameof(stockDocumentRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
@@ -182,6 +186,13 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!employeeViewModel.Save())
 				return;
+
+			var draft = stockDocumentRepository.GetDraftExpenseForEmployee(Entity, UoW).Take(1).SingleOrDefault();
+			if(draft != null) {
+				interactive.ShowMessage(ImportanceLevel.Info, "Будет открыта предварительно подготовленная для сотрудника выдача");
+				navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(draft.Id));
+				return;
+			}
 			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
