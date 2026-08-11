@@ -25,7 +25,7 @@ image::interface_main-window.png[]
 
 * *База* — глобальные настройки программы
 ifdef::assembler-profile-pdf[]
-** *Пользователи* — link:admin-guide.pdf#admin-guide:users:::user-edit[управление пользователями] базы данных (требуются права администратора)
+** *Пользователи* — link:руководство-администратора.pdf#admin-guide:users:::user-edit[управление пользователями] базы данных (требуются права администратора)
 endif::[]
 ifndef::assembler-profile-pdf[]
 ** *Пользователи* — xref:admin-guide:users.adoc#user-edit[управление пользователями] базы данных (требуются права администратора)

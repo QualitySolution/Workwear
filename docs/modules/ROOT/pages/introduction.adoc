@@ -40,7 +40,7 @@
 |не ограничено
 
 ifdef::assembler-profile-pdf[]
-|link:admin-guide.pdf#admin-guide:update:::update-application[Обновление] на следующий значительный релиз
+|link:руководство-администратора.pdf#admin-guide:update:::update-application[Обновление] на следующий значительный релиз
 endif::[]
 ifndef::assembler-profile-pdf[]
 |xref:admin-guide:update.adoc#update-application[Обновление] на следующий значительный релиз

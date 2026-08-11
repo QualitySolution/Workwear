@@ -531,7 +531,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnHelpActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenUserGuide");
 		try {
-			OpenHelper.OpenUrl("user-guide.pdf");
+			OpenHelper.OpenUrl("руководство-пользователя.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -543,7 +543,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionPracticalGuideActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenPracticalGuide");
 		try {
-			OpenHelper.OpenUrl("practical-guide.pdf");
+			OpenHelper.OpenUrl("практическое-руководство.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -863,7 +863,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionAdminGuideActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenAdminGuide");
 		try {
-			OpenHelper.OpenUrl("admin-guide.pdf");
+			OpenHelper.OpenUrl("руководство-администратора.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,

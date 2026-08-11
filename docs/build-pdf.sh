@@ -24,6 +24,6 @@ if [ -z "$ExportDir" ]; then
 fi
 
 mkdir -p "$OutputDir"
-cp -v "$ExportDir/руководство-пользователя.pdf" "$OutputDir/user-guide.pdf"
-cp -v "$ExportDir/руководство-администратора.pdf" "$OutputDir/admin-guide.pdf"
-cp -v "$ExportDir/практическое-руководство.pdf" "$OutputDir/practical-guide.pdf"
+cp -v "$ExportDir/руководство-пользователя.pdf" "$OutputDir/"
+cp -v "$ExportDir/руководство-администратора.pdf" "$OutputDir/"
+cp -v "$ExportDir/практическое-руководство.pdf" "$OutputDir/"
