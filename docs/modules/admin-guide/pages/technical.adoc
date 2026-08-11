@@ -1,4 +1,5 @@
 = Технические подробности
+:page-aliases: ROOT:technical.adoc
 
 == Файл конфигурации
 

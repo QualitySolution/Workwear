@@ -1,4 +1,5 @@
 = Перенос базы на другой компьютер
+:page-aliases: ROOT:transfer_base.adoc
 :experimental:
 
 Для переноса базы данных с одного компьютера на другой нам понадобится установить MySQL Workbench.

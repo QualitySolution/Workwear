@@ -1,4 +1,5 @@
 = Решение проблем 
+:page-aliases: ROOT:problems.adoc
 :experimental:
 
 == Не запускается «QS: Спецодежда и имущество»

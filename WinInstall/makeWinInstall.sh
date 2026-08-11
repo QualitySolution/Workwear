@@ -58,8 +58,8 @@ fi
 ${BuildDoc} ../docs/modules/ROOT/user-guide.adoc
 cp -v ../docs/modules/ROOT/user-guide.pdf ./Files
 
-${BuildDoc} ../docs/modules/ROOT/admin-guide.adoc
-cp -v ../docs/modules/ROOT/admin-guide.pdf ./Files
+${BuildDoc} ../docs/modules/admin-guide/admin-guide.adoc
+cp -v ../docs/modules/admin-guide/admin-guide.pdf ./Files
 
 ${BuildDoc} ../docs/modules/practical-guide/practical-guide.adoc
 cp -v ../docs/modules/practical-guide/practical-guide.pdf ./Files

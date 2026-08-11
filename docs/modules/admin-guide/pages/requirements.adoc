@@ -1,5 +1,6 @@
 [#requirements]
 = Системные требования
+:page-aliases: ROOT:requirements.adoc
 
 == Аппаратное обеспечение и программное окружение
 
