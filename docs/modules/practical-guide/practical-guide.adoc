@@ -13,6 +13,8 @@ Quality Solution 2026
 
 :leveloffset: 1
 
+include::pages/introduction.adoc[]
+
 include::pages/launch.adoc[]
 
 include::pages/launch-manual.adoc[]
