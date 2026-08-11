@@ -194,6 +194,7 @@ Section "${PRODUCT_NAME}" SecProgram
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Удаление.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe" "" "$INSTDIR\${EXE_NAME}.exe" 0
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство пользователя.lnk" "$INSTDIR\user-guide.pdf"
+  CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Практическое руководство.lnk" "$INSTDIR\practical-guide.pdf"
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство администратора.lnk" "$INSTDIR\admin-guide.pdf"
   
   ; Удяляем файлы ненужные после версии 1.2.4.2

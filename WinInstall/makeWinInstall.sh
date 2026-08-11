@@ -61,4 +61,7 @@ cp -v ../docs/modules/ROOT/user-guide.pdf ./Files
 ${BuildDoc} ../docs/modules/ROOT/admin-guide.adoc
 cp -v ../docs/modules/ROOT/admin-guide.pdf ./Files
 
+${BuildDoc} ../docs/modules/practical-guide/practical-guide.adoc
+cp -v ../docs/modules/practical-guide/practical-guide.pdf ./Files
+
 wine ~/.wine/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe /INPUTCHARSET UTF8 ${NsisOptions} ${ProjectName}.nsi
