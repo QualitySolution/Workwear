@@ -1,0 +1,20 @@
+assembly:
+  root_level: 1
+  insert_start_page: false
+  section_merge_strategy: fuse
+  attributes:
+    author: Quality Solution
+    revdate: 2026
+    sectnums: ''
+    chapter-signifier: ~
+    toc: left
+    toc-title: Содержание
+    toclevels: 3
+    icons: font
+
+build:
+  dir: ./build/pdf
+  clean: true
+  keep_source: true
+  process_limit: 1
+  publish: false
