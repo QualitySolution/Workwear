@@ -3,7 +3,7 @@ using QS.Configuration;
 using QS.Project.Versioning;
 using QS.Updater.App;
 
-	namespace Workwear.Tools {
+namespace Workwear.Tools {
 	public class UpdateChannelService : IUpdateChannelService {
 		public UpdateChannelService(IChangeableConfiguration configuration, IApplicationInfo applicationInfo) {
 		}

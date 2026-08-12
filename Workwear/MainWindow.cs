@@ -141,7 +141,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionUpdate.Visible = false;
 		ActionUpdateChannel.Visible = false;
 
-		progress.CheckPoint("Проверка обновлений");
+		progress.CheckPoint("Проверка версии базы данных");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
 			var checker = updateScope.Resolve<VersionCheckerService>();
 			var configuration = updateScope.Resolve<IChangeableConfiguration>();
