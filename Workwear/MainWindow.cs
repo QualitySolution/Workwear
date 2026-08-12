@@ -137,17 +137,9 @@ public partial class MainWindow : Gtk.Window {
 		dispatcher = AutofacScope.Resolve<IGuiDispatcher>();
 		FeaturesService = AutofacScope.Resolve<FeaturesService>();
 
-		progress.CheckPoint("Настройка каналов обновления");
-		using(var releaseScope = AutofacScope.BeginLifetimeScope()) {
-			var appInfo = releaseScope.Resolve<IApplicationInfo>();
-			if(appInfo.Modification == null) { //Пока не используем каналы для редакций
-				var configuration = releaseScope.Resolve<IChangeableConfiguration>();
-				UpdateChannelActive(configuration);
-			}
-			else {
-				ActionUpdateChannel.Visible = false;
-			}
-		}
+		progress.CheckPoint("Отключение проверки обновлений");
+		ActionUpdate.Visible = false;
+		ActionUpdateChannel.Visible = false;
 
 		progress.CheckPoint("Проверка обновлений");
 		using(var updateScope = AutofacScope.BeginLifetimeScope()) {
