@@ -382,9 +382,13 @@ namespace Workwear.ViewModels.Stock
 			return item;
 		}
 		
-		public void AddFromScan() =>
+		public void AddFromScan() {
 			//Здесь зануления других моделей обязательно чтобы их не создавал DI
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(this, null, this, null);
+			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
+				this,
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel) },
+				new object[] { null, this, null, null });
+		}
 
 		public string ValidateBarcodeForScan(Barcode barcode) {
 			if(barcode == null)

@@ -99,6 +99,11 @@ namespace Workwear.Domain.Stock.Documents
 			
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			foreach(var item in Items) {
+				var barcodesCount = GetWriteoffBarcodesCount(item);
+				if(barcodesCount > 0 && item.Amount != barcodesCount)
+					yield return new ValidationResult(
+						$" \"{item.Nomenclature.Name}\" количество должно быть равно количеству выбранных штрихкодов.",
+						new[] { nameof(Items) });
 				switch(item.WriteoffFrom) {
 					case WriteoffFrom.Warehouse:
 						if(baseParameters.CheckBalances && item.Amount > item.MaxAmount)
@@ -124,41 +129,63 @@ namespace Workwear.Domain.Stock.Documents
 
 		#endregion
 
+		private int GetWriteoffBarcodesCount(WriteoffItem item) {
+			switch(item.WriteoffFrom) {
+				case WriteoffFrom.Employee:
+					return item.EmployeeWriteoffOperation.BarcodeOperations.Count;
+				case WriteoffFrom.DutyNorm:
+					return item.DutyNormWriteOffOperation.BarcodeOperations.Count;
+				case WriteoffFrom.Warehouse:
+					return item.WarehouseBarcodeOperations.Count;
+				default:
+					return 0;
+			}
+		}
 
 		public Writeoff ()
 		{
 		}
 
 		#region Обработка строк
-		public virtual WriteoffItem AddItem(EmployeeIssueOperation operation, int count)
+		public virtual WriteoffItem AddItem(EmployeeIssueOperation operation, int count, IEnumerable<Barcode> barcodes = null)
 		{
 			if(operation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.EmployeeWriteoffOperation?.IssuedOperation, operation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return null;
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					DomainHelper.EqualDomainObjects(p.EmployeeWriteoffOperation?.IssuedOperation, operation) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
-			var item = new WriteoffItem(this, operation, count);
+			var item = new WriteoffItem(this, operation, count, barcodeList);
 			Items.Add(item);
 			return item;
 		}
 
-		public virtual WriteoffItem AddItem(DutyNormIssueOperation operation, int count) 
+		public virtual WriteoffItem AddItem(DutyNormIssueOperation operation, int count, IEnumerable<Barcode> barcodes = null)
 		{
 			if(operation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.DutyNormWriteOffOperation?.IssuedOperation, operation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return null;
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					DomainHelper.EqualDomainObjects(p.DutyNormWriteOffOperation?.IssuedOperation, operation) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
-			var item = new WriteoffItem(this, operation, count);
+			var item = new WriteoffItem(this, operation, count, barcodeList);
 			Items.Add(item);
 			return item;
 		}
 
-		public virtual void AddItem(StockPosition position, Warehouse warehouse, int count)
+		public virtual WriteoffItem AddItem(StockPosition position, Warehouse warehouse, int count, IEnumerable<Barcode> barcodes = null)
 		{
 			if(position == null)
 				throw new ArgumentNullException(nameof(position));
@@ -166,12 +193,19 @@ namespace Workwear.Domain.Stock.Documents
 			if(warehouse == null)
 				throw new ArgumentNullException(nameof(warehouse));
 
-			if(Items.Any(p => p.WarehouseOperation?.ExpenseWarehouse == warehouse && position.Equals(p.StockPosition))) {
-				logger.Warn($"Позиция [{position}] для склада {warehouse.Name} уже добавлена. Пропускаем...");
-				return;
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					p.WarehouseOperation?.ExpenseWarehouse == warehouse && position.Equals(p.StockPosition) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn($"Позиция [{position}] для склада {warehouse.Name} уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
 
-			Items.Add (new WriteoffItem(this, position, warehouse, count));
+			var item = new WriteoffItem(this, position, warehouse, count, barcodeList);
+			Items.Add(item);
+			return item;
 		}
 
 		public virtual void RemoveItem(WriteoffItem item)

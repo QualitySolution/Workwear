@@ -88,6 +88,8 @@ namespace Workwear.Views.Stock
 
 		private global::Gamma.GtkWidgets.yButton buttonAddDutyNorm;
 
+		private global::Gamma.GtkWidgets.yButton buttonAddScan;
+
 		private global::Gamma.GtkWidgets.yButton buttonDel;
 
 		private global::Gamma.GtkWidgets.yLabel labelSum;
@@ -543,6 +545,19 @@ namespace Workwear.Views.Stock
 			w47.Expand = false;
 			w47.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
+			this.buttonAddScan = new global::Gamma.GtkWidgets.yButton();
+			this.buttonAddScan.CanFocus = true;
+			this.buttonAddScan.Name = "buttonAddScan";
+			this.buttonAddScan.UseUnderline = true;
+			global::Gtk.Image w48 = new global::Gtk.Image();
+			w48.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.qr-code.png");
+			this.buttonAddScan.Image = w48;
+			this.hbox8.Add(this.buttonAddScan);
+			global::Gtk.Box.BoxChild w49 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonAddScan]));
+			w49.Position = 3;
+			w49.Expand = false;
+			w49.Fill = false;
+			// Container child hbox8.Gtk.Box+BoxChild
 			this.buttonDel = new global::Gamma.GtkWidgets.yButton();
 			this.buttonDel.CanFocus = true;
 			this.buttonDel.Name = "buttonDel";
@@ -550,26 +565,26 @@ namespace Workwear.Views.Stock
 			this.buttonDel.UseUnderline = true;
 			this.buttonDel.Label = "gtk-remove";
 			this.hbox8.Add(this.buttonDel);
-			global::Gtk.Box.BoxChild w48 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
-			w48.Position = 3;
-			w48.Expand = false;
-			w48.Fill = false;
+			global::Gtk.Box.BoxChild w50 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.buttonDel]));
+			w50.Position = 4;
+			w50.Expand = false;
+			w50.Fill = false;
 			// Container child hbox8.Gtk.Box+BoxChild
 			this.labelSum = new global::Gamma.GtkWidgets.yLabel();
 			this.labelSum.Name = "labelSum";
 			this.labelSum.Xalign = 1F;
 			this.labelSum.LabelProp = global::Mono.Unix.Catalog.GetString("Количество:");
 			this.hbox8.Add(this.labelSum);
-			global::Gtk.Box.BoxChild w49 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
-			w49.Position = 4;
+			global::Gtk.Box.BoxChild w51 = ((global::Gtk.Box.BoxChild)(this.hbox8[this.labelSum]));
+			w51.Position = 5;
 			this.vbox2.Add(this.hbox8);
-			global::Gtk.Box.BoxChild w50 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
-			w50.Position = 2;
-			w50.Expand = false;
-			w50.Fill = false;
+			global::Gtk.Box.BoxChild w52 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox8]));
+			w52.Position = 2;
+			w52.Expand = false;
+			w52.Fill = false;
 			this.dialog1_VBox.Add(this.vbox2);
-			global::Gtk.Box.BoxChild w51 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
-			w51.Position = 2;
+			global::Gtk.Box.BoxChild w53 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.vbox2]));
+			w53.Position = 2;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{

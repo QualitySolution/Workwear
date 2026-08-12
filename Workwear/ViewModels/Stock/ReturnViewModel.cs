@@ -275,8 +275,10 @@ namespace Workwear.ViewModels.Stock {
 
 		public void AddFromScan() {
 			//Здесь зануления других моделей обязательно чтобы их не создавал DI
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(
-				this, null, null, this);
+			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
+				this,
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel) },
+				new object[] { null, null, this, null });
 		}
 
 		public void AddItems(IEnumerable<ServiceClaim> claims) =>
