@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Company;
@@ -69,30 +70,43 @@ namespace Workwear.Domain.Operations {
 		                                          throw new Exception("Нет даты связанной операции");
 		public virtual string OperationTitle {
 			get {
-				if(EmployeeIssueOperation != null)
-					return EmployeeIssueOperation.Issued > 0 && EmployeeIssueOperation.Returned == 0
-						? $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}"
-							: EmployeeIssueOperation.Returned > 0 && EmployeeIssueOperation.Issued == 0 ?
-							//TODO реализовать списание
-								$"Возврат от сотрудника: {EmployeeIssueOperation.Employee.ShortName}"
-									: throw new NotSupportedException();
-				if(DutyNormIssueOperation != null)
-					return DutyNormIssueOperation.Issued > 0 && DutyNormIssueOperation.Returned == 0
-						? $"Выдача по дежурной норме: {DutyNormIssueOperation.DutyNorm.Name}"
-							: DutyNormIssueOperation.Returned > 0 && DutyNormIssueOperation.Issued == 0 ?
-							//TODO реализовать списание
-								$"Возврат с дежурной нормы: {DutyNormIssueOperation.DutyNorm.Name}"
-									: throw new NotSupportedException();
-				if(OverNormOperation != null)
-					return OverNormOperation.WarehouseOperation?.ExpenseWarehouse != null 
-						? $"{OverNormOperation.Type} выдача сотруднику: {OverNormOperation.Employee.ShortName}"
-							: OverNormOperation.WarehouseOperation?.ReceiptWarehouse != null ?
-								$"Возврат вне нормы от сотрудника: {OverNormOperation.Employee.ShortName}"
-									: throw new NotSupportedException();
-				if(WarehouseOperation != null)
+				var parts = new List<string>();
+
+				if(EmployeeIssueOperation != null) {
+					if(EmployeeIssueOperation.Issued > 0)
+						parts.Add($"Выдано сотруднику: {EmployeeIssueOperation.Employee.ShortName}");
+					if(EmployeeIssueOperation.Returned > 0)
+						//TODO реализовать списание
+						parts.Add($"Списано с сотрудника: {EmployeeIssueOperation.Employee.ShortName}");
+				}
+				if(DutyNormIssueOperation != null) {
+					if(DutyNormIssueOperation.Issued > 0)
+						parts.Add($"Выдано по дежурной норме: {DutyNormIssueOperation.DutyNorm.Name}");
+					if(DutyNormIssueOperation.Returned > 0)
+						//TODO реализовать списание
+						parts.Add($"Списано с дежурной нормы: {DutyNormIssueOperation.DutyNorm.Name}");
+				}
+				if(OverNormOperation != null) {
+					if(OverNormOperation.WarehouseOperation?.ExpenseWarehouse != null)
+						parts.Add($"{OverNormOperation.Type} выдача сотруднику: {OverNormOperation.Employee.ShortName}");
+					if(OverNormOperation.WarehouseOperation?.ReceiptWarehouse != null)
+						parts.Add($"Возврат вне нормы от сотрудника: {OverNormOperation.Employee.ShortName}");
+				}
+
+				if(parts.Count == 0 && WarehouseOperation != null)
 					return "Маркировка на складе.";
-				
-				throw new NotSupportedException();
+
+				if(WarehouseOperation != null) {
+					if(WarehouseOperation.ExpenseWarehouse != null)
+						parts.Add($"Списано со склада: {WarehouseOperation.ExpenseWarehouse.Name}");
+					if(WarehouseOperation.ReceiptWarehouse != null)
+						parts.Add($"Поступило на склад: {WarehouseOperation.ReceiptWarehouse.Name}");
+				}
+
+				if(parts.Count == 0)
+					throw new NotSupportedException();
+
+				return string.Join(". ", parts) + ".";
 			}
 		}
 

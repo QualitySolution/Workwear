@@ -58,7 +58,7 @@ namespace Workwear.Journal.ViewModels.Stock
 		protected override IQueryOver<Barcode> ItemsQuery(IUnitOfWork uow) 
 		{
 			BarcodeJournalNode resultAlias = null;
-			
+
 			Barcode barcodeAlias = null;
 			Nomenclature nomenclatureAlias = null;
 			EmployeeCard employeeAlias = null;
@@ -69,6 +69,11 @@ namespace Workwear.Journal.ViewModels.Stock
 			OverNormOperation overNormOperationAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
+			BarcodeOperation lastBarcodeOperationAlias = null;
+			EmployeeIssueOperation lastEmployeeIssueOperationAlias = null;
+			EmployeeCard lastEmployeeAlias = null;
+			WarehouseOperation lastWarehouseOperationAlias = null;
+			Warehouse lastWarehouseAlias = null;
 			var query = uow.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Where(MakeSearchCriterion().By(
 					() => barcodeAlias.Title,
@@ -92,6 +97,7 @@ namespace Workwear.Journal.ViewModels.Stock
 				if(Filter.Warehouse != null) {
 					BarcodeOperation barcodeOperationSubAlias = null;
 					EmployeeIssueOperation empIsOperationSubAlias = null;
+					DutyNormIssueOperation dutyNormOperationSubAlias = null;
 					WarehouseOperation whOperationSubAlias = null;
 					OverNormOperation overNormOperationSubAlias = null;
 
@@ -99,10 +105,12 @@ namespace Workwear.Journal.ViewModels.Stock
 						.Left.JoinAlias(() => barcodeOperationSubAlias.WarehouseOperation, () => whOperationSubAlias)
 						.Left.JoinAlias(() => barcodeOperationSubAlias.OverNormOperation, () => overNormOperationSubAlias)
 						.Left.JoinAlias(() => barcodeOperationSubAlias.EmployeeIssueOperation, () => empIsOperationSubAlias)
+						.Left.JoinAlias(() => barcodeOperationSubAlias.DutyNormIssueOperation, () => dutyNormOperationSubAlias)
 						.Where(() => barcodeOperationSubAlias.Barcode.Id == barcodeAlias.Id)
 						.OrderBy(Projections.SqlFunction("coalesce", NHibernateUtil.Date,
                         	Projections.Property(() => whOperationSubAlias.OperationTime),
                         	Projections.Property(() => empIsOperationSubAlias.OperationTime),
+                        	Projections.Property(() => dutyNormOperationSubAlias.OperationTime),
                         	Projections.Property(() => overNormOperationSubAlias.OperationTime)))
                         	.Desc
                         .Select(x => whOperationSubAlias.ReceiptWarehouse.Id)
@@ -118,6 +126,27 @@ namespace Workwear.Journal.ViewModels.Stock
 						query.Where(() => warehouseOperationAlias.Owner == null);
 			}
 
+			BarcodeOperation lastOperationSubAlias = null;
+			EmployeeIssueOperation lastEmpSubAlias = null;
+			DutyNormIssueOperation lastDutyNormSubAlias = null;
+			WarehouseOperation lastWhSubAlias = null;
+			OverNormOperation lastOverNormSubAlias = null;
+
+			var lastOperationIdSubQuery = QueryOver.Of(() => lastOperationSubAlias)
+				.Left.JoinAlias(() => lastOperationSubAlias.WarehouseOperation, () => lastWhSubAlias)
+				.Left.JoinAlias(() => lastOperationSubAlias.EmployeeIssueOperation, () => lastEmpSubAlias)
+				.Left.JoinAlias(() => lastOperationSubAlias.DutyNormIssueOperation, () => lastDutyNormSubAlias)
+				.Left.JoinAlias(() => lastOperationSubAlias.OverNormOperation, () => lastOverNormSubAlias)
+				.Where(() => lastOperationSubAlias.Barcode.Id == barcodeAlias.Id)
+				.OrderBy(Projections.SqlFunction("coalesce", NHibernateUtil.Date,
+					Projections.Property(() => lastEmpSubAlias.OperationTime),
+					Projections.Property(() => lastDutyNormSubAlias.OperationTime),
+					Projections.Property(() => lastOverNormSubAlias.OperationTime),
+					Projections.Property(() => lastWhSubAlias.OperationTime)))
+					.Desc
+				.Select(x => x.Id)
+				.Take(1);
+
 			query.Left.JoinAlias(x => x.Nomenclature, () => nomenclatureAlias)
 				.Left.JoinAlias(x => x.Size, () => sizeAlias)
 				.Left.JoinAlias(x => x.Height, () => heightAlias)
@@ -127,6 +156,13 @@ namespace Workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => barcodeOperationAlias.WarehouseOperation, () => warehouseOperationAlias)
 				.Left.JoinAlias(() => warehouseOperationAlias.ReceiptWarehouse, () => warehouseAlias)
 				.Left.JoinAlias(() => barcodeOperationAlias.OverNormOperation, () => overNormOperationAlias)
+				.Left.JoinAlias(x => x.BarcodeOperations, () => lastBarcodeOperationAlias,
+					Subqueries.WhereProperty(() => lastBarcodeOperationAlias.Id).Eq(lastOperationIdSubQuery))
+				.Left.JoinAlias(() => lastBarcodeOperationAlias.EmployeeIssueOperation, () => lastEmployeeIssueOperationAlias,
+					Restrictions.Gt(Projections.Property(() => lastEmployeeIssueOperationAlias.Issued), 0))
+				.Left.JoinAlias(() => lastEmployeeIssueOperationAlias.Employee, () => lastEmployeeAlias)
+				.Left.JoinAlias(() => lastBarcodeOperationAlias.WarehouseOperation, () => lastWarehouseOperationAlias)
+				.Left.JoinAlias(() => lastWarehouseOperationAlias.ReceiptWarehouse, () => lastWarehouseAlias)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
 					.Select(x => x.Type).WithAlias(() => resultAlias.Type)
@@ -137,11 +173,11 @@ namespace Workwear.Journal.ViewModels.Stock
 					.Select(() => nomenclatureAlias.Name).WithAlias(() => resultAlias.Nomenclature)
 					.Select(() => sizeAlias.Name).WithAlias(() => resultAlias.Size)
 					.Select(() => heightAlias.Name).WithAlias(() => resultAlias.Height)
-					.Select(() => employeeAlias.LastName).WithAlias(() => resultAlias.LastName)
-					.Select(() => employeeAlias.FirstName).WithAlias(() => resultAlias.FirstName)
-					.Select(() => employeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
-					.Select(() => warehouseAlias.Name).WithAlias(() => resultAlias.WarehouseName)
-					.Select(() => barcodeOperationAlias.KitNumber).WithAlias(() => resultAlias.KitNumber)
+					.Select(() => lastEmployeeAlias.LastName).WithAlias(() => resultAlias.LastName)
+					.Select(() => lastEmployeeAlias.FirstName).WithAlias(() => resultAlias.FirstName)
+					.Select(() => lastEmployeeAlias.Patronymic).WithAlias(() => resultAlias.Patronymic)
+					.Select(() => lastWarehouseAlias.Name).WithAlias(() => resultAlias.WarehouseName)
+					.Select(() => lastBarcodeOperationAlias.KitNumber).WithAlias(() => resultAlias.KitNumber)
 				).OrderBy(x => x.Id).Desc
 				.TransformUsing(Transformers.AliasToBean<BarcodeJournalNode>());
 			
