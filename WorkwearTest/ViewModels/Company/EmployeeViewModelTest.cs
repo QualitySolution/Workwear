@@ -27,6 +27,7 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
+using Workwear.Repository.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
@@ -91,6 +92,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<NormRepository>().AsSelf();
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<StockBalanceModel>().AsSelf();
+			builder.RegisterType<StockDocumentRepository>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
