@@ -44,8 +44,11 @@ namespace Workwear.Views.Company.EmployeeChildren
 		void YtreeviewMovements_ButtonReleaseEvent(object o, Gtk.ButtonReleaseEventArgs args)
 		{
 			if(args.Event.Button == 3) {
-				var menu = new Menu();
 				var selected = ytreeviewMovements.GetSelectedObject<EmployeeMovementItem>();
+				if(selected?.Operation == null)
+					return;
+
+				var menu = new Menu();
 
 				var itemOpenLastIssue = new MenuItemId<EmployeeMovementItem>("Редактировать");
 				itemOpenLastIssue.ID = selected;
@@ -56,12 +59,14 @@ namespace Workwear.Views.Company.EmployeeChildren
 				
 				var itemRecalculateIssue = new MenuItemId<EmployeeMovementItem>("Пересчитать срок носки");
 				itemRecalculateIssue.ID = selected;
+				itemRecalculateIssue.Sensitive = selected?.Operation != null;
 				itemRecalculateIssue.Activated += (sender, e) => ViewModel.RecalculateIssue(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemRecalculateIssue);
 
 				var itemRemoveOperation = new MenuItemId<EmployeeMovementItem>("Удалить операцию");
 				itemRemoveOperation.ID = selected;
-				itemRemoveOperation.Sensitive = selected?.EmployeeIssueReference?.DocumentType == null;
+				itemRemoveOperation.Sensitive = selected?.Operation != null
+				                                    && selected.EmployeeIssueReference?.DocumentType == null;
 				itemRemoveOperation.Activated += (sender, e) => ViewModel.RemoveOperation(((MenuItemId<EmployeeMovementItem>)sender).ID);
 				menu.Add(itemRemoveOperation);
 

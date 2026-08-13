@@ -39,6 +39,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly IInteractiveService interactive;
 		List<EmployeeMovementItem> movements;
+		private bool isDisposed;
 
 		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, 
 			OpenStockDocumentsModel openStockDocumentsModel,  
@@ -90,6 +91,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#region Контекстное меню
 		
 		public void RecalculateIssue(EmployeeMovementItem item) {
+			if(isDisposed || item?.Operation == null) {
+				logger.Warn("Невозможно пересчитать срок носки: карточка закрыта или операция не выбрана.");
+				return;
+			}
+
 			issueModel.RecalculateDateOfIssue(new List<EmployeeIssueOperation>() {item.Operation}, baseParameters, interactive);
 		}
 
@@ -263,6 +269,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void Dispose()
 		{
+			isDisposed = true;
 			NotifyConfiguration.Instance.UnsubscribeAll(this);
 		}
 	}
