@@ -67,6 +67,7 @@ namespace WorkwearTest.ViewModels.ClothingService {
 					postomatDocVm: postomatDocumentViewModel,
 					null,
 					null,
+					null,
 					unitOfWorkProvider: unitOfWorkProvider
 					);
 
