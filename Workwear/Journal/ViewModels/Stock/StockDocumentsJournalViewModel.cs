@@ -16,7 +16,6 @@ using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Utilities.Text;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -24,11 +23,13 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Supply;
 using workwear.Journal.Filter.ViewModels.Stock;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Models.Stock;
+using Workwear.Models.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
-using Workwear.Domain.Operations;
 
 namespace workwear.Journal.ViewModels.Stock
 {
@@ -36,6 +37,7 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		public readonly FeaturesService FeaturesService;
 		private readonly OpenStockDocumentsModel openStockDocumentsModel;
+		private readonly NormToDutyNormModel normToDutyNormModel;
 
 		public StockDocumentsFilterViewModel Filter { get; private set; }
 		#region IDialogDocumentation
@@ -43,13 +45,14 @@ namespace workwear.Journal.ViewModels.Stock
 		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
 		#endregion
 		public StockDocumentsJournalViewModel(
-			IUnitOfWorkFactory unitOfWorkFactory, 
-			IInteractiveService interactiveService, 
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IInteractiveService interactiveService,
 			INavigationManager navigation,
 			OpenStockDocumentsModel openStockDocumentsModel,
-			ILifetimeScope autofacScope, 
+			NormToDutyNormModel normToDutyNormModel,
+			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
-			ICurrentPermissionService currentPermissionService = null, 
+			ICurrentPermissionService currentPermissionService = null,
 			IDeleteEntityService deleteEntityService = null)
 			: base(unitOfWorkFactory, interactiveService, navigation)
 		{
@@ -57,6 +60,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CurrentPermissionService = currentPermissionService;
 			DeleteEntityService = deleteEntityService;
 			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
+			this.normToDutyNormModel = normToDutyNormModel ?? throw new ArgumentNullException(nameof(normToDutyNormModel));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			JournalFilter = Filter = autofacScope.Resolve<StockDocumentsFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
@@ -79,6 +83,7 @@ namespace workwear.Journal.ViewModels.Stock
 
 			CreateNodeActions();
 			CreateDocumentsActions();
+			CreatePopupActions();
 
 			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Return), typeof(Writeoff),
 				typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(ExpenseDutyNorm), typeof(OverNorm), typeof(Barcoding));
@@ -106,6 +111,7 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Income incomeAlias = null;
+			Shipment shipmentAlias = null;
 
 			var incomeQuery = uow.Session.QueryOver<Income>(() => incomeAlias);
 			if(Filter.StartDate.HasValue)
@@ -118,13 +124,16 @@ namespace workwear.Journal.ViewModels.Stock
 			incomeQuery.Where(GetSearchCriterion(
 				() => incomeAlias.Id,
 				() => incomeAlias.DocNumber,
+				() => incomeAlias.Number,
 				() => incomeAlias.Comment,
-				() => authorAlias.Name
+				() => authorAlias.Name,
+				() => shipmentAlias.Id
 			));
 
 			incomeQuery
 				.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => incomeAlias.Shipment, () => shipmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
@@ -135,6 +144,7 @@ namespace workwear.Journal.ViewModels.Stock
 			            .Select(() => StockDocumentType.Income).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 			            .Select(() => incomeAlias.Number).WithAlias(() => resultAlias.IncomeDocNubber)
+			            .Select(() => shipmentAlias.Id).WithAlias(() => resultAlias.ShipmentId)
 					)
 			.OrderBy(() => incomeAlias.Date).Desc
 			.ThenBy(() => incomeAlias.CreationDate).Desc
@@ -695,9 +705,64 @@ namespace workwear.Journal.ViewModels.Stock
 			);
 			NodeActionsList.Add(deleteAction);
 		}
-		
-		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes)
-		{
+
+		protected override void CreatePopupActions() {
+			PopupActionsList.Add(new JournalAction("Перенести на дежурную норму",
+				arg => true,
+				arg => FeaturesService.Available(WorkwearFeature.DutyNorms) &&
+					arg.Length == 1 &&
+					((StockDocumentsJournalNode)arg[0]).DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc,
+				TransferExpenseToDutyNorm));
+
+			PopupActionsList.Add(new JournalAction("Перенести на дежурную норму",
+				arg => true,
+				arg => FeaturesService.Available(WorkwearFeature.DutyNorms) &&
+					arg.Length == 1 &&
+					((StockDocumentsJournalNode)arg[0]).DocTypeEnum == StockDocumentType.CollectiveExpense,
+				TransferCollectiveExpenseToDutyNorm));
+		}
+
+		private void TransferExpenseToDutyNorm(object[] nodes) {
+			if(nodes.Length != 1)
+				return;
+			int expenseId = ((StockDocumentsJournalNode)nodes[0]).Id;
+
+			var selectJournal = NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.Tag = expenseId;
+			selectJournal.ViewModel.OnSelectResult += TransferExpenseToDutyNorm_OnSelectResult;
+		}
+
+		private void TransferExpenseToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((QS.ViewModels.Dialog.DialogViewModelBase)sender);
+			var expenseId = (int)page.Tag;
+			var node = e.GetSelectedObjects<DutyNormsJournalNode>().FirstOrDefault();
+			if(node == null)
+				return;
+			normToDutyNormModel.CopyExpenseToDutyNorm(expenseId, node.Id);
+		}
+
+		private void TransferCollectiveExpenseToDutyNorm(object[] nodes) {
+			if(nodes.Length != 1)
+				return;
+			int collectiveExpenseId = ((StockDocumentsJournalNode)nodes[0]).Id;
+
+			var selectJournal = NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.Tag = collectiveExpenseId;
+			selectJournal.ViewModel.OnSelectResult += TransferCollectiveExpenseToDutyNorm_OnSelectResult;
+		}
+
+		private void TransferCollectiveExpenseToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((QS.ViewModels.Dialog.DialogViewModelBase)sender);
+			var collectiveExpenseId = (int)page.Tag;
+			var node = e.GetSelectedObjects<DutyNormsJournalNode>().FirstOrDefault();
+			if(node == null)
+				return;
+			normToDutyNormModel.CopyCollectiveExpenseToDutyNorm(collectiveExpenseId, node.Id);
+		}
+
+		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes) {
 			foreach(var node in nodes) {
 				var doctype = StockDocument.GetDocClass(node.DocTypeEnum);
 				DeleteEntityService.DeleteEntity(doctype, DomainHelper.GetId(node));
@@ -728,11 +793,13 @@ namespace workwear.Journal.ViewModels.Stock
 				if(!String.IsNullOrWhiteSpace(EmployeeFio))
 					text += $"Сотрудник: {EmployeeFio} ";
 				if(!String.IsNullOrWhiteSpace(DutyNormName))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"Дежурное: {DutyNormName} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"Дежурное: {DutyNormName}";
 				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $" TН №: {IncomeDocNubber} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $"TН №:{IncomeDocNubber}";
+				if(ShipmentId.HasValue)
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"К поставке №{ShipmentId}";
 				if(DocTypeEnum == StockDocumentType.WriteoffDoc && !String.IsNullOrWhiteSpace(ExpenseWarehouse))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $" Со склада: {ExpenseWarehouse} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $"Со склада: {ExpenseWarehouse}";
 				return text;
 			}
 		}
@@ -747,6 +814,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public DateTime? IssueDate { get; set; }
 		public string Color => DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc && IssueDate == null ? "purple" : "black";
 		public string IncomeDocNubber { get; set; }
+		public int? ShipmentId { get; set; }
 		public string DutyNormName { get; set; }
 		public string Comment { get; set; }
 

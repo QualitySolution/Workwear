@@ -5,6 +5,8 @@ version: '2.10'
 start_page: introduction.adoc
 nav:
 - modules/ROOT/nav.adoc
+- modules/admin-guide/nav.adoc
+- modules/practical-guide/nav.adoc
 
 asciidoc:
   attributes:

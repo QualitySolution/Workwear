@@ -39,6 +39,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action helpAction;
 
+	private global::Gtk.Action ActionPracticalGuide;
+
 	private global::Gtk.Action ActionHistory;
 
 	private global::Gtk.Action ActionUpdate;
@@ -334,6 +336,9 @@ public partial class MainWindow
 		this.helpAction = new global::Gtk.Action("helpAction", global::Mono.Unix.Catalog.GetString("Руководство пользователя"), null, "gtk-help");
 		this.helpAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Документация");
 		w1.Add(this.helpAction, null);
+		this.ActionPracticalGuide = new global::Gtk.Action("ActionPracticalGuide", global::Mono.Unix.Catalog.GetString("Практическое руководство"), null, "gtk-index");
+		this.ActionPracticalGuide.ShortLabel = global::Mono.Unix.Catalog.GetString("Практическое руководство");
+		w1.Add(this.ActionPracticalGuide, null);
 		this.ActionHistory = new global::Gtk.Action("ActionHistory", global::Mono.Unix.Catalog.GetString("История версий"), null, "gtk-file");
 		this.ActionHistory.ShortLabel = global::Mono.Unix.Catalog.GetString("История версий");
 		w1.Add(this.ActionHistory, null);
@@ -746,8 +751,9 @@ public partial class MainWindow
 				"rt\' action=\'ActionDutyNormIssuedReport\'/></menu><separator/><menuitem name=\'Acti" +
 				"onRentMovements\' action=\'ActionRentMovements\'/><menuitem name=\'ActionRentAct\' ac" +
 				"tion=\'ActionRentAct\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuit" +
-				"em name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionAdminGuide\' acti" +
-				"on=\'ActionAdminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'Action" +
+				"em name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionPracticalGuide\'" +
+				" action=\'ActionPracticalGuide\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionA" +
+				"dminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'Action" +
 				"History\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuite" +
 				"m name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'Act" +
 				"ionChannelStable\' action=\'ActionChannelStable\'/><menuitem name=\'ActionOffAutoUpd" +
@@ -912,6 +918,7 @@ public partial class MainWindow
 		this.Action11.Activated += new global::System.EventHandler(this.OnAction11Activated);
 		this.Action12.Activated += new global::System.EventHandler(this.OnAction12Activated);
 		this.helpAction.Activated += new global::System.EventHandler(this.OnHelpActionActivated);
+		this.ActionPracticalGuide.Activated += new global::System.EventHandler(this.OnActionPracticalGuideActivated);
 		this.ActionHistory.Activated += new global::System.EventHandler(this.OnActionHistoryActivated);
 		this.ActionUpdate.Activated += new global::System.EventHandler(this.OnActionUpdateActivated);
 		this.ActionSN.Activated += new global::System.EventHandler(this.OnActionSNActivated);

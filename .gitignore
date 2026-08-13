@@ -19,6 +19,7 @@ base/*.mwb.bak
 
 #Doc
 docs/modules/ROOT/pages/*.pdf
+docs/build/
 
 #Installer
 WinInstall/*

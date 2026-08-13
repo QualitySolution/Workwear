@@ -5260,6 +5260,13 @@
         <property name="StockId">gtk-help</property>
         <signal name="Activated" handler="OnHelpActionActivated" />
       </action>
+      <action id="ActionPracticalGuide">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Практическое руководство</property>
+        <property name="ShortLabel" translatable="yes">Практическое руководство</property>
+        <property name="StockId">gtk-index</property>
+        <signal name="Activated" handler="OnActionPracticalGuideActivated" />
+      </action>
       <action id="ActionHistory">
         <property name="Type">Action</property>
         <property name="Label" translatable="yes">История версий</property>
@@ -6084,6 +6091,7 @@
               </node>
               <node type="Menu" action="ActionHelp">
                 <node type="Menuitem" action="helpAction" />
+                <node type="Menuitem" action="ActionPracticalGuide" />
                 <node type="Menuitem" action="ActionAdminGuide" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionHistory" />

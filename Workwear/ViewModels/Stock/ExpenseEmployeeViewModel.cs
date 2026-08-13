@@ -31,6 +31,7 @@ using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Models.Print;
 using Workwear.Repository.Stock;
+using Workwear.Repository.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
@@ -55,13 +56,14 @@ namespace Workwear.ViewModels.Stock {
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly IssuedSheetPrintModel printModel;
+		private readonly StockDocumentRepository stockDocumentRepository;
 		private EmployeeCard employeeBefore;
 
-		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder, 
+		public ExpenseEmployeeViewModel(IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			UnitOfWorkProvider unitOfWorkProvider,
-			INavigationManager navigation, 
-			ILifetimeScope autofacScope, 
+			INavigationManager navigation,
+			ILifetimeScope autofacScope,
 			IValidator validator,
 			IUserService userService,
 			CurrentUserSettings currentUserSettings,
@@ -77,6 +79,7 @@ namespace Workwear.ViewModels.Stock {
 			BaseParameters baseParameters,
 			EmployeeIssueModel issueModel,
 			IssuedSheetPrintModel printModel,
+			StockDocumentRepository stockDocumentRepository,
 			EmployeeCard employee = null,
 			Visit visit = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider)
@@ -93,6 +96,7 @@ namespace Workwear.ViewModels.Stock {
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
+			this.stockDocumentRepository = stockDocumentRepository ?? throw new ArgumentNullException(nameof(stockDocumentRepository));
 			SetDocumentDateProperty(e => e.Date);
 
 			var performance = new ProgressPerformanceHelper(globalProgress, employee == null ? 5u : 12u, "Загружаем размеры", logger);
@@ -396,19 +400,32 @@ namespace Workwear.ViewModels.Stock {
 		
 		private void OnEmployeeChangedByUser(object sender, EventArgs args)
 		{
-			if(CheckDismissDate()) {
-				var performanceEmployee = new ProgressPerformanceHelper(globalProgress, 6, "Обновление строк документа", logger);
-				if(Entity.Employee?.Subdivision?.Warehouse != null && Entity.Employee?.Subdivision?.Warehouse != Entity.Warehouse) {
-					Entity.Warehouse = Entity.Employee.Subdivision.Warehouse;
-				}
-				else {
-					stockBalanceModel.Warehouse = Entity.Warehouse;
-					FillUnderreceived(performanceEmployee);
-				}
-				performanceEmployee.End();
-			}
-			else
+			if(!CheckDismissDate()) {
 				Entity.Employee = employeeBefore;
+				return;
+			}
+
+			if(Entity.Id == 0 && Entity.Employee != null) {
+				var draft = stockDocumentRepository.GetDraftExpenseForEmployee(Entity.Employee, UoW).Take(1).SingleOrDefault();;
+				if(draft != null && interactive.Question(
+					   $"Для сотрудника {Entity.Employee.ShortName} уже есть подготовленная выдача №{draft.DocNumberText} от {draft.Date:d}. " +
+					   "Открыть её вместо создания нового документа?",
+					   "Обнаружена выдача")) {
+					NavigationManager.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(this, EntityUoWBuilder.ForOpen(draft.Id));
+					Close(false, CloseSource.Self);
+					return;
+				}
+			}
+
+			var performanceEmployee = new ProgressPerformanceHelper(globalProgress, 6, "Обновление строк документа", logger);
+			if(Entity.Employee?.Subdivision?.Warehouse != null && Entity.Employee?.Subdivision?.Warehouse != Entity.Warehouse) {
+				Entity.Warehouse = Entity.Employee.Subdivision.Warehouse;
+			}
+			else {
+				stockBalanceModel.Warehouse = Entity.Warehouse;
+				FillUnderreceived(performanceEmployee);
+			}
+			performanceEmployee.End();
 		}
 		
 		public void EntityChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
