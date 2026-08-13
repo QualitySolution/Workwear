@@ -14,7 +14,7 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT title AS 'Штрихкод',
-                TO_CHAR(start_date, 'DD.MM.YYYY') AS 'Дата',
+                DATE_FORMAT(start_date, '%d.%m.%Y') AS 'Дата',
                 name AS 'Номенклатура',
                 tab_num,
                 CASE WHEN need_for_repair = 1 THEN
