@@ -201,6 +201,8 @@ namespace Workwear.Domain.Stock.Documents {
 
 		public virtual bool CanEditAmount => !ReturnBarcodeOperations.Any();
 
+		public virtual IEnumerable<Barcode> Barcodes => ReturnBarcodeOperations.Select(x => x.Barcode);
+
 		private IEnumerable<BarcodeOperation> ReturnBarcodeOperations {
 			get {
 				switch(ReturnFrom) {

@@ -96,7 +96,19 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any (i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
 					new[] { nameof(Items)});
-			
+
+			var duplicateBarcodeTitles = Items
+				.SelectMany(i => i.Barcodes)
+				.Where(b => b != null)
+				.GroupBy(b => b.Id != 0 ? (object)b.Id : b)
+				.Where(g => g.Count() > 1)
+				.Select(g => g.First().Title)
+				.ToList();
+			if(duplicateBarcodeTitles.Any())
+				yield return new ValidationResult(
+					$"В документе несколько раз указана одна и та же метка: {string.Join(", ", duplicateBarcodeTitles)}.",
+					new[] { nameof(Items) });
+
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			foreach(var item in Items) {
 				var barcodesCount = GetWriteoffBarcodesCount(item);

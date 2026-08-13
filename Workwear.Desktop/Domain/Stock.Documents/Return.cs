@@ -57,6 +57,19 @@ namespace Workwear.Domain.Stock.Documents
 			if(Items.Any (i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.",
 					new[] { this.GetPropertyName (o => o.Items)});
+
+			var duplicateBarcodeTitles = Items
+				.SelectMany(i => i.Barcodes)
+				.Where(b => b != null)
+				.GroupBy(b => b.Id != 0 ? (object)b.Id : b)
+				.Where(g => g.Count() > 1)
+				.Select(g => g.First().Title)
+				.ToList();
+			if(duplicateBarcodeTitles.Any())
+				yield return new ValidationResult(
+					$"В документе несколько раз указана одна и та же метка: {string.Join(", ", duplicateBarcodeTitles)}.",
+					new[] { nameof(Items) });
+
 			foreach(var item in items) {
 				if(item.ReturnFrom != ReturnFrom.Employee || item.EmployeeCard == null) continue;
 				if(item.IssuedEmployeeOnOperation == null ||
@@ -119,12 +132,17 @@ namespace Workwear.Domain.Stock.Documents
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return null;
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
 
-			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodes);
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodeList);
 
 			Items.Add(newItem);
 			return newItem;
@@ -133,11 +151,16 @@ namespace Workwear.Domain.Stock.Documents
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return null;
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					DomainHelper.EqualDomainObjects(p.IssuedDutyNormOnOperation, issuedOperation) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
-			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodes);
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodeList);
 
 			Items.Add(newItem);
 			return newItem;
@@ -147,12 +170,17 @@ namespace Workwear.Domain.Stock.Documents
 			if(issuedOperation.WarehouseOperation?.ExpenseWarehouse == null)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи вне нормы.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedOverNormOperation, issuedOperation))) {
-				logger.Warn("Номенклатура из этой выдачи вне нормы уже добавлена. Пропускаем...");
-				return null;
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					DomainHelper.EqualDomainObjects(p.IssuedOverNormOperation, issuedOperation) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn("Номенклатура из этой выдачи вне нормы уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
 
-			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodes);
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodeList);
 
 			Items.Add(newItem);
 			return newItem;

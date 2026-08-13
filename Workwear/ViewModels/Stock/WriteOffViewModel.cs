@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using NHibernate;
+using NHibernate.Criterion;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -254,8 +256,8 @@ namespace Workwear.ViewModels.Stock
 	        var context = (StockBarcodeAddContext)page.Tag;
 	        var barcodes = GetSelectedBarcodes(e);
 
-	        if(barcodes.Any())
-		        Entity.AddItem(context.StockPosition, context.Warehouse, barcodes.Count, barcodes: barcodes);
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(context.StockPosition, context.Warehouse, 1, barcodes: new[] { barcode });
 
 	        var remainder = context.Count - barcodes.Count;
 	        if(remainder > 0)
@@ -305,6 +307,22 @@ namespace Workwear.ViewModels.Stock
             CalculateTotal();
         }
 
+        /// <param name="writtenOffOperation">Dictionary(operationId,amount)</param>
+        public void AddFromDictionary(Dictionary<int, int> writtenOffOperation) {
+	        var operations = UoW.Session.QueryOver<EmployeeIssueOperation>()
+		        .Where(x => x.Id.IsIn(writtenOffOperation.Select(i => i.Key).ToList()))
+		        .Fetch(SelectMode.Fetch, x => x.NormItem)
+		        .Fetch(SelectMode.Fetch, x => x.IssuedOperation)
+		        .Fetch(SelectMode.Fetch, x => x.Employee)
+		        .Fetch(SelectMode.Fetch, x => x.Nomenclature)
+		        .Fetch(SelectMode.Fetch, x => x.WearSize)
+		        .Fetch(SelectMode.Fetch, x => x.Height)
+		        .List();
+	        foreach(var operation in operations)
+		        AddEmployeeOperation(operation, writtenOffOperation[operation.Id]);
+	        CalculateTotal();
+        }
+
         private void AddEmployeeOperation(EmployeeIssueOperation operation, int amount) {
 	        if(amount <= 0) {
 		        Entity.AddItem(operation, amount);
@@ -315,12 +333,18 @@ namespace Workwear.ViewModels.Stock
 		        Entity.AddItem(operation, amount);
 		        return;
 	        }
-	        if(availableBarcodeIds.Count > 1) {
+	        if(amount < availableBarcodeIds.Count) {
+		        //Не ясно какие именно коды списывать - даём выбрать вручную
 		        OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedEmployeeBarcodes);
 		        return;
 	        }
+	        //Промаркировано все, либо промаркировано меньше чем запрошено - каждый код своей строкой, остаток (если есть) отдельной строкой без штрихкода.
 	        var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
-	        Entity.AddItem(operation, 1, barcodes: barcodes);
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+	        var free = amount - barcodes.Count;
+	        if(free > 0)
+		        Entity.AddItem(operation, free);
         }
 
         public void AddFromDutyNorm() 
@@ -360,12 +384,16 @@ namespace Workwear.ViewModels.Stock
 		        Entity.AddItem(operation, amount);
 		        return;
 	        }
-	        if(availableBarcodeIds.Count > 1) {
+	        if(amount < availableBarcodeIds.Count) {
 		        OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedDutyNormBarcodes);
 		        return;
 	        }
 	        var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
-	        Entity.AddItem(operation, 1, barcodes: barcodes);
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+	        var free = amount - barcodes.Count;
+	        if(free > 0)
+		        Entity.AddItem(operation, free);
         }
 
         private void OpenBarcodeSelector<T>(T operation, IList<int> availableBarcodeIds, EventHandler<JournalSelectedEventArgs> selectHandler) {
@@ -388,7 +416,8 @@ namespace Workwear.ViewModels.Stock
 	        var operation = (EmployeeIssueOperation)page.Tag;
 	        var barcodes = GetSelectedBarcodes(e);
 
-	        Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(operation, 1, barcodes: new[] { barcode });
 	        CalculateTotal();
         }
 
@@ -397,7 +426,8 @@ namespace Workwear.ViewModels.Stock
 	        var operation = (DutyNormIssueOperation)page.Tag;
 	        var barcodes = GetSelectedBarcodes(e);
 
-	        Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(operation, 1, barcodes: new[] { barcode });
 	        CalculateTotal();
         }
 

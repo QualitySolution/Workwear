@@ -415,43 +415,69 @@ namespace Workwear.ViewModels.Stock {
 			foreach(var node in nodes) {
 				var operation = overNormOperationRepository.GetIssuedOperation(node.Id, UoW);
 				var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
-				if(availableBarcodeIds.Count > 1) {
+				if(!availableBarcodeIds.Any()) {
+					Entity.AddItem(operation, node.Amount);
+					continue;
+				}
+				if(node.Amount < availableBarcodeIds.Count) {
 					OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedOverNormBarcodes);
 					continue;
 				}
 
-				var barcodes = availableBarcodeIds.Count == 1
-					? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
-					: null;
-				Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : node.Amount, barcodes: barcodes);
+				var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
+				foreach(var barcode in barcodes)
+					Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+				var remainder = node.Amount - barcodes.Count;
+				if(remainder > 0)
+					Entity.AddItem(operation, remainder);
 			}
 			CalculateTotal();
 		}
 
 		private void AddEmployeeOperation(EmployeeIssueOperation operation, int amount) {
+			if(amount <= 0) {
+				Entity.AddItem(operation, amount);
+				return;
+			}
 			var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
-			if(availableBarcodeIds.Count > 1) {
+			if(!availableBarcodeIds.Any()) {
+				Entity.AddItem(operation, amount);
+				return;
+			}
+			if(amount < availableBarcodeIds.Count) {
 				OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedEmployeeBarcodes);
 				return;
 			}
 
-			var barcodes = availableBarcodeIds.Count == 1
-				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
-				: null;
-			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes: barcodes);
+			var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+			var free = amount - barcodes.Count;
+			if(free > 0)
+				Entity.AddItem(operation, free);
 		}
 
 		private void AddDutyNormOperation(DutyNormIssueOperation operation, int amount) {
+			if(amount <= 0) {
+				Entity.AddItem(operation, amount);
+				return;
+			}
 			var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
-			if(availableBarcodeIds.Count > 1) {
+			if(!availableBarcodeIds.Any()) {
+				Entity.AddItem(operation, amount);
+				return;
+			}
+			if(amount < availableBarcodeIds.Count) {
 				OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedDutyNormBarcodes);
 				return;
 			}
 
-			var barcodes = availableBarcodeIds.Count == 1
-				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
-				: null;
-			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes: barcodes);
+			var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+			var free = amount - barcodes.Count;
+			if(free > 0)
+				Entity.AddItem(operation, free);
 		}
 
 		private void OpenBarcodeSelector<T>(T operation, IList<int> availableBarcodeIds, EventHandler<JournalSelectedEventArgs> selectHandler) {
@@ -474,7 +500,8 @@ namespace Workwear.ViewModels.Stock {
 			var operation = (EmployeeIssueOperation)page.Tag;
 			var barcodes = GetSelectedBarcodes(e);
 
-			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
 			CalculateTotal();
 		}
 
@@ -483,7 +510,8 @@ namespace Workwear.ViewModels.Stock {
 			var operation = (DutyNormIssueOperation)page.Tag;
 			var barcodes = GetSelectedBarcodes(e);
 
-			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
 			CalculateTotal();
 		}
 
@@ -492,7 +520,8 @@ namespace Workwear.ViewModels.Stock {
 			var operation = (OverNormOperation)page.Tag;
 			var barcodes = GetSelectedBarcodes(e);
 
-			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
 			CalculateTotal();
 		}
 

@@ -83,9 +83,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				page.ViewModel.AddFromDictionary(new Dictionary<int, int>() {{node.Id, node.Balance}});
 		}
 
-		public void WriteOffWear()
+		public void WriteOffWear(EmployeeBalanceVMNode node = null)
 		{
-			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
+			var page = navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
+			if(node != null)
+				page.ViewModel.AddFromDictionary(new Dictionary<int, int>() {{node.Id, node.Balance}});
 		}
 
 		public void InspectionWear() {

@@ -190,6 +190,8 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual bool CanEditAmount => !BarcodeOperations.Any();
 
+		public virtual IEnumerable<Barcode> Barcodes => BarcodeOperations.Select(x => x.Barcode);
+
 		private IEnumerable<BarcodeOperation> BarcodeOperations {
 			get {
 				switch(WriteoffFrom) {
