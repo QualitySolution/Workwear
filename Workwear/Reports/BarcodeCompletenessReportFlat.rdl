@@ -40,7 +40,7 @@ FROM (SELECT
           SUM(bar_op.num_new)
               AS 'new_barcodes',
           IF(@show_employees,
-              GROUP_CONCAT(IF((bar_op.emp_ballance &gt; 0 AND bar_op.emp_ballance &gt; bar_op.num_all),
+              LEFT(GROUP_CONCAT(IF((bar_op.emp_ballance &gt; 0 AND bar_op.emp_ballance &gt; bar_op.num_all),
                            CONCAT_WS('',
                                  CONCAT(wear_cards.last_name, ' '),
                                  IF(wear_cards.first_name = '',
@@ -50,11 +50,11 @@ FROM (SELECT
                                     NULL,
                                     CONCAT(LEFT(wear_cards.patronymic_name, 1), '.')))
                     ,null )
-                  SEPARATOR ', ' LIMIT 1000)
+                  SEPARATOR ', '), 5000)
               ,null) 
                AS 'list_without_barcoses',
           IF(@show_employees,
-             GROUP_CONCAT(IF((bar_op.emp_ballance &gt; 0 AND bar_op.emp_ballance &lt;= bar_op.num_all),
+             LEFT(GROUP_CONCAT(IF((bar_op.emp_ballance &gt; 0 AND bar_op.emp_ballance &lt;= bar_op.num_all),
                              CONCAT_WS('',
                                        CONCAT(wear_cards.last_name, ' '),
                                        IF(wear_cards.first_name = '',
@@ -64,7 +64,7 @@ FROM (SELECT
                                           NULL,
                                           CONCAT(LEFT(wear_cards.patronymic_name, 1), '.')))
                               ,null )
-                          SEPARATOR ', ' LIMIT 1000)
+                          SEPARATOR ', '), 5000)
               ,null)
               AS 'list_with_barcoses'
 
