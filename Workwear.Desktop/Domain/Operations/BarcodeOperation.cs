@@ -76,14 +76,12 @@ namespace Workwear.Domain.Operations {
 					if(EmployeeIssueOperation.Issued > 0)
 						parts.Add($"Выдано сотруднику: {EmployeeIssueOperation.Employee.ShortName}");
 					if(EmployeeIssueOperation.Returned > 0)
-						//TODO реализовать списание
 						parts.Add($"Списано с сотрудника: {EmployeeIssueOperation.Employee.ShortName}");
 				}
 				if(DutyNormIssueOperation != null) {
 					if(DutyNormIssueOperation.Issued > 0)
 						parts.Add($"Выдано по дежурной норме: {DutyNormIssueOperation.DutyNorm.Name}");
 					if(DutyNormIssueOperation.Returned > 0)
-						//TODO реализовать списание
 						parts.Add($"Списано с дежурной нормы: {DutyNormIssueOperation.DutyNorm.Name}");
 				}
 				if(OverNormOperation != null) {
