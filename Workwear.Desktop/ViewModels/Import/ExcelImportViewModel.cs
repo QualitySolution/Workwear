@@ -81,7 +81,6 @@ namespace Workwear.ViewModels.Import
 		#endregion
 
 		#region private
-		protected readonly IInteractiveMessage interactiveMessage;
 		private readonly ProgressInterceptor progressInterceptor;
 		private readonly FeaturesService featuresService;
 		private readonly EmployeeRepository employeeRepository;
@@ -234,7 +233,7 @@ namespace Workwear.ViewModels.Import
 				ImportModel.FileName = Path.GetFileName(FileName);
 			}
 			catch(IOException ex) when(ex.HResult == -2147024864) {
-				interactiveMessage.ShowMessage(ImportanceLevel.Error, 
+				interactive.ShowMessage(ImportanceLevel.Error,
 					"Указанный файл уже открыт в другом приложении. Оно заблокировало доступ к файлу.");
 				return;
 			}
