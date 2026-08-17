@@ -277,8 +277,8 @@ namespace Workwear.ViewModels.Stock {
 			//Здесь зануления других моделей обязательно чтобы их не создавал DI
 			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
 				this,
-				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel) },
-				new object[] { null, null, this, null });
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel), typeof(WarehouseTransferViewModel) },
+				new object[] { null, null, this, null, null });
 		}
 
 		public void AddItems(IEnumerable<ServiceClaim> claims) =>

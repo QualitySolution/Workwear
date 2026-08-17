@@ -91,8 +91,8 @@ namespace Workwear.Domain.Operations {
 						parts.Add($"Возврат вне нормы от сотрудника: {OverNormOperation.Employee.ShortName}");
 				}
 
-				if(parts.Count == 0 && WarehouseOperation != null)
-					return "Маркировка на складе.";
+				if(parts.Count == 0 && WarehouseOperation?.ExpenseWarehouse == null && WarehouseOperation?.ReceiptWarehouse != null)
+					return $"Промаркировано на {WarehouseOperation.ReceiptWarehouse.Name}.";
 
 				if(WarehouseOperation != null) {
 					if(WarehouseOperation.ExpenseWarehouse != null)

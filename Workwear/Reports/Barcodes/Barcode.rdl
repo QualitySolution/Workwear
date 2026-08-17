@@ -188,7 +188,7 @@ Format({operation_time}, "d") + Iif(Fields!personnel_number.IsMissing, "", "   "
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    ifnull(operation_issued_by_employee.operation_time, barcodes.creation_date) as operation_time,
+    ifnull(COALESCE(operation_issued_by_employee.operation_time, operation_issued_by_duty_norm.operation_time, operation_over_norm.operation_time, operation_warehouse.operation_time), barcodes.creation_date) as operation_time,
     LEFT(barcodes.title, 2) AS number_system,
     SUBSTRING(barcodes.title, 3, 5) AS manufacture_code,
     SUBSTRING(barcodes.title, 8, 5) AS product_code,
@@ -197,23 +197,36 @@ Format({operation_time}, "d") + Iif(Fields!personnel_number.IsMissing, "", "   "
     CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name) AS employee,
     employees.personnel_number,
     warehouse.name as warehouse,
-    kit_number,
+    op.kit_number,
     nomenclature.name AS nomenclature,
     wear_size.name as wear_size,
     wear_height.name as wear_height
-FROM operation_barcodes
-         JOIN barcodes ON barcodes.id = operation_barcodes.barcode_id
-         LEFT JOIN operation_issued_by_employee ON operation_barcodes.employee_issue_operation_id = operation_issued_by_employee.id
-         LEFT JOIN operation_warehouse ON operation_barcodes.warehouse_operation_id = operation_warehouse.id
+FROM barcodes
+         LEFT JOIN operation_barcodes op ON op.id = (
+             -- Последняя по времени операция с этим штрихкодом: среди операций всех типов
+             -- (выдача сотруднику, дежурная норма, вне нормы, склад - маркировка/перемещение/списание)
+             SELECT ob.id
+             FROM operation_barcodes ob
+                      LEFT JOIN operation_issued_by_employee oe ON oe.id = ob.employee_issue_operation_id
+                      LEFT JOIN operation_issued_by_duty_norm od ON od.id = ob.duty_norm_issue_operation_id
+                      LEFT JOIN operation_over_norm oo ON oo.id = ob.over_norm_operation_id
+                      LEFT JOIN operation_warehouse ow ON ow.id = ob.warehouse_operation_id
+             WHERE ob.barcode_id = barcodes.id
+             ORDER BY COALESCE(oe.operation_time, od.operation_time, oo.operation_time, ow.operation_time) DESC, ob.id DESC
+             LIMIT 1
+         )
+         LEFT JOIN operation_issued_by_employee ON operation_issued_by_employee.id = op.employee_issue_operation_id
+         LEFT JOIN operation_issued_by_duty_norm ON operation_issued_by_duty_norm.id = op.duty_norm_issue_operation_id
+         LEFT JOIN operation_over_norm ON operation_over_norm.id = op.over_norm_operation_id
+         LEFT JOIN operation_warehouse ON operation_warehouse.id = op.warehouse_operation_id
          LEFT JOIN employees ON employees.id = operation_issued_by_employee.employee_id
          LEFT JOIN warehouse ON operation_warehouse.warehouse_receipt_id = warehouse.id
          LEFT JOIN subdivisions ON subdivisions.id = employees.subdivision_id
          LEFT JOIN sizes as wear_size ON wear_size.id = barcodes.size_id
          LEFT JOIN sizes as wear_height ON wear_height.id = barcodes.height_id
          LEFT JOIN nomenclature ON nomenclature.id = barcodes.nomenclature_id
-WHERE operation_barcodes.barcode_id IN (@barcodes)
-GROUP BY operation_barcodes.barcode_id
-ORDER BY operation_issued_by_employee.operation_time DESC</CommandText>
+WHERE barcodes.id IN (@barcodes)
+ORDER BY operation_time DESC</CommandText>
         <QueryParameters>
           <QueryParameter Name="barcodes">
             <Value>={?barcodes}</Value>

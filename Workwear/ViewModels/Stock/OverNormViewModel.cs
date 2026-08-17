@@ -386,8 +386,8 @@ namespace Workwear.ViewModels.Stock
 			//Здесь зануления других моделей обязательно чтобы их не создавал DI
 			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
 				this,
-				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel) },
-				new object[] { null, this, null, null });
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel), typeof(WarehouseTransferViewModel) },
+				new object[] { null, this, null, null, null });
 		}
 
 		public string ValidateBarcodeForScan(Barcode barcode) {

@@ -128,8 +128,8 @@ namespace Workwear.ViewModels.Postomats {
 			//Здесь зануления других моделей обязательно чтобы их не создавал DI
 			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
 				this,
-				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel) },
-				new object[] { this, null, null, null });
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel), typeof(WarehouseTransferViewModel) },
+				new object[] { this, null, null, null, null });
 		}
 		
 		public void AddItems(IEnumerable<ServiceClaim> claims) {

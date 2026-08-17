@@ -52,8 +52,19 @@ namespace Workwear.Views.Stock
 			.AddColumn("Процент износа").AddTextRenderer(x => x.WarehouseOperation.WearPercent.ToString("P0"))
 			.AddColumn("Количество").Tag("Count")
 				.AddNumericRenderer(x => x.Amount, false)
-				.Editing(new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit).WidthChars(8)
+				.Adjustment(new Adjustment(0, 0, 100000, 1, 10, 1))
+				.Editing(x => ViewModel.CanEdit && x.CanEditAmount).WidthChars(8)
 				.AddReadOnlyTextRenderer(x => x.Nomenclature?.Type?.Units?.Name,  false)
+			.AddColumn("Название").Resizable()
+				.Visible(ViewModel.BarcodesVisible)
+				.AddTextRenderer(x => x.Label)
+				.AddSetter((c, n) => c.Editable = ViewModel.CanEdit && n.Id == 0)
+			.AddColumn("Метка(штрихкод)").Resizable()
+				.Visible(ViewModel.BarcodesVisible)
+				.AddTextRenderer(x => x.BarcodesString)
+			.AddColumn("Номер").MinWidth(60)
+				.Visible(ViewModel.BarcodesVisible)
+				.AddTextRenderer(x => string.Join("\n", x.Barcodes.Select(b => b.GetKitNumberText(x.WarehouseOperation))))
 			.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 			.Finish();
 
@@ -64,6 +75,13 @@ namespace Workwear.Views.Stock
 
 			ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 			buttonAddItem.Sensitive = ViewModel.CanAddItem;
+			buttonAddItemBarcode.Visible = ViewModel.BarcodesVisible;
+			buttonAddItemBarcode.Sensitive = ViewModel.CanAddItem;
+			buttonAddScan.Visible = ViewModel.BarcodesVisible;
+			buttonAddScan.Sensitive = ViewModel.CanAddItem;
+			buttonPrintSelectBarcodes.Visible = ViewModel.BarcodesVisible;
+			buttonPrintSelectBarcodes.Sensitive = false;
+			buttonPrintSelectBarcodes.Clicked += OnButtonPrintSelectBarcodesClicked;
 			ybuttonPrint.Clicked += OnButtonPrintClicked;
 		}
 		#region PopupMenu
@@ -89,19 +107,33 @@ namespace Workwear.Views.Stock
 			ViewModel.OpenNomenclature(item?.Nomenclature);
 		}
 		#endregion
-		private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
+		private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			buttonAddItem.Sensitive = ViewModel.CanAddItem;
-		private void Selection_Changed(object sender, EventArgs e) =>
-			buttonRemoveItem.Sensitive =  ViewModel.CanEdit && table.Selection.CountSelectedRows() > 0 ;
+			buttonAddItemBarcode.Sensitive = ViewModel.CanAddItem;
+			buttonAddScan.Sensitive = ViewModel.CanAddItem;
+		}
+		private void Selection_Changed(object sender, EventArgs e) {
+			var selected = table.GetSelectedObjects<TransferItem>();
+			buttonRemoveItem.Sensitive = ViewModel.CanEdit && selected.Any();
+			buttonPrintSelectBarcodes.Sensitive = selected.Any(i => i.Barcodes.Any());
+		}
 		private void OnButtonAddClicked(object sender, EventArgs e) =>
 			ViewModel.AddItems();
+		private void OnButtonAddItemBarcodeClicked(object sender, EventArgs e) =>
+			ViewModel.AddBarcode();
+		private void OnButtonAddScanClicked(object sender, EventArgs e) =>
+            ViewModel.AddFromScan();
 		private void OnButtonDelClicked(object sender, EventArgs e) {
 			var items = table.GetSelectedObjects<TransferItem>();
 			ViewModel.RemoveItems(items);
 		}
 		private string GetRowColor(TransferItem item) =>
 			!ViewModel.ValidateNomenclature(item) ? "red" : null;
-		private void OnButtonPrintClicked(object sender, EventArgs e) => 
+		private void OnButtonPrintClicked(object sender, EventArgs e) =>
 			ViewModel.Print();
+		private void OnButtonPrintSelectBarcodesClicked(object sender, EventArgs e) {
+			var items = table.GetSelectedObjects<TransferItem>();
+			ViewModel.PrintBarcodes(items);
+		}
 	}
 }

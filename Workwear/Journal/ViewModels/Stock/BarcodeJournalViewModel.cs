@@ -74,6 +74,7 @@ namespace Workwear.Journal.ViewModels.Stock
 			EmployeeCard lastEmployeeAlias = null;
 			WarehouseOperation lastWarehouseOperationAlias = null;
 			Warehouse lastWarehouseAlias = null;
+			Owner lastOwnerAlias = null;
 			var query = uow.Session.QueryOver<Barcode>(() => barcodeAlias)
 				.Where(MakeSearchCriterion().By(
 					() => barcodeAlias.Title,
@@ -163,8 +164,15 @@ namespace Workwear.Journal.ViewModels.Stock
 				.Left.JoinAlias(() => lastEmployeeIssueOperationAlias.Employee, () => lastEmployeeAlias)
 				.Left.JoinAlias(() => lastBarcodeOperationAlias.WarehouseOperation, () => lastWarehouseOperationAlias)
 				.Left.JoinAlias(() => lastWarehouseOperationAlias.ReceiptWarehouse, () => lastWarehouseAlias)
+				.Left.JoinAlias(() => lastWarehouseOperationAlias.Owner, () => lastOwnerAlias)
 				.SelectList((list) => list
 					.SelectGroup(x => x.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => nomenclatureAlias.Id).WithAlias(() => resultAlias.NomenclatureId)
+					.Select(() => sizeAlias.Id).WithAlias(() => resultAlias.SizeId)
+					.Select(() => heightAlias.Id).WithAlias(() => resultAlias.HeightId)
+					.Select(() => lastOwnerAlias.Id).WithAlias(() => resultAlias.OwnerId)
+					.Select(() => lastWarehouseOperationAlias.WearPercent).WithAlias(() => resultAlias.WearPercent)
+					.Select(() => lastWarehouseAlias.Id).WithAlias(() => resultAlias.WarehouseId)
 					.Select(x => x.Type).WithAlias(() => resultAlias.Type)
 					.Select(x => x.Title).WithAlias(() => resultAlias.Value)
 					.Select(x => x.CreateDate).WithAlias(() => resultAlias.CreateDate)
@@ -250,6 +258,12 @@ namespace Workwear.Journal.ViewModels.Stock
 	public class BarcodeJournalNode
 	{
 		public int Id { get; set; }
+		public int NomenclatureId { get; set; }
+		public int? SizeId { get; set; }
+		public int? HeightId { get; set; }
+		public int? OwnerId { get; set; }
+		public int? WarehouseId { get; set; }
+		public decimal WearPercent { get; set; }
 		public BarcodeTypes Type { get; set; }
 		public string Value { get; set; }
 		public string Nomenclature { get; set; }
@@ -267,5 +281,12 @@ namespace Workwear.Journal.ViewModels.Stock
 		public string NameText => String.IsNullOrEmpty(WarehouseName) ?
 			PersonHelper.PersonFullName(LastName, FirstName, Patronymic) :
 			WarehouseName;
+
+		public StockPosition GetStockPosition(IUnitOfWork uow) => new StockPosition(
+			uow.GetById<Nomenclature>(NomenclatureId), 
+			WearPercent, 
+			SizeId.HasValue ? uow.GetById<Size>(SizeId.Value) : null, 
+			HeightId.HasValue ? uow.GetById<Size>(HeightId.Value) : null,
+			OwnerId.HasValue ? uow.GetById<Owner>(OwnerId.Value) : null);
 	}
 }

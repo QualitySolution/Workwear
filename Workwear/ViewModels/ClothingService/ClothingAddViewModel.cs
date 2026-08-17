@@ -29,6 +29,7 @@ namespace Workwear.ViewModels.ClothingService {
 		private readonly OverNormViewModel overNormDocVM;
 		private readonly ReturnViewModel returnDocVM;
 		private readonly WriteOffViewModel writeoffDocVM;
+		private readonly WarehouseTransferViewModel transferDocVM;
 		private readonly OverNormItem overNormItem;
 		public BarcodeInfoViewModel BarcodeInfoViewModel { get; }
 
@@ -37,11 +38,12 @@ namespace Workwear.ViewModels.ClothingService {
 			BarcodeInfoViewModel barcodeInfoViewModel,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			INavigationManager navigation,
-			//Следующие 4 модели по сути являются обязательными, вернее обязательна одна из них, но стальные должны быть принудительно переданы как null чтобы их не сознавал DI
+			//Следующие 5 моделей по сути являются обязательными, вернее обязательна одна из них, но стальные должны быть принудительно переданы как null чтобы их не сознавал DI
 			PostomatDocumentViewModel postomatDocVm,
 			OverNormViewModel overNormDocVm,
 			ReturnViewModel returnDocVm,
 			WriteOffViewModel writeoffDocVm,
+			WarehouseTransferViewModel transferDocVm,
 			IValidator validator = null,
 			string UoWTitle = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
@@ -55,6 +57,7 @@ namespace Workwear.ViewModels.ClothingService {
 			this.overNormDocVM = overNormDocVm;
 			this.returnDocVM = returnDocVm;
 			this.writeoffDocVM = writeoffDocVm;
+			this.transferDocVM = transferDocVm;
 			overNormItem = overNormDocVm?.SelectedItem;
 			_ = UoW; //Дёргаем, чтобы заполнился провайдер
 			Title = "Добавить в документ";
@@ -104,6 +107,10 @@ namespace Workwear.ViewModels.ClothingService {
 					       && !Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == BarcodeInfoViewModel.Barcode.Id);
 				}
 				if(writeoffDocVM != null)
+					return BarcodeInfoViewModel.Barcode != null
+					       && string.IsNullOrEmpty(BarcodeInfoViewModel.LabelInfo)
+					       && !Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == BarcodeInfoViewModel.Barcode.Id);
+				if(transferDocVM != null)
 					return BarcodeInfoViewModel.Barcode != null
 					       && string.IsNullOrEmpty(BarcodeInfoViewModel.LabelInfo)
 					       && !Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == BarcodeInfoViewModel.Barcode.Id);
@@ -165,6 +172,26 @@ namespace Workwear.ViewModels.ClothingService {
 				return;
 			}
 
+			if(transferDocVM != null) {
+				if(Items.OfType<AddMarkBarcodeNode>().Any(x => x.Barcode.Id == barcode.Id)) {
+					BarcodeInfoViewModel.LabelInfo = $"Метка {barcode.Title} уже в списке.";
+					return;
+				}
+
+				var transferError = transferDocVM.ValidateBarcodeForScan(barcode);
+				if(transferError != null) {
+					BarcodeInfoViewModel.LabelInfo = transferError;
+					return;
+				}
+
+				BarcodeInfoViewModel.LabelInfo = null;
+				if(AutoAdd)
+					Items.Add(new AddMarkBarcodeNode(barcode, null));
+
+				OnPropertyChanged(nameof(CanAdd));
+				return;
+			}
+
 			if(postomatDocVM != null || returnDocVM != null) {
 				ActiveClaim = barcodeRepository.GetActiveServiceClaimFor(barcode);
 				if(ActiveClaim != null) {
@@ -202,6 +229,7 @@ namespace Workwear.ViewModels.ClothingService {
 				overNormDocVM?.AddBarcode(overNormItem, barcode);
 				returnDocVM?.AddBarcode(barcode);
 				writeoffDocVM?.AddBarcode(barcode);
+				transferDocVM?.AddBarcode(barcode);
 			}
 			Close(false, CloseSource.Save);
 		}
@@ -220,6 +248,11 @@ namespace Workwear.ViewModels.ClothingService {
 			if(writeoffDocVM != null) {
 				if(BarcodeInfoViewModel.Barcode != null)
 					Items.Add(new AddMarkBarcodeNode(BarcodeInfoViewModel.Barcode, BarcodeInfoViewModel.Employee));
+				return;
+			}
+			if(transferDocVM != null) {
+				if(BarcodeInfoViewModel.Barcode != null)
+					Items.Add(new AddMarkBarcodeNode(BarcodeInfoViewModel.Barcode, null));
 				return;
 			}
 			Items.Add(new AddMarkServiceClaimNode(ActiveClaim));

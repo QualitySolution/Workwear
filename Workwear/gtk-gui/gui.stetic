@@ -12620,6 +12620,25 @@
                 <property name="Fill">False</property>
               </packing>
             </child>
+            <child>
+              <widget class="Gtk.Button" id="buttonPrintSelectBarcodes">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextAndIcon</property>
+                <property name="Icon">stock:gtk-print Menu</property>
+                <property name="Label" translatable="yes">Печать выбранных меток</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder />
+            </child>
           </widget>
           <packing>
             <property name="Position">0</property>
@@ -13056,6 +13075,40 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="Gtk.Button" id="buttonAddItemBarcode">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Type">TextAndIcon</property>
+                    <property name="Icon">stock:gtk-add Menu</property>
+                    <property name="Label" translatable="yes">Штрихкод</property>
+                    <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnButtonAddItemBarcodeClicked" />
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gamma.GtkWidgets.yButton" id="buttonAddScan">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Type">TextAndIcon</property>
+                    <property name="Icon">resource:Workwear.icon.buttons.qr-code.png</property>
+                    <property name="Label" translatable="yes" />
+                    <property name="UseUnderline">True</property>
+                    <signal name="Clicked" handler="OnButtonAddScanClicked" />
+                  </widget>
+                  <packing>
+                    <property name="Position">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="Gtk.Button" id="buttonRemoveItem">
                     <property name="MemberName" />
                     <property name="Sensitive">False</property>
@@ -13067,7 +13120,7 @@
                     <signal name="Clicked" handler="OnButtonDelClicked" />
                   </widget>
                   <packing>
-                    <property name="Position">1</property>
+                    <property name="Position">3</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>

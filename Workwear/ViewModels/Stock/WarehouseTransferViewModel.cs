@@ -18,15 +18,22 @@ using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
+using Workwear.ViewModels.ClothingService;
+using Workwear.ViewModels.Postomats;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -35,9 +42,12 @@ namespace Workwear.ViewModels.Stock
 		public EntityEntryViewModel<Organization> OrganizationEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseFromEntryViewModel;
 		public EntityEntryViewModel<Warehouse> WarehouseToEntryViewModel;
+		private readonly BarcodeRepository barcodeRepository;
+		private readonly BarcodeService barcodeService;
+		private readonly BaseParameters baseParameters;
 		public readonly FeaturesService FeaturesService;
 		private readonly StockBalanceModel stockBalanceModel;
-		private readonly IInteractiveQuestion interactive;
+		private readonly IInteractiveService interactive;
 		
 		public IList<Owner> Owners { get; }
 
@@ -50,6 +60,8 @@ namespace Workwear.ViewModels.Stock
 			IValidator validator, 
 			IUserService userService,
 			BaseParameters baseParameters,
+			BarcodeRepository barcodeRepository,
+			BarcodeService barcodeService,
 			OrganizationRepository organizationRepository,
 			StockBalanceModel stockBalanceModel,
 			IInteractiveService interactive,
@@ -59,6 +71,9 @@ namespace Workwear.ViewModels.Stock
 		{
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
+			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
+			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			SetDocumentDateProperty(e => e.Date);
 			
 			if(Entity.Id == 0) {
@@ -82,6 +97,8 @@ namespace Workwear.ViewModels.Stock
 			WarehouseToEntryViewModel.IsEditable = CanEdit;
 			
 			Entity.PropertyChanged += Entity_PropertyChanged;
+			Entity.Items.ContentChanged += (sender, args) => UpdateWarehouseFromEditable();
+			UpdateWarehouseFromEditable();
 			Owners = UoW.GetAll<Owner>().ToList();
 
 			//Переопределяем параметры валидации
@@ -100,7 +117,22 @@ namespace Workwear.ViewModels.Stock
 				foreach(var item in Entity.Items) {
 					item.StockBalanceModel = this.stockBalanceModel;
 				}
+				LoadBarcodes();
 			}
+		}
+
+		private void LoadBarcodes() {
+			var itemsWithWarehouseOperation = Entity.Items.Where(i => i.WarehouseOperation?.Id > 0).ToList();
+			if(!itemsWithWarehouseOperation.Any())
+				return;
+
+			var warehouseOperationIds = itemsWithWarehouseOperation.Select(i => i.WarehouseOperation.Id).ToArray();
+			var barcodeOperations = UoW.Session.QueryOver<BarcodeOperation>()
+				.WhereRestrictionOn(x => x.WarehouseOperation.Id).IsIn(warehouseOperationIds)
+				.List();
+
+			foreach(var item in itemsWithWarehouseOperation)
+				item.WarehouseBarcodeOperations = barcodeOperations.Where(bo => bo.WarehouseOperation.Id == item.WarehouseOperation.Id).ToList();
 		}
 
 		#region IDialogDocumentation
@@ -128,10 +160,15 @@ namespace Workwear.ViewModels.Stock
 			if(e.PropertyName == nameof(Entity.Date))
 				stockBalanceModel.OnDate = Entity.Date;
 		}
+
+		private void UpdateWarehouseFromEditable() {
+			WarehouseFromEntryViewModel.IsEditable = CanEdit && !Entity.Items.Any();
+		}
 		#region Sensetive
 		public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
 		public bool CanAddItem => CanEdit && Entity.WarehouseFrom != null;
 		public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+		public bool BarcodesVisible => FeaturesService.Available(WorkwearFeature.Barcodes);
 		#endregion
 
 		#region Свойства
@@ -164,10 +201,10 @@ namespace Workwear.ViewModels.Stock
 						});
 				});
 			selectPage.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
-			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult;
+			selectPage.ViewModel.OnSelectResult += ViewModel_OnSelectResult_AddItems;
 		}
 
-		private void ViewModel_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+		private void ViewModel_OnSelectResult_AddItems(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
 			var addedAmount = ((StockBalanceJournalViewModel)sender).Filter.AddAmount;
 			var items = new List<TransferItem>();
 			foreach(var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
@@ -182,6 +219,143 @@ namespace Workwear.ViewModels.Stock
 				item.StockBalanceModel = stockBalanceModel;
 			}
 		}
+		
+		public void AddFromScan() {
+			//Здесь зануления других моделей обязательно чтобы их не создавал DI
+			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
+				this,
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel), typeof(WarehouseTransferViewModel) },
+				new object[] { null, null, null, null, this });
+		}
+
+		public void AddBarcode() {
+			var barcodeJournal = NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
+				this,
+				OpenPageOptions.AsSlave,
+				addingRegistrations: builder => {
+					builder.RegisterInstance<Action<BarcodeJournalFilterViewModel>>(filter => {
+						filter.Warehouse = Entity.WarehouseFrom;
+						filter.WarehouseEntry.IsEditable = false;
+					});
+				});
+			barcodeJournal.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Multiple;
+			barcodeJournal.ViewModel.OnSelectResult += ViewModel_OnSelectResult_AddBarcode;
+		}
+
+		private void ViewModel_OnSelectResult_AddBarcode(object sender, QS.Project.Journal.JournalSelectedEventArgs e) {
+			var items = new List<TransferItem>();
+			foreach(var node in e.GetSelectedObjects<BarcodeJournalNode>()) {
+				var barcode = UoW.GetById<Barcode>(node.Id);
+				var position = node.GetStockPosition(UoW);
+				var item = Entity.AddItem(position, 1, new[] { barcode });
+				if(item != null)
+					items.Add(item);
+			}
+
+			stockBalanceModel.AddNomenclatures(items.Select(x => x.Nomenclature));
+			foreach(var item in items) {
+				item.StockBalanceModel = stockBalanceModel;
+			}
+		}
+
+		public string ValidateBarcodeForScan(Barcode barcode) {
+			if(barcode == null)
+				return null;
+			barcode = UoW.GetById<Barcode>(barcode.Id);
+			var lastOperation = barcodeRepository.GetLastOperationAt(barcode, Entity.Date);
+			if(lastOperation?.CurrentWarehouse == null)
+				return $"{barcode.Title} на {Entity.Date:d} не числится ни на одном складе.";
+			if(lastOperation.CurrentWarehouse != Entity.WarehouseFrom)
+				return $"{barcode.Title} числится на складе «{lastOperation.CurrentWarehouse.Name}», а не на складе отправителе «{Entity.WarehouseFrom.Name}».";
+			return null;
+		}
+
+		public void AddBarcode(Barcode barcode) {
+			barcode = UoW.GetById<Barcode>(barcode.Id);
+			var lastOperation = barcodeRepository.GetLastOperationAt(barcode, Entity.Date);
+
+			if(lastOperation?.CurrentWarehouse == null || lastOperation.CurrentWarehouse != Entity.WarehouseFrom) {
+				interactive.ShowMessage(ImportanceLevel.Warning, $"{barcode.Title}: не числится на складе отправления.");
+				return;
+			}
+
+			var stockPosition = new StockPosition(
+				barcode.Nomenclature,
+				lastOperation.WarehouseOperation.WearPercent,
+				barcode.Size,
+				barcode.Height,
+				lastOperation.WarehouseOperation.Owner);
+			var existing = Entity.Items.FirstOrDefault(i => stockPosition.Equals(i.StockPosition));
+			if(existing == null) {
+				var newItem = Entity.AddItem(stockPosition, 1, new[] { barcode });
+				if(newItem != null) {
+					stockBalanceModel.AddNomenclatures(new[] { newItem.Nomenclature });
+					newItem.StockBalanceModel = stockBalanceModel;
+				}
+				return;
+			}
+			if(!existing.CanEditAmount) {
+				existing.AddBarcode(barcode);
+				return;
+			}
+			interactive.ShowMessage(ImportanceLevel.Warning,
+				$"{barcode.Title}: по этой позиции в документе уже есть перемещение без штрихкода, добавить со штрихкодом нельзя.");
+		}
+
+		#region Номера комплектов и печать штрихкодов
+
+		public bool NeedsKitNumberRecalc =>
+			Entity.Items.SelectMany(i => i.WarehouseBarcodeOperations).Any(bo => !(bo.KitNumber > 0));
+
+		public void RecalculateKitNumbers() {
+			var pending = Entity.Items
+				.SelectMany(i => i.WarehouseBarcodeOperations)
+				.Where(bo => !(bo.KitNumber > 0))
+				.ToList();
+			if(!pending.Any())
+				return;
+
+			if(baseParameters.KitNumberingMode == KitNumberingMode.PerNomenclature) {
+				foreach(var group in pending.GroupBy(bo => bo.WarehouseOperation.Nomenclature)) {
+					var list = group.ToList();
+					var kitNumbers = barcodeService.GetNextKitNumbers(UoW, Entity.WarehouseTo, group.Key, list.Count, baseParameters.KitNumberingMode);
+					for(var i = 0; i < list.Count; i++)
+						list[i].KitNumber = kitNumbers[i];
+				}
+			} else {
+				var kitNumbers = barcodeService.GetNextKitNumbers(UoW, Entity.WarehouseTo, pending[0].WarehouseOperation.Nomenclature, pending.Count, baseParameters.KitNumberingMode);
+				for(var i = 0; i < pending.Count; i++)
+					pending[i].KitNumber = kitNumbers[i];
+			}
+		}
+
+		private void OfferRecalculateKitNumbers() {
+			if(NeedsKitNumberRecalc && interactive.Question(
+				   "Есть промаркированные позиции, для которых не пересчитан номер комплекта для склада получателя. Пересчитать номера?"))
+				RecalculateKitNumbers();
+		}
+
+		public void PrintBarcodes(IEnumerable<TransferItem> items) {
+			var barcodeIds = items.SelectMany(i => i.Barcodes).Select(b => b.Id).Distinct().ToList();
+			if(!barcodeIds.Any())
+				return;
+
+			OfferRecalculateKitNumbers();
+			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if(!Save())
+				return;
+
+			var reportInfo = new ReportInfo {
+				Title = "Штрихкод",
+				Identifier = "Barcodes.Barcode",
+				Parameters = new Dictionary<string, object> { { "barcodes", barcodeIds } }
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
+		}
+
+		#endregion
+
 		public void RemoveItems(IEnumerable<TransferItem> items) {
 			foreach(var item in items) {
 				Entity.Items.Remove(item);
@@ -195,8 +369,9 @@ namespace Workwear.ViewModels.Stock
 			if(AutoDocNumber)
 				Entity.DocNumber = null;
 			else if(String.IsNullOrWhiteSpace(Entity.DocNumber))
-				Entity.DocNumber = Entity.DocNumberText;				
-			Entity.UpdateOperations(UoW, null); 
+				Entity.DocNumber = Entity.DocNumberText;
+			OfferRecalculateKitNumbers();
+			Entity.UpdateOperations(UoW, null);
 			return base.Save();
 		}
 		public override void Dispose() {
