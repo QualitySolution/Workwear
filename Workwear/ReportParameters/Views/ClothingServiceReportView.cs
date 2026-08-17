@@ -72,6 +72,17 @@ namespace Workwear.ReportParameters.Views {
             ycheckbuttonSumCost.Binding
 	            .AddBinding(ViewModel, vm => vm.VisibleSumCost, v => v.Visible)
 	            .AddBinding(ViewModel, vm => vm.SumCost, w => w.Active).InitializeFromSource();
+            ylabelGroupclaim.Binding
+	            .AddBinding(ViewModel, vm => vm.VisibleGroupClaim, v => v.Visible).InitializeFromSource();
+            ycheckbuttonGroupclaim.Binding
+	            .AddBinding(ViewModel, vm => vm.VisibleGroupClaim, v => v.Visible)
+	            .AddBinding(ViewModel, vm => vm.GroupClaim, w => w.Active).InitializeFromSource();
+            choiceServises.ViewModel = ViewModel.ChoiceServiceViewModel;
+            expanderServises.Visible = ViewModel.VisibleChoiceService;
+            ViewModel.PropertyChanged += (sender, args) => {
+	            if(args.PropertyName == nameof(ViewModel.VisibleChoiceService))
+		            expanderServises.Visible = ViewModel.VisibleChoiceService;
+            };
             buttonRun.Clicked += OnButtonRunClicked;
 			buttonRun.Binding
 				.AddBinding(ViewModel, vm=>vm.SensetiveLoad, w=>w.Sensitive).InitializeFromSource();
