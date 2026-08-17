@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
@@ -118,6 +120,9 @@ namespace Workwear.Domain.Stock.Documents
 			set => SetField(ref height, value);
 		}
 
+		[IgnoreHistoryTrace]
+		public virtual IList<BarcodeOperation> WarehouseBarcodeOperations { get; set; } = new List<BarcodeOperation>();
+
 		#endregion
 		#region Вычисляемые
 		public virtual string WriteoffFromText{
@@ -171,11 +176,36 @@ namespace Workwear.Domain.Stock.Documents
 		}
 
 		public virtual StockPosition StockPosition => new StockPosition(
-			Nomenclature, 
-			WearPercent, 
-			WearSize, 
+			Nomenclature,
+			WearPercent,
+			WearSize,
 			Height,
 			Owner);
+
+		public virtual string BarcodesString => string.Join(
+			"\n",
+			BarcodeOperations
+				.Select(x => x.Barcode?.Title)
+				.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+		public virtual bool CanEditAmount => !BarcodeOperations.Any();
+
+		public virtual IEnumerable<Barcode> Barcodes => BarcodeOperations.Select(x => x.Barcode);
+
+		private IEnumerable<BarcodeOperation> BarcodeOperations {
+			get {
+				switch(WriteoffFrom) {
+					case WriteoffFrom.Employee:
+						return EmployeeWriteoffOperation.BarcodeOperations;
+					case WriteoffFrom.DutyNorm:
+						return DutyNormWriteOffOperation.BarcodeOperations;
+					case WriteoffFrom.Warehouse:
+						return WarehouseBarcodeOperations;
+					default:
+						return Enumerable.Empty<BarcodeOperation>();
+				}
+			}
+		}
 
 		public virtual WriteoffFrom WriteoffFrom {
 			get {
@@ -196,7 +226,7 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 		#region Конструкторы
 		protected WriteoffItem (){}
-		public WriteoffItem(Writeoff writeOff, EmployeeIssueOperation issueOperation, int amount) {
+		public WriteoffItem(Writeoff writeOff, EmployeeIssueOperation issueOperation, int amount, IEnumerable<Barcode> barcodes = null) {
 			document = writeOff;
 			employeeWriteoffOperation = new EmployeeIssueOperation {
 				Employee = issueOperation.Employee,
@@ -209,13 +239,15 @@ namespace Workwear.Domain.Stock.Documents
 				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
+			CopyBarcodeOperations(issueOperation.BarcodeOperations, employeeWriteoffOperation.BarcodeOperations, barcodes,
+				x => x.EmployeeIssueOperation = employeeWriteoffOperation);
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
 			Height = issueOperation.Height;
 			this.amount = amount;
 		}
 
-		public WriteoffItem(Writeoff writeoff, DutyNormIssueOperation issueOperation, int amount) {
+		public WriteoffItem(Writeoff writeoff, DutyNormIssueOperation issueOperation, int amount, IEnumerable<Barcode> barcodes = null) {
 			document = writeoff;
 			dutyNormWriteOffOperation = new DutyNormIssueOperation {
 				DutyNorm = issueOperation.DutyNorm,
@@ -228,13 +260,15 @@ namespace Workwear.Domain.Stock.Documents
 				Height = issueOperation.Height,
 				WearPercent = issueOperation.CalculatePercentWear(document.Date)
 			};
+			CopyBarcodeOperations(issueOperation.BarcodeOperations, dutyNormWriteOffOperation.BarcodeOperations, barcodes,
+				x => x.DutyNormIssueOperation = dutyNormWriteOffOperation);
 			nomenclature = issueOperation.Nomenclature;
 			WearSize = issueOperation.WearSize;
 			Height = issueOperation.Height;
 			this.amount = amount;
 		}
-		
-		public WriteoffItem(Writeoff writeOff, StockPosition position, Warehouse warehouse, int amount) {
+
+		public WriteoffItem(Writeoff writeOff, StockPosition position, Warehouse warehouse, int amount, IEnumerable<Barcode> barcodes = null) {
 			document = writeOff;
 			this.amount = amount;
 			nomenclature = position.Nomenclature;
@@ -251,6 +285,48 @@ namespace Workwear.Domain.Stock.Documents
 				ExpenseWarehouse = warehouse
 			};
 			Owner = position.Owner;
+			AddWarehouseBarcodes(barcodes);
+		}
+
+		/// <summary>
+		/// Копирует BarcodeOperation из выдачи без WarehouseOperation
+		/// </summary>
+		private void CopyBarcodeOperations(
+			IEnumerable<BarcodeOperation> sourceOperations,
+			ICollection<BarcodeOperation> targetOperations,
+			IEnumerable<Barcode> barcodes,
+			Action<BarcodeOperation> configureOperation)
+		{
+			var selectedBarcodes = barcodes?.ToList();
+			if(selectedBarcodes == null || !selectedBarcodes.Any())
+				return;
+
+			var operations = sourceOperations ?? Enumerable.Empty<BarcodeOperation>();
+			foreach(var sourceOperation in operations.Where(x => selectedBarcodes.Any(b => DomainHelper.EqualDomainObjects(b, x.Barcode)))) {
+				var newBarcodeOperation = new BarcodeOperation {
+					Barcode = sourceOperation.Barcode,
+					KitNumber = sourceOperation.KitNumber
+				};
+				configureOperation(newBarcodeOperation);
+				targetOperations.Add(newBarcodeOperation);
+				sourceOperation.Barcode.BarcodeOperations.Add(newBarcodeOperation);
+			}
+		}
+
+		private void AddWarehouseBarcodes(IEnumerable<Barcode> barcodes) {
+			var selectedBarcodes = barcodes?.ToList();
+			if(selectedBarcodes == null || !selectedBarcodes.Any())
+				return;
+
+			foreach(var barcode in selectedBarcodes) {
+				var newBarcodeOperation = new BarcodeOperation {
+					Barcode = barcode,
+					WarehouseOperation = warehouseOperation,
+					KitNumber = barcode.SortedOperations.LastOrDefault()?.KitNumber
+				};
+				barcode.BarcodeOperations.Add(newBarcodeOperation);
+				WarehouseBarcodeOperations.Add(newBarcodeOperation);
+			}
 		}
 		#endregion
 		#region Методы
@@ -261,6 +337,8 @@ namespace Workwear.Domain.Stock.Documents
 					break;
 				case WriteoffFrom.Warehouse:
 					WarehouseOperation.Update(uow, this);
+					foreach(var barcodeOperation in WarehouseBarcodeOperations)
+						uow.Save(barcodeOperation);
 					break;
 				case WriteoffFrom.DutyNorm:
 					DutyNormWriteOffOperation.Update(uow, this);
@@ -269,7 +347,30 @@ namespace Workwear.Domain.Stock.Documents
 					throw new NotImplementedException();
 			}
 		}
-		
+
+		/// <summary>
+		/// Добавляет ещё один штрихкод в уже существующую строку списания (сканирование).
+		/// </summary>
+		public virtual void AddBarcode(Barcode barcode) {
+			if(BarcodeOperations.Any(x => DomainHelper.EqualDomainObjects(x.Barcode, barcode)))
+				return; //уже добавлен этим документом
+
+			switch(WriteoffFrom) {
+				case WriteoffFrom.Employee:
+					CopyBarcodeOperations(EmployeeWriteoffOperation.IssuedOperation.BarcodeOperations, employeeWriteoffOperation.BarcodeOperations,
+						new[] { barcode }, x => x.EmployeeIssueOperation = employeeWriteoffOperation);
+					break;
+				case WriteoffFrom.DutyNorm:
+					CopyBarcodeOperations(DutyNormWriteOffOperation.IssuedOperation.BarcodeOperations, dutyNormWriteOffOperation.BarcodeOperations,
+						new[] { barcode }, x => x.DutyNormIssueOperation = dutyNormWriteOffOperation);
+					break;
+				case WriteoffFrom.Warehouse:
+					AddWarehouseBarcodes(new[] { barcode });
+					break;
+			}
+			Amount++;
+		}
+
 		public virtual bool CanSetOwner => WarehouseOperation != null;
 		#endregion
 	}

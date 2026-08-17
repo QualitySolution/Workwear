@@ -47,7 +47,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 		protected void OnButtonWriteOffWearClicked(object sender, EventArgs e) {
 			buttonWriteOffWear.Sensitive = false;
-			ViewModel.WriteOffWear();
+			ViewModel.WriteOffWear(treeviewListedItems.GetSelectedObject<EmployeeBalanceVMNode>());
 			buttonWriteOffWear.Sensitive = ViewModel.SensetiveButtonWriteoff;
 		}
 		protected void OnButtonInspectionClicked(object sender, EventArgs e) {

@@ -61,6 +61,7 @@ namespace Workwear.ViewModels.Stock {
 			OverNormOperationRepository overNormOperationRepository,
 			EmployeeIssueRepository employeeIssueRepository,
 			BarcodeOperationRepository barcodeOperationRepository,
+			BarcodeRepository barcodeRepository,
 			ICurrentPermissionService permissionService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
@@ -76,6 +77,7 @@ namespace Workwear.ViewModels.Stock {
 			this.overNormOperationRepository = overNormOperationRepository ?? throw new ArgumentNullException(nameof(overNormOperationRepository));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.barcodeOperationRepository = barcodeOperationRepository ?? throw new ArgumentNullException(nameof(barcodeOperationRepository));
+			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 			DutyNorm = UoW.GetInSession(dutyNorm);
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			SetDocumentDateProperty(e => e.Date);
@@ -142,7 +144,8 @@ namespace Workwear.ViewModels.Stock {
 		private readonly OverNormOperationRepository overNormOperationRepository;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly BarcodeOperationRepository barcodeOperationRepository;
-		
+		private readonly BarcodeRepository barcodeRepository;
+
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
 		
@@ -272,12 +275,61 @@ namespace Workwear.ViewModels.Stock {
 
 		public void AddFromScan() {
 			//Здесь зануления других моделей обязательно чтобы их не создавал DI
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(
-				this, null, null, this);
+			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
+				this,
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel), typeof(WarehouseTransferViewModel) },
+				new object[] { null, null, this, null, null });
 		}
 
 		public void AddItems(IEnumerable<ServiceClaim> claims) =>
 			AddClaims(LoadClaims(claims.Select(c => c.Id)));
+
+		public string ValidateBarcodeForScan(Barcode barcode) {
+			if(barcode == null)
+				return null;
+			barcode = UoW.GetById<Barcode>(barcode.Id);
+			var lastOperation = barcodeRepository.GetLastOperationAt(barcode, Entity.Date);
+			if(lastOperation?.CurrentEmployee == null && lastOperation?.CurrentDutyNorm == null)
+				return $"{barcode.Title} на {Entity.Date:d} не числится ни за сотрудником, ни за дежурной нормой.";
+			return null;
+		}
+
+		public void AddBarcode(Barcode barcode) {
+			barcode = UoW.GetById<Barcode>(barcode.Id);
+			var lastOperation = barcodeRepository.GetLastOperationAt(barcode, Entity.Date);
+
+			if(lastOperation?.CurrentEmployee != null && lastOperation.EmployeeIssueOperation != null)
+				AddOrExtendItem(barcode,
+					i => i.ReturnFrom == ReturnFrom.Employee && DomainHelper.EqualDomainObjects(i.IssuedEmployeeOnOperation, lastOperation.EmployeeIssueOperation),
+					() => Entity.AddItem(lastOperation.EmployeeIssueOperation, 1, barcodes: new[] { barcode }));
+			else if(lastOperation?.CurrentEmployee != null && lastOperation.OverNormOperation != null)
+				AddOrExtendItem(barcode,
+					i => i.ReturnFrom == ReturnFrom.OverNorm && DomainHelper.EqualDomainObjects(i.IssuedOverNormOperation, lastOperation.OverNormOperation),
+					() => Entity.AddItem(lastOperation.OverNormOperation, 1, barcodes: new[] { barcode }));
+			else if(lastOperation?.CurrentDutyNorm != null)
+				AddOrExtendItem(barcode,
+					i => i.ReturnFrom == ReturnFrom.DutyNorm && DomainHelper.EqualDomainObjects(i.IssuedDutyNormOnOperation, lastOperation.DutyNormIssueOperation),
+					() => Entity.AddItem(lastOperation.DutyNormIssueOperation, 1, barcodes: new[] { barcode }));
+			else {
+				interactiveService.ShowMessage(ImportanceLevel.Warning, $"{barcode.Title}: ни к чему не привязан.");
+				return;
+			}
+			CalculateTotal();
+		}
+
+		private void AddOrExtendItem(Barcode barcode, Func<ReturnItem, bool> isSameSourceOperation, Action addNewItem) {
+			var existingItem = Entity.Items.FirstOrDefault(isSameSourceOperation);
+			if(existingItem == null) {
+				addNewItem();
+				return;
+			}
+			if(!existingItem.CanEditAmount) {
+				existingItem.AddBarcode(barcode);
+				return;
+			}
+			interactiveService.ShowMessage(ImportanceLevel.Warning,
+				$"{barcode.Title}: по этой выдаче в документе уже есть выдача без штрихкода, добавить со штрихкодом нельзя. ");
+		}
 
 		private IList<ServiceClaim> LoadClaims(IEnumerable<int> claimIds) {
 			Barcode barcodeAlias = null;
@@ -363,43 +415,69 @@ namespace Workwear.ViewModels.Stock {
 			foreach(var node in nodes) {
 				var operation = overNormOperationRepository.GetIssuedOperation(node.Id, UoW);
 				var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
-				if(availableBarcodeIds.Count > 1) {
+				if(!availableBarcodeIds.Any()) {
+					Entity.AddItem(operation, node.Amount);
+					continue;
+				}
+				if(node.Amount < availableBarcodeIds.Count) {
 					OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedOverNormBarcodes);
 					continue;
 				}
 
-				var barcodes = availableBarcodeIds.Count == 1
-					? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
-					: null;
-				Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : node.Amount, barcodes: barcodes);
+				var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
+				foreach(var barcode in barcodes)
+					Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+				var remainder = node.Amount - barcodes.Count;
+				if(remainder > 0)
+					Entity.AddItem(operation, remainder);
 			}
 			CalculateTotal();
 		}
 
 		private void AddEmployeeOperation(EmployeeIssueOperation operation, int amount) {
+			if(amount <= 0) {
+				Entity.AddItem(operation, amount);
+				return;
+			}
 			var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
-			if(availableBarcodeIds.Count > 1) {
+			if(!availableBarcodeIds.Any()) {
+				Entity.AddItem(operation, amount);
+				return;
+			}
+			if(amount < availableBarcodeIds.Count) {
 				OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedEmployeeBarcodes);
 				return;
 			}
 
-			var barcodes = availableBarcodeIds.Count == 1
-				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
-				: null;
-			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes: barcodes);
+			var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+			var free = amount - barcodes.Count;
+			if(free > 0)
+				Entity.AddItem(operation, free);
 		}
 
 		private void AddDutyNormOperation(DutyNormIssueOperation operation, int amount) {
+			if(amount <= 0) {
+				Entity.AddItem(operation, amount);
+				return;
+			}
 			var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
-			if(availableBarcodeIds.Count > 1) {
+			if(!availableBarcodeIds.Any()) {
+				Entity.AddItem(operation, amount);
+				return;
+			}
+			if(amount < availableBarcodeIds.Count) {
 				OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedDutyNormBarcodes);
 				return;
 			}
 
-			var barcodes = availableBarcodeIds.Count == 1
-				? barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW)
-				: null;
-			Entity.AddItem(operation, availableBarcodeIds.Count == 1 ? 1 : amount, barcodes: barcodes);
+			var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+			var free = amount - barcodes.Count;
+			if(free > 0)
+				Entity.AddItem(operation, free);
 		}
 
 		private void OpenBarcodeSelector<T>(T operation, IList<int> availableBarcodeIds, EventHandler<JournalSelectedEventArgs> selectHandler) {
@@ -422,7 +500,8 @@ namespace Workwear.ViewModels.Stock {
 			var operation = (EmployeeIssueOperation)page.Tag;
 			var barcodes = GetSelectedBarcodes(e);
 
-			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
 			CalculateTotal();
 		}
 
@@ -431,7 +510,8 @@ namespace Workwear.ViewModels.Stock {
 			var operation = (DutyNormIssueOperation)page.Tag;
 			var barcodes = GetSelectedBarcodes(e);
 
-			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
 			CalculateTotal();
 		}
 
@@ -440,7 +520,8 @@ namespace Workwear.ViewModels.Stock {
 			var operation = (OverNormOperation)page.Tag;
 			var barcodes = GetSelectedBarcodes(e);
 
-			Entity.AddItem(operation, barcodes.Count, barcodes: barcodes);
+			foreach(var barcode in barcodes)
+				Entity.AddItem(operation, 1, barcodes: new[] { barcode });
 			CalculateTotal();
 		}
 

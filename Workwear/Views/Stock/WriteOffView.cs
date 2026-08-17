@@ -60,6 +60,10 @@ namespace Workwear.Views.Stock
 				buttonDel.Clicked += (s,e) => ViewModel.DeleteItem(ytreeItems.GetSelectedObject<WriteoffItem>());
 				buttonDel.Sensitive = false;
 
+				buttonAddScan.Visible = ViewModel.BarcodesVisible;
+				buttonAddScan.Sensitive = ViewModel.CanEdit;
+				buttonAddScan.Clicked += (s,e) => ViewModel.AddFromScan();
+
 				ybuttonAddMember.Sensitive = ViewModel.CanEdit;
 				ybuttonAddMember.Clicked += (s, e) => ViewModel.AddMembers();
 				ybuttonDelMember.Clicked += (s,e)  => ViewModel.DeleteMember(ytreeMembers.GetSelectedObject<Leader>());
@@ -91,8 +95,12 @@ namespace Workwear.Views.Stock
 						.Editing(new Adjustment(0, 0, 999, 1, 10, 0), ViewModel.CanEdit).WidthChars(6).Digits(0)
 						.AddTextRenderer(e => "%", expand: false)
 					.AddColumn ("Количество").AddNumericRenderer (e => e.Amount)
-						.Editing (new Adjustment(0, 0, 100000, 1, 10, 1), ViewModel.CanEdit).WidthChars(7)
+						.Adjustment(new Adjustment(0, 0, 100000, 1, 10, 1))
+						.Editing(e => ViewModel.CanEdit && e.CanEditAmount).WidthChars(7)
 						.AddReadOnlyTextRenderer(e => e.Nomenclature?.Type?.Units?.Name ?? e.EmployeeWriteoffOperation.ProtectionTools?.Type?.Units?.Name)
+					.AddColumn("Метка").Resizable()
+						.Visible(ViewModel.BarcodesVisible)
+						.AddTextRenderer(e => e.BarcodesString)
 					.AddColumn ("Списано из").AddTextRenderer (e => e.WriteoffFromText)
 					.AddColumn("Причина списания")
 						.AddComboRenderer(x=>x.CausesWriteOff)

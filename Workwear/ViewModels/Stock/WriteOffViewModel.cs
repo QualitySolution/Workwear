@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using NHibernate;
+using NHibernate.Criterion;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -27,16 +29,23 @@ using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Company;
 using Workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.Filter.ViewModels.Stock;
+using Workwear.Journal.Filter.ViewModels.Stock;
 using workwear.Journal.ViewModels.Company;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Operations;
 using Workwear.Repository.Company;
+using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
+using Workwear.ViewModels.ClothingService;
 using Workwear.ViewModels.Company;
+using Workwear.ViewModels.Postomats;
 
 namespace Workwear.ViewModels.Stock
 {
@@ -55,9 +64,12 @@ namespace Workwear.ViewModels.Stock
         public IList<Owner> Owners { get; }
         public IList<CausesWriteOff> CausesWriteOffs { get; }
         private DutyNormRepository dutyNormRepository;
+        private readonly BarcodeService barcodeService;
+        private readonly BarcodeRepository barcodeRepository;
+        private readonly BarcodeOperationRepository barcodeOperationRepository;
 
         public WriteOffViewModel(
-            IEntityUoWBuilder uowBuilder, 
+            IEntityUoWBuilder uowBuilder,
             IUnitOfWorkFactory unitOfWorkFactory,
             INavigationManager navigation,
             IInteractiveService interactive,
@@ -72,6 +84,9 @@ namespace Workwear.ViewModels.Stock
             StockBalanceModel stockBalanceModel,
             OrganizationRepository organizationRepository,
             DutyNormRepository dutyNormRepository,
+            BarcodeService barcodeService,
+            BarcodeRepository barcodeRepository,
+            BarcodeOperationRepository barcodeOperationRepository,
             EmployeeCard employee = null,
             DutyNorm dutyNorm = null,
             IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) {
@@ -83,6 +98,9 @@ namespace Workwear.ViewModels.Stock
             this.interactive = interactive;
             this.organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             this.dutyNormRepository=dutyNormRepository ?? throw new ArgumentNullException(nameof(dutyNormRepository));
+            this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
+            this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
+            this.barcodeOperationRepository = barcodeOperationRepository ?? throw new ArgumentNullException(nameof(barcodeOperationRepository));
             SetDocumentDateProperty(e => e.Date);
             
             Entity.Items.ContentChanged += (sender, args) =>  CalculateTotal();
@@ -123,9 +141,11 @@ namespace Workwear.ViewModels.Stock
             if(Entity.Id == 0) {
 	            Entity.CreatedbyUser = userService.GetCurrentUser();
 	            logger.Info($"Создание Нового документа Списания");
-            } else 
+            } else {
 	            AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
-            
+	            LoadWarehouseBarcodes();
+            }
+
             Validations.Clear();
             Validations.Add(
 	            new ValidationRequest(Entity, 
@@ -147,6 +167,7 @@ namespace Workwear.ViewModels.Stock
         
         public bool CanChangeDocDate => CanEdit && PermissionService.ValidatePresetPermission("can_change_document_date");
         public bool SensitiveDocNumber => CanEdit && !AutoDocNumber;
+        public bool BarcodesVisible => FeaturesService.Available(WorkwearFeature.Barcodes);
         
         private bool autoDocNumber = true;
         [PropertyChangedAlso(nameof(DocNumberText))]
@@ -196,10 +217,64 @@ namespace Workwear.ViewModels.Stock
         private void SelectFromStock_OnSelectResult(object sender, JournalSelectedEventArgs e) {
 	        var selectVM = sender as StockBalanceJournalViewModel;
 	        var addedAmount = selectVM.Filter.AddAmount;
-	        foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>())
-		        Entity.AddItem(node.GetStockPosition(UoW), selectVM.Filter.Warehouse, 
-					addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount));
+	        var warehouse = selectVM.Filter.Warehouse;
+	        foreach (var node in e.GetSelectedObjects<StockBalanceJournalNode>()) {
+		        var count = addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : node.Amount);
+		        AddFromStockPosition(node.GetStockPosition(UoW), warehouse, count);
+	        }
 	        CalculateTotal();
+        }
+
+        /// <summary>
+        /// Добавление позиции склада в списание. Если для этой позиции на складе есть промаркированные штрихкодом
+        /// единицы - открывает диалог выбора конкретных меток
+        /// </summary>
+        private void AddFromStockPosition(StockPosition stockPosition, Warehouse warehouse, int count) {
+	        var markedCount = count > 0 ? barcodeService.CountBarcodesOnWarehouse(UoW, stockPosition, warehouse) : 0;
+	        if(markedCount <= 0) {
+		        Entity.AddItem(stockPosition, warehouse, count);
+		        return;
+	        }
+
+	        var barcodeJournal = NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
+		        this,
+		        OpenPageOptions.AsSlave,
+		        addingRegistrations: builder => {
+			        builder.RegisterInstance<Action<BarcodeJournalFilterViewModel>>(filter => {
+				        filter.CanUseFilter = false;
+				        filter.Warehouse = warehouse;
+				        filter.StockPosition = stockPosition;
+			        });
+		        });
+	        barcodeJournal.Tag = new StockBarcodeAddContext(stockPosition, warehouse, count);
+	        barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+	        barcodeJournal.ViewModel.OnSelectResult += AddSelectedStockBarcodes;
+        }
+
+        private void AddSelectedStockBarcodes(object sender, JournalSelectedEventArgs e) {
+	        var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
+	        var context = (StockBarcodeAddContext)page.Tag;
+	        var barcodes = GetSelectedBarcodes(e);
+
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(context.StockPosition, context.Warehouse, 1, barcodes: new[] { barcode });
+
+	        var remainder = context.Count - barcodes.Count;
+	        if(remainder > 0)
+		        Entity.AddItem(context.StockPosition, context.Warehouse, remainder);
+
+	        CalculateTotal();
+        }
+
+        private class StockBarcodeAddContext {
+	        public StockBarcodeAddContext(StockPosition stockPosition, Warehouse warehouse, int count) {
+		        StockPosition = stockPosition;
+		        Warehouse = warehouse;
+		        Count = count;
+	        }
+	        public StockPosition StockPosition { get; }
+	        public Warehouse Warehouse { get; }
+	        public int Count { get; }
         }
 
         public void AddFromEmployee() {
@@ -227,9 +302,49 @@ namespace Workwear.ViewModels.Stock
             var balance = e.GetSelectedObjects<EmployeeBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
 
             foreach (var operation in operations)
-	            Entity.AddItem(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
-            
+	            AddEmployeeOperation(operation, addedAmount == AddedAmount.One ? 1 : (addedAmount == AddedAmount.Zero ? 0 : balance[operation.Id]));
+
             CalculateTotal();
+        }
+
+        /// <param name="writtenOffOperation">Dictionary(operationId,amount)</param>
+        public void AddFromDictionary(Dictionary<int, int> writtenOffOperation) {
+	        var operations = UoW.Session.QueryOver<EmployeeIssueOperation>()
+		        .Where(x => x.Id.IsIn(writtenOffOperation.Select(i => i.Key).ToList()))
+		        .Fetch(SelectMode.Fetch, x => x.NormItem)
+		        .Fetch(SelectMode.Fetch, x => x.IssuedOperation)
+		        .Fetch(SelectMode.Fetch, x => x.Employee)
+		        .Fetch(SelectMode.Fetch, x => x.Nomenclature)
+		        .Fetch(SelectMode.Fetch, x => x.WearSize)
+		        .Fetch(SelectMode.Fetch, x => x.Height)
+		        .List();
+	        foreach(var operation in operations)
+		        AddEmployeeOperation(operation, writtenOffOperation[operation.Id]);
+	        CalculateTotal();
+        }
+
+        private void AddEmployeeOperation(EmployeeIssueOperation operation, int amount) {
+	        if(amount <= 0) {
+		        Entity.AddItem(operation, amount);
+		        return;
+	        }
+	        var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
+	        if(!availableBarcodeIds.Any()) {
+		        Entity.AddItem(operation, amount);
+		        return;
+	        }
+	        if(amount < availableBarcodeIds.Count) {
+		        //Не ясно какие именно коды списывать - даём выбрать вручную
+		        OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedEmployeeBarcodes);
+		        return;
+	        }
+	        //Промаркировано все, либо промаркировано меньше чем запрошено - каждый код своей строкой, остаток (если есть) отдельной строкой без штрихкода.
+	        var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+	        var free = amount - barcodes.Count;
+	        if(free > 0)
+		        Entity.AddItem(operation, free);
         }
 
         public void AddFromDutyNorm() 
@@ -250,15 +365,186 @@ namespace Workwear.ViewModels.Stock
 	        selectJournal.ViewModel.OnSelectResult += SelectFromDutyNorm_Selected;
         }
 
-        private void SelectFromDutyNorm_Selected(object sender, JournalSelectedEventArgs e) 
+        private void SelectFromDutyNorm_Selected(object sender, JournalSelectedEventArgs e)
         {
 	        var operations=UoW.GetById<DutyNormIssueOperation>(e.GetSelectedObjects<DutyNormBalanceJournalNode>().Select(x => x.Id));
 	        var balance = e.GetSelectedObjects<DutyNormBalanceJournalNode>().ToDictionary(k => k.Id, v => v.Balance);
 	        foreach(var operation in operations)
-		        Entity.AddItem(operation, balance[operation.Id]);
+		        AddDutyNormOperation(operation, balance[operation.Id]);
 	        CalculateTotal();
         }
-        
+
+        private void AddDutyNormOperation(DutyNormIssueOperation operation, int amount) {
+	        if(amount <= 0) {
+		        Entity.AddItem(operation, amount);
+		        return;
+	        }
+	        var availableBarcodeIds = barcodeOperationRepository.GetAvailableBarcodeIdsForReturn(operation, UoW);
+	        if(!availableBarcodeIds.Any()) {
+		        Entity.AddItem(operation, amount);
+		        return;
+	        }
+	        if(amount < availableBarcodeIds.Count) {
+		        OpenBarcodeSelector(operation, availableBarcodeIds, AddSelectedDutyNormBarcodes);
+		        return;
+	        }
+	        var barcodes = barcodeOperationRepository.GetBarcodes(availableBarcodeIds, UoW);
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+	        var free = amount - barcodes.Count;
+	        if(free > 0)
+		        Entity.AddItem(operation, free);
+        }
+
+        private void OpenBarcodeSelector<T>(T operation, IList<int> availableBarcodeIds, EventHandler<JournalSelectedEventArgs> selectHandler) {
+	        var barcodeJournal = NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
+		        this,
+		        OpenPageOptions.AsSlave,
+		        addingRegistrations: builder => {
+			        builder.RegisterInstance<Action<BarcodeJournalFilterViewModel>>(filter => {
+				        filter.CanUseFilter = false;
+				        filter.AllowedBarcodeIds = availableBarcodeIds;
+			        });
+		        });
+	        barcodeJournal.Tag = operation;
+	        barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
+	        barcodeJournal.ViewModel.OnSelectResult += selectHandler;
+        }
+
+        private void AddSelectedEmployeeBarcodes(object sender, JournalSelectedEventArgs e) {
+	        var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
+	        var operation = (EmployeeIssueOperation)page.Tag;
+	        var barcodes = GetSelectedBarcodes(e);
+
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+	        CalculateTotal();
+        }
+
+        private void AddSelectedDutyNormBarcodes(object sender, JournalSelectedEventArgs e) {
+	        var page = NavigationManager.FindPage((BarcodeJournalViewModel)sender);
+	        var operation = (DutyNormIssueOperation)page.Tag;
+	        var barcodes = GetSelectedBarcodes(e);
+
+	        foreach(var barcode in barcodes)
+		        Entity.AddItem(operation, 1, barcodes: new[] { barcode });
+	        CalculateTotal();
+        }
+
+        private IList<Barcode> GetSelectedBarcodes(JournalSelectedEventArgs e) {
+	        var barcodeIds = e.GetSelectedObjects<BarcodeJournalNode>()
+		        .Select(x => x.Id)
+		        .ToArray();
+	        return barcodeOperationRepository.GetBarcodes(barcodeIds, UoW);
+        }
+
+        #region Сканирование штрихкода
+
+        public void AddFromScan() {
+	        //Здесь зануления других моделей обязательно чтобы их не создавал DI
+	        NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
+		        this,
+		        new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel), typeof(WarehouseTransferViewModel) },
+		        new object[] { null, null, null, this, null });
+        }
+
+        public string ValidateBarcodeForScan(Barcode barcode) {
+	        if(barcode == null)
+		        return null;
+	        barcode = UoW.GetById<Barcode>(barcode.Id);
+	        var lastOperation = barcodeRepository.GetLastOperationAt(barcode, Entity.Date);
+	        if((lastOperation?.EmployeeIssueOperation?.Issued ?? 0) <= 0
+	           && (lastOperation?.DutyNormIssueOperation?.Issued ?? 0) <= 0
+	           && lastOperation?.CurrentWarehouse == null)
+		        return $"{barcode.Title} на {Entity.Date:d} не числится ни за сотрудником, ни за дежурной нормой, ни на складе.";
+	        return null;
+        }
+
+        public void AddBarcode(Barcode barcode) {
+	        barcode = UoW.GetById<Barcode>(barcode.Id);
+	        var lastOperation = barcodeRepository.GetLastOperationAt(barcode, Entity.Date);
+
+	        if((lastOperation?.EmployeeIssueOperation?.Issued ?? 0) > 0)
+		        AddOrExtendEmployeeItem(barcode, lastOperation.EmployeeIssueOperation);
+	        else if((lastOperation?.DutyNormIssueOperation?.Issued ?? 0) > 0)
+		        AddOrExtendDutyNormItem(barcode, lastOperation.DutyNormIssueOperation);
+	        else if(lastOperation?.CurrentWarehouse != null)
+		        AddOrExtendWarehouseItem(barcode, lastOperation);
+	        else {
+		        interactive.ShowMessage(ImportanceLevel.Warning, $"{barcode.Title}: ни к чему не привязан.");
+		        return;
+	        }
+	        CalculateTotal();
+        }
+
+        private void AddOrExtendEmployeeItem(Barcode barcode, EmployeeIssueOperation issuedOperation) {
+	        var existing = Entity.Items.FirstOrDefault(i => i.WriteoffFrom == WriteoffFrom.Employee
+		        && DomainHelper.EqualDomainObjects(i.EmployeeWriteoffOperation?.IssuedOperation, issuedOperation));
+	        if(existing == null) {
+		        Entity.AddItem(issuedOperation, 1, new[] { barcode });
+		        return;
+	        }
+	        if(!existing.CanEditAmount) {
+		        existing.AddBarcode(barcode);
+		        return;
+	        }
+	        interactive.ShowMessage(ImportanceLevel.Warning,
+		        $"{barcode.Title}: по этой выдаче в документе уже есть списание без штрихкода, добавить со штрихкодом нельзя.");
+        }
+
+        private void AddOrExtendDutyNormItem(Barcode barcode, DutyNormIssueOperation issuedOperation) {
+	        var existing = Entity.Items.FirstOrDefault(i => i.WriteoffFrom == WriteoffFrom.DutyNorm
+		        && DomainHelper.EqualDomainObjects(i.DutyNormWriteOffOperation?.IssuedOperation, issuedOperation));
+	        if(existing == null) {
+		        Entity.AddItem(issuedOperation, 1, new[] { barcode });
+		        return;
+	        }
+	        if(!existing.CanEditAmount) {
+		        existing.AddBarcode(barcode);
+		        return;
+	        }
+	        interactive.ShowMessage(ImportanceLevel.Warning,
+		        $"{barcode.Title}: по этой выдаче в документе уже есть списание без штрихкода, добавить со штрихкодом нельзя.");
+        }
+
+        private void AddOrExtendWarehouseItem(Barcode barcode, BarcodeOperation lastOperation) {
+	        var warehouse = lastOperation.CurrentWarehouse;
+	        var stockPosition = new StockPosition(
+		        barcode.Nomenclature,
+		        lastOperation.WarehouseOperation.WearPercent,
+		        barcode.Size,
+		        barcode.Height,
+		        lastOperation.WarehouseOperation.Owner);
+	        var existing = Entity.Items.FirstOrDefault(i => i.WriteoffFrom == WriteoffFrom.Warehouse
+		        && i.WarehouseOperation?.ExpenseWarehouse == warehouse && stockPosition.Equals(i.StockPosition));
+	        if(existing == null) {
+		        Entity.AddItem(stockPosition, warehouse, 1, new[] { barcode });
+		        return;
+	        }
+	        if(!existing.CanEditAmount) {
+		        existing.AddBarcode(barcode);
+		        return;
+	        }
+	        interactive.ShowMessage(ImportanceLevel.Warning,
+		        $"{barcode.Title}: по этой позиции в документе уже есть списание без штрихкода, добавить со штрихкодом нельзя.");
+        }
+
+        private void LoadWarehouseBarcodes() {
+	        var warehouseItems = Entity.Items.Where(i => i.WriteoffFrom == WriteoffFrom.Warehouse && i.WarehouseOperation?.Id > 0).ToList();
+	        if(!warehouseItems.Any())
+		        return;
+
+	        var warehouseOperationIds = warehouseItems.Select(i => i.WarehouseOperation.Id).ToArray();
+	        var barcodeOperations = UoW.Session.QueryOver<BarcodeOperation>()
+		        .WhereRestrictionOn(x => x.WarehouseOperation.Id).IsIn(warehouseOperationIds)
+		        .List();
+
+	        foreach(var item in warehouseItems)
+		        item.WarehouseBarcodeOperations = barcodeOperations.Where(bo => bo.WarehouseOperation.Id == item.WarehouseOperation.Id).ToList();
+        }
+
+        #endregion
+
         public void FillMaxAmount(DateTime? date = null) {
 	        var itemsWh = Entity.Items.Where(i => i.WriteoffFrom == WriteoffFrom.Warehouse).ToList();
 	        if(itemsWh.Any()) {
