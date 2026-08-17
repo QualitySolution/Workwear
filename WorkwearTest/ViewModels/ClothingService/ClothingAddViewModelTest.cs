@@ -68,6 +68,7 @@ namespace WorkwearTest.ViewModels.ClothingService {
 					null,
 					null,
 					null,
+					null,
 					unitOfWorkProvider: unitOfWorkProvider
 					);
 
