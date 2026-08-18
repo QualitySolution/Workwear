@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,15 +14,21 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ClothingServiceReportViewModel: ReportParametersViewModelBase, IDialogDocumentation {
+	public class ClothingServiceReportViewModel: ReportParametersUowViewModelBase, IDialogDocumentation {
 
 		private readonly FeaturesService featuresService;
 		public ClothingServiceReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
+			IUnitOfWorkFactory uowFactory,
 			FeaturesService featuresService
-			) : base(rdlViewerViewModel) 
+			) : base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+
+			var serviceList = UoW.GetAll<Service>().ToList();
+			ChoiceServiceViewModel = new ChoiceListViewModel<Service>(
+				serviceList,
+				TitleFunc: s => string.IsNullOrWhiteSpace(s.AlternativeName) ? s.Name : $"({s.AlternativeName}) {s.Name}");
 
 			var hiddenReportTypes = new List<object>();
 			if(!featuresService.Available(WorkwearFeature.Postomats)) {
@@ -51,6 +60,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(VisibleSubdivisionAsMVZ))]
 		[PropertyChangedAlso(nameof(VisibleAlternativeName))]
 		[PropertyChangedAlso(nameof(VisibleSumCost))]
+		[PropertyChangedAlso(nameof(VisibleGroupClaim))]
+		[PropertyChangedAlso(nameof(VisibleChoiceService))]
 		[PropertyChangedAlso(nameof(Title))]
 		[PropertyChangedAlso(nameof(ShowClosedLabel))]
 		public virtual ClothingServiceReportType ReportType {
@@ -124,6 +135,8 @@ namespace Workwear.ReportParameters.ViewModels {
 					{ "use_subdivision", SubdivisionAsMVZ },
 					{ "show_alternative_name", ShowAlternativeName },
 					{ "sum_cost", SumCost },
+					{ "group_claim", GroupClaim },
+					{ "service_ids", ChoiceServiceViewModel.SelectedIdsMod },
 				};
 				default: throw new InvalidOperationException(nameof(SetParameters));
 			}
@@ -226,6 +239,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool VisibleSubdivisionAsMVZ => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleAlternativeName => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleSumCost => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleGroupClaim => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleChoiceService => reportType == ClothingServiceReportType.Serviced;
 
 		private bool showAlternativeName;
 		public virtual bool ShowAlternativeName {
@@ -238,6 +253,14 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => sumCost;
 			set => SetField(ref sumCost, value);
 		}
+
+		private bool groupClaim;
+		public virtual bool GroupClaim {
+			get => groupClaim;
+			set => SetField(ref groupClaim, value);
+		}
+
+		public ChoiceListViewModel<Service> ChoiceServiceViewModel { get; }
 	}
 	public enum ClothingServiceReportType {
 		[ReportIdentifier("ClothingService.ClothingServiceStatusReport")]
