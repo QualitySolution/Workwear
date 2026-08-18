@@ -146,7 +146,7 @@ namespace Workwear.Test.Integration.Import
 					Subdivision = subdivision,
 					Post = post
 				};
-				employee.AddUsedNorm(norm, uowPrepare);
+				employee.AddUsedNorm(norm);
 				uowPrepare.Save(employee);
 				uowPrepare.Commit();
 				
@@ -160,7 +160,7 @@ namespace Workwear.Test.Integration.Import
 				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(issueRepository);
 				var setting = new SettingsWorkwearItemsViewModel();
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService(), issueModel);
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -286,7 +286,7 @@ namespace Workwear.Test.Integration.Import
 					FirstName = "Руслан",
 					Patronymic = "Анорбекович",
 				};
-				employee.AddUsedNorm(norm, uowPrepare);
+				employee.AddUsedNorm(norm);
 				uowPrepare.Save(employee);
 				uowPrepare.Commit();
 				
@@ -301,7 +301,7 @@ namespace Workwear.Test.Integration.Import
 				var employeeRepository = new EmployeeRepository();
 				var issueRepository = new EmployeeIssueRepository(unitOfWorkProvider);
 				var issueModel = new EmployeeIssueModel(issueRepository);
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService(), issueModel);
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;
@@ -383,14 +383,14 @@ namespace Workwear.Test.Integration.Import
 					FirstName = "РУСЛАН",
 					Patronymic = "Анорбекович",
 				};
-				employee.AddUsedNorm(norm, uowPrepare);
+				employee.AddUsedNorm(norm);
 				uowPrepare.Save(employee);
 				var employee2 = new EmployeeCard() {
 					LastName = "АНУРОВ",
 					FirstName = "ПАВЕЛ",
 					Patronymic = "Александрович",
 				};
-				employee2.AddUsedNorm(norm, uowPrepare);
+				employee2.AddUsedNorm(norm);
 				uowPrepare.Save(employee2);
 				uowPrepare.Commit();
 				
@@ -404,7 +404,7 @@ namespace Workwear.Test.Integration.Import
 				var unitOfWorkProvider = new UnitOfWorkProvider();
 				var employeeRepository = new EmployeeRepository();
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(unitOfWorkProvider));
-				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService());
+				var dataparser = new DataParserWorkwearItems(new NomenclatureRepository(unitOfWorkProvider), new PostRepository(), new NormRepository(), baseParameters, new SizeService(), issueModel);
 				var model = new ImportModelWorkwearItems(dataparser, setting, issueModel);
 				using(var itemsLoad = new ExcelImportViewModel(model, UnitOfWorkFactory, navigation, interactive, progressInterceptor, unitOfWorkProvider, featureService, employeeRepository)) {
 					itemsLoad.ProgressStep = progressStep;

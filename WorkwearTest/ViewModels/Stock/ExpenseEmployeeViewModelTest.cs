@@ -134,7 +134,7 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				var warehouseOperation = new WarehouseOperation {
@@ -241,7 +241,7 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				foreach (var item in employee.WorkwearItems) {
 					item.Created = new DateTime(2020, 1, 1);
 				}
@@ -376,7 +376,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var employee = new EmployeeCard();
 				employee.DismissDate = null;
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				var warehouseOperation = new WarehouseOperation {
@@ -497,7 +497,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var employee = new EmployeeCard();
 				employee.DismissDate = null;
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				var warehouseOperation = new WarehouseOperation {

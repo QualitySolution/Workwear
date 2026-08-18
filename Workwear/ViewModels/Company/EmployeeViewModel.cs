@@ -28,6 +28,7 @@ using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
@@ -54,6 +55,7 @@ namespace Workwear.ViewModels.Company
 		private readonly CommonMessages messages;
 		private readonly SpecCoinManagerService specCoinManagerService;
 		private readonly BaseParameters baseParameters;
+		private readonly EmployeeIssueModel employeeIssueModel;
 		
 		public SizeService SizeService { get; }
 
@@ -77,6 +79,7 @@ namespace Workwear.ViewModels.Company
 			SizeService sizeService,
 			CommonMessages messages,
 			BaseParameters baseParameters,
+			EmployeeIssueModel employeeIssueModel,
 			SpecCoinManagerService specCoinManagerService) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -90,6 +93,7 @@ namespace Workwear.ViewModels.Company
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			this.specCoinManagerService = specCoinManagerService ?? throw new ArgumentNullException(nameof(specCoinManagerService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
 			remainingEmployees = featuresService.Employees - employeeRepository.GetNumberOfEmployees();
@@ -311,7 +315,8 @@ namespace Workwear.ViewModels.Company
 
 						if(Entity.UsedNorms.Any(n => (n.Posts.Any(p => p == post) && !n.Posts.Any(p => p == value)))
 						   && interactive.Question("Заменить нормы от старой должности нормами от новой должности?")) {
-							Entity.NormFromPost(UoW, NormRepository, value);
+							var norms = NormRepository.GetNormsForPost(UoW, value).Where(x => !x.Archival);
+							employeeIssueModel.AddUsedNorms(Entity, norms, UoW);
 						}
 
 						var postsNorms = NormRepository.GetNormsForPost(UoW, value);
@@ -323,7 +328,8 @@ namespace Workwear.ViewModels.Company
 									"Норма не установлена, так как не все данные сотрудника заполнены корректно.");
 								return;
 							}
-							Entity.NormFromPost(UoW, NormRepository, value);
+							var norms = NormRepository.GetNormsForPost(UoW, value).Where(x => !x.Archival);
+							employeeIssueModel.AddUsedNorms(Entity, norms, UoW);
 						}
 					}
 					post = value;

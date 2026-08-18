@@ -12,6 +12,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
 using Workwear.Models.Regulations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
@@ -49,7 +50,7 @@ namespace Workwear.Test.Integration.Regulations {
 				uow.Save(norm);
 
 				var employee = new EmployeeCard { FirstName = "Иван", Patronymic = "Сергеевич", LastName = "Г." , Sex = Sex.M};
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				var expectedNextIssue = new DateTime(2025, 1, 10);
@@ -122,6 +123,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyNormToDutyNorm(normId);
@@ -199,7 +201,7 @@ namespace Workwear.Test.Integration.Regulations {
 				uow.Save(norm);
 
 				var employee = new EmployeeCard { FirstName = "Иван", Patronymic = "Сергеевич", LastName = "Г." , Sex = Sex.M};
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 				var oldNextIssueForMatching = employee.WorkwearItems.First(x => x.ProtectionTools == matchingTools).NextIssue;
 
@@ -309,6 +311,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyExpenseToDutyNorm(expenseDocId, dutyNormId);
@@ -429,6 +432,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyExpenseToDutyNorm(expenseDocId, dutyNormId);
@@ -551,6 +555,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyCollectiveExpenseToDutyNorm(collectiveExpenseDocId, dutyNormId);
@@ -593,7 +598,7 @@ namespace Workwear.Test.Integration.Regulations {
 				uow.Save(norm);
 
 				var employee1 = new EmployeeCard { FirstName = "Первый" };
-				employee1.AddUsedNorm(norm, uow);
+				employee1.AddUsedNorm(norm);
 				uow.Save(employee1);
 				var oldNextIssueForMatching = employee1.WorkwearItems.First().NextIssue;
 
@@ -707,6 +712,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyCollectiveExpenseToDutyNorm(collectiveExpenseDocId, dutyNormId);

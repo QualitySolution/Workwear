@@ -173,7 +173,7 @@ namespace Workwear.Test.Integration.Tools
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 
 				var vacationType = new VacationType();
 				vacationType.Name = "Тестовый отпуск";
@@ -309,7 +309,7 @@ namespace Workwear.Test.Integration.Tools
 
 				var employee = new EmployeeCard();
 				employee.HireDate = new DateTime(2018, 1, 15);
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 				uow.Commit();
 

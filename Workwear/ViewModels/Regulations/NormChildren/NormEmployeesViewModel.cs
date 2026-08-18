@@ -10,6 +10,7 @@ using QS.Project.Domain;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Models.Operations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.ViewModels.Company;
 
@@ -19,12 +20,14 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveQuestion interactive;
 		private readonly ModalProgressCreator progressCreator;
+		private readonly EmployeeIssueModel employeeIssueModel;
 
-		public NormEmployeesViewModel(NormViewModel parent, INavigationManager navigation, IInteractiveQuestion interactive, ModalProgressCreator progressCreator) {
+		public NormEmployeesViewModel(NormViewModel parent, INavigationManager navigation, IInteractiveQuestion interactive, ModalProgressCreator progressCreator, EmployeeIssueModel employeeIssueModel) {
 			this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 		}
 
 		#region Свойства View
@@ -65,7 +68,7 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 			var newEmployees = parent.UoW.GetById<EmployeeCard>(selectedIds);
 			foreach(var employee in newEmployees) {
 				progressCreator.Add(text: $"Добавление нормы для {employee.ShortName}");
-				employee.AddUsedNorm(parent.Entity, parent.UoW);
+				employeeIssueModel.AddUsedNorm(employee, parent.Entity, parent.UoW);
 			}
 			progressCreator.Add(text: "Сохранение изменений");
 			parent.UoW.Commit();
@@ -84,7 +87,7 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 			var newEmployees = parent.UoW.GetById<EmployeeCard>(employees.Select(x => x.Id).ToArray());
 			foreach(var employee in newEmployees) {
 				progressCreator.Add(text: $"Удаление нормы у {employee.ShortName}");
-				employee.RemoveUsedNorm(parent.Entity, parent.UoW);
+				employeeIssueModel.RemoveUsedNorm(employee, parent.Entity, parent.UoW);
 			}
 
 			progressCreator.Add(text: "Сохранение изменений");

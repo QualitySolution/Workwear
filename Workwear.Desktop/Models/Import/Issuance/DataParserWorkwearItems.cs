@@ -10,6 +10,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
@@ -28,19 +29,22 @@ namespace Workwear.Models.Import.Issuance
 		private readonly NormRepository normRepository;
 		private readonly BaseParameters baseParameters;
 		private readonly SizeService sizeService;
+		private readonly EmployeeIssueModel employeeIssueModel;
 
 		public DataParserWorkwearItems(
 			NomenclatureRepository nomenclatureRepository,
 			PostRepository postRepository,
 			NormRepository normRepository,
 			BaseParameters baseParameters,
-			SizeService sizeService)
+			SizeService sizeService,
+			EmployeeIssueModel employeeIssueModel)
 		{
 			this.nomenclatureRepository = nomenclatureRepository ?? throw new ArgumentNullException(nameof(nomenclatureRepository));
 			this.postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			
 			AddColumnName(DataTypeWorkwearItems.PersonnelNumber,
 				"Табельный",
@@ -330,7 +334,7 @@ namespace Workwear.Models.Import.Issuance
 				return false;
 
 			//FIXME в идеале здесь перебирать все нормы и искать в них именно тот СИЗ который выдается.
-			employee.AddUsedNorm(norm.First(), uow);
+			employeeIssueModel.AddUsedNorm(employee, norm.First(), uow);
 			ChangedEmployees.Add(employee);
 			return true;
 		}

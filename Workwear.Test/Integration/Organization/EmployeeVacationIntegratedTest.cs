@@ -89,7 +89,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 				uow.Commit();
 

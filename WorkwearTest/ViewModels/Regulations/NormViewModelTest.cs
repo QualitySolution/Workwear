@@ -109,7 +109,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				// Создаем последовательность неправильных выдач

@@ -139,7 +139,7 @@ namespace WorkwearTest.ViewModels.Company {
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				// Создаем ручную выдачу

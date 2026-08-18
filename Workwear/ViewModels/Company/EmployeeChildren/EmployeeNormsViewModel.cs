@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -8,6 +9,7 @@ using QS.Project.Domain;
 using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
+using Workwear.Models.Operations;
 using workwear.Journal.ViewModels.Regulations;
 using Workwear.ViewModels.Regulations;
 
@@ -21,12 +23,14 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly EmployeeViewModel employeeViewModel;
 		private readonly INavigationManager navigation;
 		private readonly IInteractiveService interactive;
+		private readonly EmployeeIssueModel employeeIssueModel;
 
-		public EmployeeNormsViewModel(EmployeeViewModel employeeViewModel, INavigationManager navigation, IInteractiveService interactive)
+		public EmployeeNormsViewModel(EmployeeViewModel employeeViewModel, INavigationManager navigation, IInteractiveService interactive, EmployeeIssueModel employeeIssueModel)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 
 			Entity.PropertyChanged += Entity_PropertyChanged;
 		}
@@ -83,13 +87,13 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		void NormJournal_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
 			foreach(var norm in e.SelectedObjects) {
-				Entity.AddUsedNorm(UoW.GetById<Norm>(norm.GetId()), UoW);
+				employeeIssueModel.AddUsedNorm(Entity, UoW.GetById<Norm>(norm.GetId()), UoW);
 			}
 		}
 
 		public void RemoveNorm(Norm norm)
 		{
-			Entity.RemoveUsedNorm(norm, UoW);
+			employeeIssueModel.RemoveUsedNorm(Entity, norm, UoW);
 		}
 
 		public void NormFromPost()
@@ -98,7 +102,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				interactive.ShowMessage(ImportanceLevel.Error, "Норма не будет установлена, так как не все данные сотрудника заполнены корректно.");
 				return;
 			}
-			Entity.NormFromPost(UoW, employeeViewModel.NormRepository);
+			var norms = employeeViewModel.NormRepository.GetNormsForPost(UoW, Entity.Post).Where(x => !x.Archival);
+			employeeIssueModel.AddUsedNorms(Entity, norms, UoW);
 		}
 
 		public void OpenNorm(Norm norm)

@@ -141,7 +141,7 @@ namespace WorkwearTest.ViewModels.Visits
 					FirstName = "Тест",
 					HireDate = new DateTime(2020, 1, 1)
 				};
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				// Создаем складскую операцию (поступление товара на склад)

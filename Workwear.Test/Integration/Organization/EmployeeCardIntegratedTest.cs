@@ -72,7 +72,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
 				uow.Commit();
@@ -166,7 +166,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(height);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
@@ -298,7 +298,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(winterShoesSize);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
@@ -386,7 +386,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
@@ -470,7 +470,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
@@ -572,7 +572,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);
@@ -654,7 +654,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				employee.Sex = Sex.M;
 				Assert.That(employee.WorkwearItems.Count, Is.GreaterThan(0));
 				uow.Save(employee);

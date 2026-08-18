@@ -367,6 +367,10 @@ namespace Workwear.Domain.Company
 
 		#endregion
 		#region Функции для работы с коллекцией норм
+		/// <summary>
+		/// Добавляет норму и обновляет только доменную коллекцию потребностей.
+		/// Для полного пересчёта с учетом прошлых выдач используйте EmployeeIssueModel.AddUsedNorm.
+		/// </summary>
 		public virtual void AddUsedNorm(Norm norm) {
 			if(norm == null) {
 				logger.Warn ("Попытка добавить null вместо нормы! Ай-Ай-Ай!");
@@ -377,9 +381,13 @@ namespace Workwear.Domain.Company
 				return;
 			}
 			UsedNorms.Add (norm);
-			UpdateWorkwearItems ();
+			UpdateWorkwearItemsCollection();
 		}
 
+		/// <summary>
+		/// Добавляет нормы и обновляет только доменную коллекцию потребностей.
+		/// Для полного пересчёта с учетом прошлых выдач используйте EmployeeIssueModel.AddUsedNorms.
+		/// </summary>
 		public virtual void AddUsedNorms(IEnumerable<Norm> norms) {
 			foreach(var norm in norms) {
 				if(UsedNorms.Any(usedNorm => DomainHelper.EqualDomainObjects(usedNorm, norm))) {
@@ -388,30 +396,25 @@ namespace Workwear.Domain.Company
 				}
 				UsedNorms.Add(norm);
 			}
-			UpdateWorkwearItems();
+			UpdateWorkwearItemsCollection();
 		}
 
+		/// <summary>
+		/// Удаляет норму и обновляет только доменную коллекцию потребностей.
+		/// Для полного пересчёта с учетом прошлых выдач используйте EmployeeIssueModel.RemoveUsedNorm.
+		/// Метод также используется механизмом удаления зависимостей, поэтому должен оставаться публичным.
+		/// </summary>
 		public virtual void RemoveUsedNorm(Norm norm) {
-			UsedNorms.Remove (norm);
-			UpdateWorkwearItems ();
-		}
-
-		public virtual int NormFromPost(IUnitOfWork uow, NormRepository normRepository, Post post = null) {
-			var norms = normRepository.GetNormsForPost(uow, post ?? Post);
-			int count = 0;
-			foreach(var norm in norms)
-				if(!norm.Archival) {
-					AddUsedNorm(norm);
-					count++;
-				}
-			return count;
+			UsedNorms.Remove(norm);
+			UpdateWorkwearItemsCollection();
 		}
 		#endregion
 		#region Функции для работы с коллекцией потребностей
 		/// <summary>
-		/// Для работы функции необходимо иметь заполненный UoW.
+		/// Перестраивает только доменную коллекцию потребностей по применённым нормам.
+		/// Для загрузки выдач, пересчёта дат и сохранения используйте EmployeeIssueModel.UpdateWorkwearItems.
 		/// </summary>
-		public virtual void UpdateWorkwearItems() {
+		public virtual List<EmployeeCardItem> UpdateWorkwearItemsCollection() {
 			logger.Info("Пересчитываем требования по спецодежде для сотрудника");
 			//Проверяем нужно ли добавлять
 			var processed = new List<EmployeeCardItem>();
@@ -442,14 +445,7 @@ namespace Workwear.Domain.Company
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 			needRemove.ToList ().ForEach (i => WorkwearItems.Remove (i));
-			//Обновляем информацию о прошлых выдачах, перед обновлением даты следующей выдачи. Так как могли добавить строчку, у которой таких данных еще нет.
-			if(processed.Any())
-				FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
-			//Обновляем срок следующей выдачи
-			foreach(var item in processed) {
-				item.UpdateNextIssue(UoW);
-			}
-			logger.Info("Ok");
+			return processed;
 		}
 
 		/// <summary>

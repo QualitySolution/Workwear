@@ -83,7 +83,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -191,7 +191,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -313,7 +313,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -405,7 +405,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 				uow.Commit();
 

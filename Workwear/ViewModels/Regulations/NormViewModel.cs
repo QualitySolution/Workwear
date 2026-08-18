@@ -233,7 +233,7 @@ namespace Workwear.ViewModels.Regulations
 				progressPage.ViewModel.Progress.Start(worksEmployees.Count, text: "Обработка сотрудников...");
 
 				foreach(var emp in worksEmployees) {
-					emp.UpdateWorkwearItems(UoW);
+					issueModel.UpdateWorkwearItems(new[] { emp }, UoW);
 					UoW.Save(emp);
 					progressPage.ViewModel.Progress.Add();
 				}
@@ -289,7 +289,7 @@ namespace Workwear.ViewModels.Regulations
 							if(item.IsSame(employeeItem.ActiveNormItem))
 								employeeItem.ProtectionTools = newProtectionTools;
 						}
-						emp.UpdateWorkwearItems(UoW);
+						issueModel.UpdateWorkwearItems(new[] { emp }, UoW);
 						UoW.Save(emp);
 						progressPage.ViewModel.Progress.Add();
 					}
@@ -420,7 +420,7 @@ namespace Workwear.ViewModels.Regulations
 				progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
 				foreach (var employee in employees) {
 					progress.Add(text: $"Обработка {employee.ShortName}");
-					employee.UpdateWorkwearItems(UoW);
+					issueModel.UpdateWorkwearItems(new[] { employee }, UoW);
 					UoW.Save(employee);
 				}
 				progress.Add(text: "Завершаем...");

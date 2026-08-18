@@ -144,7 +144,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var employee = new EmployeeCard();
 				employee.DismissDate = null;
-				employee.AddUsedNorm(norm, uow);
+				employee.AddUsedNorm(norm);
 				uow.Save(employee);
 
 				var warehouseOperation = new WarehouseOperation {
