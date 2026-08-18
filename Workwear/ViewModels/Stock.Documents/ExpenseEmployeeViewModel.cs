@@ -98,6 +98,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
 			this.stockDocumentRepository = stockDocumentRepository ?? throw new ArgumentNullException(nameof(stockDocumentRepository));
+			(stockRepository ?? throw new ArgumentNullException(nameof(stockRepository))).RepoUow = UoW;
 			SetDocumentDateProperty(e => e.Date);
 
 			var performance = new ProgressPerformanceHelper(globalProgress, employee == null ? 5u : 12u, "Загружаем размеры", logger);
@@ -173,7 +174,10 @@ namespace Workwear.ViewModels.Stock.Documents {
 			} else AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			//Переопределяем параметры валидации
 			Validations.Clear();
-			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> {
+				{ nameof(BaseParameters), baseParameters },
+				{ nameof(StockRepository), stockRepository }
+			})));
 			performance.End();
 		}
 		private bool CheckDismissDate() {
@@ -363,7 +367,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 				UoW.Save(Entity.IssuanceSheet);
 
 			performance.CheckPoint("Обновляем записи в карточке сотрудника...");
-			Entity.UpdateEmployeeWearItems();
+			Entity.UpdateEmployeeWearItems(UoW);
 			performance.CheckPoint("Завершение транзакции...");
 			UoW.Commit();
 			performance.End();

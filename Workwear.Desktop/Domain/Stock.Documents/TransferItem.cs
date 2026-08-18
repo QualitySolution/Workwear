@@ -102,7 +102,7 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual StockBalanceModel StockBalanceModel { get; set; }
 		#endregion
 		public TransferItem() { }
-		public TransferItem(IUnitOfWork uow, Transfer transfer, StockPosition position, int amount, IEnumerable<Barcode> barcodes = null) {
+		public TransferItem(Transfer transfer, StockPosition position, int amount, IEnumerable<Barcode> barcodes = null) {
 			document = transfer;
 			warehouseOperation.Nomenclature = nomenclature = position.Nomenclature;
 			warehouseOperation.WearSize = position.WearSize;

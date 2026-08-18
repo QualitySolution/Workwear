@@ -54,7 +54,7 @@ namespace Workwear.Models.Import.Issuance
 			progress.Add();
 			foreach(var employeeGroup in grouped) {
 				progress.Add(text: $"Подготовка {employeeGroup.Key.ShortName}");
-				employeeGroup.Key.UpdateNextIssueAll();
+				employeeGroup.Key.UpdateNextIssueAll(uow);
 				dataParser.ChangedEmployees.Add(employeeGroup.Key);
 			}
 

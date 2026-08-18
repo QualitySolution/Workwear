@@ -88,6 +88,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
+			(stockRepository ?? throw new ArgumentNullException(nameof(stockRepository))).RepoUow = UoW;
 			SetDocumentDateProperty(e => e.Date);
 			
 			var entityEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
@@ -127,7 +128,10 @@ namespace Workwear.ViewModels.Stock.Documents {
 			Entity.PropertyChanged += EntityChange;
 			
 			Validations.Clear();
-			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> {
+				{ nameof(BaseParameters), baseParameters },
+				{ nameof(StockRepository), stockRepository }
+			})));
 		}
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#duty-issue");

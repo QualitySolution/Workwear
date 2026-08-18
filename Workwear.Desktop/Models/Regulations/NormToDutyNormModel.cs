@@ -129,7 +129,7 @@ namespace Workwear.Models.Regulations {
 				RemoveNorm(norm, uow);
 				foreach(var emp in employees) {
 					progressBar.Add(text: $"Пересчитываем потребности для {emp.ShortName}");
-					emp.UpdateWorkwearItems();
+					emp.UpdateWorkwearItems(uow);
 				}
 
 				UpdateDocsComments(expenseDocs);
@@ -190,7 +190,7 @@ namespace Workwear.Models.Regulations {
 
 				var employee = expenseDoc.Employee;
 				progressBar.Add(text: $"Пересчитываем потребности для {employee.ShortName}");
-				employee.UpdateWorkwearItems();
+				employee.UpdateWorkwearItems(uow);
 
 				UpdateDocsComments(expenseDocs);
 				uow.Commit();
@@ -245,7 +245,7 @@ namespace Workwear.Models.Regulations {
 				//Коллективная выдача может затрагивать нескольких сотрудников - пересчитываем потребности у всех.
 				foreach(var employee in matchingItems.Select(x => x.Employee).Where(x => x != null).Distinct()) {
 					progressBar.Add(text: $"Пересчитываем потребности для {employee.ShortName}");
-					employee.UpdateWorkwearItems();
+					employee.UpdateWorkwearItems(uow);
 				}
 
 				UpdateDocsComments(collectiveExpenseDocs);

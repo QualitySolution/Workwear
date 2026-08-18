@@ -189,7 +189,10 @@ namespace Workwear.ViewModels.Company
 			Performance.CheckPoint("Создание View");
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(this));
-			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object>{{nameof(FeaturesService), featuresService}})));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> {
+				{ nameof(FeaturesService), featuresService },
+				{ nameof(IUnitOfWork), UoW }
+			})));
 		}
 
 		public readonly ProgressPerformanceHelper Performance;

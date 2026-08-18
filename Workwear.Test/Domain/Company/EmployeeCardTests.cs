@@ -43,8 +43,8 @@ namespace Workwear.Test.Domain.Company
 			norm2.Items.Returns(items2);
 			
 			var employee = new EmployeeCard();
-			employee.AddUsedNorm(norm1);
-			employee.AddUsedNorm(norm2);
+			employee.AddUsedNorm(norm1, null);
+			employee.AddUsedNorm(norm2, null);
 
 			//Происходит автоматически
 			//employee.UpdateWorkwearItems();
@@ -91,8 +91,8 @@ namespace Workwear.Test.Domain.Company
 			var items2 = new ObservableList<NormItem> { norm2item1, norm2item2 };
 			norm2.Items.Returns(items2);
 			
-			employee.AddUsedNorm(norm1);
-			employee.AddUsedNorm(norm2);
+			employee.AddUsedNorm(norm1, null);
+			employee.AddUsedNorm(norm2, null);
 
 			//Происходит автоматически
 			//employee.UpdateWorkwearItems();
@@ -139,8 +139,8 @@ namespace Workwear.Test.Domain.Company
 			var items2 = new ObservableList<NormItem> { norm2item1, norm2item2 };
 			norm2.Items.Returns(items2);
 			
-			employee.AddUsedNorm(norm2);
-			employee.AddUsedNorm(norm1);
+			employee.AddUsedNorm(norm2, null);
+			employee.AddUsedNorm(norm1, null);
 
 			//Происходит автоматически
 			//employee.UpdateWorkwearItems();
@@ -170,7 +170,7 @@ namespace Workwear.Test.Domain.Company
 			var normCondition = new NormCondition() { SexNormCondition = sexNormCondition };
 			norm.AddItem(protectionTools).NormCondition = normCondition;
 			var employee = new EmployeeCard() { Sex = employeeSex };
-			employee.AddUsedNorm(norm);
+			employee.AddUsedNorm(norm, null);
 
 			return employee.WorkwearItems.Count;
 		}
@@ -185,12 +185,12 @@ namespace Workwear.Test.Domain.Company
 			var normWithoutCondition = new Norm();
 			normWithoutCondition.AddItem(protectionTools);
 			var employeeWithoutCondition = new EmployeeCard() { Sex = employeeSex };
-			employeeWithoutCondition.AddUsedNorm(normWithoutCondition);
+			employeeWithoutCondition.AddUsedNorm(normWithoutCondition, null);
 			
 			var normWithCondition = new Norm();
 			normWithCondition.AddItem(protectionTools).NormCondition = new NormCondition();
 			var employeeWithCondition = new EmployeeCard() { Sex = employeeSex };
-			employeeWithCondition.AddUsedNorm(normWithCondition);
+			employeeWithCondition.AddUsedNorm(normWithCondition, null);
 
 			Assert.That(employeeWithCondition.WorkwearItems.Count, Is.EqualTo(employeeWithoutCondition.WorkwearItems.Count));
 		}
@@ -202,12 +202,12 @@ namespace Workwear.Test.Domain.Company
 			var protectionTools1 = Substitute.For<ProtectionTools>();
 			norm.AddItem(protectionTools1);
 			var employee = new EmployeeCard();
-			employee.AddUsedNorm(norm);
+			employee.AddUsedNorm(norm, null);
 			var before = employee.WorkwearItems.Count;
 			
 			var protectionTools2 = Substitute.For<ProtectionTools>();
 			norm.AddItem(protectionTools2);
-			employee.UpdateWorkwearItems();
+			employee.UpdateWorkwearItems(null);
 			var after = employee.WorkwearItems.Count;
 			
 			Assert.That(after - before, Is.EqualTo(1));
@@ -222,11 +222,11 @@ namespace Workwear.Test.Domain.Company
 			var protectionTools2 = Substitute.For<ProtectionTools>();
 			var secondItem = norm.AddItem(protectionTools2);
 			var employee = new EmployeeCard();
-			employee.AddUsedNorm(norm);
+			employee.AddUsedNorm(norm, null);
 			var before = employee.WorkwearItems.Count;
 			
 			norm.RemoveItem(secondItem);
-			employee.UpdateWorkwearItems();
+			employee.UpdateWorkwearItems(null);
 			var after = employee.WorkwearItems.Count;
 			
 			Assert.That(after - before, Is.EqualTo(-1));

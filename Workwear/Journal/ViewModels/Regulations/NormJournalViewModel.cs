@@ -185,7 +185,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				foreach(var employee in employees) {
 					progress.Add(text: $"Обработка {employee.ShortName}");
 					step++;
-					employee.UpdateWorkwearItems();
+					employee.UpdateWorkwearItems(localUow);
 					localUow.Save(employee);
 					if(step % 10 == 0)
 						localUow.Commit();

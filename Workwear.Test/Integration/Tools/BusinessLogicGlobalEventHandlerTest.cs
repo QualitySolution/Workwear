@@ -173,7 +173,7 @@ namespace Workwear.Test.Integration.Tools
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 
 				var vacationType = new VacationType();
 				vacationType.Name = "Тестовый отпуск";
@@ -309,7 +309,7 @@ namespace Workwear.Test.Integration.Tools
 
 				var employee = new EmployeeCard();
 				employee.HireDate = new DateTime(2018, 1, 15);
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -339,7 +339,7 @@ namespace Workwear.Test.Integration.Tools
 				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
 				uow.Commit();
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				employee.WorkwearItems.First(e => e.ProtectionTools.IsSame(protectionTools2)).Created = new DateTime(2018, 4, 22);
 				uow.Save(expense.Employee);
 				uow.Commit();

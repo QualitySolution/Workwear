@@ -83,7 +83,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -127,7 +127,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 
 				//Тут ожидаем предложение перенести дату использование второй номенклатуры на год.
 				ask.ReceivedWithAnyArgs().Question(String.Empty);
@@ -191,7 +191,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -242,7 +242,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Commit();
 
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.UpdateNextIssue(expense.Items.Select(x => x.ProtectionTools).ToArray());
+				employee.UpdateNextIssue(uow, expense.Items.Select(x => x.ProtectionTools).ToArray());
 
 				//Тут ожидаем предложение перенести дату использование второй номенклатуры на год.
 				ask.ReceivedWithAnyArgs().Question(String.Empty);
@@ -313,7 +313,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -344,7 +344,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -405,7 +405,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -434,7 +434,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(expense.IssuanceSheet);
 				uow.Save(expense);
 				uow.Commit();
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				Assert.That(expense.IssuanceSheet, Is.Not.Null);

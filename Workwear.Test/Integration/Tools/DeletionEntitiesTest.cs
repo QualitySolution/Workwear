@@ -84,7 +84,7 @@ namespace Workwear.Test.Integration.Tools
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -123,7 +123,7 @@ namespace Workwear.Test.Integration.Tools
 				uow.Save(expense.IssuanceSheet);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				var docs = uow.GetAll<Expense>().ToList();

@@ -199,7 +199,7 @@ namespace Workwear.Domain.Stock.Documents
 			foreach(var item in items) {
 				if(item.ReturnFrom == ReturnFrom.Employee && item.EmployeeCard != null) {
 					item.EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-					item.EmployeeCard.UpdateNextIssue(Items.Where(i =>
+					item.EmployeeCard.UpdateNextIssue(uow, Items.Where(i =>
 							i.ReturnFrom == ReturnFrom.Employee
 							&& DomainHelper.EqualDomainObjects(i.EmployeeCard, item.EmployeeCard))
 						.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)

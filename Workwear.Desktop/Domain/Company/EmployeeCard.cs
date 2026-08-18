@@ -32,7 +32,7 @@ namespace Workwear.Domain.Company
 		GenitivePlural = "карточек сотрудников"
 	)]
 	[HistoryTrace]
-	public class EmployeeCard: BusinessObjectBase<EmployeeCard>, IDomainObject, IValidatableObject
+	public class EmployeeCard: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
@@ -323,9 +323,12 @@ namespace Workwear.Domain.Company
 					$"Некорректный формат email адреса",
 					new[] { nameof(Email) });
 
-			if(!String.IsNullOrEmpty(PersonnelNumber)) {
+			validationContext.Items.TryGetValue(nameof(IUnitOfWork), out var uowObject);
+			var uow = uowObject as IUnitOfWork;
 
-				var result = UoW.Session.QueryOver<EmployeeCard>()
+			if(uow != null && !String.IsNullOrEmpty(PersonnelNumber)) {
+
+				var result = uow.Session.QueryOver<EmployeeCard>()
 					.Where(x => x.PersonnelNumber == PersonnelNumber && x.DismissDate == DismissDate);
 				if(Id > 0)
 					result.WhereNot(x => x.Id == Id);
@@ -335,9 +338,9 @@ namespace Workwear.Domain.Company
 						new[] { this.GetPropertyName(o => o.PersonnelNumber) });
 			}
 
-			if(!String.IsNullOrEmpty(CardNumber)) {
+			if(uow != null && !String.IsNullOrEmpty(CardNumber)) {
 
-				var result = UoW.Session.QueryOver<EmployeeCard>()
+				var result = uow.Session.QueryOver<EmployeeCard>()
 					.Where(x => x.CardNumber == CardNumber);
 				if(Id > 0)
 					result.WhereNot(x => x.Id == Id);
@@ -454,11 +457,11 @@ namespace Workwear.Domain.Company
 		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
 		/// </summary>
 		/// <param name="protectionTools">Список номенклатур нормы потребности в которых надо обновлять.</param>
-		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools) {
+		public virtual void UpdateNextIssue(IUnitOfWork uow, params ProtectionTools[] protectionTools) {
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
 			foreach(var wearItem in WorkwearItems) {
 				if(ids.Contains(wearItem.ProtectionTools.Id))
-					wearItem.UpdateNextIssue(UoW);
+					wearItem.UpdateNextIssue(uow);
 			}
 		}
 
@@ -467,9 +470,9 @@ namespace Workwear.Domain.Company
 		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
 		/// </summary>
 		[Obsolete("Под удаление, используйте аналогичный механизм из EmployeeIssueModel.")]
-		public virtual void UpdateNextIssueAll() {
+		public virtual void UpdateNextIssueAll(IUnitOfWork uow) {
 			foreach(var wearItem in WorkwearItems) {
-				wearItem.UpdateNextIssue(UoW);
+				wearItem.UpdateNextIssue(uow);
 			}
 		}
 
@@ -551,8 +554,7 @@ namespace Workwear.Domain.Company
 				}
 			}
 			FillWearReceivedInfo(operations);
-			UpdateNextIssueAll();
+			UpdateNextIssueAll(uow);
 		}
 	}
 }
-

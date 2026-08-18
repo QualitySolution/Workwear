@@ -270,8 +270,7 @@ namespace Workwear.ViewModels.Regulations
 					var progress = progressPage.ViewModel.Progress;
 					progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
 					foreach(var employee in employees) {
-						employee.UoW = UoW;
-						employee.UpdateWorkwearItems();
+						employee.UpdateWorkwearItems(UoW);
 						UoW.Save(employee);
 					}
 					NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);

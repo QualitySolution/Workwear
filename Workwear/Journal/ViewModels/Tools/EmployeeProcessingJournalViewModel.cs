@@ -315,7 +315,7 @@ namespace workwear.Journal.ViewModels.Tools
 					step++;
 					if(removeNorms)
 						employee.UsedNorms.Clear();
-					employee.AddUsedNorm(norm);
+					employee.AddUsedNorm(norm, UoW);
 					UoW.Save(employee);
 					Results[employee.Id] = ("ОК", "green");
 					if(step % 10 == 0)

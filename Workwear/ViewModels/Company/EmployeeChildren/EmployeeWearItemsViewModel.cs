@@ -213,9 +213,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void UpdateWorkwearItems()
 		{
-			Entity.UpdateWorkwearItems();
+			Entity.UpdateWorkwearItems(UoW);
 			issueModel.FillWearInStockInfo(Entity, stockBalanceModel);
-			Entity.UpdateNextIssueAll();
+			Entity.UpdateNextIssueAll(UoW);
 		}
 
 		#region Ручные операции
@@ -245,7 +245,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionTools);
+			Entity.UpdateNextIssue(UoW, protectionTools);
 			UoW.Save(Entity);
 			UoW.Commit();
 		}

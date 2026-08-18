@@ -170,7 +170,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 				uow.Commit();
 
@@ -200,7 +200,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot()) {

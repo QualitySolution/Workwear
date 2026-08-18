@@ -256,11 +256,11 @@ namespace Workwear.Test.Integration.Operations
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 
 				var employee2 = new EmployeeCard();
-				employee2.AddUsedNorm(norm);
+				employee2.AddUsedNorm(norm, uow);
 				uow.Save(employee2);
 
 				var expense = new CollectiveExpense() {

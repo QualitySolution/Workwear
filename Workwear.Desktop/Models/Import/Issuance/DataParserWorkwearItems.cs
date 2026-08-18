@@ -330,7 +330,7 @@ namespace Workwear.Models.Import.Issuance
 				return false;
 
 			//FIXME в идеале здесь перебирать все нормы и искать в них именно тот СИЗ который выдается.
-			employee.AddUsedNorm(norm.First());
+			employee.AddUsedNorm(norm.First(), uow);
 			ChangedEmployees.Add(employee);
 			return true;
 		}

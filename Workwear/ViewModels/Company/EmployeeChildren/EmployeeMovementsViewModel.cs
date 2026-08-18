@@ -165,7 +165,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			}
 
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionToolsForUpdate.ToArray());
+			Entity.UpdateNextIssue(UoW, protectionToolsForUpdate.ToArray());
 		}
 
 		public void OpenJournalChangeProtectionTools(EmployeeMovementItem item) {
@@ -228,7 +228,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools) {
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionTools);
+			Entity.UpdateNextIssue(UoW, protectionTools);
 		}
 
 		#endregion

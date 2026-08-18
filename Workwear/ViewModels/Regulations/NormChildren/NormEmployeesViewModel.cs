@@ -65,7 +65,7 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 			var newEmployees = parent.UoW.GetById<EmployeeCard>(selectedIds);
 			foreach(var employee in newEmployees) {
 				progressCreator.Add(text: $"Добавление нормы для {employee.ShortName}");
-				employee.AddUsedNorm(parent.Entity);
+				employee.AddUsedNorm(parent.Entity, parent.UoW);
 			}
 			progressCreator.Add(text: "Сохранение изменений");
 			parent.UoW.Commit();
@@ -84,7 +84,7 @@ namespace Workwear.ViewModels.Regulations.NormChildren {
 			var newEmployees = parent.UoW.GetById<EmployeeCard>(employees.Select(x => x.Id).ToArray());
 			foreach(var employee in newEmployees) {
 				progressCreator.Add(text: $"Удаление нормы у {employee.ShortName}");
-				employee.RemoveUsedNorm(parent.Entity);
+				employee.RemoveUsedNorm(parent.Entity, parent.UoW);
 			}
 
 			progressCreator.Add(text: "Сохранение изменений");

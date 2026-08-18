@@ -134,7 +134,7 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 
 				var warehouseOperation = new WarehouseOperation {
@@ -241,8 +241,7 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.UoW = uow;
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				foreach (var item in employee.WorkwearItems) {
 					item.Created = new DateTime(2020, 1, 1);
 				}
@@ -292,7 +291,7 @@ namespace WorkwearTest.ViewModels.Stock
 				};
 				uow.Save(issuedOperation2);
 				
-				employee.UpdateNextIssueAll();
+				employee.UpdateNextIssueAll(uow);
 				uow.Commit();
 
 				//Создаем выдачу чтобы выдать вторую номенклатуру программа не должна предлагать к выдаче первую.
@@ -377,7 +376,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var employee = new EmployeeCard();
 				employee.DismissDate = null;
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 
 				var warehouseOperation = new WarehouseOperation {
@@ -498,7 +497,7 @@ namespace WorkwearTest.ViewModels.Stock
 
 				var employee = new EmployeeCard();
 				employee.DismissDate = null;
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 
 				var warehouseOperation = new WarehouseOperation {

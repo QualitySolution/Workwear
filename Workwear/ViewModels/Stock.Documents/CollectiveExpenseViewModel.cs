@@ -84,6 +84,7 @@ namespace Workwear.ViewModels.Stock.Documents
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
+			(stockRepository ?? throw new ArgumentNullException(nameof(stockRepository))).RepoUow = UoW;
 			SetDocumentDateProperty(e => e.Date);
 
 			var performance = new ProgressPerformanceHelper(globalProgress, 12, "Предзагрузка данных документа", logger);
@@ -134,7 +135,10 @@ namespace Workwear.ViewModels.Stock.Documents
 			
 			//Переопределяем параметры валидации
 			Validations.Clear();
-			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> { { nameof(BaseParameters), baseParameters } })));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> {
+				{ nameof(BaseParameters), baseParameters },
+				{ nameof(StockRepository), stockRepository }
+			})));
 			performance.End();
 		}
 

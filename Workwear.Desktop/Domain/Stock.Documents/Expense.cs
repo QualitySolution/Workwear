@@ -108,8 +108,9 @@ namespace Workwear.Domain.Stock.Documents
 			
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if(UoW != null && baseParameters.CheckBalances) {
-				var repository = new StockRepository(UoW);
+			validationContext.Items.TryGetValue(nameof(StockRepository), out var repositoryObject);
+			var repository = repositoryObject as StockRepository;
+			if(repository != null && baseParameters.CheckBalances) {
 				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
 				var balance = repository.StockBalances(Warehouse, nomenclatures, Date, excludeOperations);
@@ -210,11 +211,11 @@ namespace Workwear.Domain.Stock.Documents
 				Items.ToList().ForEach(x => x.UpdateWarehouseOperations(uow));
 		}
 
-		public virtual void UpdateEmployeeWearItems()
+		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow)
 		{
-			Employee.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
-			Employee.UpdateNextIssue(Items.Where(x => x.ProtectionTools != null).Select(x => x.ProtectionTools).ToArray());
-			UoW.Save(Employee);
+			Employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+			Employee.UpdateNextIssue(uow, Items.Where(x => x.ProtectionTools != null).Select(x => x.ProtectionTools).ToArray());
+			uow.Save(Employee);
 		}
 
 		#region Ведомость

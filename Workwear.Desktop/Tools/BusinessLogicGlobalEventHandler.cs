@@ -72,7 +72,7 @@ namespace Workwear.Tools
 								x.GetOldValueCast<EmployeeIssueOperation, ProtectionTools>(e => e.ProtectionTools))
 							.Where(x => x != null).Distinct().ToArray();
 						employee.FillWearReceivedInfo(employeeIssueRepository);
-						employee.UpdateNextIssue(protectionTools);
+						employee.UpdateNextIssue(uow, protectionTools);
 					}
 					uow.Commit();
 				}

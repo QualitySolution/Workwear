@@ -146,7 +146,7 @@ namespace Workwear.Test.Integration.Import
 					Subdivision = subdivision,
 					Post = post
 				};
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uowPrepare);
 				uowPrepare.Save(employee);
 				uowPrepare.Commit();
 				
@@ -286,7 +286,7 @@ namespace Workwear.Test.Integration.Import
 					FirstName = "Руслан",
 					Patronymic = "Анорбекович",
 				};
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uowPrepare);
 				uowPrepare.Save(employee);
 				uowPrepare.Commit();
 				
@@ -383,14 +383,14 @@ namespace Workwear.Test.Integration.Import
 					FirstName = "РУСЛАН",
 					Patronymic = "Анорбекович",
 				};
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uowPrepare);
 				uowPrepare.Save(employee);
 				var employee2 = new EmployeeCard() {
 					LastName = "АНУРОВ",
 					FirstName = "ПАВЕЛ",
 					Patronymic = "Александрович",
 				};
-				employee2.AddUsedNorm(norm);
+				employee2.AddUsedNorm(norm, uowPrepare);
 				uowPrepare.Save(employee2);
 				uowPrepare.Commit();
 				

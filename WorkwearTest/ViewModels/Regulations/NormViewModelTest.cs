@@ -109,7 +109,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.AddUsedNorm(norm);
+				employee.AddUsedNorm(norm, uow);
 				uow.Save(employee);
 
 				// Создаем последовательность неправильных выдач
@@ -157,7 +157,7 @@ namespace WorkwearTest.ViewModels.Regulations {
 				uow.Commit();
 				
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.UpdateNextIssueAll();
+				employee.UpdateNextIssueAll(uow);
 				
 				Assert.That(employee.WorkwearItems.First().NextIssue, Is.EqualTo(new DateTime(2023, 2, 17)));
 				
