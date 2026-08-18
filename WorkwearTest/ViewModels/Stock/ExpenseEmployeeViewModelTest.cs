@@ -31,6 +31,7 @@ using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace WorkwearTest.ViewModels.Stock
 {

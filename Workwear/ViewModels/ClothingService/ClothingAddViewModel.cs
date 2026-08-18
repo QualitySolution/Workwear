@@ -19,6 +19,7 @@ using Workwear.Repository.Stock;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Postomats;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.ClothingService {
 	public class ClothingAddViewModel : UowDialogViewModelBase, IWindowDialogSettings {

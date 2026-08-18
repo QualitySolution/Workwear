@@ -8,6 +8,7 @@ using Workwear.Domain.Company;
 using workwear.Representations.Organization;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {

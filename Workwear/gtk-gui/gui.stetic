@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <stetic-interface>
   <configuration>
     <images-root-path>..</images-root-path>
@@ -3288,7 +3288,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseEmployeeView" design-size="729 441">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.ExpenseEmployeeView" design-size="729 441">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -3843,7 +3843,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Workwear.Views.Stock.ExpenseDocItemEmployeeView" id="expensedocitememployeeview1">
+          <widget class="Workwear.Views.Stock.Documents.ExpenseDocItemEmployeeView" id="expensedocitememployeeview1">
             <property name="MemberName" />
             <property name="Events">ButtonPressMask</property>
           </widget>
@@ -3855,7 +3855,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.CollectiveExpenseView" design-size="894 494">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.CollectiveExpenseView" design-size="894 494">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -4344,7 +4344,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Workwear.Views.Stock.CollectiveExpenseItemsView" id="expensedocitememployeeview1">
+          <widget class="Workwear.Views.Stock.Documents.CollectiveExpenseItemsView" id="expensedocitememployeeview1">
             <property name="MemberName" />
             <property name="Events">ButtonPressMask</property>
           </widget>
@@ -4356,7 +4356,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.WriteOffView" design-size="1102 499">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.WriteOffView" design-size="1102 499">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -12549,7 +12549,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.WarehouseTransferView" design-size="984 449">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.WarehouseTransferView" design-size="984 449">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -15129,7 +15129,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseDocItemEmployeeView" design-size="699 234">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.ExpenseDocItemEmployeeView" design-size="699 234">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -15330,7 +15330,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.CollectiveExpenseItemsView" design-size="762 235">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.CollectiveExpenseItemsView" design-size="762 235">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -20731,7 +20731,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.CompletionView" design-size="1536 402">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.CompletionView" design-size="1536 402">
     <property name="MemberName" />
     <child>
       <widget class="Gamma.GtkWidgets.yVBox" id="yvbox1">
@@ -25280,7 +25280,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.InspectionView" design-size="823 405">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.InspectionView" design-size="823 405">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -30835,7 +30835,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ExpenseDutyNormView" design-size="1020 498">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.ExpenseDutyNormView" design-size="1020 498">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -34424,7 +34424,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.IncomeView" design-size="639 368">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.IncomeView" design-size="639 368">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -35003,7 +35003,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.ReturnView" design-size="995 368">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.ReturnView" design-size="922 368">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -40328,7 +40328,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.OverNormView" design-size="987 411">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.OverNormView" design-size="987 411">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -41109,7 +41109,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Stock.BarcodingView" design-size="823 372">
+  <widget class="Gtk.Bin" id="Workwear.Views.Stock.Documents.BarcodingView" design-size="823 372">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>

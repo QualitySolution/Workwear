@@ -23,6 +23,7 @@ using Workwear.ViewModels.Operations;
 using Workwear.ViewModels.Regulations;
 using Workwear.Tools;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
