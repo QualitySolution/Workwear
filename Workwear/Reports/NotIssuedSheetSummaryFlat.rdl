@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>43in</PageWidth>
+  <PageWidth>50in</PageWidth>
   <Width>1pt</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>4mm</LeftMargin>
@@ -59,16 +59,19 @@
           <TableColumn>
             <Width>74.3pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>193.7pt</Width>
-          </TableColumn>
-          <TableColumn >
-            <Width>179.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>109.1pt</Width>
             <Visibility>
               <Hidden>=!{?show_stock}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>675.6pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_shipment}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
@@ -92,9 +95,9 @@
                         <BorderStyle>
                           <Default>None</Default>
                           <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -114,9 +117,9 @@
                         <BorderStyle>
                           <Default>None</Default>
                           <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -135,9 +138,9 @@
                         <BorderStyle>
                           <Default>None</Default>
                           <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -168,7 +171,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox15">
                       <Value></Value>
@@ -189,7 +192,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox20">
                       <Value></Value>
@@ -198,9 +201,9 @@
                         <BorderStyle>
                           <Default>None</Default>
                           <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -219,9 +222,9 @@
                         <BorderStyle>
                           <Default>None</Default>
                           <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -240,9 +243,9 @@
                         <BorderStyle>
                           <Default>None</Default>
                           <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
                         <FontWeight>Bold</FontWeight>
                         <BorderColor />
@@ -419,28 +422,10 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
                       <Value>Причина расхождения</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox21">
-                      <Value>Дата поставки</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -471,6 +456,24 @@
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                       <Visibility></Visibility>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value>Поставки</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -664,24 +667,6 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox22">
-                      <Value>={shipment_periods}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <Format>0</Format>
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                      <CanGrow>true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox54">
@@ -702,6 +687,23 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox22">
+                      <Value>={shipment_periods}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Left</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox6">
                       <Value>={employees}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -710,7 +712,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign>Center</TextAlign>
+                        <TextAlign>Left</TextAlign>
                         <Format>0</Format>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
@@ -731,7 +733,7 @@
     <Height>13.8pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
-    <ReportItems >
+    <ReportItems>
       <Textbox Name="Textbox12">
         <Height>12pt</Height>
         <Width>265.75pt</Width>
@@ -755,7 +757,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT tabel.*,
@@ -804,13 +806,14 @@ FROM (SELECT protection_tools.name                                              
                           GROUP_CONCAT(DISTINCT IFNULL(period,
                                          IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,
                                             CONCAT(
-                                              CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%Y'),
+                                              '№', diff.shipment_id,
+                                              ' (', CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%y'),
                                                         NULLIF(
-                                                          DATE_FORMAT(diff.end_period, '%d.%m.%Y'),
-                                                          DATE_FORMAT(diff.start_period, '%d.%m.%Y')
+                                                          DATE_FORMAT(diff.end_period, '%d.%m.%y'),
+                                                          DATE_FORMAT(diff.start_period, '%d.%m.%y')
                                                         )
-                                              ),
-                                             ' (№', diff.shipment_id, ')'
+                                              ), ')',
+                                              IFNULL(CONCAT(' ', NULLIF(diff.comment, '')), '')
                                             )))
                                       SEPARATOR ', ') AS shipment_periods
                    FROM protection_tools_nomenclature
@@ -819,15 +822,18 @@ FROM (SELECT protection_tools.name                                              
                                          shipment.id as shipment_id,
                                          shipment.start_period,
                                          shipment.end_period,
+                                         shipment.comment,
                                          GROUP_CONCAT(DISTINCT NULLIF(shipment_items.diff_cause, '') SEPARATOR ', ') AS diff_causes,
                                          IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL,
                                             CONCAT(
-                                                    CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y'),
+                                                    '№', shipment.id,
+                                                    ' (', CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%y'),
                                                               NULLIF(
-                                                                      DATE_FORMAT(MAX(shipment_items.end_period), '%d.%m.%Y'),
-                                                                      DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y')
+                                                                      DATE_FORMAT(MAX(shipment_items.end_period), '%d.%m.%y'),
+                                                                      DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%y')
                                                               )),
-                                                    ' (№', shipment.id, ')'
+                                                    ')',
+                                                    IFNULL(CONCAT(' ', NULLIF(shipment.comment, '')), '')
                                             )) AS period
                                   FROM nomenclature
                                         LEFT JOIN shipment_items ON nomenclature.id = shipment_items.nomenclature_id
@@ -1039,7 +1045,7 @@ ORDER BY tabel.protection_tools_name,
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1136,7 +1142,7 @@ ORDER BY tabel.protection_tools_name,
       </ConnectionProperties>
     </DataSource>
   </DataSources>
-  <ReportParameters>
+  <ReportParameters >
     <ReportParameter Name="report_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1258,6 +1264,18 @@ ORDER BY tabel.protection_tools_name,
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_shipment">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>

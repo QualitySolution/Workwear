@@ -99,6 +99,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"all_warehouse", Warehouse.Id == -1},
 					{"warehouse_id", Warehouse.Id },
 					{"hide_worn", HideWorn},
+					{"show_shipment", ShowShipment},
 					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
@@ -115,6 +116,7 @@ namespace workwear.ReportParameters.ViewModels
 			set {
 				SetField(ref reportType, value);
 				OnPropertyChanged(nameof(VisibleShowEmployees));
+				OnPropertyChanged(nameof(VisibleShowShipment));
 			}
 		}
 
@@ -179,7 +181,13 @@ namespace workwear.ReportParameters.ViewModels
 			get => warehouse.Id != -2 && hideWorn;
 			set => SetField(ref hideWorn, value);
 		}
-		
+
+		private bool showShipment;
+		public virtual bool ShowShipment {
+			get => warehouse.Id != -2 && showShipment;
+			set => SetField(ref showShipment, value);
+		}
+
 		private bool showEmployees;
 		public virtual bool ShowEmployees {
 			get => showEmployees;
@@ -217,6 +225,7 @@ namespace workwear.ReportParameters.ViewModels
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected && !ChoiceEmployeeGroupViewModel.AllUnSelected;
 		public bool VisibleShowEmployees => ReportType == NotIssuedSheetSummaryReportType.Flat;
 		public bool StockElementsSensetive => warehouse.Id != -2;
+		public bool VisibleShowShipment => featuresService.Available(WorkwearFeature.Shipment) && ReportType == NotIssuedSheetSummaryReportType.Flat;
 
 		public bool GroupByElementSensetive => Subdivision == null;
 		
