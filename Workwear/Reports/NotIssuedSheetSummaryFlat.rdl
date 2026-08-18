@@ -890,7 +890,13 @@ FROM (SELECT protection_tools.name                                              
                 DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end, 6),
                 DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start, 6) OR
                 DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end, 6)))
-        AND (@issue_type = '' OR item_types.issue_type = @issue_type)
+        AND (@issue_type = '' OR EXISTS (
+              SELECT 1 FROM protection_tools_nomenclature AS itn
+                  JOIN nomenclature AS itnom ON itnom.id = itn.nomenclature_id
+                  JOIN item_types AS itnit ON itnit.id = itnom.type_id
+              WHERE itn.protection_tools_id = protection_tools.id
+                AND itnit.issue_type = @issue_type
+            ))
         AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
         AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; employee_cards_item.next_issue)
       GROUP BY IF(@group_by_subdivision, subdivisions.id, NULL),
