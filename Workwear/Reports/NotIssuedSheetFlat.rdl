@@ -1093,7 +1093,7 @@ FROM
         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
         LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
         LEFT JOIN (
-            SELECT protection_tools_nomenclature.protection_tools_id, protection_tools.item_types_id as type_id,
+            SELECT protection_tools_nomenclature.protection_tools_id,
                             GROUP_CONCAT(DISTINCT NULLIF(diff.diff_causes, '') SEPARATOR ', ') AS diff_causes,
                             GROUP_CONCAT(
                                 DISTINCT
@@ -1168,11 +1168,11 @@ FROM
             ) as ballance
                   ON (employee_cards_item.employee_id = ballance.emp_id AND employee_cards_item.protection_tools_id = ballance.pt_id)
         #Остатки на складе
-        LEFT JOIN (SELECT sex_b.ptid, sex_b.type_id, sex_b.size_id, sex_b.height_id, sex_const.sex,
+        LEFT JOIN (SELECT sex_b.ptid, sex_b.size_id, sex_b.height_id, sex_const.sex,
                           IF(sex_const.sex = 'Men', sex_b.SUM_M + sex_b.SUM_U, sex_b.SUM_F + sex_b.SUM_U) AS SUM
                    FROM (
                             #Универсальый зарос
-                            SELECT spt.id AS ptid, sn.type_id, sopwh.size_id, sopwh.height_id,
+                            SELECT spt.id AS ptid, sopwh.size_id, sopwh.height_id,
                                    (SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
                                                                      (@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id)), sopwh.amount, 0))
                                        - SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_expense_id IS NOT NULL AND
@@ -1206,7 +1206,6 @@ FROM
                    GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
         AS stock
                   ON (employee_cards_item.protection_tools_id = stock.ptid
-                      AND nomenclatureTypes.type_id = stock.type_id
                       AND (stock.sex = 'Universal' OR (stock.sex = 'Men' AND employees.sex = 'M') OR (stock.sex = 'Women' AND employees.sex = 'F'))
                       AND (sizeTypeAlias.id IS NULL OR stock.size_id IS NULL OR stock.size_id = employeeSizeAlias.size_id OR stock.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
                       AND (heightTypeAlias.id IS NULL OR stock.height_id IS NULL OR stock.height_id = employeeHeightAlias.size_id OR stock.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
@@ -1235,7 +1234,12 @@ WHERE
             JOIN item_types AS itnit ON itnit.id = itnom.type_id
         WHERE itn.protection_tools_id = protection_tools.id
           AND itnit.issue_type = @issue_type
-      ) )
+      )
+      #Если номенклатуры ещё не подобраны, смотрим на тип номенклатуры нормы
+      OR (NOT EXISTS (
+            SELECT 1 FROM protection_tools_nomenclature AS itn0
+            WHERE itn0.protection_tools_id = protection_tools.id
+          ) AND item_types.issue_type = @issue_type) )
   AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
   AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; employee_cards_item.next_issue)
 GROUP BY

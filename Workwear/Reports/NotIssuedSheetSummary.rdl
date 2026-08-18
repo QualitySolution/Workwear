@@ -924,7 +924,12 @@ FROM(SELECT
                  JOIN item_types AS itnit ON itnit.id = itnom.type_id
              WHERE itn.protection_tools_id = protection_tools.id
                AND itnit.issue_type = @issue_type
-           ) )
+           )
+           #Если номенклатуры не подобраны, смотрим на тип номенклатуры нормы
+           OR (NOT EXISTS (
+                 SELECT 1 FROM protection_tools_nomenclature AS itn0
+                 WHERE itn0.protection_tools_id = protection_tools.id
+               ) AND item_types.issue_type = @issue_type) )
        AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
        AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; employee_cards_item.next_issue)
      GROUP BY
