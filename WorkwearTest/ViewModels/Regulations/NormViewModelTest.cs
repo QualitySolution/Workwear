@@ -156,8 +156,8 @@ namespace WorkwearTest.ViewModels.Regulations {
 				uow.Save(issuedOperation3);
 				uow.Commit();
 				
-				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.UpdateNextIssueAll(uow);
+				container.Resolve<EmployeeIssueModel>()
+					.UpdateNextIssueAll(new[] { employee }, uow: uow);
 				
 				Assert.That(employee.WorkwearItems.First().NextIssue, Is.EqualTo(new DateTime(2023, 2, 17)));
 				

@@ -291,7 +291,8 @@ namespace WorkwearTest.ViewModels.Stock
 				};
 				uow.Save(issuedOperation2);
 				
-				employee.UpdateNextIssueAll(uow);
+				container.Resolve<EmployeeIssueModel>()
+					.UpdateNextIssueAll(new[] { employee }, uow: uow);
 				uow.Commit();
 
 				//Создаем выдачу чтобы выдать вторую номенклатуру программа не должна предлагать к выдаче первую.
