@@ -90,21 +90,25 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void OnShow()
 		{
-			if (IsConfigured) return;
+			if(IsConfigured || employeeViewModel.IsBusy)
+				return;
+
 			IsConfigured = true;
-			var performance = new ProgressPerformanceHelper(progress, 9, nameof(issueModel.PreloadWearItems), logger: logger);
-			issueModel.PreloadWearItems(Entity.Id);
-			performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
-			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
-			issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
-			performance.EndGroup();
-			performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
-			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			performance.CheckPoint("Обновление таблицы");
-			OnPropertyChanged(nameof(ObservableWorkwearItems));
-			Entity.PropertyChanged += EntityOnPropertyChanged;
-			performance.End();
-			logger.Info($"Таблица «Спецодежда по нормам» заполнена за {performance.TotalTime.TotalSeconds} сек." );
+			using(employeeViewModel.BeginBusyOperation("Загрузка спецодежды")) {
+				var performance = new ProgressPerformanceHelper(progress, 9, nameof(issueModel.PreloadWearItems), logger: logger);
+				issueModel.PreloadWearItems(Entity.Id);
+				performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
+				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+				issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
+				performance.EndGroup();
+				performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
+				Entity.FillWearReceivedInfo(employeeIssueRepository);
+				performance.CheckPoint("Обновление таблицы");
+				OnPropertyChanged(nameof(ObservableWorkwearItems));
+				Entity.PropertyChanged += EntityOnPropertyChanged;
+				performance.End();
+				logger.Info($"Таблица «Спецодежда по нормам» заполнена за {performance.TotalTime.TotalSeconds} сек." );
+			}
 		}
 
 		#endregion
