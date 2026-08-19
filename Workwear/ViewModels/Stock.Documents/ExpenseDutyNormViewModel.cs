@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using NHibernate;
 using NLog;
 using QS.Dialog;
 using QS.Dialog.GtkUI;
@@ -94,6 +95,9 @@ namespace Workwear.ViewModels.Stock.Documents {
 			var entityEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNorm>(this, Entity, UoW, navigation, autofacScope);
 			var vmEntryBuilder = new CommonEEVMBuilderFactory<ExpenseDutyNormViewModel>(this, this, UoW, navigation, autofacScope);
 
+			if(Entity.Id > 0)
+				PreloadDocument();
+
 			if(Entity.Warehouse == null)
 				Entity.Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
 			if(Entity.Id == 0) {
@@ -133,6 +137,50 @@ namespace Workwear.ViewModels.Stock.Documents {
 				{ nameof(StockRepository), stockRepository }
 			})));
 		}
+
+		private void PreloadDocument() {
+			var documentQuery = UoW.Session.QueryOver<ExpenseDutyNorm>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+				.Fetch(SelectMode.Fetch, x => x.DutyNorm)
+				.Fetch(SelectMode.Fetch, x => x.Warehouse)
+				.Fetch(SelectMode.Fetch, x => x.ResponsibleEmployee)
+				.Fetch(SelectMode.Fetch, x => x.IssuanceSheet)
+				.Future();
+
+			ExpenseDutyNormItem itemAlias = null;
+			UoW.Session.QueryOver<ExpenseDutyNorm>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Left.JoinAlias(x => x.Items, () => itemAlias)
+				.Fetch(SelectMode.Fetch, x => x.Items)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Operation)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Operation.DutyNormItem)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Operation.ProtectionTools)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Operation.ProtectionTools.Type)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Operation.Nomenclature)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Operation.Nomenclature.Type)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Operation.WearSize)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Operation.Height)
+				.Fetch(SelectMode.Fetch, () => itemAlias.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, () => itemAlias.WarehouseOperation.Owner)
+				.Fetch(SelectMode.Fetch, () => itemAlias.IssuanceSheetItem)
+				.Future();
+
+			DutyNormItem dutyNormItemAlias = null;
+			UoW.Session.QueryOver<DutyNorm>()
+				.Where(x => x.Id == Entity.DutyNorm.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Left.JoinAlias(x => x.Items, () => dutyNormItemAlias)
+				.Fetch(SelectMode.Fetch, x => x.Items)
+				.Fetch(SelectMode.Fetch, () => dutyNormItemAlias.ProtectionTools)
+				.Fetch(SelectMode.Fetch, () => dutyNormItemAlias.ProtectionTools.Type)
+				.Future();
+
+			documentQuery.SingleOrDefault();
+		}
+
 		#region IDialogDocumentation
 		public string DocumentationUrl => DocHelper.GetDocUrl("stock-documents.html#duty-issue");
 		public string ButtonTooltip => DocHelper.GetEntityDocTooltip(Entity.GetType());
