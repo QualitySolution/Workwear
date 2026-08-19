@@ -804,6 +804,7 @@ CREATE TABLE IF NOT EXISTS `operation_warehouse` (
   INDEX `fk_operation_warehouse_5_idx` (`height_id` ASC),
   INDEX `fk_operation_warehouse_6_idx` (`owner_id` ASC),
   INDEX `index_operation_warehouse_time` (`operation_time` ASC),
+  INDEX `idx_operation_warehouse_nomenclature_time` (`nomenclature_id` ASC, `operation_time` ASC),
   INDEX `index_operation_warehouse_wear_percent` (`wear_percent` ASC),
   CONSTRAINT `fk_operation_warehouse_1`
     FOREIGN KEY (`nomenclature_id`)
