@@ -22,6 +22,7 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using workwear;
 using Workwear.Domain.Company;
+using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
@@ -256,7 +257,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 				.Fetch(SelectMode.Fetch, () => expenseItemAlias.WarehouseOperation)
 				.Future();
 
-			if(featuresService.Available(WorkwearFeature.Barcodes))
+			if(featuresService.Available(WorkwearFeature.Barcodes)) {
 				UoW.Session.QueryOver<ExpenseItem>()
 					.Where(x => x.ExpenseDoc.Id == Entity.Id)
 					.Fetch(SelectMode.ChildFetch, x => x)
@@ -266,6 +267,18 @@ namespace Workwear.ViewModels.Stock.Documents {
 					.JoinQueryOver(x => x.BarcodeOperations, JoinType.LeftOuterJoin)
 					.Fetch(SelectMode.Fetch, x => x)
 					.Future();
+
+				BarcodeOperation barcodeOperationAlias = null;
+				ExpenseItem barcodeExpenseItemAlias = null;
+				UoW.Session.QueryOver<Barcode>()
+					.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias)
+					.JoinEntityAlias(
+						() => barcodeExpenseItemAlias,
+						() => barcodeExpenseItemAlias.EmployeeIssueOperation.Id == barcodeOperationAlias.EmployeeIssueOperation.Id,
+						JoinType.InnerJoin)
+					.Where(() => barcodeExpenseItemAlias.ExpenseDoc.Id == Entity.Id)
+					.Future();
+			}
 
 			expenseQuery.SingleOrDefault();
 		}
