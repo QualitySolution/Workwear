@@ -65,7 +65,7 @@ namespace Workwear.Views.Stock.Documents
 				.AddTextRenderer(x => x.BarcodesString)
 			.AddColumn("Номер").MinWidth(60)
 				.Visible(ViewModel.BarcodesVisible)
-				.AddTextRenderer(x => string.Join("\n", x.Barcodes.Select(b => b.GetKitNumberText(x.WarehouseOperation))))
+				.AddTextRenderer(x => x.KitNumbersString)
 			.RowCells().AddSetter<CellRendererText>((c, n) => c.Foreground = GetRowColor(n))
 			.Finish();
 

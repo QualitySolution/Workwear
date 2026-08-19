@@ -95,6 +95,10 @@ namespace Workwear.Domain.Stock.Documents
 				.Select(x => x.Barcode?.Title)
 				.Where(x => !string.IsNullOrWhiteSpace(x)));
 
+		public virtual string KitNumbersString => string.Join(
+			"\n",
+			WarehouseBarcodeOperations.Select(x => x.KitNumber > 0 ? x.KitNumber.ToString() : ""));
+
 		public virtual bool CanEditAmount => !WarehouseBarcodeOperations.Any();
 		#endregion
 

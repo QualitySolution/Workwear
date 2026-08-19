@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
+using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
@@ -75,13 +76,16 @@ namespace Workwear.ViewModels.Stock.Documents
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			SetDocumentDateProperty(e => e.Date);
+			var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
 			
 			if(Entity.Id == 0) {
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 				Entity.Organization =
 					organizationRepository.GetDefaultOrganization(UoW, autofacScope.Resolve<IUserService>().CurrentUserId);
-			}else 
-				autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
+			}
+			else {
+				PreloadDocument();
+			}
 
 			autoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 
@@ -99,7 +103,7 @@ namespace Workwear.ViewModels.Stock.Documents
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.Items.ContentChanged += (sender, args) => UpdateWarehouseFromEditable();
 			UpdateWarehouseFromEditable();
-			Owners = UoW.GetAll<Owner>().ToList();
+			Owners = ownersQuery.ToList();
 
 			//Переопределяем параметры валидации
 			Validations.Clear();
@@ -121,6 +125,33 @@ namespace Workwear.ViewModels.Stock.Documents
 			}
 		}
 
+		private void PreloadDocument() {
+			var documentQuery = UoW.Session.QueryOver<Transfer>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.Organization)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseFrom)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseTo)
+				.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+				.Future();
+
+			TransferItem itemAlias = null;
+			UoW.Session.QueryOver<Transfer>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Left.JoinAlias(x => x.Items, () => itemAlias)
+				.Fetch(SelectMode.Fetch, x => x.Items)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Nomenclature)
+				.Fetch(SelectMode.Fetch, () => itemAlias.Nomenclature.Type)
+				.Fetch(SelectMode.Fetch, () => itemAlias.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, () => itemAlias.WarehouseOperation.WearSize)
+				.Fetch(SelectMode.Fetch, () => itemAlias.WarehouseOperation.Height)
+				.Fetch(SelectMode.Fetch, () => itemAlias.WarehouseOperation.Owner)
+				.Future();
+
+			documentQuery.SingleOrDefault();
+		}
+
 		private void LoadBarcodes() {
 			var itemsWithWarehouseOperation = Entity.Items.Where(i => i.WarehouseOperation?.Id > 0).ToList();
 			if(!itemsWithWarehouseOperation.Any())
@@ -129,6 +160,7 @@ namespace Workwear.ViewModels.Stock.Documents
 			var warehouseOperationIds = itemsWithWarehouseOperation.Select(i => i.WarehouseOperation.Id).ToArray();
 			var barcodeOperations = UoW.Session.QueryOver<BarcodeOperation>()
 				.WhereRestrictionOn(x => x.WarehouseOperation.Id).IsIn(warehouseOperationIds)
+				.Fetch(SelectMode.Fetch, x => x.Barcode)
 				.List();
 
 			foreach(var item in itemsWithWarehouseOperation)
