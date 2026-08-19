@@ -92,6 +92,12 @@
               <Hidden>=!{?show_shipment}</Hidden>
             </Visibility>
           </TableColumn>
+          <TableColumn>
+            <Width>300pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_employee_groups}</Hidden>
+            </Visibility>
+          </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
@@ -684,6 +690,24 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="TextboxEmployeeGroupsHeader">
+                      <Value>Группы сотрудников</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
               <Visibility></Visibility>
             </TableRow>
@@ -997,6 +1021,23 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="TextboxEmployeeGroups">
+                      <Value>={employee_groups}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <TextAlign>Left</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -1082,7 +1123,8 @@
     IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0) as need,
     IF(@show_stock, SUM(stock.SUM), null) AS in_stock,
     nomenclatureTypes.diff_causes,
-    nomenclatureTypes.shipment_periods
+    nomenclatureTypes.shipment_periods,
+    IF(@show_employee_groups, employeeGroups.groups, NULL) AS employee_groups
 FROM
     employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
@@ -1135,6 +1177,13 @@ FROM
         ON diff.nom_id = nomenclature.id
         GROUP BY protection_tools_id
         ) AS nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
+        LEFT JOIN (
+            SELECT egi.employee_id,
+                   GROUP_CONCAT(DISTINCT eg.name ORDER BY eg.name SEPARATOR ', ') AS groups
+            FROM employee_group_items AS egi
+                JOIN employee_groups AS eg ON eg.id = egi.employee_group_id
+            GROUP BY egi.employee_id
+        ) AS employeeGroups ON employeeGroups.employee_id = employee_cards_item.employee_id
         LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
         JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
         LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
@@ -1275,6 +1324,9 @@ ORDER BY
           <QueryParameter Name="@show_stock">
             <Value>={?show_stock}</Value>
           </QueryParameter>
+          <QueryParameter Name="@show_employee_groups">
+            <Value>={?show_employee_groups}</Value>
+          </QueryParameter>
           <QueryParameter Name="@hide_worn">
             <Value>={?hide_worn}</Value>
           </QueryParameter>
@@ -1398,6 +1450,10 @@ ORDER BY
         </Field>
         <Field Name="shipment_periods">
           <DataField>shipment_periods</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="employee_groups">
+          <DataField>employee_groups</DataField>
           <TypeName>System.String</TypeName>
         </Field>
       </Fields>
@@ -1524,6 +1580,18 @@ ORDER BY
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_shipment">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_employee_groups">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>

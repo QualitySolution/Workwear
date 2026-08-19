@@ -94,6 +94,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"hide_worn", HideWorn},
 					{"view_phones", ViewPhones},
 					{"show_shipment", ShowShipment},
+					{"show_employee_groups", featuresService.Available(WorkwearFeature.EmployeeGroups)},
 					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
