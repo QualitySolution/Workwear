@@ -454,6 +454,17 @@ namespace Workwear.Models.Operations {
 				.Select(x => x.ProtectionTools.Id)
 				.Distinct().ToArray();
 
+			//Загружаем выбор номенклатуры сотрудника, чтобы не запускать lazy-запрос при отрисовке таблицы
+			EmployeeSelectedNomenclature selectedNomenclatureAlias = null;
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.JoinAlias(x => x.SelectedNomenclatures, () => selectedNomenclatureAlias, JoinType.LeftOuterJoin)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.SelectedNomenclatures)
+				.Fetch(SelectMode.Fetch, () => selectedNomenclatureAlias.ProtectionTools)
+				.Fetch(SelectMode.Fetch, () => selectedNomenclatureAlias.Nomenclature)
+				.Future();
+
 			var query = UoW.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))
 				.Fetch(SelectMode.Fetch, p => p.Type)

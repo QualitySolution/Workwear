@@ -96,6 +96,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			IsConfigured = true;
 			using(employeeViewModel.BeginBusyOperation("Загрузка спецодежды")) {
 				var performance = new ProgressPerformanceHelper(progress, 9, nameof(issueModel.PreloadWearItems), logger: logger);
+				var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
 				issueModel.PreloadWearItems(Entity.Id);
 				performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
 				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;

@@ -404,6 +404,9 @@ namespace Workwear.ViewModels.Stock
 		{
 			if(Employee == null)
 				return;
+			//Выбор складской позиции учитывает приоритет владельца и показывает его имя.
+			//Загружаем справочник заранее, чтобы Owner из остатков не загружались по одному.
+			uow.Session.QueryOver<Owner>().List();
 			Expense = new Expense();
 			Expense.CreatedbyUser = userService.GetCurrentUser();
 			Expense.Employee = Employee;
