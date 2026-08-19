@@ -96,18 +96,24 @@ namespace Workwear.ViewModels.Stock.Documents
 			performance.CheckPoint(nameof(issueModel.PreloadWearItems));
 			issueModel.PreloadWearItems(employeeIds);
 			
-			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
-			var employees = Entity.Items.Select(x => x.Employee).Distinct();
 			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
 			stockBalanceModel.Warehouse = Entity.Warehouse;
 			stockBalanceModel.OnDate = Entity.Date;
 			stockBalanceModel.ExcludeOperations = excludeOperations;
-			issueModel.FillWearInStockInfo(employees, stockBalanceModel);
 			
 			performance.CheckPoint("Fill EmployeeCardItem's");
 			foreach(var docItem in Entity.Items) {
 				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
 			}
+
+			var documentWearItems = Entity.Items
+				.Select(x => x.EmployeeCardItem)
+				.Where(x => x != null)
+				.Distinct()
+				.ToArray();
+
+			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
+			issueModel.FillWearInStockInfo(documentWearItems, stockBalanceModel);
 			
 			performance.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
 			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());

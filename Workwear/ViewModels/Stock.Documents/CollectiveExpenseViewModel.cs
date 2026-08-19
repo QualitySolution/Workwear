@@ -98,6 +98,7 @@ namespace Workwear.ViewModels.Stock.Documents
 					.Fetch(SelectMode.ChildFetch, x => x)
 					.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
 					.Fetch(SelectMode.Fetch, x => x.Warehouse)
+					.Fetch(SelectMode.Fetch, x => x.TransferAgent)
 					.SingleOrDefault();
 			}
 			
