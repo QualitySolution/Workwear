@@ -5,6 +5,7 @@ using System.Linq;
 using Autofac;
 using NHibernate;
 using NHibernate.Criterion;
+using NHibernate.SqlCommand;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -102,6 +103,12 @@ namespace Workwear.ViewModels.Stock.Documents
             this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
             this.barcodeOperationRepository = barcodeOperationRepository ?? throw new ArgumentNullException(nameof(barcodeOperationRepository));
             SetDocumentDateProperty(e => e.Date);
+
+            var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
+            var causesWriteOffQuery = UoW.Session.QueryOver<CausesWriteOff>().Future();
+
+            if(Entity.Id > 0)
+                PreloadDocument();
             
             Entity.Items.ContentChanged += (sender, args) =>  CalculateTotal();
             CalculateTotal();
@@ -111,8 +118,8 @@ namespace Workwear.ViewModels.Stock.Documents
             }
             Employee = UoW.GetInSession(employee);
             DutyNorm = UoW.GetInSession(dutyNorm);
-            Owners = UoW.GetAll<Owner>().ToList();
-            CausesWriteOffs = UoW.GetAll<CausesWriteOff>().ToList();
+            Owners = ownersQuery.ToList();
+            CausesWriteOffs = causesWriteOffQuery.ToList();
             var entryBuilder = new CommonEEVMBuilderFactory<Writeoff>(this, Entity, UoW, navigation) {
 	            AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope))
             };
@@ -152,6 +159,86 @@ namespace Workwear.ViewModels.Stock.Documents
 		            new ValidationContext(Entity, 
 			            new Dictionary<object, object> { {nameof(BaseParameters), baseParameters} } 
 		            )));
+        }
+
+        private void PreloadDocument() {
+            var documentQuery = UoW.Session.QueryOver<Writeoff>()
+                .Where(x => x.Id == Entity.Id)
+                .Fetch(SelectMode.ChildFetch, x => x)
+                .Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+                .Fetch(SelectMode.Fetch, x => x.Director)
+                .Fetch(SelectMode.Fetch, x => x.Chairman)
+                .Fetch(SelectMode.Fetch, x => x.Organization)
+                .Future();
+
+            WriteoffItem itemAlias = null;
+            UoW.Session.QueryOver<Writeoff>()
+                .Where(x => x.Id == Entity.Id)
+                .Fetch(SelectMode.ChildFetch, x => x)
+                .Left.JoinAlias(x => x.Items, () => itemAlias)
+                .Fetch(SelectMode.Fetch, x => x.Items)
+                .Fetch(SelectMode.Fetch, () => itemAlias.Nomenclature)
+                .Fetch(SelectMode.Fetch, () => itemAlias.Nomenclature.Type)
+                .Fetch(SelectMode.Fetch, () => itemAlias.WearSize)
+                .Fetch(SelectMode.Fetch, () => itemAlias.Height)
+                .Fetch(SelectMode.Fetch, () => itemAlias.Warehouse)
+                .Fetch(SelectMode.Fetch, () => itemAlias.WarehouseOperation)
+                .Fetch(SelectMode.Fetch, () => itemAlias.WarehouseOperation.Owner)
+                .Fetch(SelectMode.Fetch, () => itemAlias.EmployeeWriteoffOperation)
+                .Fetch(SelectMode.Fetch, () => itemAlias.EmployeeWriteoffOperation.Employee)
+                .Fetch(SelectMode.Fetch, () => itemAlias.DutyNormWriteOffOperation)
+                .Fetch(SelectMode.Fetch, () => itemAlias.DutyNormWriteOffOperation.DutyNorm)
+                .Fetch(SelectMode.Fetch, () => itemAlias.CausesWriteOff)
+                .Future();
+
+            Leader memberAlias = null;
+            UoW.Session.QueryOver<Writeoff>()
+                .Where(x => x.Id == Entity.Id)
+                .Fetch(SelectMode.ChildFetch, x => x)
+                .Left.JoinAlias(x => x.Members, () => memberAlias)
+                .Fetch(SelectMode.Fetch, x => x.Members)
+                .Future();
+
+            if(FeaturesService.Available(WorkwearFeature.Barcodes)) {
+                PreloadEmployeeBarcodes();
+                PreloadDutyNormBarcodes();
+            }
+
+            documentQuery.SingleOrDefault();
+        }
+
+        private void PreloadEmployeeBarcodes() {
+            EmployeeIssueOperation operationAlias = null;
+            WriteoffItem itemAlias = null;
+            BarcodeOperation barcodeOperationAlias = null;
+
+            UoW.Session.QueryOver(() => operationAlias)
+                .JoinEntityAlias(
+                    () => itemAlias,
+                    () => itemAlias.EmployeeWriteoffOperation.Id == operationAlias.Id,
+                    JoinType.InnerJoin)
+                .Left.JoinAlias(() => operationAlias.BarcodeOperations, () => barcodeOperationAlias)
+                .Fetch(SelectMode.Fetch, () => operationAlias.BarcodeOperations)
+                .Fetch(SelectMode.Fetch, () => barcodeOperationAlias.Barcode)
+                .Where(() => itemAlias.Document.Id == Entity.Id)
+                .Future();
+        }
+
+        private void PreloadDutyNormBarcodes() {
+            DutyNormIssueOperation operationAlias = null;
+            WriteoffItem itemAlias = null;
+            BarcodeOperation barcodeOperationAlias = null;
+
+            UoW.Session.QueryOver(() => operationAlias)
+                .JoinEntityAlias(
+                    () => itemAlias,
+                    () => itemAlias.DutyNormWriteOffOperation.Id == operationAlias.Id,
+                    JoinType.InnerJoin)
+                .Left.JoinAlias(() => operationAlias.BarcodeOperations, () => barcodeOperationAlias)
+                .Fetch(SelectMode.Fetch, () => operationAlias.BarcodeOperations)
+                .Fetch(SelectMode.Fetch, () => barcodeOperationAlias.Barcode)
+                .Where(() => itemAlias.Document.Id == Entity.Id)
+                .Future();
         }
         
         #region IDialogDocumentation
@@ -537,6 +624,7 @@ namespace Workwear.ViewModels.Stock.Documents
 	        var warehouseOperationIds = warehouseItems.Select(i => i.WarehouseOperation.Id).ToArray();
 	        var barcodeOperations = UoW.Session.QueryOver<BarcodeOperation>()
 		        .WhereRestrictionOn(x => x.WarehouseOperation.Id).IsIn(warehouseOperationIds)
+		        .Fetch(SelectMode.Fetch, x => x.Barcode)
 		        .List();
 
 	        foreach(var item in warehouseItems)
