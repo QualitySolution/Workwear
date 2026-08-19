@@ -888,13 +888,9 @@ SELECT
     employees.phone_number,
     employee_cards_item.next_issue,
     (SELECT MAX(operation_issued_by_employee.operation_time) FROM operation_issued_by_employee WHERE operation_issued_by_employee.employee_id = employees.id AND protection_tools.id = operation_issued_by_employee.protection_tools_id AND operation_issued_by_employee.issued &gt; 0) as last_issue,
-    IF(
-            employee_cards_item.next_issue &lt;= CONVERT(@report_date, DATE),
-            DATEDIFF(
-                    CONVERT(@report_date, DATE),
-                    employee_cards_item.next_issue
-            ),
-            NULL
+    DATEDIFF(
+            CONVERT(@report_date, DATE),
+            employee_cards_item.next_issue
     ) AS delay,
     protection_tools.name AS protection_tools_name,
     protection_tools.assessed_cost * IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0) AS protection_tools_assessed_cost,
@@ -1029,7 +1025,7 @@ WHERE
             SELECT 1 FROM protection_tools_nomenclature AS itn0
             WHERE itn0.protection_tools_id = protection_tools.id
           ) AND item_types.issue_type = @issue_type) )
-  AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
+  AND employee_cards_item.next_issue &lt;= CONVERT(@report_date, DATE)
   AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; employee_cards_item.next_issue)
 GROUP BY
     employee_cards_item.employee_id,

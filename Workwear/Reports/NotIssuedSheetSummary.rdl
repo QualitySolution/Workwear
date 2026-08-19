@@ -930,7 +930,7 @@ FROM(SELECT
                  SELECT 1 FROM protection_tools_nomenclature AS itn0
                  WHERE itn0.protection_tools_id = protection_tools.id
                ) AND item_types.issue_type = @issue_type) )
-       AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
+       AND employee_cards_item.next_issue &lt;= CONVERT(@report_date, DATE)
        AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; employee_cards_item.next_issue)
      GROUP BY
          IF(@group_by_subdivision, subdivisions.id, NULL),
