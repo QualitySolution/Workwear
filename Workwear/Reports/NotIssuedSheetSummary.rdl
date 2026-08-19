@@ -387,7 +387,7 @@
                             <FontWeight>Bold</FontWeight>
                             <FontSize>11pt</FontSize>
                           </Style>
-                          <Value>= Iif(Fields!subdivision_id.IsMissing, "      Без подразделения", {subdivision_name}) + Iif({?department_name} !=  "", "  " + {?department_name}, "")</Value>
+                          <Value>= Iif({?group_by_subdivision}, Iif(Fields!subdivision_id.IsMissing, "      Без подразделения", {subdivision_name}), "      По всем выбранным подразделениям") + Iif({?department_name} !=  "", "  " + {?department_name}, "")</Value>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>6</ColSpan>
@@ -855,7 +855,7 @@ FROM(SELECT
          employee_cards_item.protection_tools_id,
          if(@group_by_subdivision, subdivisions.code, NULL) as subdivision_code,
          if(@group_by_subdivision, subdivisions.id, NULL)as subdivision_id,
-         subdivisions.name as subdivision_name,
+         if(@group_by_subdivision, subdivisions.name, NULL) as subdivision_name,
          IF(@show_sex, employees.sex, NULL) as sex,
          sizeTypeAlias.id as sizeTypeId,
          heightTypeAlias.id as heightTypeId,

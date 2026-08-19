@@ -508,7 +508,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox70">
-                      <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value)</Value>
+                      <Value>=Iif({?group_by_subdivision}, Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value), "")</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -765,11 +765,11 @@
 FROM (SELECT protection_tools.name                                                                     AS protection_tools_name,
              protection_tools.assessed_cost * SUM(IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0)) AS protection_tools_assessed_cost,
              employee_cards_item.protection_tools_id,
-             subdivisions.code                                                                              as subdivision_code,
-             subdivisions.id                                                                                as subdivision_id,
+             if(@group_by_subdivision, subdivisions.code, NULL)                                             as subdivision_code,
+             if(@group_by_subdivision, subdivisions.id, NULL)                                               as subdivision_id,
              if(@department_id, (SELECT name from departments as d where d.id = @department_id),
                 NULL)                                                                                  as department_name,
-             subdivisions.name                                                                              as subdivision_name,
+             if(@group_by_subdivision, subdivisions.name, NULL)                                             as subdivision_name,
              if(@show_employees,
                 LEFT(GROUP_CONCAT(CONCAT_WS('',
                                        CONCAT(employees.last_name, ' '),
