@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Autofac;
 using NHibernate;
+using NHibernate.SqlCommand;
 using NLog;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -85,6 +86,9 @@ namespace Workwear.ViewModels.Stock.Documents
 				{ nameof(BaseParameters), baseParameters },
 				{ nameof(StockRepository), stockRepository }
 			})));
+
+			if(Entity.Id > 0)
+				PreloadDocument();
 			
 			var builder = new CommonEEVMBuilderFactory<OverNorm>(this, Entity, UoW, NavigationManager, autofacScope);
 			EntryWarehouseViewModel = builder.ForProperty(x => x.Warehouse)
@@ -113,6 +117,50 @@ namespace Workwear.ViewModels.Stock.Documents
 			Entity.PropertyChanged += Entity_PropertyChanged;
 			Entity.Items.ContentChanged += CalculateTotal;
 			CalculateTotal(null, null);
+		}
+
+		private void PreloadDocument() {
+			var documentQuery = UoW.Session.QueryOver<OverNorm>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.CreatedbyUser)
+				.Fetch(SelectMode.Fetch, x => x.Warehouse)
+				.Future();
+
+			OverNormItem itemAlias = null;
+			UoW.Session.QueryOver<OverNorm>()
+				.Where(x => x.Id == Entity.Id)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Left.JoinAlias(x => x.Items, () => itemAlias)
+				.Fetch(SelectMode.Fetch, x => x.Items)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.Employee)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.WarehouseOperation.Nomenclature)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.WarehouseOperation.Nomenclature.Type)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.WarehouseOperation.WearSize)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.WarehouseOperation.Height)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.WarehouseOperation.Owner)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.SubstitutedIssueOperation)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.SubstitutedIssueOperation.Nomenclature)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.SubstitutedIssueOperation.Nomenclature.Type)
+				.Fetch(SelectMode.Fetch, () => itemAlias.OverNormOperation.SubstitutedIssueOperation.ProtectionTools)
+				.Future();
+
+			OverNormOperation operationAlias = null;
+			BarcodeOperation barcodeOperationAlias = null;
+			UoW.Session.QueryOver(() => operationAlias)
+				.JoinEntityAlias(
+					() => itemAlias,
+					() => itemAlias.OverNormOperation.Id == operationAlias.Id,
+					JoinType.InnerJoin)
+				.Left.JoinAlias(() => operationAlias.BarcodeOperations, () => barcodeOperationAlias)
+				.Fetch(SelectMode.Fetch, () => operationAlias.BarcodeOperations)
+				.Fetch(SelectMode.Fetch, () => barcodeOperationAlias.Barcode)
+				.Where(() => itemAlias.Document.Id == Entity.Id)
+				.Future();
+
+			documentQuery.SingleOrDefault();
 		}
 
 		#region View Properties
