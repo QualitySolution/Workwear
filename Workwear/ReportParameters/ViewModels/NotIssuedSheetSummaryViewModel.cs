@@ -100,6 +100,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"warehouse_id", Warehouse.Id },
 					{"hide_worn", HideWorn},
 					{"show_shipment", ShowShipment},
+					{"show_employee_groups", featuresService.Available(WorkwearFeature.EmployeeGroups)},
 					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
