@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
 using NHibernate;
@@ -92,9 +93,23 @@ namespace Workwear.ViewModels.Stock.Documents
 			performance.CheckPoint("Загружаем информацию о сотрудниках");
 			var employeeIds = Entity.Items.Select(x => x.Employee.Id).Distinct().ToArray();
 			issueModel.PreloadEmployeeInfo(employeeIds);
+			LogMemory("до загрузки потребностей");
 			
 			performance.CheckPoint(nameof(issueModel.PreloadWearItems));
-			issueModel.PreloadWearItems(employeeIds);
+			var employeeIdsByProtectionTools = Entity.Items
+				.GroupBy(x => x.ProtectionTools.Id)
+				.ToDictionary(
+					group => group.Key,
+					group => group.Select(x => x.Employee.Id).Distinct().ToArray());
+			var documentWearItems = issueModel.PreloadWearItems(employeeIdsByProtectionTools);
+			logger.Info(
+				"Коллективная выдача №{0}: строк {1}, сотрудников {2}, запрошено пар сотрудник/СИЗ {3}, загружено потребностей {4}.",
+				Entity.Id,
+				Entity.Items.Count,
+				employeeIds.Length,
+				employeeIdsByProtectionTools.Sum(x => x.Value.Length),
+				documentWearItems.Count);
+			LogMemory("потребности документа загружены");
 			
 			var excludeOperations = Entity.Items.Select(x => x.WarehouseOperation);
 			stockBalanceModel.Warehouse = Entity.Warehouse;
@@ -102,21 +117,21 @@ namespace Workwear.ViewModels.Stock.Documents
 			stockBalanceModel.ExcludeOperations = excludeOperations;
 			
 			performance.CheckPoint("Fill EmployeeCardItem's");
+			var wearItemsByEmployeeAndProtectionTools = documentWearItems.ToDictionary(
+				x => (x.EmployeeCard.Id, x.ProtectionTools.Id));
 			foreach(var docItem in Entity.Items) {
-				docItem.EmployeeCardItem = docItem.Employee.WorkwearItems.FirstOrDefault(x => x.ProtectionTools.IsSame(docItem.ProtectionTools));
+				wearItemsByEmployeeAndProtectionTools.TryGetValue(
+					(docItem.Employee.Id, docItem.ProtectionTools.Id),
+					out var employeeCardItem);
+				docItem.EmployeeCardItem = employeeCardItem;
 			}
-
-			var documentWearItems = Entity.Items
-				.Select(x => x.EmployeeCardItem)
-				.Where(x => x != null)
-				.Distinct()
-				.ToArray();
 
 			performance.CheckPoint(nameof(this.issueModel.FillWearInStockInfo));
 			issueModel.FillWearInStockInfo(documentWearItems, stockBalanceModel);
 			
 			performance.CheckPoint(nameof(issueModel.FillWearReceivedInfo));
-			issueModel.FillWearReceivedInfo(Entity.Employees.ToArray());
+			issueModel.FillWearReceivedInfo(documentWearItems.ToArray());
+			LogMemory("графы документа построены");
 
 			performance.CheckPoint("Finish");
 			Entity.PropertyChanged += Entity_PropertyChanged;
@@ -127,6 +142,21 @@ namespace Workwear.ViewModels.Stock.Documents
 		#region Хелперы
 		private IUnitOfWork UoW => collectiveExpenseViewModel.UoW;
 		public CollectiveExpense Entity => collectiveExpenseViewModel.Entity;
+
+		private void LogMemory(string label) {
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			GC.Collect();
+			var gcManaged = GC.GetTotalMemory(false);
+			var workingSet = Process.GetCurrentProcess().WorkingSet64;
+			logger.Info(
+				"[Память][Коллективная выдача №{0}, строк: {1}] {2}: управляемая куча = {3:N0} КБ, рабочий набор = {4:N0} КБ",
+				Entity.Id,
+				Entity.Items.Count,
+				label,
+				gcManaged / 1024,
+				workingSet / 1024);
+		}
 		#endregion
 		#region Поля
 		public string Sum => $"Строк в документе: <u>{Entity.Items.Count}</u>" +

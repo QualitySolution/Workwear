@@ -356,22 +356,25 @@ namespace Workwear.Models.Operations {
 			progress?.Add(text: "Подгружаем операции");
 			if(!employeeCardItems.Any())
 				return;
-			var operations = employeeIssueRepository.AllOperationsFor(
-					employeeCardItems.Select(i => i.EmployeeCard).ToArray(),
-					employeeCardItems.Select(i => i.ProtectionTools).ToArray()
-				).ToList();
-		
-			var protectionGroups = 
-				operations
-					.Where(x => x.ProtectionTools != null)
-					.GroupBy(x => (x.Employee.Id, x.ProtectionTools.Id))
-					.ToDictionary(g => g.Key, g => g);
+			var employeeIdsByProtectionTools = employeeCardItems
+				.GroupBy(x => x.ProtectionTools.Id)
+				.ToDictionary(
+					group => group.Key,
+					group => group.Select(x => x.EmployeeCard.Id).Distinct().ToArray());
+			var operations = employeeIssueRepository.AllOperationsForGraph(employeeIdsByProtectionTools);
+			logger.Info(
+				"Для {0} потребностей по {1} сотрудникам загружено {2} операций для построения графов.",
+				employeeCardItems.Length,
+				employeeCardItems.Select(x => x.EmployeeCard.Id).Distinct().Count(),
+				operations.Count);
+			var operationsByEmployee = GroupOperationsByEmployeeAndProtectionTools(operations);
 			
 			foreach (var item in employeeCardItems) {
-				if(protectionGroups.ContainsKey((item.EmployeeCard.Id, item.ProtectionTools.Id))) 
-					item.Graph = new IssueGraph(protectionGroups[(item.EmployeeCard.Id, item.ProtectionTools.Id)].ToList<IGraphIssueOperation>());
-				else 
-					item.Graph = new IssueGraph(new List<IGraphIssueOperation>() );
+				var operationsForItem = operationsByEmployee.TryGetValue(item.EmployeeCard.Id, out var byProtectionTools)
+					&& byProtectionTools.TryGetValue(item.ProtectionTools.Id, out var result)
+					? result
+					: new List<IGraphIssueOperation>();
+				item.Graph = new IssueGraph(operationsForItem);
 			}
 		}
 		#endregion
@@ -400,17 +403,7 @@ namespace Workwear.Models.Operations {
 
 			progress?.Add(text: "Добавляем несохранённые");
 			
-			// Группируем: employeeId → protectionToolsId → список операций
-			var byEmployee = dtos
-				.GroupBy(x => x.EmployeeId)
-				.ToDictionary(
-					eg => eg.Key,
-					eg => eg
-						.Where(x => x.ProtectionToolsId != 0)
-						.GroupBy(x => x.ProtectionToolsId)
-						.ToDictionary(
-							pg => pg.Key,
-							pg => pg.ToList<IGraphIssueOperation>()));
+			var byEmployee = GroupOperationsByEmployeeAndProtectionTools(dtos);
 
 			// Объединяем с несохранёнными операциями (если есть)
 			if(notSavedOperations != null) {
@@ -436,6 +429,20 @@ namespace Workwear.Models.Operations {
 			if(needClose)
 				progress.Close();
 		}
+
+		private static Dictionary<int, Dictionary<int, List<IGraphIssueOperation>>>
+			GroupOperationsByEmployeeAndProtectionTools(IEnumerable<GraphIssueOperationDto> operations) =>
+			operations
+				.Where(x => x.ProtectionToolsId != 0)
+				.GroupBy(x => x.EmployeeId)
+				.ToDictionary(
+					employeeGroup => employeeGroup.Key,
+					employeeGroup => employeeGroup
+						.GroupBy(x => x.ProtectionToolsId)
+						.ToDictionary(
+							protectionToolsGroup => protectionToolsGroup.Key,
+							protectionToolsGroup => protectionToolsGroup.ToList<IGraphIssueOperation>()));
+
 		public void PreloadWearItems(params int[] employeeIds) {
 			//Загружаем строки
 			EmployeeCardItem employeeCardItemAlias = null;
@@ -453,7 +460,45 @@ namespace Workwear.Models.Operations {
 				.SelectMany(e => e.WorkwearItems)
 				.Select(x => x.ProtectionTools.Id)
 				.Distinct().ToArray();
+			PreloadWearItemsDependencies(employeeIds, protectionToolsIds);
+		}
 
+		/// <summary>
+		/// Загружает только потребности для переданных пар «сотрудник + номенклатура нормы».
+		/// Ключ словаря — Id номенклатуры нормы, значение — Id сотрудников.
+		/// </summary>
+		public IList<EmployeeCardItem> PreloadWearItems(
+			IReadOnlyDictionary<int, int[]> employeeIdsByProtectionTools) {
+			if(employeeIdsByProtectionTools == null)
+				throw new ArgumentNullException(nameof(employeeIdsByProtectionTools));
+			if(!employeeIdsByProtectionTools.Any(x => x.Value?.Any() == true))
+				return new List<EmployeeCardItem>();
+
+			EmployeeCardItem itemAlias = null;
+			var requestedPairs = Restrictions.Disjunction();
+			foreach(var pair in employeeIdsByProtectionTools.Where(x => x.Value?.Any() == true)) {
+				requestedPairs.Add(Restrictions.Conjunction()
+					.Add(Restrictions.In(
+						Projections.Property(() => itemAlias.EmployeeCard.Id),
+						pair.Value.Cast<object>().ToArray()))
+					.Add(Restrictions.Eq(
+						Projections.Property(() => itemAlias.ProtectionTools.Id),
+						pair.Key)));
+			}
+
+			var items = UoW.Session.QueryOver(() => itemAlias)
+				.Where(requestedPairs)
+				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem)
+				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem.NormCondition)
+				.List();
+
+			var employeeIds = employeeIdsByProtectionTools.Values.SelectMany(x => x).Distinct().ToArray();
+			var protectionToolsIds = employeeIdsByProtectionTools.Keys.ToArray();
+			PreloadWearItemsDependencies(employeeIds, protectionToolsIds);
+			return items.Distinct().ToList();
+		}
+
+		private void PreloadWearItemsDependencies(int[] employeeIds, int[] protectionToolsIds) {
 			//Загружаем выбор номенклатуры сотрудника, чтобы не запускать lazy-запрос при отрисовке таблицы
 			EmployeeSelectedNomenclature selectedNomenclatureAlias = null;
 			UoW.Session.QueryOver<EmployeeCard>()
