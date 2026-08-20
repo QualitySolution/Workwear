@@ -42,6 +42,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly BaseParameters baseParameters;
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly IInteractiveService interactive;
+		private readonly IEntityChangeWatcher changeWatcher;
 		List<EmployeeMovementItem> movements;
 		private bool isDisposed;
 
@@ -51,7 +52,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			FeaturesService featuresService, 
 			EmployeeIssueModel issueModel,
 			BaseParameters baseParameters,
-			
+			IEntityChangeWatcher changeWatcher,
 			IInteractiveService interactive,
 			ITdiCompatibilityNavigation navigation)
 		{
@@ -61,6 +62,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 
@@ -87,7 +89,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!isConfigured) {
 				isConfigured = true;
-				NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeIssueOperation>(HandleManyEntityChangeEventMethod);
+				changeWatcher.BatchSubscribe(HandleManyEntityChangeEventMethod)
+					.ExcludeUow(UoW)
+					.IfEntity<EmployeeIssueOperation>()
+					.AndWhere(x => x.Employee.Id == Entity.Id);
 				UpdateMovements();
 			}
 		}
@@ -287,17 +292,26 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		void HandleManyEntityChangeEventMethod(EntityChangeEvent[] changeEvents)
 		{
-			var updatedOperations = changeEvents.Where(x => x.GetEntity<EmployeeIssueOperation>().Employee.IsSame(employeeViewModel.Entity)).ToList();
-			if(updatedOperations.Count > 0) {
-				Movements.ForEach(m => UoW.Session.Evict(m.Operation));
-				UpdateMovements();
+			if(isDisposed || !UoW.IsAlive)
+				return;
+
+			foreach(var changeEvent in changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Update)) {
+				var operationId = changeEvent.GetEntity<EmployeeIssueOperation>().Id;
+				var operation = Movements
+					.FirstOrDefault(x => x.Operation.Id == operationId)
+					?.Operation;
+				if(operation != null && UoW.Session.Contains(operation))
+					UoW.Session.Refresh(operation);
 			}
+
+			// Не отсоединяем операции массово: на них могут ссылаться уже загруженные строки документов
+			// с Cascade.All. Повторный запрос вернет для существующих записей те же экземпляры из сессии.
+			UpdateMovements();
 		}
 
 		public void Dispose()
 		{
 			isDisposed = true;
-			NotifyConfiguration.Instance.UnsubscribeAll(this);
 		}
 	}
 }
