@@ -15,7 +15,6 @@ using QS.Navigation;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
-using QS.ViewModels.Control;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
@@ -95,9 +94,19 @@ namespace Workwear.ViewModels.ClothingService {
 				
 				Claim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
 				if(Claim == null)
-					BarcodeInfoViewModel.LabelInfo = $"Спецодежда не была принята в стирку.";
+					BarcodeInfoViewModel.LabelInfo = BarcodeInfoViewModel.Employee == null
+						? GetUnsupportedHolderMessage()
+						: "Спецодежда не была принята в стирку.";
 				OnPropertyChanged(nameof(CanAddClaim));
 			}
+		}
+
+		private string GetUnsupportedHolderMessage() {
+			if(BarcodeInfoViewModel.Warehouse != null)
+				return $"Числится на складе «{BarcodeInfoViewModel.Warehouse.Name}». Приём пока не поддерживается.";
+			if(BarcodeInfoViewModel.DutyNorm != null)
+				return $"Числится на дежурной норме №{BarcodeInfoViewModel.DutyNorm.Id}. Приём пока не поддерживается.";
+			return "Спецодежда не выдана сотруднику, приём пока не поддерживается.";
 		}
 		
 		private void ServicesListOnContentChanged(object sender, EventArgs e) {
@@ -198,7 +207,7 @@ namespace Workwear.ViewModels.ClothingService {
 		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
 
 		public virtual bool ShowTerminal => FeaturesService.Available(WorkwearFeature.Postomats);
-		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null;
+		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null && BarcodeInfoViewModel.Employee != null;
 		public virtual bool SensitiveActions => Claim != null;
 		public virtual bool SensitiveAccept => Claim != null;
 		public virtual bool SensitivePrint => (Claim?.Barcode != null);
@@ -260,6 +269,10 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 			if(Claim != null) {
 				BarcodeInfoViewModel.LabelInfo = "Уже принято на обслуживание.";
+				return;
+			}
+			if(BarcodeInfoViewModel.Employee == null) {
+				BarcodeInfoViewModel.LabelInfo = GetUnsupportedHolderMessage();
 				return;
 			}
 

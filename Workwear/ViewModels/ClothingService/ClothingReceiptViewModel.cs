@@ -54,10 +54,26 @@ namespace Workwear.ViewModels.ClothingService {
 					return;
 				}
 				var activeClaim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
-				SensitiveAccept = activeClaim == null;
-				if(activeClaim != null)
+				if(activeClaim != null) {
+					SensitiveAccept = false;
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда уже в работе по заявке №{activeClaim.Id}";
+					return;
+				}
+				if(BarcodeInfoViewModel.Employee == null) {
+					SensitiveAccept = false;
+					BarcodeInfoViewModel.LabelInfo = GetUnsupportedHolderMessage();
+					return;
+				}
+				SensitiveAccept = true;
 			}
+		}
+
+		private string GetUnsupportedHolderMessage() {
+			if(BarcodeInfoViewModel.Warehouse != null)
+				return $"Числится на складе «{BarcodeInfoViewModel.Warehouse.Name}». На данный момент приём не поддерживается.";
+			if(BarcodeInfoViewModel.DutyNorm != null)
+				return $"Числится на дежурной норме №{BarcodeInfoViewModel.DutyNorm.Id}. На данный момент приём не поддерживается.";
+			return "Спецодежда не выдана сотруднику, приём на обслуживание невозможен.";
 		}
 
 		#region Свойства View
