@@ -93,7 +93,7 @@ namespace Workwear.ViewModels.Stock.Documents
 		}
 
 		private ExpenseItem selectedItem;
-		[PropertyChangedAlso(nameof(CanAddBarcodeForSelected))]
+		[PropertyChangedAlso(nameof(CanAddBarcodeForSelected), nameof(SensitiveShowAllSize))]
 		public virtual ExpenseItem SelectedItem {
 			get => selectedItem;
 			set => SetField(ref selectedItem, value);
@@ -105,7 +105,7 @@ namespace Workwear.ViewModels.Stock.Documents
 		public bool CanEdit => permissionService.ValidateEntityPermission(typeof(Expense), Entity.Date).CanUpdate;
 		public bool VisibleSignColumn => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool CanAddItems => CanEdit && Entity.Warehouse != null && Entity.Employee != null;
-		public bool SensitiveShowAllSize => CanEdit && Entity.Warehouse != null;
+		public bool SensitiveShowAllSize => CanEdit && Entity.Warehouse != null && SelectedItem != null;
 		#endregion
 		#region Действия View
 		public void AddItem()
@@ -127,6 +127,9 @@ namespace Workwear.ViewModels.Stock.Documents
 
 		public void ShowAllSize(ExpenseItem item)
 		{
+			if(item == null)
+				return;
+
 			var selectJournal = MainClass.MainWin.NavigationManager.OpenViewModel<StockBalanceJournalViewModel>(expenseEmployeeViewModel, QS.Navigation.OpenPageOptions.AsSlave,
 				addingRegistrations: builder => {
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(

@@ -43,6 +43,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly INavigationManager navigation;
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
 		private readonly IProgressBarDisplayable progress;
+		private EmployeeCard subscribedEmployee;
 
 		public readonly BaseParameters BaseParameters;
 		public EmployeeWearItemsViewModel(
@@ -106,7 +107,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				Entity.FillWearReceivedInfo(employeeIssueRepository);
 				performance.CheckPoint("Обновление таблицы");
 				OnPropertyChanged(nameof(ObservableWorkwearItems));
-				Entity.PropertyChanged += EntityOnPropertyChanged;
+				subscribedEmployee = Entity;
+				subscribedEmployee.PropertyChanged += EntityOnPropertyChanged;
 				performance.End();
 				logger.Info($"Таблица «Спецодежда по нормам» заполнена за {performance.TotalTime.TotalSeconds} сек." );
 			}
@@ -342,8 +344,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void Dispose()
 		{
-			if(IsConfigured)
-				Entity.PropertyChanged -= EntityOnPropertyChanged;
+			if(subscribedEmployee == null)
+				return;
+
+			subscribedEmployee.PropertyChanged -= EntityOnPropertyChanged;
+			subscribedEmployee = null;
 		}
 	}
 }
