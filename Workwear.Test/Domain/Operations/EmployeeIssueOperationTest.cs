@@ -273,6 +273,8 @@ namespace Workwear.Test.Domain.Operations
 		[TestCase("2018-1-2", "2018-1-1", "2018-1-7", 0.40, ExpectedResult = 0.50)]
 		[TestCase("2018-2-5", "2018-1-31", "2018-2-27", 2.5, ExpectedResult = 2.5)]
 		[TestCase("2018-1-30", "2018-1-1", "2018-1-20", 0.5, ExpectedResult = 1.26)]
+		[TestCase("2018-2-5", null, "2018-2-10", 0.35, ExpectedResult = 0.35)]
+		[TestCase("2018-2-5", "2018-1-31", null, 0.35, ExpectedResult = 0.35)]
 		public decimal CalculatePercentWear_Writeoff_WearPercentTest (DateTime calcDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent)
 		{
 			var issue = new EmployeeIssueOperation();
