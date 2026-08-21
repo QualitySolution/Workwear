@@ -578,8 +578,8 @@
                           <Visibility>
                             <Hidden>={?summary}</Hidden>
                           </Visibility>
-                          <CanGrow >true</CanGrow>
-                          <CanShrink >true</CanShrink>
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>4</ColSpan>
@@ -606,7 +606,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox35">
                           <Value></Value>
@@ -708,24 +708,24 @@
                               <Default>Solid</Default>
                               <Left>None</Left>
                               <Right>None</Right>
-                              <Top >None</Top>
+                              <Top>None</Top>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
                             <FontWeight>Bold</FontWeight>
-                            <VerticalAlign >Bottom</VerticalAlign>
+                            <VerticalAlign>Bottom</VerticalAlign>
                           </Style>
                           <Value>= Iif(Fields!department.IsMissing, "      Без отдела", "  " + {department_code} + "      " + {department})</Value>
-                          <Visibility >
+                          <Visibility>
                             <Hidden>=!{?byDepartment}</Hidden>
                           </Visibility>
-                          <CanGrow >true</CanGrow>
-                          <CanShrink >true</CanShrink>
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
                         </Textbox>
                       </ReportItems>
                       <ColSpan>3</ColSpan>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox30">
                           <Value></Value>
@@ -734,7 +734,7 @@
                               <Default>Solid</Default>
                               <Left>None</Left>
                               <Right>None</Right>
-                              <Top >None</Top>
+                              <Top>None</Top>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -769,7 +769,7 @@
                               <Default>Solid</Default>
                               <Left>None</Left>
                               <Right>None</Right>
-                              <Top >None</Top>
+                              <Top>None</Top>
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
@@ -833,7 +833,7 @@
                     </TableCell>
                   </TableCells>
                   <Visibility>
-                    <Hidden >=!{?byDepartment}</Hidden>
+                    <Hidden>=!{?byDepartment}</Hidden>
                   </Visibility>
                 </TableRow>
                 <TableRow>
@@ -1099,7 +1099,7 @@
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <FontSize >9pt</FontSize>
+                            <FontSize>9pt</FontSize>
                           </Style>
                           <Value>=Sum({sum})</Value>
                         </Textbox>
@@ -1136,7 +1136,7 @@
                             </BorderStyle>
                             <BorderColor />
                             <BorderWidth />
-                            <FontSize >9pt</FontSize>
+                            <FontSize>9pt</FontSize>
                           </Style>
                           <Value>=Sum({cost_sum})</Value>
                         </Textbox>
@@ -1347,7 +1347,7 @@
                             <BorderColor />
                             <BorderWidth />
                             <PaddingRight>2pt</PaddingRight>
-                            <FontSize >9pt</FontSize>
+                            <FontSize>9pt</FontSize>
                           </Style>
                           <Value>=Sum({sum})</Value>
                         </Textbox>
@@ -1375,7 +1375,7 @@
                             <BorderColor />
                             <BorderWidth />
                             <PaddingRight>2pt</PaddingRight>
-                            <FontSize >9pt</FontSize>
+                            <FontSize>9pt</FontSize>
                           </Style>
                           <Value>=Sum({cost_sum})</Value>
                         </Textbox>
@@ -1503,7 +1503,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <FontSize >9pt</FontSize>
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1520,7 +1520,7 @@
                         <PaddingLeft>2pt</PaddingLeft>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize >9pt</FontSize>
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1537,7 +1537,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <FontSize >9pt</FontSize>
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1554,7 +1554,7 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <FontSize >9pt</FontSize>
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1571,9 +1571,9 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <FontSize >8pt</FontSize>
+                        <FontSize>8pt</FontSize>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1589,9 +1589,9 @@
                         <BorderColor />
                         <BorderWidth />
                         <TextAlign>Center</TextAlign>
-                        <FontSize >8pt</FontSize>
+                        <FontSize>8pt</FontSize>
                       </Style>
-                      <CanGrow >true</CanGrow>
+                      <CanGrow>true</CanGrow>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -1608,7 +1608,7 @@
                         <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize >9pt</FontSize>
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1625,7 +1625,7 @@
                         <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize >9pt</FontSize>
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1642,7 +1642,7 @@
                         <TextAlign>Right</TextAlign>
                         <BorderColor />
                         <BorderWidth />
-                        <FontSize >9pt</FontSize>
+                        <FontSize>9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1894,7 +1894,7 @@ LEFT JOIN stock_expense ON stock_expense_detail.stock_expense_id = stock_expense
 LEFT JOIN stock_collective_expense_detail ON operation_issued_by_employee.id = stock_collective_expense_detail.employee_issue_operation_id
 LEFT JOIN stock_collective_expense ON stock_collective_expense_detail.stock_collective_expense_id = stock_collective_expense.id
 WHERE operation_issued_by_employee.operation_time &gt;= CONVERT(@dateStart, DATE) and operation_issued_by_employee.operation_time &lt; DATE_ADD(CONVERT(@dateEnd, DATE), INTERVAL 1 DAY)
-AND NOT operation_issued_by_employee.manual_operation -- В отчете не показываем ручные операции. 
+AND (@showManualOperation OR NOT operation_issued_by_employee.manual_operation)
 AND operation_issued_by_employee.returned = 0 
 AND (@issue_type = "" OR item_types.issue_type = @issue_type)
 AND ((-1 IN (@subdivisions)) OR (@withoutsub AND subdivisions.id IS NULL) OR (subdivisions.id IN (@subdivisions)))
@@ -1978,6 +1978,9 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), department, emplo
           </QueryParameter>
           <QueryParameter Name="departments">
             <Value>={?departments}</Value>
+          </QueryParameter>
+          <QueryParameter Name="showManualOperation">
+            <Value>={?showManualOperation}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -2245,6 +2248,13 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), department, emplo
       <AllowBlank>false</AllowBlank>
       <MultiValue>true</MultiValue>
       <Prompt />
+    </ReportParameter>
+    <ReportParameter Name="showManualOperation">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>
   <DataSources>

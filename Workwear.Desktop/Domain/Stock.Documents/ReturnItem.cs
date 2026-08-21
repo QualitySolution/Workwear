@@ -201,6 +201,8 @@ namespace Workwear.Domain.Stock.Documents {
 
 		public virtual bool CanEditAmount => !ReturnBarcodeOperations.Any();
 
+		public virtual IEnumerable<Barcode> Barcodes => ReturnBarcodeOperations.Select(x => x.Barcode);
+
 		private IEnumerable<BarcodeOperation> ReturnBarcodeOperations {
 			get {
 				switch(ReturnFrom) {
@@ -390,6 +392,27 @@ namespace Workwear.Domain.Stock.Documents {
 
 
 		#region Функции
+		public virtual void AddBarcode(Barcode barcode) {
+			if(ReturnBarcodeOperations.Any(x => DomainHelper.EqualDomainObjects(x.Barcode, barcode)))
+				return; //уже возвращён этим документом
+
+			switch(ReturnFrom) {
+				case ReturnFrom.Employee:
+					CopyBarcodeOperations(IssuedEmployeeOnOperation.BarcodeOperations, returnFromEmployeeOperation.BarcodeOperations, warehouseOperation,
+						new[] { barcode }, x => x.EmployeeIssueOperation = returnFromEmployeeOperation);
+					break;
+				case ReturnFrom.DutyNorm:
+					CopyBarcodeOperations(IssuedDutyNormOnOperation.BarcodeOperations, returnFromDutyNormOperation.BarcodeOperations, warehouseOperation,
+						new[] { barcode }, x => x.DutyNormIssueOperation = returnFromDutyNormOperation);
+					break;
+				case ReturnFrom.OverNorm:
+					CopyBarcodeOperations(IssuedOverNormOperation.BarcodeOperations, returnFromOverNormOperation.BarcodeOperations, warehouseOperation,
+						new[] { barcode }, x => x.OverNormOperation = returnFromOverNormOperation);
+					break;
+			}
+			Amount++;
+		}
+
 		public virtual void UpdateOperations(IUnitOfWork uow) {
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);

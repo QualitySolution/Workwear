@@ -207,7 +207,7 @@ namespace Workwear.Test.Domain.Company
 			
 			var protectionTools2 = Substitute.For<ProtectionTools>();
 			norm.AddItem(protectionTools2);
-			employee.UpdateWorkwearItems();
+			employee.UpdateWorkwearItemsCollection();
 			var after = employee.WorkwearItems.Count;
 			
 			Assert.That(after - before, Is.EqualTo(1));
@@ -226,7 +226,7 @@ namespace Workwear.Test.Domain.Company
 			var before = employee.WorkwearItems.Count;
 			
 			norm.RemoveItem(secondItem);
-			employee.UpdateWorkwearItems();
+			employee.UpdateWorkwearItemsCollection();
 			var after = employee.WorkwearItems.Count;
 			
 			Assert.That(after - before, Is.EqualTo(-1));

@@ -8,6 +8,7 @@ using Workwear.Domain.Company;
 using workwear.Representations.Organization;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
 {
@@ -83,9 +84,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				page.ViewModel.AddFromDictionary(new Dictionary<int, int>() {{node.Id, node.Balance}});
 		}
 
-		public void WriteOffWear()
+		public void WriteOffWear(EmployeeBalanceVMNode node = null)
 		{
-			navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
+			var page = navigation.OpenViewModel<WriteOffViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
+			if(node != null)
+				page.ViewModel.AddFromDictionary(new Dictionary<int, int>() {{node.Id, node.Balance}});
 		}
 
 		public void InspectionWear() {

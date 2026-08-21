@@ -804,6 +804,7 @@ CREATE TABLE IF NOT EXISTS `operation_warehouse` (
   INDEX `fk_operation_warehouse_5_idx` (`height_id` ASC),
   INDEX `fk_operation_warehouse_6_idx` (`owner_id` ASC),
   INDEX `index_operation_warehouse_time` (`operation_time` ASC),
+  INDEX `idx_operation_warehouse_nomenclature_time` (`nomenclature_id` ASC, `operation_time` ASC),
   INDEX `index_operation_warehouse_wear_percent` (`wear_percent` ASC),
   CONSTRAINT `fk_operation_warehouse_1`
     FOREIGN KEY (`nomenclature_id`)
@@ -2868,6 +2869,7 @@ create table clothing_service_services_claim
 	service_id int unsigned not null,
 	claim_id   int unsigned not null,
 	`cost` 		DECIMAL DEFAULT 0 NULL,
+	`amount`    DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 1.00 COMMENT 'Количество (кг/шт/м и т.д.), используется для расчёта стоимости услуги',
 	service_date datetime null comment 'Время последней активации услуги для заявки',
 	constraint clothing_service_services_claim_pk
 		primary key (id),
@@ -3131,7 +3133,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.13');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.14');
 
 COMMIT;
 

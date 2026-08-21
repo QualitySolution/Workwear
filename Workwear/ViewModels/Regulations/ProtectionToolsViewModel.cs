@@ -19,6 +19,7 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
+using Workwear.Models.Operations;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
@@ -35,6 +36,7 @@ namespace Workwear.ViewModels.Regulations
 		private readonly FeaturesService featuresService;
 		private readonly NormRepository normRepository;
 		private readonly EmployeeRepository employeeRepository;
+		private readonly EmployeeIssueModel employeeIssueModel;
 
 		public ProtectionToolsViewModel(IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
@@ -44,12 +46,14 @@ namespace Workwear.ViewModels.Regulations
 			ILifetimeScope autofacScope,
 			NormRepository normRepository,
 			EmployeeRepository employeeRepository,
+			EmployeeIssueModel employeeIssueModel,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.interactiveService = interactiveService ?? throw new ArgumentNullException(nameof(interactiveService));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.normRepository = normRepository ?? throw new ArgumentNullException(nameof(normRepository));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			var entryBuilder = new CommonEEVMBuilderFactory<ProtectionTools>(this, Entity, UoW, navigation, autofacScope);
 			ItemTypeEntryViewModel = entryBuilder.ForProperty(x => x.Type)
 				.MakeByType()
@@ -270,8 +274,7 @@ namespace Workwear.ViewModels.Regulations
 					var progress = progressPage.ViewModel.Progress;
 					progress.Start(employees.Count, text: "Обновляем потребности сотрудников");
 					foreach(var employee in employees) {
-						employee.UoW = UoW;
-						employee.UpdateWorkwearItems();
+						employeeIssueModel.UpdateWorkwearItems(new[] { employee }, UoW);
 						UoW.Save(employee);
 					}
 					NavigationManager.ForceClosePage(progressPage, CloseSource.FromParentPage);

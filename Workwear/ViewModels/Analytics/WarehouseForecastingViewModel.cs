@@ -429,6 +429,9 @@ namespace Workwear.ViewModels.Analytics {
 			var file = fileDialogService.RunSaveFileDialog(settings);
 			if(!file.Successful)
 				return;
+			var filePath = file.Path.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase)
+				? file.Path
+				: file.Path + ".xlsx";
 			
 			SensitiveSettings = false;
 			ProgressLocal.Start(Items.Count + 1, text: "Сохранение");
@@ -490,7 +493,7 @@ namespace Workwear.ViewModels.Analytics {
 					ProgressLocal.Add();
 				}
 
-				workbook.SaveAs(file.Path);
+				workbook.SaveAs(filePath);
 			}
 			ProgressLocal.Close();
 			SensitiveSettings = true;

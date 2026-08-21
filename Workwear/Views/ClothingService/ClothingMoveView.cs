@@ -1,8 +1,8 @@
 using System;
 using System.Globalization;
 using Gamma.Utilities;
+using Gtk;
 using QS.Cloud.Postomat.Manage;
-using QS.ViewModels.Control;
 using QS.Views;
 using Workwear.Domain.ClothingService;
 using Workwear.ViewModels.ClothingService;
@@ -53,9 +53,14 @@ namespace Workwear.Views.ClothingService {
 				.AddBinding(ViewModel, v => v.Comment, w => w.Buffer.Text).InitializeFromSource();
 			buttonAccept.Binding
 				.AddBinding(ViewModel, v => v.SensitiveAccept, w => w.Sensitive).InitializeFromSource();
-			treeServices.CreateFluentColumnsConfig<SelectableEntity<ProvidedService>>()			
+			treeServices.CreateFluentColumnsConfig<SelectableProvidedService>()
 				.AddColumn("☑").AddToggleRenderer(x => x.Select).Editing()
 				.AddColumn("Услуга").AddReadOnlyTextRenderer(x => x.Label)
+				.AddColumn("Количество").AddNumericRenderer(x => x.Amount)
+					.Digits(2).WidthChars(8)
+					.Adjustment(new Adjustment(0, 0, 100000, 0.1, 1, 1))
+					.Editing(x => x.Select)
+					.AddSetter((c, n) => { if(!n.Select) c.Text = String.Empty; })
 				.AddColumn("Стоимость").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.Cost.ToString(CultureInfo.InvariantCulture) : String.Empty)
 				.AddColumn("Дата оказания").AddReadOnlyTextRenderer(x => x.Select ? x.Entity.ServiceDate.ToShortDateString().ToString(CultureInfo.InvariantCulture) : String.Empty)
 				.Finish();

@@ -26,11 +26,14 @@ using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
+using Workwear.Repository.Stock;
 using Workwear.Tools;
+using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 using WorkwearTest.Testing;
 
 namespace WorkwearTest.ViewModels.Stock
@@ -61,6 +64,9 @@ namespace WorkwearTest.ViewModels.Stock
 				});
 
 			var builder = new ContainerBuilder();
+			builder.RegisterType<BarcodeOperationRepository>().AsSelf();
+			builder.RegisterType<BarcodeRepository>().AsSelf();
+			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.RegisterType<DutyNormRepository>().AsSelf();
 			builder.RegisterType<EmployeeBalanceFilterViewModel>().AsSelf();
 			builder.RegisterType<EmployeeBalanceJournalViewModel>().AsSelf();

@@ -16,6 +16,11 @@ using Workwear.Repository.Operations;
 using Workwear.Tools;
 
 namespace Workwear.Models.Operations {
+	/// <summary>
+	/// Выполняет полные сценарии работы с потребностями и выдачами сотрудников:
+	/// загружает операции, строит графы, пересчитывает потребности и сохраняет изменения в текущий UnitOfWork.
+	/// Методы обновления потребностей и следующих выдач не выполняют Commit — им управляет вызывающий код.
+	/// </summary>
 	public class EmployeeIssueModel {
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		
@@ -97,30 +102,39 @@ namespace Workwear.Models.Operations {
 		}
 
 		/// <summary>
-		/// Выполняет пересчет всех даты следующих выдач для всех сотрудников.
+		/// Одним запросом загружает историю выдач и пересчитывает даты следующей выдачи для всех сотрудников.
+		/// Метод сохраняет изменения в UnitOfWork, но не выполняет Commit.
+		/// Для массовой обработки можно передать callback, вызываемый после каждого обработанного пакета.
 		/// </summary>
-		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству сотрудников + 1</param>
-		public void UpdateNextIssueAll(EmployeeCard[] employees, IProgressBarDisplayable progress = null, CancellationToken? cancellation = null, uint commitBatchSize = 1000, Action<EmployeeCard, string[]> changeLog = null) {
+		public void UpdateNextIssueAll(
+			EmployeeCard[] employees,
+			IProgressBarDisplayable progress = null,
+			CancellationToken? cancellation = null,
+			Action<EmployeeCard, string[]> changeLog = null,
+			EmployeeIssueOperation[] notSavedOperations = null,
+			IUnitOfWork uow = null,
+			int batchSize = 0,
+			Action batchProcessed = null) {
+			if(batchProcessed != null && batchSize <= 0)
+				throw new ArgumentOutOfRangeException(nameof(batchSize), "Размер пакета должен быть больше нуля.");
+
 			bool needClose = false;
-			IUnitOfWork uow = unitOfWorkProvider.UoW;
+			uow = GetRequiredUow(uow);
 			if(progress != null && !progress.IsStarted) {
-				progress.Start(employees.Length + 1);
+				progress.Start(employees.Length * 2 + 3);
 				needClose = true;
 			}
-			progress?.Add(text: "Получаем информацию о прошлых выдачах");
-			CheckAndPrepareGraphs(employees);
+			FillWearReceivedInfo(employees, notSavedOperations, progress, uow);
 
-			int step = 0;
+			int processedCount = 0;
 			foreach(var employee in employees) {
 				if(cancellation?.IsCancellationRequested ?? false) {
 					break;
 				}
 				progress?.Add(text: $"Обработка {employee.ShortName}");
-				step++;
 				var oldDates = employee.WorkwearItems.Select(x => x.NextIssue).ToArray();
 				
 				foreach(var wearItem in employee.WorkwearItems) {
-					wearItem.Graph = GetPreparedOrEmptyGraph(employee, wearItem.ProtectionTools);
 					wearItem.UpdateNextIssue(uow);
 				}
 				
@@ -129,14 +143,98 @@ namespace Workwear.Models.Operations {
 				changeLog?.Invoke(employee, changes);
 				if(changes.Any())
 					uow.Save(employee);
-				if(step % commitBatchSize == 0)
-					uow.Commit();
+
+				processedCount++;
+				if(batchProcessed != null && processedCount % batchSize == 0)
+					batchProcessed();
 			}
 			if (progress != null && !(cancellation?.IsCancellationRequested ?? false))
 				progress.Add(text: "Готово");
 			if(needClose)
 				progress.Close();
 		}
+
+		/// <summary>
+		/// Выполняет полный пересчёт потребностей: перестраивает коллекции по нормам,
+		/// загружает прошлые выдачи, обновляет даты и сохраняет сотрудников без Commit.
+		/// </summary>
+		public void UpdateWorkwearItems(
+			IEnumerable<EmployeeCard> employees,
+			IUnitOfWork uow = null,
+			IProgressBarDisplayable progress = null,
+			CancellationToken? cancellation = null) {
+			if(employees == null)
+				throw new ArgumentNullException(nameof(employees));
+
+			uow = GetRequiredUow(uow);
+			var employeeArray = employees.Distinct().ToArray();
+			foreach(var employee in employeeArray)
+				employee.UpdateWorkwearItemsCollection();
+
+			UpdateWorkwearItemsAfterCollectionChanged(employeeArray, uow, progress, cancellation);
+		}
+
+		/// <summary>
+		/// Добавляет норму и выполняет полный пересчёт потребностей сотрудника без Commit.
+		/// </summary>
+		public bool AddUsedNorm(EmployeeCard employee, Norm norm, IUnitOfWork uow = null) {
+			if(employee == null)
+				throw new ArgumentNullException(nameof(employee));
+
+			var oldCount = employee.UsedNorms.Count;
+			employee.AddUsedNorm(norm);
+			if(employee.UsedNorms.Count == oldCount)
+				return false;
+
+			UpdateWorkwearItemsAfterCollectionChanged(new[] { employee }, uow);
+			return true;
+		}
+
+		/// <summary>
+		/// Добавляет нормы и выполняет один полный пересчёт потребностей сотрудника без Commit.
+		/// </summary>
+		public int AddUsedNorms(EmployeeCard employee, IEnumerable<Norm> norms, IUnitOfWork uow = null) {
+			if(employee == null)
+				throw new ArgumentNullException(nameof(employee));
+
+			var oldCount = employee.UsedNorms.Count;
+			employee.AddUsedNorms(norms);
+			var addedCount = employee.UsedNorms.Count - oldCount;
+			if(addedCount > 0)
+				UpdateWorkwearItemsAfterCollectionChanged(new[] { employee }, uow);
+			return addedCount;
+		}
+
+		/// <summary>
+		/// Удаляет норму и выполняет полный пересчёт потребностей сотрудника без Commit.
+		/// </summary>
+		public bool RemoveUsedNorm(EmployeeCard employee, Norm norm, IUnitOfWork uow = null) {
+			if(employee == null)
+				throw new ArgumentNullException(nameof(employee));
+
+			var oldCount = employee.UsedNorms.Count;
+			employee.RemoveUsedNorm(norm);
+			if(employee.UsedNorms.Count == oldCount)
+				return false;
+
+			UpdateWorkwearItemsAfterCollectionChanged(new[] { employee }, uow);
+			return true;
+		}
+
+		private void UpdateWorkwearItemsAfterCollectionChanged(
+			EmployeeCard[] employees,
+			IUnitOfWork uow,
+			IProgressBarDisplayable progress = null,
+			CancellationToken? cancellation = null) {
+			uow = GetRequiredUow(uow);
+			UpdateNextIssueAll(employees, progress, cancellation, uow: uow);
+			foreach(var employee in employees)
+				uow.Save(employee);
+		}
+
+		private IUnitOfWork GetRequiredUow(IUnitOfWork uow) =>
+			uow ?? unitOfWorkProvider?.UoW ?? throw new InvalidOperationException(
+				$"Для выполнения сценария {nameof(EmployeeIssueModel)} необходим UnitOfWork.");
 		
 		/// <summary>
 		/// Выполняет пересчет всех даты следующих выдач связанные с перечисленными операциями.
@@ -258,22 +356,25 @@ namespace Workwear.Models.Operations {
 			progress?.Add(text: "Подгружаем операции");
 			if(!employeeCardItems.Any())
 				return;
-			var operations = employeeIssueRepository.AllOperationsFor(
-					employeeCardItems.Select(i => i.EmployeeCard).ToArray(),
-					employeeCardItems.Select(i => i.ProtectionTools).ToArray()
-				).ToList();
-		
-			var protectionGroups = 
-				operations
-					.Where(x => x.ProtectionTools != null)
-					.GroupBy(x => (x.Employee.Id, x.ProtectionTools.Id))
-					.ToDictionary(g => g.Key, g => g);
+			var employeeIdsByProtectionTools = employeeCardItems
+				.GroupBy(x => x.ProtectionTools.Id)
+				.ToDictionary(
+					group => group.Key,
+					group => group.Select(x => x.EmployeeCard.Id).Distinct().ToArray());
+			var operations = employeeIssueRepository.AllOperationsForGraph(employeeIdsByProtectionTools);
+			logger.Info(
+				"Для {0} потребностей по {1} сотрудникам загружено {2} операций для построения графов.",
+				employeeCardItems.Length,
+				employeeCardItems.Select(x => x.EmployeeCard.Id).Distinct().Count(),
+				operations.Count);
+			var operationsByEmployee = GroupOperationsByEmployeeAndProtectionTools(operations);
 			
 			foreach (var item in employeeCardItems) {
-				if(protectionGroups.ContainsKey((item.EmployeeCard.Id, item.ProtectionTools.Id))) 
-					item.Graph = new IssueGraph(protectionGroups[(item.EmployeeCard.Id, item.ProtectionTools.Id)].ToList<IGraphIssueOperation>());
-				else 
-					item.Graph = new IssueGraph(new List<IGraphIssueOperation>() );
+				var operationsForItem = operationsByEmployee.TryGetValue(item.EmployeeCard.Id, out var byProtectionTools)
+					&& byProtectionTools.TryGetValue(item.ProtectionTools.Id, out var result)
+					? result
+					: new List<IGraphIssueOperation>();
+				item.Graph = new IssueGraph(operationsForItem);
 			}
 		}
 		#endregion
@@ -283,7 +384,7 @@ namespace Workwear.Models.Operations {
 		/// Заполняет графы и обновляет дату последней выдачи.
 		/// </summary>
 		/// <param name="progress">Можно предать начатый прогресс, количество шагов прогресса равно количеству сотрудников + 2</param>
-		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null, IProgressBarDisplayable progress = null) {
+		public void FillWearReceivedInfo(EmployeeCard[] employees, EmployeeIssueOperation[] notSavedOperations = null, IProgressBarDisplayable progress = null, IUnitOfWork uow = null) {
 			bool needClose = false;
 			if(progress != null && !progress.IsStarted) {
 				progress.Start(employees.Length + 2);
@@ -295,22 +396,14 @@ namespace Workwear.Models.Operations {
 			
 			// Загружаем только нужные поля через проекцию — полные сущности НЕ попадают в Identity Map.
 			// Это снижает потребление памяти на крупных базах с ~2 ГБ до десятков МБ.
-			var employeeIds = employees.Select(e => e.Id).ToArray();
-			var dtos = employeeIssueRepository.AllOperationsForGraph(employeeIds);
+			var employeeIds = employees.Select(e => e.Id).Where(id => id > 0).ToArray();
+			var dtos = employeeIds.Any()
+				? employeeIssueRepository.AllOperationsForGraph(employeeIds, uow)
+				: new List<GraphIssueOperationDto>();
 
 			progress?.Add(text: "Добавляем несохранённые");
 			
-			// Группируем: employeeId → protectionToolsId → список операций
-			var byEmployee = dtos
-				.GroupBy(x => x.EmployeeId)
-				.ToDictionary(
-					eg => eg.Key,
-					eg => eg
-						.Where(x => x.ProtectionToolsId != 0)
-						.GroupBy(x => x.ProtectionToolsId)
-						.ToDictionary(
-							pg => pg.Key,
-							pg => pg.ToList<IGraphIssueOperation>()));
+			var byEmployee = GroupOperationsByEmployeeAndProtectionTools(dtos);
 
 			// Объединяем с несохранёнными операциями (если есть)
 			if(notSavedOperations != null) {
@@ -336,6 +429,20 @@ namespace Workwear.Models.Operations {
 			if(needClose)
 				progress.Close();
 		}
+
+		private static Dictionary<int, Dictionary<int, List<IGraphIssueOperation>>>
+			GroupOperationsByEmployeeAndProtectionTools(IEnumerable<GraphIssueOperationDto> operations) =>
+			operations
+				.Where(x => x.ProtectionToolsId != 0)
+				.GroupBy(x => x.EmployeeId)
+				.ToDictionary(
+					employeeGroup => employeeGroup.Key,
+					employeeGroup => employeeGroup
+						.GroupBy(x => x.ProtectionToolsId)
+						.ToDictionary(
+							protectionToolsGroup => protectionToolsGroup.Key,
+							protectionToolsGroup => protectionToolsGroup.ToList<IGraphIssueOperation>()));
+
 		public void PreloadWearItems(params int[] employeeIds) {
 			//Загружаем строки
 			EmployeeCardItem employeeCardItemAlias = null;
@@ -353,6 +460,55 @@ namespace Workwear.Models.Operations {
 				.SelectMany(e => e.WorkwearItems)
 				.Select(x => x.ProtectionTools.Id)
 				.Distinct().ToArray();
+			PreloadWearItemsDependencies(employeeIds, protectionToolsIds);
+		}
+
+		/// <summary>
+		/// Загружает только потребности для переданных пар «сотрудник + номенклатура нормы».
+		/// Ключ словаря — Id номенклатуры нормы, значение — Id сотрудников.
+		/// </summary>
+		public IList<EmployeeCardItem> PreloadWearItems(
+			IReadOnlyDictionary<int, int[]> employeeIdsByProtectionTools) {
+			if(employeeIdsByProtectionTools == null)
+				throw new ArgumentNullException(nameof(employeeIdsByProtectionTools));
+			if(!employeeIdsByProtectionTools.Any(x => x.Value?.Any() == true))
+				return new List<EmployeeCardItem>();
+
+			EmployeeCardItem itemAlias = null;
+			var requestedPairs = Restrictions.Disjunction();
+			foreach(var pair in employeeIdsByProtectionTools.Where(x => x.Value?.Any() == true)) {
+				requestedPairs.Add(Restrictions.Conjunction()
+					.Add(Restrictions.In(
+						Projections.Property(() => itemAlias.EmployeeCard.Id),
+						pair.Value.Cast<object>().ToArray()))
+					.Add(Restrictions.Eq(
+						Projections.Property(() => itemAlias.ProtectionTools.Id),
+						pair.Key)));
+			}
+
+			var items = UoW.Session.QueryOver(() => itemAlias)
+				.Where(requestedPairs)
+				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem)
+				.Fetch(SelectMode.Fetch, x => x.ActiveNormItem.NormCondition)
+				.List();
+
+			var employeeIds = employeeIdsByProtectionTools.Values.SelectMany(x => x).Distinct().ToArray();
+			var protectionToolsIds = employeeIdsByProtectionTools.Keys.ToArray();
+			PreloadWearItemsDependencies(employeeIds, protectionToolsIds);
+			return items.Distinct().ToList();
+		}
+
+		private void PreloadWearItemsDependencies(int[] employeeIds, int[] protectionToolsIds) {
+			//Загружаем выбор номенклатуры сотрудника, чтобы не запускать lazy-запрос при отрисовке таблицы
+			EmployeeSelectedNomenclature selectedNomenclatureAlias = null;
+			UoW.Session.QueryOver<EmployeeCard>()
+				.Where(x => x.Id.IsIn(employeeIds))
+				.JoinAlias(x => x.SelectedNomenclatures, () => selectedNomenclatureAlias, JoinType.LeftOuterJoin)
+				.Fetch(SelectMode.ChildFetch, x => x)
+				.Fetch(SelectMode.Fetch, x => x.SelectedNomenclatures)
+				.Fetch(SelectMode.Fetch, () => selectedNomenclatureAlias.ProtectionTools)
+				.Fetch(SelectMode.Fetch, () => selectedNomenclatureAlias.Nomenclature)
+				.Future();
 
 			var query = UoW.Session.QueryOver<ProtectionTools>()
 				.Where(p => p.Id.IsIn(protectionToolsIds))

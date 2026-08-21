@@ -51,7 +51,7 @@ namespace workwear.Journal
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).XAlign(0.5f)
 					.AddColumn("Метка(штрихкод)").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Табельный").AddTextRenderer(node => node.EmployeePersonnelNumber).SearchHighlight().XAlign(1.0f)
-					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
+					.AddColumn("Сотрудник").AddTextRenderer(node => node.EmployeeString).SearchHighlight()
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
 					.AddColumn("Изменен").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g")).XAlign(0.5f)
 					.AddColumn("Номенклатура").Resizable().AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight().WrapWidth(500)

@@ -24,12 +24,14 @@ using Workwear.Models.Operations;
 using Workwear.Models.Print;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
+using Workwear.Repository.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace WorkwearTest.ViewModels.Stock
 {
@@ -80,6 +82,7 @@ namespace WorkwearTest.ViewModels.Stock
 			builder.RegisterType<IssuedSheetPrintModel>().AsSelf();
 			builder.RegisterType<ModalProgressCreatorForTests>().As<ModalProgressCreator>();
 			builder.RegisterType<StockBalanceModel>().AsSelf();
+			builder.RegisterType<StockDocumentRepository>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			
@@ -238,7 +241,6 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.UoW = uow;
 				employee.AddUsedNorm(norm);
 				foreach (var item in employee.WorkwearItems) {
 					item.Created = new DateTime(2020, 1, 1);
@@ -289,7 +291,8 @@ namespace WorkwearTest.ViewModels.Stock
 				};
 				uow.Save(issuedOperation2);
 				
-				employee.UpdateNextIssueAll();
+				container.Resolve<EmployeeIssueModel>()
+					.UpdateNextIssueAll(new[] { employee }, uow: uow);
 				uow.Commit();
 
 				//Создаем выдачу чтобы выдать вторую номенклатуру программа не должна предлагать к выдаче первую.

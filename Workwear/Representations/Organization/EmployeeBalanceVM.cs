@@ -84,16 +84,58 @@ namespace workwear.Representations.Organization
 					.SelectSubQuery (subQueryRemove).WithAlias (() => resultAlias.Removed)
 				)
 				.TransformUsing (Transformers.AliasToBean<EmployeeBalanceVMNode> ())
-				.List<EmployeeBalanceVMNode> ().Where(r => r.Added - r.Removed != 0);		
+				.List<EmployeeBalanceVMNode> ().Where(r => r.Added - r.Removed != 0).ToList();
 
-			SetItemsSource (expenseList.ToList ());
+			FillBarcodes(expenseList);
+			SetItemsSource (expenseList);
 		}
+		
+		private void FillBarcodes(List<EmployeeBalanceVMNode> nodes) {
+			if(!nodes.Any())
+				return;
+
+			var operationIds = nodes.Select(x => x.Id).ToArray();
+			BarcodeOperation barcodeOperationAlias = null;
+			Barcode barcodeAlias = null;
+			EmployeeIssueOperation issueOperationAlias = null;
+			var issuedBarcodes = UoW.Session.QueryOver(() => barcodeOperationAlias)
+				.JoinAlias(() => barcodeOperationAlias.EmployeeIssueOperation, () => issueOperationAlias)
+				.JoinAlias(() => barcodeOperationAlias.Barcode, () => barcodeAlias)
+				.WhereRestrictionOn(() => issueOperationAlias.Id).IsIn(operationIds)
+				.SelectList(list => list
+					.Select(() => issueOperationAlias.Id)
+					.Select(() => barcodeAlias.Id)
+					.Select(() => barcodeAlias.Title))
+				.List<object[]>();
+			if(!issuedBarcodes.Any())
+				return;
+
+			BarcodeOperation closingBarcodeOperationAlias = null;
+			EmployeeIssueOperation closingOperationAlias = null;
+			var returnedBarcodeIds = new HashSet<int>(UoW.Session.QueryOver(() => closingBarcodeOperationAlias)
+				.JoinAlias(() => closingBarcodeOperationAlias.EmployeeIssueOperation, () => closingOperationAlias)
+				.WhereRestrictionOn(() => closingOperationAlias.IssuedOperation.Id).IsIn(operationIds)
+				.Select(Projections.Property(() => closingBarcodeOperationAlias.Barcode.Id))
+				.List<int>());
+
+			var barcodesByOperation = issuedBarcodes
+				.Where(x => !returnedBarcodeIds.Contains((int)x[1]))
+				.GroupBy(x => (int)x[0])
+				.ToDictionary(g => g.Key, g => string.Join("\n", g.Select(x => (string)x[2])));
+
+			foreach(var node in nodes) {
+				barcodesByOperation.TryGetValue(node.Id, out var barcodeText);
+				node.BarcodeText = barcodeText;
+			}
+		}
+
 		private IColumnsConfig treeViewConfig = ColumnsConfigFactory.Create<EmployeeBalanceVMNode> ()
 			.AddColumn ("Наименование").AddTextRenderer (e => e.ItemName).WrapWidth(700)
 			.AddSetter((w, item) => w.Foreground = item.NomenclatureName != null ? "black" : "blue")
 			.AddColumn ("Размер").AddTextRenderer (e => e.WearSize)
 			.AddColumn ("Рост").AddTextRenderer (e => e.Height)
 			.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
+			.AddColumn ("Штрихкод").AddTextRenderer (e => e.BarcodeText)
 			.AddColumn ("Стоимость").AddTextRenderer (e => e.AvgCostText)
 			.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 			.AddSetter ((w, e) => w.Text = 
@@ -134,6 +176,7 @@ namespace workwear.Representations.Organization
 		public int Balance => Added - Removed;
 		public string BalanceText => $"{Balance} {UnitsName}";
 		public string AvgCostText => AvgCost > 0 ? CurrencyWorks.GetShortCurrencyString(AvgCost) : String.Empty;
+		public string BarcodeText { get; set; }
 	}
 }
 

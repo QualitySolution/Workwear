@@ -339,7 +339,7 @@ namespace Workwear.Test.Integration.Tools
 				expense.UpdateOperations(uow, baseParameters, ask);
 				uow.Save(expense);
 				uow.Commit();
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				employee.WorkwearItems.First(e => e.ProtectionTools.IsSame(protectionTools2)).Created = new DateTime(2018, 4, 22);
 				uow.Save(expense.Employee);
 				uow.Commit();

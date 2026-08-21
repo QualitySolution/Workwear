@@ -45,7 +45,7 @@ WHERE
     operation_issued_by_employee.auto_writeoff_date &gt; @start_date
   AND nomenclature.use_barcode
   AND barcodes.id IS NOT NULL
-  AND (clothing_service_claim.id IS  NULL OR start_state.operation_time BETWEEN @start_date AND @finish_date) #
+  AND (clothing_service_claim.id IS  NULL OR (start_state.operation_time &gt;= CONVERT(@start_date, DATE) AND start_state.operation_time &lt; DATE_ADD(CONVERT(@finish_date, DATE), INTERVAL 1 DAY))) #
 GROUP BY bar_id#, employees.subdivision_id #IF(@subdivision_group, employees.subdivision_id, null)
 HAVING @show_zero OR personal_count &gt; 0
 ORDER BY personal_count DESC , subdivision, department, FIO) as personal_count_tabel

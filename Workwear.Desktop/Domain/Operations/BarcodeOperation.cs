@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
+using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 
 namespace Workwear.Domain.Operations {
@@ -61,20 +65,71 @@ namespace Workwear.Domain.Operations {
 		#region Расчетные
 		public virtual string Title => $"Операция с меткой {Barcode.Title}";
 		public virtual DateTime OperationDate => EmployeeIssueOperation?.OperationTime ??
+		                                          DutyNormIssueOperation?.OperationTime ??
 		                                          OverNormOperation?.OperationTime ??
 		                                          WarehouseOperation?.OperationTime ??
 		                                          throw new Exception("Нет даты связанной операции");
 		public virtual string OperationTitle {
 			get {
+				var parts = new List<string>();
+
+				if(EmployeeIssueOperation != null) {
+					if(EmployeeIssueOperation.Issued > 0)
+						parts.Add($"Выдано сотруднику: {EmployeeIssueOperation.Employee.ShortName}");
+					if(EmployeeIssueOperation.Returned > 0)
+						parts.Add($"Списано с сотрудника: {EmployeeIssueOperation.Employee.ShortName}");
+				}
+				if(DutyNormIssueOperation != null) {
+					if(DutyNormIssueOperation.Issued > 0)
+						parts.Add($"Выдано по дежурной норме: {DutyNormIssueOperation.DutyNorm.Name}");
+					if(DutyNormIssueOperation.Returned > 0)
+						parts.Add($"Списано с дежурной нормы: {DutyNormIssueOperation.DutyNorm.Name}");
+				}
+				if(OverNormOperation != null) {
+					if(OverNormOperation.WarehouseOperation?.ExpenseWarehouse != null)
+						parts.Add($"{OverNormOperation.Type.GetEnumTitle()} выдача сотруднику: {OverNormOperation.Employee.ShortName}");
+					if(OverNormOperation.WarehouseOperation?.ReceiptWarehouse != null)
+						parts.Add($"Возврат вне нормы от сотрудника: {OverNormOperation.Employee.ShortName}");
+				}
+
+				if(parts.Count == 0 && WarehouseOperation?.ExpenseWarehouse == null && WarehouseOperation?.ReceiptWarehouse != null)
+					return $"Промаркировано на {WarehouseOperation.ReceiptWarehouse.Name}.";
+
+				if(WarehouseOperation != null) {
+					if(WarehouseOperation.ExpenseWarehouse != null)
+						parts.Add($"Списано со склада: {WarehouseOperation.ExpenseWarehouse.Name}");
+					if(WarehouseOperation.ReceiptWarehouse != null)
+						parts.Add($"Поступило на склад: {WarehouseOperation.ReceiptWarehouse.Name}");
+				}
+
+				if(parts.Count == 0)
+					throw new NotSupportedException();
+
+				return string.Join(". ", parts) + ".";
+			}
+		}
+
+		public virtual EmployeeCard CurrentEmployee {
+			get {
+				if(WarehouseOperation?.ReceiptWarehouse != null)
+					return null;
 				if(EmployeeIssueOperation?.Issued > 0)
-					return $"Выдача сотруднику: {EmployeeIssueOperation.Employee.ShortName}";
+					return EmployeeIssueOperation.Employee;
 				if(OverNormOperation != null)
-					return $"{OverNormOperation.Type} выдача сотруднику: {OverNormOperation.Employee.ShortName}";
-				if(WarehouseOperation != null)
-////1289
-//TODO Отделить маркировку от возврата
-					return $"Маркировка на складе.";
-				return "???";
+					return OverNormOperation.Employee;
+				return null;
+			}
+		}
+
+		public virtual Warehouse CurrentWarehouse => WarehouseOperation?.ReceiptWarehouse;
+
+		public virtual DutyNorm CurrentDutyNorm {
+			get {
+				if(WarehouseOperation?.ReceiptWarehouse != null)
+					return null;
+				if(DutyNormIssueOperation?.Issued > 0)
+					return DutyNormIssueOperation.DutyNorm;
+				return null;
 			}
 		}
 		#endregion

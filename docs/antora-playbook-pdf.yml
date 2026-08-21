@@ -1,0 +1,22 @@
+site:
+  title: 'QS: Спецодежда'
+  start_page: workwear::introduction.adoc
+
+antora:
+  extensions:
+  - require: '@antora/pdf-extension'
+    config_file: ./antora-assembler-pdf.yml
+
+content:
+  sources:
+  - url: ./..
+    branches: HEAD
+    worktrees: true
+    start_path: docs
+
+ui:
+  bundle:
+    url: ./pdf-ui
+
+output:
+  destinations: []

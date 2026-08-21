@@ -122,7 +122,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				Assert.That(employee.WorkwearItems.First(i => i.ProtectionTools == protectionTools).NextIssue,

@@ -73,6 +73,33 @@ namespace Workwear.Domain.Stock.Documents
 			if (WarehouseTo == WarehouseFrom)
 				yield return new ValidationResult("Склад получатель должен отличаться от склада отправителя",
 				new[] { nameof(Items) });
+
+			var duplicateBarcodeTitles = Items
+				.SelectMany(i => i.Barcodes)
+				.Where(b => b != null)
+				.GroupBy(b => b.Id != 0 ? (object)b.Id : b)
+				.Where(g => g.Count() > 1)
+				.Select(g => g.First().Title)
+				.ToList();
+			if(duplicateBarcodeTitles.Any())
+				yield return new ValidationResult(
+					$"{String.Join(", ", duplicateBarcodeTitles)} добавлены в документ более одного раза.",
+					new[] { nameof(Items) });
+
+			var misplacedBarcodeTitles = Items
+				.SelectMany(i => i.WarehouseBarcodeOperations)
+				.Where(bo => bo.Barcode != null)
+				.Where(bo => bo.Barcode.SortedOperations
+					.Where(x => x != bo)
+					.LastOrDefault(x => x.OperationDate <= Date)
+					?.CurrentWarehouse != warehouseFrom)
+				.Select(bo => bo.Barcode.Title)
+				.ToList();
+			if(misplacedBarcodeTitles.Any())
+				yield return new ValidationResult(
+					$"{String.Join(", ", misplacedBarcodeTitles)} не числятся на складе отправителе.",
+					new[] { nameof(Items) });
+
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			if (baseParameters.CheckBalances) {
 				var strNom = items
@@ -85,12 +112,16 @@ namespace Workwear.Domain.Stock.Documents
 			}
 		}
 		#endregion
-		public virtual TransferItem AddItem(StockPosition position, int amount) {
-			if(Items.Any(p => position.Equals(p.StockPosition))) {
-				logger.Warn($"Складская позици {position.Title} из уже добавлена. Пропускаем...");
-				return null;
+		public virtual TransferItem AddItem(StockPosition position, int amount, IEnumerable<Barcode> barcodes = null) {
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p => position.Equals(p.StockPosition) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn($"Складская позици {position.Title} из уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
-			var newItem = new TransferItem(UoW, this, position, amount);
+			var newItem = new TransferItem(this, position, amount, barcodeList);
 			Items.Add(newItem);
 			return newItem;
 		}

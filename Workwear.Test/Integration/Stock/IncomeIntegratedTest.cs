@@ -200,7 +200,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot()) {

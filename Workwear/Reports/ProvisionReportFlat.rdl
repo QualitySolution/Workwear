@@ -93,14 +93,14 @@ FROM (SELECT
                  , 0)
               ,null) AS 'in_stock',
           IF(@show_employees,
-             GROUP_CONCAT( CONCAT_WS('',
+             LEFT(GROUP_CONCAT(CONCAT_WS('',
                                      CONCAT(employees.last_name, ' '),
                                      IF(employees.first_name = '',
                                         NULL,
                                         CONCAT(LEFT(employees.first_name, 1), '.')),
                                      IF(employees.patronymic_name = '',
                                         NULL,
-                                        CONCAT(LEFT(employees.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 1000)
+                                        CONCAT(LEFT(employees.patronymic_name, 1), '.'))) SEPARATOR ', '), 5000)
               ,null) AS 'employees'
       FROM employee_cards_item
                JOIN employees ON employees.id = employee_cards_item.employee_id
@@ -129,7 +129,18 @@ FROM (SELECT
                         AND gi.employee_group_id IN (@employee_groups_ids))) )
         AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
         AND ((-1 IN (@subdivision_ids)) OR (@without_subdivision AND employees.subdivision_id IS NULL) OR (employees.subdivision_id IN (@subdivision_ids)))
-        AND (@issue_type = '' OR item_types.issue_type = @issue_type)
+        AND (@issue_type = '' OR EXISTS (
+              SELECT 1 FROM protection_tools_nomenclature AS itn
+                  JOIN nomenclature AS itnom ON itnom.id = itn.nomenclature_id
+                  JOIN item_types AS itnit ON itnit.id = itnom.type_id
+              WHERE itn.protection_tools_id = protection_tools.id
+                AND itnit.issue_type = @issue_type
+            )
+            #Если номенклатуры не подобраны, смотрим на тип номенклатуры нормы
+            OR (NOT EXISTS (
+                  SELECT 1 FROM protection_tools_nomenclature AS itn0
+                  WHERE itn0.protection_tools_id = protection_tools.id
+                ) AND item_types.issue_type = @issue_type))
         AND (NOT @exclude_in_vacation
           OR (NOT EXISTS(SELECT *
                          FROM employees_vacations AS vac

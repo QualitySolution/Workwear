@@ -24,6 +24,7 @@ using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestViewModel: EntityDialogViewModelBase<IssuanceRequest> {

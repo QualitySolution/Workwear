@@ -74,7 +74,6 @@ namespace Workwear.Repository.Stock
 			uow = GetUoW(uow);
 			StockBalanceDTO resultAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
-			Nomenclature nomenclatureAlias = null;
 			Size sizeAlias = null;
 			Size heightAlias = null;
 			Owner ownerAlias = null;
@@ -106,7 +105,6 @@ namespace Workwear.Repository.Stock
 			);
 			
 			var result = queryStock
-					.JoinAlias(() => warehouseOperationAlias.Nomenclature, () => nomenclatureAlias)
 					.JoinAlias(() => warehouseOperationAlias.WearSize, () => sizeAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => warehouseOperationAlias.Height, () => heightAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => warehouseOperationAlias.Owner, () => ownerAlias, JoinType.LeftOuterJoin)

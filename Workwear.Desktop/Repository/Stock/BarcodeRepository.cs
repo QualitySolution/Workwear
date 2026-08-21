@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
 using Workwear.Domain.ClothingService;
-using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 
@@ -22,21 +21,9 @@ namespace Workwear.Repository.Stock {
 				.SingleOrDefault();
 		}
 
-		public EmployeeCard GetLastEmployeeFor(Barcode barcode) {
-			var result = unitOfWorkProvider.UoW.Session.Query<BarcodeOperation>()
-				.Where(x => x.Barcode.Id == barcode.Id)
-				.Select(x => new {
-					EmployeeIssueEmployee = x.EmployeeIssueOperation.Employee,
-					OverNormEmployee = x.OverNormOperation.Employee,
-					DutyNormEmployee = x.DutyNormIssueOperation.DutyNorm.ResponsibleEmployee,
-					Date = (DateTime?)x.EmployeeIssueOperation.OperationTime
-					       ?? (DateTime?)x.OverNormOperation.OperationTime
-					       ?? (DateTime?)x.DutyNormIssueOperation.OperationTime
-				})
-				.OrderByDescending(x => x.Date)
-				.FirstOrDefault();
-
-			return result?.EmployeeIssueEmployee ?? result?.OverNormEmployee ?? result?.DutyNormEmployee;
+		public BarcodeOperation GetLastOperationAt(Barcode barcode, DateTime? date = null) {
+			var loadedBarcode = unitOfWorkProvider.UoW.GetById<Barcode>(barcode.Id);
+			return loadedBarcode?.LastOperationAt(date ?? DateTime.Now);
 		}
 
 		

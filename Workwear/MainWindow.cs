@@ -531,7 +531,19 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnHelpActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenUserGuide");
 		try {
-			OpenHelper.OpenUrl("user-guide.pdf");
+			OpenHelper.OpenUrl("руководство-пользователя.pdf");
+		}
+		catch(System.ComponentModel.Win32Exception ex) {
+			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
+			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
+				"Возможно на компьютере не установлена или неисправна программа для открытия PDF");
+		}
+	}
+
+	protected void OnActionPracticalGuideActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenPracticalGuide");
+		try {
+			OpenHelper.OpenUrl("практическое-руководство.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -851,7 +863,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionAdminGuideActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenAdminGuide");
 		try {
-			OpenHelper.OpenUrl("admin-guide.pdf");
+			OpenHelper.OpenUrl("руководство-администратора.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,

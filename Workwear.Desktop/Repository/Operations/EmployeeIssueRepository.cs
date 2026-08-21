@@ -82,11 +82,50 @@ namespace Workwear.Repository.Operations
 		/// Используется в прогнозировании склада.
 		/// </summary>
 		public virtual IList<GraphIssueOperationDto> AllOperationsForGraph(int[] employeeIds, IUnitOfWork uow = null) {
+			if(employeeIds == null)
+				throw new ArgumentNullException(nameof(employeeIds));
+			if(!employeeIds.Any())
+				return new List<GraphIssueOperationDto>();
+
+			return AllOperationsForGraph(
+				Restrictions.In(
+					Projections.Property<EmployeeIssueOperation>(x => x.Employee.Id),
+					employeeIds.Distinct().Cast<object>().ToArray()),
+				uow);
+		}
+
+		/// <summary>
+		/// Загружает операции только для переданных пар «сотрудник + номенклатура нормы».
+		/// Ключ словаря — Id номенклатуры нормы, значение — Id сотрудников.
+		/// </summary>
+		public virtual IList<GraphIssueOperationDto> AllOperationsForGraph(
+			IReadOnlyDictionary<int, int[]> employeeIdsByProtectionTools,
+			IUnitOfWork uow = null) {
+			if(employeeIdsByProtectionTools == null)
+				throw new ArgumentNullException(nameof(employeeIdsByProtectionTools));
+			if(!employeeIdsByProtectionTools.Any(x => x.Value?.Any() == true))
+				return new List<GraphIssueOperationDto>();
+
+			var requestedPairs = Restrictions.Disjunction();
+			foreach(var pair in employeeIdsByProtectionTools.Where(x => x.Value?.Any() == true)) {
+				requestedPairs.Add(Restrictions.Conjunction()
+					.Add(Restrictions.In(
+						Projections.Property<EmployeeIssueOperation>(x => x.Employee.Id),
+						pair.Value.Cast<object>().ToArray()))
+					.Add(Restrictions.Eq(
+						Projections.Property<EmployeeIssueOperation>(x => x.ProtectionTools.Id),
+						pair.Key)));
+			}
+			return AllOperationsForGraph(requestedPairs, uow);
+		}
+
+		private IList<GraphIssueOperationDto> AllOperationsForGraph(
+			ICriterion restriction,
+			IUnitOfWork uow) {
 			EmployeeIssueOperation opAlias = null;
 			GraphIssueOperationDto dtoAlias = null;
-
 			var dtos = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => opAlias)
-				.Where(() => opAlias.Employee.Id.IsIn(employeeIds))
+				.Where(restriction)
 				.SelectList(list => list
 					.Select(() => opAlias.Id).WithAlias(() => dtoAlias.Id)
 					.Select(() => opAlias.OperationTime).WithAlias(() => dtoAlias.OperationTime)
@@ -103,7 +142,7 @@ namespace Workwear.Repository.Operations
 				.TransformUsing(Transformers.AliasToBean<GraphIssueOperationDto>())
 				.List<GraphIssueOperationDto>();
 
-			// Разрешаем ссылки IssuedOperation внутри загруженного набора
+			// Разрешаем ссылки IssuedOperation внутри загруженного набора.
 			var dtoById = dtos.Where(d => d.Id != 0).ToDictionary(d => d.Id);
 			foreach(var dto in dtos.Where(d => d.IssuedOperationId.HasValue)) {
 				if(dtoById.TryGetValue(dto.IssuedOperationId.Value, out var issuedOp))

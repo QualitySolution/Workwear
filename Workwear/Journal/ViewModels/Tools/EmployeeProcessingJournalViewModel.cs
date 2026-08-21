@@ -37,6 +37,7 @@ namespace workwear.Journal.ViewModels.Tools
 	[DontUseAsDefaultViewModel]
 	public class EmployeeProcessingJournalViewModel : EntityJournalViewModelBase<EmployeeCard, EmployeeViewModel, EmployeeProcessingJournalNode>, IDialogDocumentation
 	{
+		private const int RecalculationBatchSize = 50;
 		NLog.Logger loggerProcessing = NLog.LogManager.GetLogger("EmployeeProcessing");
 		private string logFile = NLog.LogManager.Configuration.FindTargetByName<FileTarget>("EmployeeProcessing").FileName.Render(new NLog.LogEventInfo { TimeStamp = DateTime.Now });
 
@@ -315,7 +316,7 @@ namespace workwear.Journal.ViewModels.Tools
 					step++;
 					if(removeNorms)
 						employee.UsedNorms.Clear();
-					employee.AddUsedNorm(norm);
+					issueModel.AddUsedNorm(employee, norm, UoW);
 					UoW.Save(employee);
 					Results[employee.Id] = ("ОК", "green");
 					if(step % 10 == 0)
@@ -359,7 +360,11 @@ namespace workwear.Journal.ViewModels.Tools
 					UoW.Save(employee);
 				}
 				
-				var count = employee.NormFromPost(UoW,normRepository);
+				var normsForPost = normRepository.GetNormsForPost(UoW, employee.Post)
+					.Where(x => !x.Archival)
+					.ToArray();
+				issueModel.AddUsedNorms(employee, normsForPost, UoW);
+				var count = normsForPost.Length;
 				if(count != 0) {
 					step++;
 					UoW.Save(employee);
@@ -425,12 +430,12 @@ namespace workwear.Journal.ViewModels.Tools
 			loggerProcessing.Info($"Пересчет даты следующией выдачи для {nodes.Length} сотрудников");
 			loggerProcessing.Info($"База данных: {dataBaseInfo.Name}");
 			
-			progressCreator.Start(nodes.Length + 3, text: "Загружаем сотрудников");
+			progressCreator.Start(nodes.Length * 2 + 5, text: "Загружаем сотрудников");
 			var cancellation = progressCreator.CancellationToken;
 			var employees = UoW.GetById<EmployeeCard>(nodes.Select(x => x.Id)).ToArray();
 			
-			issueModel.UpdateNextIssueAll(employees, progressCreator, cancellation, 10,
-				(employee, changes) => {
+			issueModel.UpdateNextIssueAll(employees, progressCreator, cancellation,
+				changeLog: (employee, changes) => {
 					if(changes.Length > 0) {
 						Results[employee.Id] = (NumberToTextRus.FormatCase(changes.Length, "изменена {0} строка", "изменено {0} строки", "изменено {0} строк"), "green");
 						foreach(var message in changes)
@@ -438,6 +443,11 @@ namespace workwear.Journal.ViewModels.Tools
 					}
 					else
 						Results[employee.Id] = ("Без изменений", "gray");
+				},
+				batchSize: RecalculationBatchSize,
+				batchProcessed: () => {
+					progressCreator.Update("Сохраняем рассчитанные изменения...");
+					UoW.Commit();
 				});
 			if(cancellation.IsCancellationRequested)
 				return;

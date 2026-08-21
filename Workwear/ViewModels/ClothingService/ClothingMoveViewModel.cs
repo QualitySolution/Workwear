@@ -15,7 +15,6 @@ using QS.Navigation;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
-using QS.ViewModels.Control;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.ClothingService;
@@ -95,24 +94,38 @@ namespace Workwear.ViewModels.ClothingService {
 				
 				Claim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
 				if(Claim == null)
-					BarcodeInfoViewModel.LabelInfo = $"Спецодежда не была принята в стирку.";
+					BarcodeInfoViewModel.LabelInfo = BarcodeInfoViewModel.Employee == null
+						? GetUnsupportedHolderMessage()
+						: "Спецодежда не была принята в стирку.";
 				OnPropertyChanged(nameof(CanAddClaim));
 			}
 		}
+
+		private string GetUnsupportedHolderMessage() {
+			if(BarcodeInfoViewModel.Warehouse != null)
+				return $"Числится на складе «{BarcodeInfoViewModel.Warehouse.Name}». Приём пока не поддерживается.";
+			if(BarcodeInfoViewModel.DutyNorm != null)
+				return $"Числится на дежурной норме №{BarcodeInfoViewModel.DutyNorm.Id}. Приём пока не поддерживается.";
+			return "Спецодежда не выдана сотруднику, приём пока не поддерживается.";
+		}
 		
 		private void ServicesListOnContentChanged(object sender, EventArgs e) {
-			if(sender is SelectableEntity<ProvidedService> item) {
+			if(!(sender is SelectableProvidedService item))
+				return;
+
+			if(e is PropertyChangedEventArgs propertyChangedArgs && propertyChangedArgs.PropertyName == nameof(SelectableProvidedService.Select)) {
 				if(item.Select) {
-					item.Entity.Id = 0; //Отмечаем как новый, чтобы  пересоздался. Так коректно работает журналирование
+					item.Entity.Id = 0; //Отмечаем как новый, чтобы пересоздался. Так коректно работает журналирование
+					item.Entity.Amount = 1;
 					item.Entity.Cost = item.Entity.Service.Cost;
 					item.Entity.ServiceDate = DateTime.Now;
 					Claim.ProvidedServices.Add(item.Entity);
 				} else
 					Claim.ProvidedServices.RemoveAll(x => DomainHelper.EqualDomainObjects(item.Entity, x));
-
-				UoW.Save(claim);
-				UoW.Commit();
 			}
+
+			UoW.Save(claim);
+			UoW.Commit();
 		}
 
 		#region Cвойства модели
@@ -132,7 +145,7 @@ namespace Workwear.ViewModels.ClothingService {
 					foreach(var service in claim.Barcode.Nomenclature.UseServices) { //Все услуги оказываемые для номенклатуры
 						ProvidedService provServ = Claim.ProvidedServices.FirstOrDefault(x => DomainHelper.EqualDomainObjects(service, x.Service))
 								?? new ProvidedService(claim, service); // Заготовка не сохранённая в UoW, при выборе пользователем надо сохранять
-						servicesList.Add(new SelectableEntity<ProvidedService>(service.Id, service.Name, entity: provServ)
+						servicesList.Add(new SelectableProvidedService(service.Id, service.Name, entity: provServ)
 							{ Select = provServ.Id != 0 }); //Если в базе есть, значит уже выбран
 					}
 
@@ -185,8 +198,8 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 		}
 
-		private IObservableList<SelectableEntity<ProvidedService>> servicesList = new ObservableList<SelectableEntity<ProvidedService>>();
-		public virtual IObservableList<SelectableEntity<ProvidedService>> ServicesList {
+		private IObservableList<SelectableProvidedService> servicesList = new ObservableList<SelectableProvidedService>();
+		public virtual IObservableList<SelectableProvidedService> ServicesList {
 			get => servicesList;
 			set => SetField(ref servicesList, value);
 		}
@@ -194,7 +207,7 @@ namespace Workwear.ViewModels.ClothingService {
 		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
 
 		public virtual bool ShowTerminal => FeaturesService.Available(WorkwearFeature.Postomats);
-		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null;
+		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null && BarcodeInfoViewModel.Employee != null;
 		public virtual bool SensitiveActions => Claim != null;
 		public virtual bool SensitiveAccept => Claim != null;
 		public virtual bool SensitivePrint => (Claim?.Barcode != null);
@@ -256,6 +269,10 @@ namespace Workwear.ViewModels.ClothingService {
 			}
 			if(Claim != null) {
 				BarcodeInfoViewModel.LabelInfo = "Уже принято на обслуживание.";
+				return;
+			}
+			if(BarcodeInfoViewModel.Employee == null) {
+				BarcodeInfoViewModel.LabelInfo = GetUnsupportedHolderMessage();
 				return;
 			}
 

@@ -500,7 +500,7 @@ FROM employee_cards_item
          LEFT JOIN sizes as size ON employeeSizeAlias.size_id = size.id
          LEFT JOIN sizes as height ON employeeHeightAlias.size_id = height.id
 WHERE employee_cards_item.employee_id = @employee_id
-  AND employee_cards_item.next_issue &lt; IFNULL(@endDateIssue, CURDATE())
+  AND employee_cards_item.next_issue &lt;= IFNULL(@endDateIssue, CURDATE())
   AND (-1 IN (@protection_tools_ids) OR protection_tools.id IN (@protection_tools_ids));</CommandText>
         <QueryParameters>
           <QueryParameter Name="@employee_id">

@@ -27,6 +27,7 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
+using Workwear.Repository.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
@@ -91,6 +92,7 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<NormRepository>().AsSelf();
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<StockBalanceModel>().AsSelf();
+			builder.RegisterType<StockDocumentRepository>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
@@ -156,8 +158,8 @@ namespace WorkwearTest.ViewModels.Company {
 				uow.Save(issuedOperation1);
 				uow.Commit();
 				
-				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.UpdateNextIssueAll();
+				container.Resolve<EmployeeIssueModel>()
+					.UpdateNextIssueAll(new[] { employee }, uow: uow);
 
 				var employeeItem = employee.WorkwearItems.First();
 				Assert.That(employeeItem.NextIssue, Is.EqualTo(new DateTime(2023, 11, 11)));

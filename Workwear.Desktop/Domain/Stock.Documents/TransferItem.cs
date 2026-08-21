@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.HistoryLog;
@@ -58,24 +60,53 @@ namespace Workwear.Domain.Stock.Documents
 			}
 		}
 		
+		[IgnoreHistoryTrace]
+		public virtual IList<BarcodeOperation> WarehouseBarcodeOperations { get; set; } = new List<BarcodeOperation>();
+
+		/// <summary>
+		/// Название метки. Пока строка не сохранена в базу - редактируется и при сохранении перезаписывает Barcode.Label.
+		/// Для уже сохранённой строки показывает текущее название метки, изменить отсюда уже нельзя.
+		/// </summary>
+		private string label;
+		[Display(Name = "Название")]
+		[IgnoreHistoryTrace]
+		public virtual string Label {
+			get => label ?? Barcodes.FirstOrDefault()?.Label;
+			set => SetField(ref label, value);
+		}
+
 		#endregion
 		#region Расчетные
-		public virtual string Title => 
+		public virtual string Title =>
 			$"Перемещение {StockPosition.Title} x {Amount} со склада {document.WarehouseFrom.Name} на склад {document.WarehouseTo.Name}";
 		public virtual StockPosition StockPosition => new StockPosition(
-			Nomenclature, 
-			WarehouseOperation.WearPercent, 
-			warehouseOperation.WearSize, 
-			warehouseOperation.Height, 
+			Nomenclature,
+			WarehouseOperation.WearPercent,
+			warehouseOperation.WearSize,
+			warehouseOperation.Height,
 			warehouseOperation.Owner);
 		public virtual int AmountInStock => StockBalanceModel.GetAmount(StockPosition);
+
+		public virtual IEnumerable<Barcode> Barcodes => WarehouseBarcodeOperations.Select(x => x.Barcode);
+
+		public virtual string BarcodesString => string.Join(
+			"\n",
+			WarehouseBarcodeOperations
+				.Select(x => x.Barcode?.Title)
+				.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+		public virtual string KitNumbersString => string.Join(
+			"\n",
+			WarehouseBarcodeOperations.Select(x => x.KitNumber > 0 ? x.KitNumber.ToString() : ""));
+
+		public virtual bool CanEditAmount => !WarehouseBarcodeOperations.Any();
 		#endregion
 
 		#region Служебные
 		public virtual StockBalanceModel StockBalanceModel { get; set; }
 		#endregion
 		public TransferItem() { }
-		public TransferItem(IUnitOfWork uow, Transfer transfer, StockPosition position, int amount) {
+		public TransferItem(Transfer transfer, StockPosition position, int amount, IEnumerable<Barcode> barcodes = null) {
 			document = transfer;
 			warehouseOperation.Nomenclature = nomenclature = position.Nomenclature;
 			warehouseOperation.WearSize = position.WearSize;
@@ -85,11 +116,48 @@ namespace Workwear.Domain.Stock.Documents
 			warehouseOperation.Amount = this.amount = amount;
 			warehouseOperation.ExpenseWarehouse = transfer.WarehouseFrom;
 			warehouseOperation.OperationTime = transfer.Date;
+			AddBarcodes(barcodes);
 		}
+
+		private void AddBarcodes(IEnumerable<Barcode> barcodes) {
+			var selectedBarcodes = barcodes?.ToList();
+			if(selectedBarcodes == null || !selectedBarcodes.Any())
+				return;
+
+			foreach(var barcode in selectedBarcodes) {
+				var newBarcodeOperation = new BarcodeOperation {
+					Barcode = barcode,
+					WarehouseOperation = warehouseOperation,
+					KitNumber = barcode.LastOperation?.KitNumber,
+				};
+				barcode.BarcodeOperations.Add(newBarcodeOperation);
+				WarehouseBarcodeOperations.Add(newBarcodeOperation);
+			}
+		}
+
 		#region Функции
 		public virtual void UpdateOperations(IUnitOfWork uow, Func<string, bool> askUser) {
+			var isNew = Id == 0;
 			WarehouseOperation.Update(uow, this);
 			uow.Save(WarehouseOperation);
+			foreach(var barcodeOperation in WarehouseBarcodeOperations) {
+				uow.Save(barcodeOperation);
+				if(isNew && !String.IsNullOrWhiteSpace(label) && barcodeOperation.Barcode != null) {
+					barcodeOperation.Barcode.Label = label;
+					uow.Save(barcodeOperation.Barcode);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Добавляет ещё один штрихкод в уже существующую строку перемещения (сканирование).
+		/// </summary>
+		public virtual void AddBarcode(Barcode barcode) {
+			if(WarehouseBarcodeOperations.Any(x => DomainHelper.EqualDomainObjects(x.Barcode, barcode)))
+				return; //уже добавлен этим документом
+
+			AddBarcodes(new[] { barcode });
+			Amount++;
 		}
 		#endregion
 	}

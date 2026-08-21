@@ -25,6 +25,7 @@ using Workwear.Journal.Filter.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.ClothingService;
 using Workwear.ViewModels.ClothingService;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using CellLocation = Workwear.Domain.Postomats.CellLocation;
@@ -126,7 +127,10 @@ namespace Workwear.ViewModels.Postomats {
 
 		public void AddFromScan() {
 			//Здесь зануления других моделей обязательно чтобы их не создавал DI
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel, OverNormViewModel, ReturnViewModel>(this, this, null, null);
+			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
+				this,
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel), typeof(WarehouseTransferViewModel) },
+				new object[] { this, null, null, null, null });
 		}
 		
 		public void AddItems(IEnumerable<ServiceClaim> claims) {

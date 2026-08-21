@@ -69,7 +69,9 @@ namespace workwear.ReportParameters.Views {
 			checkShowCostCenter.Binding.AddBinding(ViewModel, v => v.ShowCostCenter, w => w.Active).InitializeFromSource();
 			
 			checkShowOnlyWithoutNorm.Binding.AddBinding(ViewModel, v => v.ShowOnlyWithoutNorm, w => w.Active).InitializeFromSource();
-			
+
+			ycheckManualOperation.Binding.AddBinding(ViewModel, v => v.ShowManualOperation, w => w.Active).InitializeFromSource();
+
 			choicesubdivisionview1.ViewModel = ViewModel.ChoiceSubdivisionViewModel;
 			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
