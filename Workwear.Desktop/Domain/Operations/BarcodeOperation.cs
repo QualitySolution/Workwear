@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -86,7 +87,7 @@ namespace Workwear.Domain.Operations {
 				}
 				if(OverNormOperation != null) {
 					if(OverNormOperation.WarehouseOperation?.ExpenseWarehouse != null)
-						parts.Add($"{OverNormOperation.Type} выдача сотруднику: {OverNormOperation.Employee.ShortName}");
+						parts.Add($"{OverNormOperation.Type.GetEnumTitle()} выдача сотруднику: {OverNormOperation.Employee.ShortName}");
 					if(OverNormOperation.WarehouseOperation?.ReceiptWarehouse != null)
 						parts.Add($"Возврат вне нормы от сотрудника: {OverNormOperation.Employee.ShortName}");
 				}
