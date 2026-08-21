@@ -28,12 +28,12 @@
 	tabel,
 	barcode,
 	nomenclature,
-	type,
+	GROUP_CONCAT(DISTINCT type ORDER BY type SEPARATOR ', ') as type,
 	COUNT(*) as s,
-	table1.amount as amount,
+	SUM(amount) as amount,
 	CAST(SUM(n_weight) / 1000.0 AS DECIMAL(10,3)) AS weight,
 	SUM(cost) as cost,
-	IF(@sum_cost, SUM(cost), cost) as sum_cost,
+	IF(@sum_cost OR @group_claim, SUM(cost), cost) as sum_cost,
 	date
 FROM (
 		 SELECT
@@ -59,9 +59,10 @@ FROM (
 		          LEFT JOIN cost_center on employees_cost_allocation.cost_center_id = cost_center.id
 		          LEFT JOIN barcodes on clothing_service_claim.barcode_id = barcodes.id
 		          LEFT JOIN nomenclature on barcodes.nomenclature_id = nomenclature.id
-	     WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothing_service_services_claim.service_date &lt; @end_date
+	     WHERE clothing_service_services_claim.service_date &gt;= CONVERT(@start_date, DATE) AND clothing_service_services_claim.service_date &lt; DATE_ADD(CONVERT(@end_date, DATE), INTERVAL 1 DAY)
+	       AND ((-1 IN (@service_ids)) OR (clothing_service_services_claim.service_id IN (@service_ids)))
 	 ) AS table1
-GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
+GROUP BY IF(@group_claim, claim_id, IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id))</CommandText>
         <QueryParameters>
           <QueryParameter Name="start_date">
             <Value>=Parameters!start_date</Value>
@@ -77,6 +78,12 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
           </QueryParameter>
           <QueryParameter Name="sum_cost">
             <Value>=Parameters!sum_cost</Value>
+          </QueryParameter>
+          <QueryParameter Name="group_claim">
+            <Value>=Parameters!group_claim</Value>
+          </QueryParameter>
+          <QueryParameter Name="service_ids">
+            <Value>=Parameters!service_ids</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -1391,6 +1398,30 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="group_claim">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="service_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>

@@ -158,8 +158,8 @@ namespace WorkwearTest.ViewModels.Company {
 				uow.Save(issuedOperation1);
 				uow.Commit();
 				
-				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.UpdateNextIssueAll();
+				container.Resolve<EmployeeIssueModel>()
+					.UpdateNextIssueAll(new[] { employee }, uow: uow);
 
 				var employeeItem = employee.WorkwearItems.First();
 				Assert.That(employeeItem.NextIssue, Is.EqualTo(new DateTime(2023, 11, 11)));

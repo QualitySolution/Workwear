@@ -17,7 +17,6 @@ using Workwear.Domain.Operations;
 using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Repository.Operations;
-using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -32,7 +31,7 @@ namespace Workwear.Domain.Company
 		GenitivePlural = "карточек сотрудников"
 	)]
 	[HistoryTrace]
-	public class EmployeeCard: BusinessObjectBase<EmployeeCard>, IDomainObject, IValidatableObject
+	public class EmployeeCard: PropertyChangedBase, IDomainObject, IValidatableObject
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		#region Свойства
@@ -323,9 +322,12 @@ namespace Workwear.Domain.Company
 					$"Некорректный формат email адреса",
 					new[] { nameof(Email) });
 
-			if(!String.IsNullOrEmpty(PersonnelNumber)) {
+			validationContext.Items.TryGetValue(nameof(IUnitOfWork), out var uowObject);
+			var uow = uowObject as IUnitOfWork;
 
-				var result = UoW.Session.QueryOver<EmployeeCard>()
+			if(uow != null && !String.IsNullOrEmpty(PersonnelNumber)) {
+
+				var result = uow.Session.QueryOver<EmployeeCard>()
 					.Where(x => x.PersonnelNumber == PersonnelNumber && x.DismissDate == DismissDate);
 				if(Id > 0)
 					result.WhereNot(x => x.Id == Id);
@@ -335,9 +337,9 @@ namespace Workwear.Domain.Company
 						new[] { this.GetPropertyName(o => o.PersonnelNumber) });
 			}
 
-			if(!String.IsNullOrEmpty(CardNumber)) {
+			if(uow != null && !String.IsNullOrEmpty(CardNumber)) {
 
-				var result = UoW.Session.QueryOver<EmployeeCard>()
+				var result = uow.Session.QueryOver<EmployeeCard>()
 					.Where(x => x.CardNumber == CardNumber);
 				if(Id > 0)
 					result.WhereNot(x => x.Id == Id);
@@ -364,6 +366,10 @@ namespace Workwear.Domain.Company
 
 		#endregion
 		#region Функции для работы с коллекцией норм
+		/// <summary>
+		/// Добавляет норму и обновляет только доменную коллекцию потребностей.
+		/// Для полного пересчёта с учетом прошлых выдач используйте EmployeeIssueModel.AddUsedNorm.
+		/// </summary>
 		public virtual void AddUsedNorm(Norm norm) {
 			if(norm == null) {
 				logger.Warn ("Попытка добавить null вместо нормы! Ай-Ай-Ай!");
@@ -374,9 +380,13 @@ namespace Workwear.Domain.Company
 				return;
 			}
 			UsedNorms.Add (norm);
-			UpdateWorkwearItems ();
+			UpdateWorkwearItemsCollection();
 		}
 
+		/// <summary>
+		/// Добавляет нормы и обновляет только доменную коллекцию потребностей.
+		/// Для полного пересчёта с учетом прошлых выдач используйте EmployeeIssueModel.AddUsedNorms.
+		/// </summary>
 		public virtual void AddUsedNorms(IEnumerable<Norm> norms) {
 			foreach(var norm in norms) {
 				if(UsedNorms.Any(usedNorm => DomainHelper.EqualDomainObjects(usedNorm, norm))) {
@@ -385,30 +395,25 @@ namespace Workwear.Domain.Company
 				}
 				UsedNorms.Add(norm);
 			}
-			UpdateWorkwearItems();
+			UpdateWorkwearItemsCollection();
 		}
 
+		/// <summary>
+		/// Удаляет норму и обновляет только доменную коллекцию потребностей.
+		/// Для полного пересчёта с учетом прошлых выдач используйте EmployeeIssueModel.RemoveUsedNorm.
+		/// Метод также используется механизмом удаления зависимостей, поэтому должен оставаться публичным.
+		/// </summary>
 		public virtual void RemoveUsedNorm(Norm norm) {
-			UsedNorms.Remove (norm);
-			UpdateWorkwearItems ();
-		}
-
-		public virtual int NormFromPost(IUnitOfWork uow, NormRepository normRepository, Post post = null) {
-			var norms = normRepository.GetNormsForPost(uow, post ?? Post);
-			int count = 0;
-			foreach(var norm in norms)
-				if(!norm.Archival) {
-					AddUsedNorm(norm);
-					count++;
-				}
-			return count;
+			UsedNorms.Remove(norm);
+			UpdateWorkwearItemsCollection();
 		}
 		#endregion
 		#region Функции для работы с коллекцией потребностей
 		/// <summary>
-		/// Для работы функции необходимо иметь заполненный UoW.
+		/// Перестраивает только доменную коллекцию потребностей по применённым нормам.
+		/// Для загрузки выдач, пересчёта дат и сохранения используйте EmployeeIssueModel.UpdateWorkwearItems.
 		/// </summary>
-		public virtual void UpdateWorkwearItems() {
+		public virtual List<EmployeeCardItem> UpdateWorkwearItemsCollection() {
 			logger.Info("Пересчитываем требования по спецодежде для сотрудника");
 			//Проверяем нужно ли добавлять
 			var processed = new List<EmployeeCardItem>();
@@ -439,14 +444,7 @@ namespace Workwear.Domain.Company
 			// Удаляем больше ненужные
 			var needRemove = WorkwearItems.Where (i => !processed.Contains (i));
 			needRemove.ToList ().ForEach (i => WorkwearItems.Remove (i));
-			//Обновляем информацию о прошлых выдачах, перед обновлением даты следующей выдачи. Так как могли добавить строчку, у которой таких данных еще нет.
-			if(processed.Any())
-				FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
-			//Обновляем срок следующей выдачи
-			foreach(var item in processed) {
-				item.UpdateNextIssue(UoW);
-			}
-			logger.Info("Ok");
+			return processed;
 		}
 
 		/// <summary>
@@ -454,11 +452,11 @@ namespace Workwear.Domain.Company
 		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
 		/// </summary>
 		/// <param name="protectionTools">Список номенклатур нормы потребности в которых надо обновлять.</param>
-		public virtual void UpdateNextIssue(params ProtectionTools[] protectionTools) {
+		public virtual void UpdateNextIssue(IUnitOfWork uow, params ProtectionTools[] protectionTools) {
 			var ids = new HashSet<int>(protectionTools.Select(x => x.Id));
 			foreach(var wearItem in WorkwearItems) {
 				if(ids.Contains(wearItem.ProtectionTools.Id))
-					wearItem.UpdateNextIssue(UoW);
+					wearItem.UpdateNextIssue(uow);
 			}
 		}
 
@@ -467,9 +465,9 @@ namespace Workwear.Domain.Company
 		/// Перед выполнением обязательно вызвать заполнение информации о получениях FillWearReceivedInfo
 		/// </summary>
 		[Obsolete("Под удаление, используйте аналогичный механизм из EmployeeIssueModel.")]
-		public virtual void UpdateNextIssueAll() {
+		public virtual void UpdateNextIssueAll(IUnitOfWork uow) {
 			foreach(var wearItem in WorkwearItems) {
-				wearItem.UpdateNextIssue(UoW);
+				wearItem.UpdateNextIssue(uow);
 			}
 		}
 
@@ -551,8 +549,7 @@ namespace Workwear.Domain.Company
 				}
 			}
 			FillWearReceivedInfo(operations);
-			UpdateNextIssueAll();
+			UpdateNextIssueAll(uow);
 		}
 	}
 }
-

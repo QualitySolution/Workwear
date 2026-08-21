@@ -121,7 +121,7 @@ namespace Workwear.Domain.Stock.Documents
 					return existing;
 				}
 			}
-			var newItem = new TransferItem(UoW, this, position, amount, barcodeList);
+			var newItem = new TransferItem(this, position, amount, barcodeList);
 			Items.Add(newItem);
 			return newItem;
 		}

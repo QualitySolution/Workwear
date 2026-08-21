@@ -42,7 +42,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly BaseParameters baseParameters;
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly IInteractiveService interactive;
+		private readonly IEntityChangeWatcher changeWatcher;
 		List<EmployeeMovementItem> movements;
+		private bool isDisposed;
 
 		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, 
 			OpenStockDocumentsModel openStockDocumentsModel,  
@@ -50,7 +52,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			FeaturesService featuresService, 
 			EmployeeIssueModel issueModel,
 			BaseParameters baseParameters,
-			
+			IEntityChangeWatcher changeWatcher,
 			IInteractiveService interactive,
 			ITdiCompatibilityNavigation navigation)
 		{
@@ -60,6 +62,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 
@@ -86,7 +89,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!isConfigured) {
 				isConfigured = true;
-				NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeIssueOperation>(HandleManyEntityChangeEventMethod);
+				changeWatcher.BatchSubscribe(HandleManyEntityChangeEventMethod)
+					.ExcludeUow(UoW)
+					.IfEntity<EmployeeIssueOperation>()
+					.AndWhere(x => x.Employee.Id == Entity.Id);
 				UpdateMovements();
 			}
 		}
@@ -94,6 +100,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#region Контекстное меню
 		
 		public void RecalculateIssue(EmployeeMovementItem item) {
+			if(isDisposed || item?.Operation == null) {
+				logger.Warn("Невозможно пересчитать срок носки: карточка закрыта или операция не выбрана.");
+				return;
+			}
+
 			issueModel.RecalculateDateOfIssue(new List<EmployeeIssueOperation>() {item.Operation}, baseParameters, interactive);
 		}
 
@@ -165,7 +176,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			}
 
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionToolsForUpdate.ToArray());
+			Entity.UpdateNextIssue(UoW, protectionToolsForUpdate.ToArray());
 		}
 
 		public void OpenJournalChangeProtectionTools(EmployeeMovementItem item) {
@@ -228,7 +239,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools) {
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionTools);
+			Entity.UpdateNextIssue(UoW, protectionTools);
 		}
 
 		#endregion
@@ -281,16 +292,26 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		void HandleManyEntityChangeEventMethod(EntityChangeEvent[] changeEvents)
 		{
-			var updatedOperations = changeEvents.Where(x => x.GetEntity<EmployeeIssueOperation>().Employee.IsSame(employeeViewModel.Entity)).ToList();
-			if(updatedOperations.Count > 0) {
-				Movements.ForEach(m => UoW.Session.Evict(m.Operation));
-				UpdateMovements();
+			if(isDisposed || !UoW.IsAlive)
+				return;
+
+			foreach(var changeEvent in changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Update)) {
+				var operationId = changeEvent.GetEntity<EmployeeIssueOperation>().Id;
+				var operation = Movements
+					.FirstOrDefault(x => x.Operation.Id == operationId)
+					?.Operation;
+				if(operation != null && UoW.Session.Contains(operation))
+					UoW.Session.Refresh(operation);
 			}
+
+			// Не отсоединяем операции массово: на них могут ссылаться уже загруженные строки документов
+			// с Cascade.All. Повторный запрос вернет для существующих записей те же экземпляры из сессии.
+			UpdateMovements();
 		}
 
 		public void Dispose()
 		{
-			NotifyConfiguration.Instance.UnsubscribeAll(this);
+			isDisposed = true;
 		}
 	}
 }

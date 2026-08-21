@@ -123,7 +123,7 @@ namespace Workwear.Test.Integration.Tools
 				uow.Save(expense.IssuanceSheet);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				var docs = uow.GetAll<Expense>().ToList();

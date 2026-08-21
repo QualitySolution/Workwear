@@ -95,6 +95,10 @@ namespace Workwear.Domain.Stock.Documents
 				.Select(x => x.Barcode?.Title)
 				.Where(x => !string.IsNullOrWhiteSpace(x)));
 
+		public virtual string KitNumbersString => string.Join(
+			"\n",
+			WarehouseBarcodeOperations.Select(x => x.KitNumber > 0 ? x.KitNumber.ToString() : ""));
+
 		public virtual bool CanEditAmount => !WarehouseBarcodeOperations.Any();
 		#endregion
 
@@ -102,7 +106,7 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual StockBalanceModel StockBalanceModel { get; set; }
 		#endregion
 		public TransferItem() { }
-		public TransferItem(IUnitOfWork uow, Transfer transfer, StockPosition position, int amount, IEnumerable<Barcode> barcodes = null) {
+		public TransferItem(Transfer transfer, StockPosition position, int amount, IEnumerable<Barcode> barcodes = null) {
 			document = transfer;
 			warehouseOperation.Nomenclature = nomenclature = position.Nomenclature;
 			warehouseOperation.WearSize = position.WearSize;

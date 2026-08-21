@@ -69,7 +69,7 @@ FROM clothing_service_claim
          LEFT JOIN postomat_documents ON postomat_document_items.document_id = postomat_documents.id
 WHERE (@all_status OR @status = '' OR finish.state = @status)
   AND (@show_closed OR NOT clothing_service_claim.is_closed)
-  AND finish.operation_time BETWEEN @start_date AND @finish_date
+  AND finish.operation_time &gt;= CONVERT(@start_date, DATE) AND finish.operation_time &lt; DATE_ADD(CONVERT(@finish_date, DATE), INTERVAL 1 DAY)
 ORDER BY start_date</CommandText>
         <QueryParameters>
           <QueryParameter Name="status">

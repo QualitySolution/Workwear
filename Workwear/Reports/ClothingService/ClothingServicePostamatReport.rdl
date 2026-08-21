@@ -18,7 +18,7 @@
     Count(*) as count
 FROM clothing_service_states
 WHERE 
-    clothing_service_states.operation_time BETWEEN @start_date AND @finish_date
+    clothing_service_states.operation_time &gt;= CONVERT(@start_date, DATE) AND clothing_service_states.operation_time &lt; DATE_ADD(CONVERT(@finish_date, DATE), INTERVAL 1 DAY)
     AND clothing_service_states.state IN ('InReceiptTerminal', 'InDispenseTerminal')
 GROUP BY clothing_service_states.comment</CommandText>
         <QueryParameters>

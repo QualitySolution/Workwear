@@ -25,6 +25,7 @@ using Workwear.Journal.Filter.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.ClothingService;
 using Workwear.ViewModels.ClothingService;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using CellLocation = Workwear.Domain.Postomats.CellLocation;

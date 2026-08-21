@@ -23,6 +23,7 @@ using Workwear.ViewModels.Operations;
 using Workwear.ViewModels.Regulations;
 using Workwear.Tools;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
@@ -89,21 +90,26 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void OnShow()
 		{
-			if (IsConfigured) return;
+			if(IsConfigured || employeeViewModel.IsBusy)
+				return;
+
 			IsConfigured = true;
-			var performance = new ProgressPerformanceHelper(progress, 9, nameof(issueModel.PreloadWearItems), logger: logger);
-			issueModel.PreloadWearItems(Entity.Id);
-			performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
-			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
-			issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
-			performance.EndGroup();
-			performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
-			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			performance.CheckPoint("Обновление таблицы");
-			OnPropertyChanged(nameof(ObservableWorkwearItems));
-			Entity.PropertyChanged += EntityOnPropertyChanged;
-			performance.End();
-			logger.Info($"Таблица «Спецодежда по нормам» заполнена за {performance.TotalTime.TotalSeconds} сек." );
+			using(employeeViewModel.BeginBusyOperation("Загрузка спецодежды")) {
+				var performance = new ProgressPerformanceHelper(progress, 9, nameof(issueModel.PreloadWearItems), logger: logger);
+				var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
+				issueModel.PreloadWearItems(Entity.Id);
+				performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
+				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+				issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
+				performance.EndGroup();
+				performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
+				Entity.FillWearReceivedInfo(employeeIssueRepository);
+				performance.CheckPoint("Обновление таблицы");
+				OnPropertyChanged(nameof(ObservableWorkwearItems));
+				Entity.PropertyChanged += EntityOnPropertyChanged;
+				performance.End();
+				logger.Info($"Таблица «Спецодежда по нормам» заполнена за {performance.TotalTime.TotalSeconds} сек." );
+			}
 		}
 
 		#endregion
@@ -212,9 +218,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void UpdateWorkwearItems()
 		{
-			Entity.UpdateWorkwearItems();
+			issueModel.UpdateWorkwearItems(new[] { Entity }, UoW);
 			issueModel.FillWearInStockInfo(Entity, stockBalanceModel);
-			Entity.UpdateNextIssueAll();
 		}
 
 		#region Ручные операции
@@ -244,7 +249,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionTools);
+			Entity.UpdateNextIssue(UoW, protectionTools);
 			UoW.Save(Entity);
 			UoW.Commit();
 		}

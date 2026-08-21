@@ -139,7 +139,7 @@ FROM clothing_service_claim
          LEFT JOIN nomenclature ON barcodes.nomenclature_id = nomenclature.id
 WHERE 
     (@show_closed OR NOT clothing_service_claim.is_closed)
-    AND (NOT @show_closed OR start.operation_time BETWEEN @start_date AND @finish_date)</CommandText>
+    AND (NOT @show_closed OR (start.operation_time &gt;= CONVERT(@start_date, DATE) AND start.operation_time &lt; DATE_ADD(CONVERT(@finish_date, DATE), INTERVAL 1 DAY)))</CommandText>
         <QueryParameters>
           <QueryParameter Name="show_closed">
             <Value>=Parameters!show_closed</Value>

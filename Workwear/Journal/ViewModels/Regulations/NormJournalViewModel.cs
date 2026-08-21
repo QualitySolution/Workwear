@@ -21,6 +21,7 @@ using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Regulations;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -32,6 +33,7 @@ namespace workwear.Journal.ViewModels.Regulations
 	{
 		private readonly ILifetimeScope autofacScope;
 		private readonly NormToDutyNormModel normToDutyNormModel;
+		private readonly EmployeeIssueModel employeeIssueModel;
 		public NormFilterViewModel Filter { get; private set; }
 		public FeaturesService FeaturesService { get; }
 		#region IDialogDocumentation
@@ -44,6 +46,7 @@ namespace workwear.Journal.ViewModels.Regulations
 			INavigationManager navigationManager,
 			ILifetimeScope autofacScope,
 			NormToDutyNormModel normToDutyNormModel,
+			EmployeeIssueModel employeeIssueModel,
 			FeaturesService featuresService,
 			IDeleteEntityService deleteEntityService = null,
 			ICurrentPermissionService currentPermissionService = null) 
@@ -51,6 +54,7 @@ namespace workwear.Journal.ViewModels.Regulations
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.normToDutyNormModel = normToDutyNormModel ?? throw new ArgumentNullException(nameof(normToDutyNormModel));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			UseSlider = false;
 			JournalFilter = Filter = autofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
@@ -185,7 +189,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				foreach(var employee in employees) {
 					progress.Add(text: $"Обработка {employee.ShortName}");
 					step++;
-					employee.UpdateWorkwearItems();
+					employeeIssueModel.UpdateWorkwearItems(new[] { employee }, localUow);
 					localUow.Save(employee);
 					if(step % 10 == 0)
 						localUow.Commit();

@@ -34,6 +34,7 @@ using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.ViewModels.Company;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Regulations {
 	public class DutyNormViewModel : EntityDialogViewModelBase<DutyNorm>, IDialogDocumentation {

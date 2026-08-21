@@ -99,9 +99,10 @@ namespace Workwear.Domain.Stock.Documents
 
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if (baseParameters.CheckBalances)
+			validationContext.Items.TryGetValue(nameof(StockRepository), out var repositoryObject);
+			var repository = repositoryObject as StockRepository;
+			if (repository != null && baseParameters.CheckBalances)
 			{
-				var repository = new StockRepository(UoW);
 				var nomenclatures =
 					Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
 				var excludeOperations =

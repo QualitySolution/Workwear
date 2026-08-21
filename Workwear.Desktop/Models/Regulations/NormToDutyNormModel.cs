@@ -10,6 +10,7 @@ using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Repository.Stock.Documents;
@@ -20,6 +21,7 @@ namespace Workwear.Models.Regulations {
 		private readonly IProgressBarDisplayable progressBar;
 		private readonly IUnitOfWorkFactory unitOfWorkFactory;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
+		private readonly EmployeeIssueModel employeeIssueModel;
 		private readonly StockDocumentRepository stockDocumentRepository;
 		private readonly BarcodeRepository barcodeRepository;
 		public NormToDutyNormModel(
@@ -27,12 +29,14 @@ namespace Workwear.Models.Regulations {
 			IProgressBarDisplayable progressBar,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			EmployeeIssueRepository employeeIssueRepository,
+			EmployeeIssueModel employeeIssueModel,
 			StockDocumentRepository stockDocumentRepository,
 			BarcodeRepository barcodeRepository) {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressBar = progressBar;
 			this.unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			this.stockDocumentRepository = stockDocumentRepository ?? throw new ArgumentNullException(nameof(stockDocumentRepository));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
 		}
@@ -129,7 +133,7 @@ namespace Workwear.Models.Regulations {
 				RemoveNorm(norm, uow);
 				foreach(var emp in employees) {
 					progressBar.Add(text: $"Пересчитываем потребности для {emp.ShortName}");
-					emp.UpdateWorkwearItems();
+					employeeIssueModel.UpdateWorkwearItems(new[] { emp }, uow);
 				}
 
 				UpdateDocsComments(expenseDocs);
@@ -190,7 +194,7 @@ namespace Workwear.Models.Regulations {
 
 				var employee = expenseDoc.Employee;
 				progressBar.Add(text: $"Пересчитываем потребности для {employee.ShortName}");
-				employee.UpdateWorkwearItems();
+				employeeIssueModel.UpdateWorkwearItems(new[] { employee }, uow);
 
 				UpdateDocsComments(expenseDocs);
 				uow.Commit();
@@ -245,7 +249,7 @@ namespace Workwear.Models.Regulations {
 				//Коллективная выдача может затрагивать нескольких сотрудников - пересчитываем потребности у всех.
 				foreach(var employee in matchingItems.Select(x => x.Employee).Where(x => x != null).Distinct()) {
 					progressBar.Add(text: $"Пересчитываем потребности для {employee.ShortName}");
-					employee.UpdateWorkwearItems();
+					employeeIssueModel.UpdateWorkwearItems(new[] { employee }, uow);
 				}
 
 				UpdateDocsComments(collectiveExpenseDocs);

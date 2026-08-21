@@ -12,6 +12,7 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
 using Workwear.Models.Regulations;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
@@ -122,6 +123,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyNormToDutyNorm(normId);
@@ -309,6 +311,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyExpenseToDutyNorm(expenseDocId, dutyNormId);
@@ -429,6 +432,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyExpenseToDutyNorm(expenseDocId, dutyNormId);
@@ -551,6 +555,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyCollectiveExpenseToDutyNorm(collectiveExpenseDocId, dutyNormId);
@@ -707,6 +712,7 @@ namespace Workwear.Test.Integration.Regulations {
 					Substitute.For<IProgressBarDisplayable>(),
 					UnitOfWorkFactory,
 					new EmployeeIssueRepository(),
+					new EmployeeIssueModel(new EmployeeIssueRepository()),
 					new StockDocumentRepository(),
 					new BarcodeRepository(new UnitOfWorkProvider()));
 				model.CopyCollectiveExpenseToDutyNorm(collectiveExpenseDocId, dutyNormId);

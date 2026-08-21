@@ -31,6 +31,7 @@ using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace WorkwearTest.ViewModels.Stock
 {
@@ -240,7 +241,6 @@ namespace WorkwearTest.ViewModels.Stock
 				uow.Save(norm);
 
 				var employee = new EmployeeCard();
-				employee.UoW = uow;
 				employee.AddUsedNorm(norm);
 				foreach (var item in employee.WorkwearItems) {
 					item.Created = new DateTime(2020, 1, 1);
@@ -291,7 +291,8 @@ namespace WorkwearTest.ViewModels.Stock
 				};
 				uow.Save(issuedOperation2);
 				
-				employee.UpdateNextIssueAll();
+				container.Resolve<EmployeeIssueModel>()
+					.UpdateNextIssueAll(new[] { employee }, uow: uow);
 				uow.Commit();
 
 				//Создаем выдачу чтобы выдать вторую номенклатуру программа не должна предлагать к выдаче первую.

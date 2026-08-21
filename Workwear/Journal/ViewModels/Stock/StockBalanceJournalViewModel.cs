@@ -25,6 +25,7 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Sizes;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace workwear.Journal.ViewModels.Stock
 {
