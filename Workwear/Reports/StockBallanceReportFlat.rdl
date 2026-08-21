@@ -22,49 +22,93 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    IFNULL(nomenclature.number, operation_warehouse.nomenclature_id) as nomenclature_number,
-    IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
-                              operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
-                       SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
-                              operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
-       (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-        SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) as quantity,
-    nomenclature.name as nomenclature,
-    barcodes.title as barcode,
-    operation_barcodes.kit_number as kit_number,
-    wear_percent as life_percent,
-    item_types.name  as type,
-    sizeAlias.name AS size,
-    heightAlias.name AS growth,
-    owners.name AS owner,
-    measurement_units.name as unit,
-    (nomenclature.sale_cost *  IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
-                                                         operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
-                                                  SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
-                                                         operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
-                                  (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-                                   SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) ) AS summa,
-    IF(nomenclature.sex='Universal','Уни.', IF(nomenclature.sex='Men','Муж.', 'Жен.')) as sex
-FROM
-    operation_warehouse
-        JOIN nomenclature on nomenclature.id = operation_warehouse.nomenclature_id
-        LEFT JOIN item_types ON nomenclature.type_id = item_types.id
-        LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
+    main.nomenclature_number,
+    main.quantity,
+    main.nomenclature,
+    barcode_agg.barcode_list AS barcode,
+    main.life_percent,
+    main.type,
+    main.size,
+    main.growth,
+    main.owner,
+    main.unit,
+    main.summa,
+    main.sex
+FROM (
+    SELECT
+        IFNULL(nomenclature.number, operation_warehouse.nomenclature_id) as nomenclature_number,
+        operation_warehouse.nomenclature_id as nomenclature_id,
+        IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
+                                  operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
+                           SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
+                                  operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
+           (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
+            SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) as quantity,
+        nomenclature.name as nomenclature,
+        wear_percent as life_percent,
+        item_types.name  as type,
+        sizeAlias.id as size_id,
+        sizeAlias.name AS size,
+        heightAlias.id as height_id,
+        heightAlias.name AS growth,
+        owners.id as owner_id,
+        owners.name AS owner,
+        measurement_units.name as unit,
+        (nomenclature.sale_cost *  IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
+                                                             operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
+                                                      SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
+                                                             operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
+                                      (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
+                                       SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) ) AS summa,
+        IF(nomenclature.sex='Universal','Уни.', IF(nomenclature.sex='Men','Муж.', 'Жен.')) as sex
+    FROM
+        operation_warehouse
+            JOIN nomenclature on nomenclature.id = operation_warehouse.nomenclature_id
+            LEFT JOIN item_types ON nomenclature.type_id = item_types.id
+            LEFT JOIN measurement_units ON measurement_units.id = item_types.units_id
+            LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = operation_warehouse.size_id
+            LEFT JOIN sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
+            LEFT JOIN owners ON owners.id = operation_warehouse.owner_id
+        WHERE operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
+      AND(operation_warehouse.warehouse_receipt_id = @warehouse_id
+        or operation_warehouse.warehouse_expense_id = @warehouse_id
+        or @allWarehouses)
+      AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
+    GROUP BY operation_warehouse.nomenclature_id, sizeAlias.id, heightAlias.id, owners.id, wear_percent
+    HAVING quantity &lt;&gt; 0
+) main
+LEFT JOIN (
+    SELECT
+        operation_warehouse.nomenclature_id AS nomenclature_id,
+        sizeAlias.id AS size_id,
+        heightAlias.id AS height_id,
+        owners.id AS owner_id,
+        wear_percent,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(barcodes.title, IF(operation_barcodes.kit_number > 0, CONCAT(' (', operation_barcodes.kit_number, ')'), ''))
+            ORDER BY barcodes.title
+            SEPARATOR '\n'
+        ) AS barcode_list
+    FROM operation_warehouse
+        JOIN operation_barcodes ON operation_warehouse.id = operation_barcodes.warehouse_operation_id
+        JOIN barcodes ON operation_barcodes.barcode_id = barcodes.id
         LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = operation_warehouse.size_id
         LEFT JOIN sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
         LEFT JOIN owners ON owners.id = operation_warehouse.owner_id
-        LEFT JOIN operation_barcodes ON operation_warehouse.id = operation_barcodes.warehouse_operation_id
-        LEFT JOIN barcodes ON operation_barcodes.barcode_id = barcodes.id
-    WHERE operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
-  AND(operation_warehouse.warehouse_receipt_id = @warehouse_id
-    or operation_warehouse.warehouse_expense_id = @warehouse_id
-    or @allWarehouses)
-  AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
-GROUP BY operation_warehouse.nomenclature_id, size, growth, owner, wear_percent, CASE WHEN @show_barcode THEN barcodes.id ELSE NULL END
-HAVING quantity &lt;&gt; 0
-ORDER BY nomenclature.name,
-         CAST(SUBSTRING_INDEX(sizeAlias.name, '-', 1) AS DECIMAL(5,1)),
-         CAST(SUBSTRING_INDEX(heightAlias.name, '-', 1) AS DECIMAL(5,1));</CommandText>
+    WHERE @show_barcode
+      AND operation_warehouse.warehouse_receipt_id IS NOT NULL
+      AND (@allWarehouses OR operation_warehouse.warehouse_receipt_id = @warehouse_id)
+      AND operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
+    GROUP BY operation_warehouse.nomenclature_id, sizeAlias.id, heightAlias.id, owners.id, wear_percent
+) barcode_agg
+    ON barcode_agg.nomenclature_id = main.nomenclature_id
+   AND barcode_agg.size_id &lt;=&gt; main.size_id
+   AND barcode_agg.height_id &lt;=&gt; main.height_id
+   AND barcode_agg.owner_id &lt;=&gt; main.owner_id
+   AND barcode_agg.wear_percent = main.life_percent
+ORDER BY main.nomenclature,
+         CAST(SUBSTRING_INDEX(main.size, '-', 1) AS DECIMAL(5,1)),
+         CAST(SUBSTRING_INDEX(main.growth, '-', 1) AS DECIMAL(5,1));</CommandText>
         <QueryParameters>
           <QueryParameter Name="warehouse_id">
             <Value>=Parameters!warehouse_id</Value>
@@ -140,10 +184,6 @@ ORDER BY nomenclature.name,
         <Field Name="barcode">
           <DataField>barcode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="kit_number">
-          <DataField>kit_number</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -581,7 +621,8 @@ ORDER BY nomenclature.name,
                 <TableCell >
                   <ReportItems>
                     <Textbox Name="Textbox33">
-                      <Value>=Fields!barcode.Value &amp; IIF(Fields!kit_number.Value &gt; 0, " (" +Fields!kit_number.Value + ")", "")</Value>
+                      <Value>=Fields!barcode.Value</Value>
+                      <CanGrow>true</CanGrow>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
