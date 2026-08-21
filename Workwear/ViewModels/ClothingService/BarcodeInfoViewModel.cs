@@ -61,11 +61,13 @@ namespace Workwear.ViewModels.ClothingService {
 		public virtual Barcode Barcode {
 			get => barcode;
 			set {
-				if(SetField(ref barcode, value)) {
-					var lastOperation = barcode != null ? barcodeRepository.GetLastOperationAt(barcode) : null;
+				if(barcode != value) {
+					var lastOperation = value != null ? barcodeRepository.GetLastOperationAt(value) : null;
 					Employee = lastOperation?.CurrentEmployee;
 					Warehouse = lastOperation?.CurrentWarehouse;
 					DutyNorm = lastOperation?.CurrentDutyNorm;
+					barcode = value;
+					OnPropertyChanged();
 				}
 			}
 		}
