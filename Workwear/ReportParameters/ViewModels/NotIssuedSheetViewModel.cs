@@ -93,6 +93,8 @@ namespace workwear.ReportParameters.ViewModels
 					{"exclude_zero_stock", ExcludeZeroStock},
 					{"hide_worn", HideWorn},
 					{"view_phones", ViewPhones},
+					{"show_shipment", ShowShipment},
+					{"show_employee_groups", featuresService.Available(WorkwearFeature.EmployeeGroups)},
 					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
 				 };
 
@@ -105,6 +107,7 @@ namespace workwear.ReportParameters.ViewModels
 		
 		private NotIssuedSheetReportType reportType;
 		[PropertyChangedAlso(nameof(VisibleChoiceEmployeeGroup))]
+		[PropertyChangedAlso(nameof(VisibleShowShipment))]
 		public virtual NotIssuedSheetReportType ReportType {
 			get => reportType;
 			set => SetField(ref reportType, value);
@@ -171,6 +174,12 @@ namespace workwear.ReportParameters.ViewModels
 			get =>  warehouse.Id != -2 && hideWorn;
 			set => SetField(ref hideWorn, value);
 		}
+
+		private bool showShipment;
+		public virtual bool ShowShipment {
+			get => warehouse.Id != -2 && showShipment;
+			set => SetField(ref showShipment, value);
+		}
 		#endregion
 		
 		#region Свойства
@@ -179,6 +188,7 @@ namespace workwear.ReportParameters.ViewModels
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected && !ChoiceEmployeeGroupViewModel.AllUnSelected;
 		public object StockElementsSensetive => warehouse.Id != -2;
+		public bool VisibleShowShipment => featuresService.Available(WorkwearFeature.Shipment) && ReportType == NotIssuedSheetReportType.Flat;
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
