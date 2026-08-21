@@ -37,6 +37,9 @@ namespace workwear.ReportParameters.Views
 				.InitializeFromSource();
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
 			ycheckGroupBySubdivision.Binding.AddBinding(ViewModel, v => v.GroupByElementSensetive, w => w.Sensitive).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.ShowShipment, w => w.Active).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.VisibleShowShipment, w => w.Visible).InitializeFromSource();
 			
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 			

@@ -888,13 +888,9 @@ SELECT
     employees.phone_number,
     employee_cards_item.next_issue,
     (SELECT MAX(operation_issued_by_employee.operation_time) FROM operation_issued_by_employee WHERE operation_issued_by_employee.employee_id = employees.id AND protection_tools.id = operation_issued_by_employee.protection_tools_id AND operation_issued_by_employee.issued &gt; 0) as last_issue,
-    IF(
-            employee_cards_item.next_issue &lt;= CONVERT(@report_date, DATE),
-            DATEDIFF(
-                    CONVERT(@report_date, DATE),
-                    employee_cards_item.next_issue
-            ),
-            NULL
+    DATEDIFF(
+            CONVERT(@report_date, DATE),
+            employee_cards_item.next_issue
     ) AS delay,
     protection_tools.name AS protection_tools_name,
     protection_tools.assessed_cost * IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0) AS protection_tools_assessed_cost,
@@ -928,11 +924,6 @@ FROM employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
         JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
         LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
-        LEFT JOIN (
-            SELECT DISTINCT protection_tools_nomenclature.protection_tools_id, protection_tools.item_types_id as type_id
-            FROM protection_tools_nomenclature
-                LEFT JOIN protection_tools ON protection_tools.id = protection_tools_nomenclature.protection_tools_id
-            ) as nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
         LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
         JOIN norms_item ON employee_cards_item.norm_item_id = norms_item.id
         LEFT JOIN norm_conditions ON norms_item.condition_id = norm_conditions.id
@@ -962,11 +953,11 @@ FROM employee_cards_item
             ) as ballance 
                    ON (employee_cards_item.employee_id = ballance.emp_id AND employee_cards_item.protection_tools_id = ballance.pt_id)
         #Остатки на складе
-        LEFT JOIN (SELECT sex_b.ptid, sex_b.type_id, sex_b.size_id, sex_b.height_id, sex_const.sex,
+        LEFT JOIN (SELECT sex_b.ptid, sex_b.size_id, sex_b.height_id, sex_const.sex,
                           IF(sex_const.sex = 'Men', sex_b.SUM_M + sex_b.SUM_U, sex_b.SUM_F + sex_b.SUM_U) AS SUM
                    FROM (
 #Универсальый зарос
-                            SELECT spt.id AS ptid, sn.type_id, sopwh.size_id, sopwh.height_id,
+                            SELECT spt.id AS ptid, sopwh.size_id, sopwh.height_id,
                                    (SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_receipt_id IS NOT NULL AND
                                                                      (@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id)), sopwh.amount, 0))
                                        - SUM(IF(sn.sex = 'Universal' AND (sopwh.warehouse_expense_id IS NOT NULL AND
@@ -1000,7 +991,6 @@ FROM employee_cards_item
                    GROUP BY sex_const.sex, sex_b.ptid, sex_b.size_id, sex_b.height_id)
             AS stock
                   ON (employee_cards_item.protection_tools_id = stock.ptid
-                      AND nomenclatureTypes.type_id = stock.type_id
                       AND (stock.sex = 'Universal' OR (stock.sex = 'Men' AND employees.sex = 'M') OR (stock.sex = 'Women' AND employees.sex = 'F'))
                       AND (sizeTypeAlias.id IS NULL OR stock.size_id IS NULL OR stock.size_id = employeeSizeAlias.size_id OR stock.size_id IN (SELECT IF(size_suitable.size_id = employeeSizeAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeSizeAlias.size_id OR size_suitable.`size_suitable_id` = employeeSizeAlias.size_id))
                       AND (heightTypeAlias.id IS NULL OR stock.height_id IS NULL OR stock.height_id = employeeHeightAlias.size_id OR stock.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
@@ -1023,8 +1013,19 @@ WHERE
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
           DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6),
           DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) OR DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6)))
-  AND( @issue_type = '' OR item_types.issue_type = @issue_type )
-  AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
+  AND( @issue_type = '' OR EXISTS (
+        SELECT 1 FROM protection_tools_nomenclature AS itn
+            JOIN nomenclature AS itnom ON itnom.id = itn.nomenclature_id
+            JOIN item_types AS itnit ON itnit.id = itnom.type_id
+        WHERE itn.protection_tools_id = protection_tools.id
+          AND itnit.issue_type = @issue_type
+      )
+      #Если номенклатуры ещё не подобраны, смотрим на группу номенклатуры самой нормы
+      OR (NOT EXISTS (
+            SELECT 1 FROM protection_tools_nomenclature AS itn0
+            WHERE itn0.protection_tools_id = protection_tools.id
+          ) AND item_types.issue_type = @issue_type) )
+  AND employee_cards_item.next_issue &lt;= CONVERT(@report_date, DATE)
   AND (@exclude_before = '' OR CONVERT(@exclude_before,DATE) &lt; employee_cards_item.next_issue)
 GROUP BY
     employee_cards_item.employee_id,
