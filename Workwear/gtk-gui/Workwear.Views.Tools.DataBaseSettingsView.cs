@@ -438,7 +438,7 @@ namespace Workwear.Views.Tools
 			this.ylabel_markingKitNuberType = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel_markingKitNuberType.Name = "ylabel_markingKitNuberType";
 			this.ylabel_markingKitNuberType.Xalign = 1F;
-			this.ylabel_markingKitNuberType.LabelProp = global::Mono.Unix.Catalog.GetString("Нумерация номеров комплектов:");
+			this.ylabel_markingKitNuberType.LabelProp = global::Mono.Unix.Catalog.GetString(" Нумерация при маркировке на складе:");
 			this.table1.Add(this.ylabel_markingKitNuberType);
 			global::Gtk.Table.TableChild w28 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel_markingKitNuberType]));
 			w28.TopAttach = ((uint)(13));
