@@ -6,7 +6,7 @@ namespace Workwear.Domain.Operations.Graph {
 	/// <see cref="EmployeeIssueOperation"/> в Identity Map NHibernate.
 	/// Используется в прогнозировании склада, где нужно загрузить историю всех сотрудников.
 	/// </summary>
-	public class GraphIssueOperationDto : IGraphIssueOperation {
+	public class GraphIssueOperationDto : IEmployeeGraphIssueOperation {
 		public int Id { get; set; }
 		public DateTime OperationTime { get; set; }
 		public DateTime? StartOfUse { get; set; }
@@ -15,6 +15,7 @@ namespace Workwear.Domain.Operations.Graph {
 		public int Issued { get; set; }
 		public int Returned { get; set; }
 		public bool OverrideBefore { get; set; }
+		public bool ManualOperation { get; set; }
 
 		/// <inheritdoc />
 		public IGraphIssueOperation IssuedOperation { get; set; }
@@ -31,5 +32,4 @@ namespace Workwear.Domain.Operations.Graph {
 		public int ProtectionToolsId { get; set; }
 	}
 }
-
 

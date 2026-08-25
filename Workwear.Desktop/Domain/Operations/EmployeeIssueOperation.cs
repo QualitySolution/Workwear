@@ -24,7 +24,7 @@ namespace Workwear.Domain.Operations
 		Genitive ="операции выдачи сотруднику"
 	)]
 	[HistoryTrace]
-	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IGraphIssueOperation
+	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IEmployeeGraphIssueOperation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
