@@ -124,6 +124,7 @@ namespace Workwear.Test.Integration.Stock
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
@@ -229,15 +230,18 @@ namespace Workwear.Test.Integration.Stock
 				expenseItem2.ProtectionTools = protectionTools;
 
 				//Обновление операций
-				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2020 
+				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2020
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
 				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2022(неправильно)
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
 				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2024(неправильно)
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
@@ -341,6 +345,7 @@ namespace Workwear.Test.Integration.Stock
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
@@ -430,6 +435,7 @@ namespace Workwear.Test.Integration.Stock
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				expense.UpdateIssuanceSheet();
 				uow.Save(expense.IssuanceSheet);
 				uow.Save(expense);

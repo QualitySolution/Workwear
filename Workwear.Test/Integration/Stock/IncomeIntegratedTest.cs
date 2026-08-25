@@ -197,6 +197,7 @@ namespace Workwear.Test.Integration.Stock
 				
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 

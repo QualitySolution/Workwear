@@ -212,7 +212,6 @@ namespace Workwear.ViewModels.Stock.Documents
 			}
 			else {
 				Entity.RemoveItem(item);
-				UoW.Delete(item.WarehouseOperation);
 			}
 			CalculateTotal();
 		}
