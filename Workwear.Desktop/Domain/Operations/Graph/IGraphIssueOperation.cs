@@ -13,4 +13,8 @@ namespace Workwear.Domain.Operations.Graph {
 
 		IGraphIssueOperation IssuedOperation { get; }
 	}
+
+	public interface IEmployeeGraphIssueOperation : IGraphIssueOperation {
+		bool ManualOperation { get; }
+	}
 }

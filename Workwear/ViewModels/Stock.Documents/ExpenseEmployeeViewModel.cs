@@ -339,6 +339,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 				var performanceSmall = new ProgressPerformanceHelper(modalProgressCreator, 2, "Сохранение черновой выдачи...", logger, true);
 				Entity.CleanupItems();
 				Entity.UpdateOperations(UoW, baseParameters, interactive);
+				Entity.SaveOperations(UoW);
 				
 				UoW.Save(Entity);
 				UoW.Commit();
@@ -372,6 +373,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 			}
 			performance.CheckPoint("Запись документа выдачи...");
 			Entity.UpdateOperations(UoW, baseParameters, interactive);
+			Entity.SaveOperations(UoW);
 			UoW.Session.SaveOrUpdate(Entity); //Здесь сохраняем таким способом чтобы транзакция не закрылась.
 			
 			performance.CheckPoint("Запись ведомости...");

@@ -110,7 +110,7 @@ namespace Workwear.Domain.Operations
 		
 		#endregion
 		#region Методы обновления операций
-		public virtual void Update(IUnitOfWork uow, ExpenseItem item) {
+		public virtual void Update(ExpenseItem item) {
 			//Внимание здесь сравниваются даты без времени.
 			if(item.ExpenseDoc.Date.Date != OperationTime.Date)
 				OperationTime = item.ExpenseDoc.Date;
