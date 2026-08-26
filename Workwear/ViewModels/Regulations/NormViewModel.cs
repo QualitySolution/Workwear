@@ -255,7 +255,15 @@ namespace Workwear.ViewModels.Regulations
 		{
 			var page = NavigationManager.FindPage((DialogViewModelBase)sender);
 			var item = (NormItem)page.Tag;
-			var newProtectionTools = UoW.GetById<ProtectionTools>(e.GetSelectedObjects<ProtectionToolsJournalNode>().First().Id);
+			var selectedProtectionTools = e.GetSelectedObjects<ProtectionToolsJournalNode>().FirstOrDefault();
+			if(selectedProtectionTools == null)
+				return;
+
+			var newProtectionTools = UoW.GetById<ProtectionTools>(selectedProtectionTools.Id);
+			if(newProtectionTools == null) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Выбранная номенклатура нормы была удалена.");
+				return;
+			}
 			item.ProtectionTools = newProtectionTools;
 
 			if(item.Id > 0) {
