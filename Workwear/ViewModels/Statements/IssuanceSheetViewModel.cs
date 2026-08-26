@@ -275,6 +275,9 @@ namespace Workwear.ViewModels.Statements
 
 		void Expense_Changed(EntityChangeEvent[] changeEvents)
 		{
+			if(!UoW.IsAlive)
+				return;
+
 			if(changeEvents.Any(x => (x.Entity as ExpenseItem).ExpenseDoc.Id == Entity.Expense?.Id)){
 				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
 			}
@@ -282,6 +285,9 @@ namespace Workwear.ViewModels.Statements
 
 		void CollectiveExpense_Changed(EntityChangeEvent[] changeEvents)
 		{
+			if(!UoW.IsAlive)
+				return;
+
 			if(changeEvents.Any(x => (x.Entity as CollectiveExpenseItem).Document.Id == Entity.CollectiveExpense?.Id)) {
 				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
 			}
