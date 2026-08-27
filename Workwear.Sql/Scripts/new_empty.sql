@@ -920,6 +920,7 @@ DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE TABLE IF NOT EXISTS `protection_tools` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(800) NOT NULL,
+  `alternative_name` VARCHAR(800) NULL DEFAULT NULL COMMENT 'Наименование, отображаемое на лицевой карточке сотрудника, если заполнено',
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `dermal_ppe` tinyint(1) default 0 not null,
   `dispenser` tinyint(1) default 0 not null,
