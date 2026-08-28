@@ -420,6 +420,8 @@ namespace Workwear.Models.Regulations {
 					Operation = dutyNormIssueOperation
 				};
 				uow.Save(newExpenseDutyNormItem);
+				//WarehouseOperation переехала на newExpenseDutyNormItem - отвязываем её от исходного item ДО его удаления
+				item.WarehouseOperation = null;
 				expDutyNormItemByIssueOperation.Add(item.EmployeeIssueOperation.Id, newExpenseDutyNormItem);
 			}
 			uow.Save(expenseDutyNormDoc);
@@ -470,6 +472,8 @@ namespace Workwear.Models.Regulations {
 					Operation = dutyNormIssueOperation
 				};
 				uow.Save(newExpenseDutyNormItem);
+				//WarehouseOperation переехала на newExpenseDutyNormItem - отвязываем её от исходного item ДО его удаления
+				item.WarehouseOperation = null;
 			}
 
 			uow.Save(expenseDutyNormDoc);

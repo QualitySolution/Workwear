@@ -15,8 +15,8 @@ namespace Workwear.HibernateMapping.Stock.Documents
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 
 			References (x => x.Document).Column ("stock_expense_duty_norm_id").Not.Nullable ();
-			References(x => x.Operation).Column("operation_issued_by_duty_norm_id");
-			References(x => x.WarehouseOperation).Column("warehouse_operation_id");
+			References(x => x.Operation).Column("operation_issued_by_duty_norm_id").Cascade.All();
+			References(x => x.WarehouseOperation).Column("warehouse_operation_id").Cascade.All();
 
 			HasOne(x => x.IssuanceSheetItem)
 				.PropertyRef(x => x.ExpenseDutyNormItem);
