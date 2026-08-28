@@ -25,14 +25,14 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"only_dismissed", OnlyDismissed},
 			{"dismiss_from", DismissPeriodStart},
 			{"dismiss_to", DismissPeriodEnd},
-			{"only_without_norms", OnlyWithoutNorms},
-			{"only_with_norms", OnlyWithNorms},
+			{"only_without_norms", WithoutNorms},
+			{"only_with_norms", WithNorms},
 			{"show_phone", ShowPhone},
 		};
 
-		#region Блок 1: статус занятости
+		#region Блок 1: статус сотрудника
 
-		private bool onlyWorking;
+		private bool onlyWorking = true;
 		public virtual bool OnlyWorking {
 			get => onlyWorking;
 			set => SetField(ref onlyWorking, value);
@@ -84,16 +84,16 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		#region Блок 2: нормы
 
-		private bool onlyWithoutNorms;
-		public virtual bool OnlyWithoutNorms {
-			get => onlyWithoutNorms;
-			set => SetField(ref onlyWithoutNorms, value);
+		private bool withoutNorms = true;
+		public virtual bool WithoutNorms {
+			get => withoutNorms;
+			set => SetField(ref withoutNorms, value);
 		}
 
-		private bool onlyWithNorms;
-		public virtual bool OnlyWithNorms {
-			get => onlyWithNorms;
-			set => SetField(ref onlyWithNorms, value);
+		private bool withNorms = true;
+		public virtual bool WithNorms {
+			get => withNorms;
+			set => SetField(ref withNorms, value);
 		}
 
 		#endregion

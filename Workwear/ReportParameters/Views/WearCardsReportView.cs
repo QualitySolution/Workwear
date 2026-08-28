@@ -22,8 +22,8 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(vm => vm.DismissPeriodEnd, w => w.EndDate)
 				.InitializeFromSource();
 
-			ycheckbuttonOnlyWithoutNorms.Binding.AddBinding(ViewModel, v=>v.OnlyWithoutNorms, w=>w.Active).InitializeFromSource();
-			ycheckbuttonOnlyWithNorms.Binding.AddBinding(ViewModel, v=>v.OnlyWithNorms, w=>w.Active).InitializeFromSource();
+			ycheckbuttonOnlyWithoutNorms.Binding.AddBinding(ViewModel, v=>v.WithoutNorms, w=>w.Active).InitializeFromSource();
+			ycheckbuttonOnlyWithNorms.Binding.AddBinding(ViewModel, v=>v.WithNorms, w=>w.Active).InitializeFromSource();
 
 			ycheckbuttonShowPhone.Binding.AddBinding(ViewModel, v=>v.ShowPhone, w=>w.Active).InitializeFromSource();
 		}
