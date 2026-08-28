@@ -9969,7 +9969,7 @@
                       <widget class="Gamma.GtkWidgets.yLabel" id="ylabel_markingKitNuberType">
                         <property name="MemberName" />
                         <property name="Xalign">1</property>
-                        <property name="LabelProp" translatable="yes"> Нумерация при маркировке на складе:</property>
+                        <property name="LabelProp" translatable="yes">Нумерация при маркировке на складе:</property>
                       </widget>
                       <packing>
                         <property name="TopAttach">13</property>
