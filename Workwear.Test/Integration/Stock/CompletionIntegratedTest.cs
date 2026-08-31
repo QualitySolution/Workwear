@@ -4,11 +4,13 @@ using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Dialog;
+using QS.DomainModel.UoW;
 using QS.Testing.DB;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Stock;
+using Workwear.Tools;
 
 namespace Workwear.Test.Integration.Stock
 {
@@ -98,6 +100,20 @@ namespace Workwear.Test.Integration.Stock
                 var stockResult = stockRepository
                     .StockBalances(warehouseResult, new List<Nomenclature> { nomenclature2 }, new DateTime(2017, 1, 4));
                 Assert.That(stockResult.Where(x => x.WearSize == sizeXl).Sum(x => x.Amount), Is.EqualTo(12));
+
+				// После сохранения меняем количество до всего доступного остатка. Проверка должна
+				// исключить собственную складскую операцию, иначе повторное сохранение невозможно.
+				completion.SourceItems.Single().Amount = 10;
+				var parameters = Substitute.For<BaseParameters>();
+				parameters.CheckBalances.Returns(true);
+				var errors = completion.Validate(new System.ComponentModel.DataAnnotations.ValidationContext(
+					completion,
+					null,
+					new Dictionary<object, object> {
+						{ nameof(BaseParameters), parameters },
+						{ nameof(IUnitOfWork), uow }
+					})).ToList();
+				Assert.That(errors, Is.Empty);
             }
         }
     }
