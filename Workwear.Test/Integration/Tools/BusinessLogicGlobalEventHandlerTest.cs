@@ -337,6 +337,7 @@ namespace Workwear.Test.Integration.Tools
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 				expense.UpdateEmployeeWearItems(uow);

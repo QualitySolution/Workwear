@@ -173,24 +173,20 @@ namespace Workwear.Domain.Stock.Documents
 
 		#region Функции
 
-		public virtual void UpdateWarehouseOperations(IUnitOfWork uow) {
-			WarehouseOperation.Update(uow, this);
-			uow.Save(WarehouseOperation);
+		public virtual void UpdateWarehouseOperations() {
+			WarehouseOperation.Update(this);
 		}
 		
 		public virtual void UpdateOperations(IUnitOfWork uow, BaseParameters baseParameters, IInteractiveQuestion askUser, string signCardUid = null) 
 		{
-			UpdateWarehouseOperations(uow);
+			UpdateWarehouseOperations();
 			
 			if (EmployeeIssueOperation == null) {
 				EmployeeIssueOperation = new EmployeeIssueOperation (baseParameters);
 			}
 
 			EmployeeIssueOperation.Update(uow, baseParameters, askUser, this, signCardUid);
-								
-			uow.Save(EmployeeIssueOperation);
 		}
 		#endregion
 	}
 }
-

@@ -431,6 +431,7 @@ namespace Workwear.ViewModels.Stock
 
 			Expense.CleanupItems();
 			Expense.UpdateOperations(uow, BaseParameters, interactive, CardUidCompact);
+			Expense.SaveOperations(uow);
 			uow.Save(Expense);
 
 			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");

@@ -211,6 +211,7 @@ namespace Workwear.Test.Integration.Operations
 				var item = expense.AddItem(stockPosition, 1);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
@@ -337,6 +338,7 @@ namespace Workwear.Test.Integration.Operations
 				var item = expense.AddItem(stockPosition, 10);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				
 				//Возвращаем 2 штуки
@@ -399,6 +401,7 @@ namespace Workwear.Test.Integration.Operations
 				var item = expense.AddItem(stockPosition, 10);
 
 				expense.UpdateOperations(uow, baseParameters, interactive);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				
 				//Списываем 3 штуки

@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
+using System.Threading;
 using Autofac;
 using NSubstitute;
 using NUnit.Framework;
+using QS.Deletion;
+using QS.Deletion.Configuration;
 using QS.Dialog;
 using QS.Dialog.Testing;
 using QS.DomainModel.Entity;
@@ -20,6 +23,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 using Workwear.Models.Operations;
 using Workwear.Models.Print;
 using Workwear.Repository.Operations;
@@ -47,9 +51,12 @@ namespace WorkwearTest.ViewModels.Stock
 		}
 
 		#region Helpers
-		ContainerBuilder MakeContainer(IUserService userService, CurrentUserSettings currentUserSettings) {
+		ContainerBuilder MakeContainer(
+			IUserService userService,
+			CurrentUserSettings currentUserSettings,
+			IDeleteEntityService deleteService = null) {
 			var baseParameters = Substitute.For<BaseParameters>();
-			var deleteService = Substitute.For<IDeleteEntityService>();
+			deleteService = deleteService ?? Substitute.For<IDeleteEntityService>();
 			var featuresService = Substitute.For<FeaturesService>();
 			var interactive = Substitute.For<IInteractiveService>();
 			var navigation = Substitute.For<INavigationManager>();
@@ -88,7 +95,149 @@ namespace WorkwearTest.ViewModels.Stock
 			
 			return builder;
 		}
+
+		private class ImmediateDeleteEntityService : IDeleteEntityService
+		{
+			public DeleteCore DeleteEntity<TEntity>(
+				int id,
+				IUnitOfWork uow = null,
+				Action beforeDeletion = null,
+				bool forceDelete = false) =>
+				DeleteEntity(typeof(TEntity), id, uow, beforeDeletion, forceDelete);
+
+			public DeleteCore DeleteEntity(
+				Type entityType,
+				int id,
+				IUnitOfWork uow = null,
+				Action beforeDeletion = null,
+				bool forceDelete = false)
+			{
+				var deletion = new DeleteCore(DeleteConfig.Main, uow);
+				deletion.PrepareDeletion(entityType, id, CancellationToken.None);
+				beforeDeletion?.Invoke();
+				deletion.RunDeletion(CancellationToken.None);
+				deletion.Close();
+				return deletion;
+			}
+		}
 		#endregion
+
+		[Test(Description = "При удалении сохранённой строки выдачи через view model удаляются обе связанные операции")]
+		[Category("Integrated")]
+		public void DeleteSavedItem_RemovesWarehouseAndEmployeeIssueOperations()
+		{
+			NewSessionWithSameDB();
+			NotifyConfiguration.Enable();
+			ConfigureOneTime.ConfigureDeletion();
+
+			var userService = Substitute.For<IUserService>();
+			var currentUserSettings = Substitute.For<CurrentUserSettings>();
+			var container = MakeContainer(
+				userService,
+				currentUserSettings,
+				new ImmediateDeleteEntityService()).Build();
+
+			int expenseId;
+			int deletedItemId;
+			int deletedWarehouseOperationId;
+			int deletedEmployeeIssueOperationId;
+			int remainingItemId;
+			int remainingWarehouseOperationId;
+			int remainingEmployeeIssueOperationId;
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var user = new UserBase();
+				uow.Save(user);
+				userService.GetCurrentUser().Returns(user);
+
+				var itemType = new ItemsType { Name = "Тип" };
+				uow.Save(itemType);
+
+				var nomenclature1 = new Nomenclature { Name = "Номенклатура 1", Type = itemType };
+				var nomenclature2 = new Nomenclature { Name = "Номенклатура 2", Type = itemType };
+				uow.Save(nomenclature1);
+				uow.Save(nomenclature2);
+
+				var protectionTools1 = new ProtectionTools { Name = "СИЗ 1", Type = itemType };
+				protectionTools1.AddNomenclature(nomenclature1);
+				uow.Save(protectionTools1);
+
+				var protectionTools2 = new ProtectionTools { Name = "СИЗ 2", Type = itemType };
+				protectionTools2.AddNomenclature(nomenclature2);
+				uow.Save(protectionTools2);
+
+				var norm = new Norm();
+				var normItem1 = norm.AddItem(protectionTools1);
+				normItem1.Amount = 1;
+				normItem1.NormPeriod = NormPeriodType.Month;
+				normItem1.PeriodCount = 1;
+				var normItem2 = norm.AddItem(protectionTools2);
+				normItem2.Amount = 1;
+				normItem2.NormPeriod = NormPeriodType.Month;
+				normItem2.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				uow.Save(employee);
+
+				uow.Save(new WarehouseOperation {
+					Amount = 10,
+					ReceiptWarehouse = warehouse,
+					Nomenclature = nomenclature1
+				});
+				uow.Save(new WarehouseOperation {
+					Amount = 10,
+					ReceiptWarehouse = warehouse,
+					Nomenclature = nomenclature2
+				});
+				uow.Commit();
+
+				using(var scope = container.BeginLifetimeScope()) {
+					var vmCreate = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate()),
+						new TypedParameter(typeof(EmployeeCard), employee));
+					vmCreate.Entity.Date = new DateTime(2022, 4, 12);
+					vmCreate.Entity.Warehouse = vmCreate.UoW.GetById<Warehouse>(warehouse.Id);
+
+					Assert.That(vmCreate.Entity.Items.Count, Is.EqualTo(2));
+					foreach(var item in vmCreate.Entity.Items)
+						item.Amount = 1;
+
+					Assert.That(vmCreate.Save(), Is.True);
+					expenseId = vmCreate.Entity.Id;
+					var deletedItem = vmCreate.Entity.Items.First(x => x.Nomenclature.Id == nomenclature1.Id);
+					var remainingItem = vmCreate.Entity.Items.First(x => x.Nomenclature.Id == nomenclature2.Id);
+					deletedItemId = deletedItem.Id;
+					deletedWarehouseOperationId = deletedItem.WarehouseOperation.Id;
+					deletedEmployeeIssueOperationId = deletedItem.EmployeeIssueOperation.Id;
+					remainingItemId = remainingItem.Id;
+					remainingWarehouseOperationId = remainingItem.WarehouseOperation.Id;
+					remainingEmployeeIssueOperationId = remainingItem.EmployeeIssueOperation.Id;
+				}
+
+				using(var scope = container.BeginLifetimeScope()) {
+					var vmEdit = scope.Resolve<ExpenseEmployeeViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForOpen(expenseId)));
+					var itemToDelete = vmEdit.Entity.Items.First(x => x.Id == deletedItemId);
+					vmEdit.EmployeeItemsViewModel.Delete(itemToDelete);
+					Assert.That(vmEdit.Save(), Is.True);
+				}
+
+				using(var checkUow = UnitOfWorkFactory.CreateWithoutRoot()) {
+					Assert.That(checkUow.GetById<ExpenseItem>(deletedItemId), Is.Null);
+					Assert.That(checkUow.GetById<WarehouseOperation>(deletedWarehouseOperationId), Is.Null);
+					Assert.That(checkUow.GetById<EmployeeIssueOperation>(deletedEmployeeIssueOperationId), Is.Null);
+
+					Assert.That(checkUow.GetById<ExpenseItem>(remainingItemId), Is.Not.Null);
+					Assert.That(checkUow.GetById<WarehouseOperation>(remainingWarehouseOperationId), Is.Not.Null);
+					Assert.That(checkUow.GetById<EmployeeIssueOperation>(remainingEmployeeIssueOperationId), Is.Not.Null);
+				}
+			}
+		}
 
 		[Test(Description = "Проверяем проверяем что можем пере-сохранить документ")]
 		[Category("Integrated")]

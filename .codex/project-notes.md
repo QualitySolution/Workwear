@@ -7,10 +7,11 @@
 - SQL tests are in `Workwear.Test.Sql/Workwear.Test.Sql.csproj`; do not run them unless database scripts, migrations, or SQL-related code changed, or the user explicitly asks for SQL tests.
 - Old UI/ViewModel test project `WorkwearTest/WorkwearTest.csproj` targets .NET Framework 4.6.2.
   `dotnet test WorkwearTest/WorkwearTest.csproj` can return `0` without discovering/running tests.
-- Build `WorkwearTest` with Mono MSBuild:
-  `msbuild WorkwearTest/WorkwearTest.csproj /t:Build /p:Configuration=Debug /verbosity:minimal`
-- Run `WorkwearTest` with NUnit console from its output directory:
-  `cd WorkwearTest/bin/Debug && mono nunit3-console.exe WorkwearTest.dll --result=/tmp/workweartest-result.xml`
+- Build `WorkwearTest` through the solution so project platform mappings are applied correctly:
+  `msbuild Workwear.sln /t:WorkwearTest /p:Configuration=Debug /p:Platform=x86 /v:minimal`
+- Run one old test with the NUnit console package from the current user's NuGet cache:
+  `mono ~/.nuget/packages/nunit.consolerunner/3.16.3/tools/nunit3-console.exe WorkwearTest/bin/Debug/WorkwearTest.dll --test=<fully-qualified-test-name> --workers=0 --labels=Before`
+- NUnit Console 3 opens a local TCP service socket even with `--workers=0`. In the Codex sandbox it fails immediately with `System.Net.Sockets.SocketException: Access denied`; request an escalated run instead of trying another runner.
 - Running `WorkwearTest` from the repository root makes report tests look for `Integration/Reports/NoDBTestReport.rdl` in the wrong directory. Run from `WorkwearTest/bin/Debug`.
 - `dotnet build WorkwearTest/WorkwearTest.csproj` fails on this machine without .NET Framework 4.6.2 reference assemblies; use Mono `msbuild`.
 - `dotnet test` may need to run outside the sandbox because MSBuild/NUnit uses named pipes blocked by sandboxing.

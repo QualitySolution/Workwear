@@ -119,6 +119,7 @@ namespace Workwear.Test.Integration.Organization
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 

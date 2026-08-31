@@ -95,7 +95,7 @@ namespace WorkwearTest.ViewModels.Stock
 			return builder;
 		}
 
-		[Test(Description = "Проверяем что сохраняется новая коллективная выдача с созданной ведомостью.")]
+		[Test(Description = "Проверяем сохранение новой коллективной выдачи с ведомостью после обнуления одной из строк.")]
 		[Category("Integrated")]
 		public void CreateWithIssuanceSheet()
 		{
@@ -170,8 +170,15 @@ namespace WorkwearTest.ViewModels.Stock
 						new StockPosition(nomenclatureInSession, 0, null, null, null),
 						1
 					);
+					var zeroAmountItem = vmCreate.Entity.AddItem(
+						employeeInSession.WorkwearItems.First(),
+						new StockPosition(nomenclatureInSession, 0, null, null, null),
+						1
+					);
 
 					vmCreate.CreateIssuanceSheet();
+					Assert.That(zeroAmountItem.IssuanceSheetItem, Is.Not.Null);
+					zeroAmountItem.Amount = 0;
 					
 					Assert.That(vmCreate.Save(), Is.True);
 					Assert.That(item.Id, Is.GreaterThan(0));
