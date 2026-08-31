@@ -58,6 +58,7 @@ namespace Workwear.Domain.ClothingService {
 
 		#region Вычисляемые свойства
 		public virtual string Title => $"{Service?.Name} за {Cost} руб.";
+		public virtual decimal TotalCost => Cost * Amount;
 		#endregion
 	}
 }
