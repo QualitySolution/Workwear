@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company.EmployeeChildren;
@@ -63,7 +64,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 				.AddColumn("По норме").AddTextRenderer(item => item.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(item => item.NormLifeText)
 				.AddColumn("Послед. получения")
-					.AddPixbufRenderer(item => item.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => ((EmployeeIssueOperation)x.item.IssueOperation).ManualOperation) ? handIcon : null)
+					.AddPixbufRenderer(item => GetManualIssueIcon(item))
 					.AddTextRenderer(item => MakeLastIssuedText(item), useMarkup: true)
 				.AddColumn("Числится").AddTextRenderer(item => item.AmountText)
 					.AddSetter((w, item) => w.Foreground = item.AmountColor)
@@ -103,6 +104,11 @@ namespace Workwear.Views.Company.EmployeeChildren
 		private string MakeLastIssuedText(EmployeeCardItem item) => String.Join("\n", 
 			item.LastIssued(DateTime.Today, ViewModel.BaseParameters)
 				.Select(x => $"{FormatOfLastIssue(x.date.Date)} - {x.amount}{ShowIfExist(x.removed)}"));
+		private Pixbuf GetManualIssueIcon(EmployeeCardItem item) =>
+			item.LastIssued(DateTime.Today, ViewModel.BaseParameters)
+				.Any(x => x.item.IssueOperation is IEmployeeGraphIssueOperation operation && operation.ManualOperation)
+					? handIcon
+					: null;
 		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
 
 		private string FormatOfLastIssue(DateTime issueDate) {

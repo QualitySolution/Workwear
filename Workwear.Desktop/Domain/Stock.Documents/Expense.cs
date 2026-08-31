@@ -208,7 +208,16 @@ namespace Workwear.Domain.Stock.Documents
 			if(IssueDate != null)
 				Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
 			else
-				Items.ToList().ForEach(x => x.UpdateWarehouseOperations(uow));
+				Items.ToList().ForEach(x => x.UpdateWarehouseOperations());
+		}
+
+		public virtual void SaveOperations(IUnitOfWork uow)
+		{
+			foreach(var item in Items) {
+				uow.Save(item.WarehouseOperation);
+				if(item.EmployeeIssueOperation != null)
+					uow.Save(item.EmployeeIssueOperation);
+			}
 		}
 
 		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow)
