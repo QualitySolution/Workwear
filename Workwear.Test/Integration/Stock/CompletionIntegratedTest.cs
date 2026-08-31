@@ -101,8 +101,19 @@ namespace Workwear.Test.Integration.Stock
                     .StockBalances(warehouseResult, new List<Nomenclature> { nomenclature2 }, new DateTime(2017, 1, 4));
                 Assert.That(stockResult.Where(x => x.WearSize == sizeXl).Sum(x => x.Amount), Is.EqualTo(12));
 
+				// Поздняя расходная операция не должна влиять на проверку документа задним числом.
+				uow.Save(new Workwear.Domain.Operations.WarehouseOperation {
+					Nomenclature = nomenclature1,
+					WearSize = sizeX,
+					ExpenseWarehouse = warehouseSource,
+					OperationTime = DateTime.Today,
+					Amount = 10
+				});
+				uow.Commit();
+
 				// После сохранения меняем количество до всего доступного остатка. Проверка должна
-				// исключить собственную складскую операцию, иначе повторное сохранение невозможно.
+				// исключить собственную складскую операцию и учитывать дату документа, иначе
+				// повторное сохранение невозможно.
 				completion.SourceItems.Single().Amount = 10;
 				var parameters = Substitute.For<BaseParameters>();
 				parameters.CheckBalances.Returns(true);
