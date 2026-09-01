@@ -300,8 +300,7 @@ namespace Workwear.ViewModels.Stock.Documents
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 						filter => {
 							filter.ShowNegativeBalance = false;
-							filter.ShowWithBarcodes = !OverNormModel.CanUseWithoutBarcodes;
-							filter.CanChangeShowWithBarcodes = OverNormModel.CanChangeUseBarcodes;
+							filter.ShowOnlyWithBarcodeInStock = !OverNormModel.CanUseWithoutBarcodes;
 							filter.CanChooseAmount = OverNormModel.CanUseWithoutBarcodes;
 							filter.AddAmount = AddedAmount.One;
 							filter.Warehouse = Entity.Warehouse;
@@ -319,7 +318,7 @@ namespace Workwear.ViewModels.Stock.Documents
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
 
-			if(stockPosition.Nomenclature.UseBarcode) {
+			if(node.BarcodeCount > 0) {
 				IPage<BarcodeJournalViewModel> barcodeJournal =
 					NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
 						this,

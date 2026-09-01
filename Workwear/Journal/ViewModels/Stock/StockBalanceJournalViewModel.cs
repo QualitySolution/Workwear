@@ -24,7 +24,6 @@ using workwear.Journal.Filter.ViewModels.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Sizes;
-using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Documents;
 
 namespace workwear.Journal.ViewModels.Stock
@@ -93,7 +92,7 @@ namespace workwear.Journal.ViewModels.Stock
 				if (Filter.ProtectionTools != null && Filter.ProtectionTools.Nomenclatures.Any())
 					conductions.Add($"nomenclature.id IN ({string.Join(",", Filter.ProtectionTools.Nomenclatures.Select(x => x.Id))})");
 				
-				if(Filter.ShowWithBarcodes)
+				if(Filter.ShowWithUseBarcodes)
 					conductions.Add("nomenclature.use_barcode = 1");
 
 				if(Filter.ItemsType != null)
@@ -194,6 +193,8 @@ SELECT
           HAVING Amount {having} 0
           ORDER BY nomenclature.name, sizealias.name, heightalias.name, nomenclature.sex, owners.name, operation.wear_percent
          ) AS stock";
+				if(FeaturesService.Available(WorkwearFeature.Barcodes) && Filter.ShowOnlyWithBarcodeInStock)
+					sql += " HAVING BarcodeCount > 0";
 
 				var onDate = Filter.Date.AddDays(1);
 				// Если дата не указана, то берем склад на сегодня. Добавляем 10 лет, чтобы исключить падение, так как мы от этой даты отнимаем год.
@@ -224,7 +225,6 @@ SELECT
 			JournalAction releaseBarcodesAction = new JournalAction("Промаркировать",
 				(selected) => selected.Any(x =>
 					x is StockBalanceJournalNode node &&
-					node.UseBarcode &&
 					node.Amount > 0),
 				(selected) => FeaturesService.Available(WorkwearFeature.Barcodes) && Filter.VisibleBarcodes,
 				(selected) => NavigationManager.OpenViewModel<BarcodingViewModel, IEntityUoWBuilder, StockBalanceJournalNode, Warehouse>
