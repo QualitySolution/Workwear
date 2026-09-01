@@ -391,6 +391,8 @@ namespace Workwear.ViewModels.Stock.Documents
 				var addedItem = addedItems.First();
 				if(!ValidateSubstituteItemsType(item, addedItem.Key.Nomenclature))
 					return;
+
+				var lastWarehouseOperation = addedItem.First().LastOperation.WarehouseOperation;
 				var addedParam = new OverNormParam(
 					item.Employee,
 					addedItem.Key.Nomenclature,
@@ -398,7 +400,9 @@ namespace Workwear.ViewModels.Stock.Documents
 					addedItem.Key.Size,
 					addedItem.Key.Height,
 					item.OverNormOperation?.SubstitutedIssueOperation,
-					addedItem.ToList());
+					addedItem.ToList(),
+					wearPercent: lastWarehouseOperation.WearPercent,
+					owner: lastWarehouseOperation.Owner);
 				OverNormModel.UseBarcodes = addedParam.Barcodes.Any();
 				AddOrUpdateItem(item, addedParam);
 			}
