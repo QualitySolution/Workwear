@@ -139,7 +139,8 @@ SELECT
 		   AND opwh.height_id <=> stock.HeightId
 		   AND opwh.owner_id <=> stock.OwnerId
 		   AND opwh.wear_percent = stock.WearPercent
-		   AND opwh.warehouse_receipt_id = @warehouse_id
+		   AND opwh.warehouse_receipt_id IS NOT NULL
+		   AND (@all_warehouse OR opwh.warehouse_receipt_id = @warehouse_id)
 		   AND (ob.employee_issue_operation_id IS NULL OR opie.issued = 0)
 		   AND (ob.duty_norm_issue_operation_id IS NULL OR opdn.issued = 0)
 		   AND (ob.over_norm_operation_id IS NULL OR opon.return_from_operation IS NOT NULL)
