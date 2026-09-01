@@ -16,7 +16,7 @@ namespace Workwear.HibernateMapping.Regulations
 				Id (x => x.Id).Column ("id").GeneratedBy.Native();
 			
 			Map(x => x.Name).Column("name").Not.Nullable();
-			Map(x => x.AlternativeName).Column("alternative_name");
+			Map(x => x.OfficialName).Column("official_name");
 			Map(x => x.Comment).Column("comments");
 			Map(x => x.AssessedCost).Column("assessed_cost");
 			Map(x => x.SupplyType).Column("supply_type").Not.Nullable();

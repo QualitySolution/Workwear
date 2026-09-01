@@ -25,7 +25,7 @@ namespace Workwear.Views.Regulations
 
 			yentryName.Binding.AddBinding(Entity, e => e.Name, w => w.Text).InitializeFromSource();
 
-			yentryAlternativeName.Binding.AddBinding(Entity, e => e.AlternativeName, w => w.Text).InitializeFromSource();
+			yentryAlternativeName.Binding.AddBinding(Entity, e => e.OfficialName, w => w.Text).InitializeFromSource();
 
 			yentryItemsType.ViewModel = ViewModel.ItemTypeEntryViewModel;
 			ycheckbutton_dermal_PPE.Binding.AddBinding(ViewModel, vm => vm.WashingPPE, w => w.Active).InitializeFromSource();
