@@ -232,11 +232,15 @@ namespace Workwear.ViewModels.Stock.Documents
 			? "Обновить маркировку" : "Создать штрихкоды";
 
 		public bool CanPrintBarcode => BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
-		public bool SensitiveBarcodesPrint => CanEdit && VisibleBarcodes 
-			 && ObservableItems.Any(i => i.EmployeeIssueOperation != null && i.EmployeeIssueOperation.BarcodeOperations
-				 .Any(b => b.Barcode.Type == BarcodeTypes.EAN13)); // Есть что печатать
+		public bool SensitiveBarcodesPrint => CanEdit && VisibleBarcodes && PrintableBarcodeOperations.Any();
 		public bool CanCreateBarcode => BaseParameters.ClothingMarkingType == BarcodeTypes.EAN13;
 		private IEnumerable<ExpenseItem> MarkingItems => ObservableItems.Where(i => i.Nomenclature?.UseBarcode ?? false);
+		// Для печати важны фактически привязанные штрихкоды, независимо от настройки номенклатуры.
+		// Это позволит печатать в том числе складские штрихкоды, когда их выдача будет реализована.
+		private IEnumerable<BarcodeOperation> PrintableBarcodeOperations => ObservableItems
+			.Where(i => i.EmployeeIssueOperation != null)
+			.SelectMany(i => i.EmployeeIssueOperation.BarcodeOperations)
+			.Where(b => b.Barcode?.Type == BarcodeTypes.EAN13);
 		public bool NeedUpdateBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount != (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
 		public bool NeedAddBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount > (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
 		public bool	NeedRemoveBarcodes => CanEdit && VisibleBarcodes && MarkingItems.Any(i => i.Amount < (i.EmployeeIssueOperation?.BarcodeOperations.Count ?? 0));
@@ -266,24 +270,24 @@ namespace Workwear.ViewModels.Stock.Documents
 
 		public void PrintBarcodesEAN13() {
 			if(NeedUpdateBarcodes) {
-				if(interactive.Question("Не для всех строк документа была проставлена маркировка. Обновить маркировку?"))
-					ReleaseBarcodes();
-				else
+				if(!interactive.Question("Не для всех строк документа была проставлена маркировка. Обновить маркировку?"))
+					return;
+				ReleaseBarcodes();
+				if(NeedUpdateBarcodes)
 					return;
 			}
+
+			var barcodeIds = PrintableBarcodeOperations
+				.Select(b => b.Barcode.Id)
+				.ToList();
+			if(!barcodeIds.Any())
+				return;
 
 			var reportInfo = new ReportInfo {
 				Title = "Штрихкоды",
 				Identifier = "Barcodes.Barcode",
 				Parameters = new Dictionary<string, object> {
-					{
-						"barcodes", Entity.Items
-							.SelectMany(x => x.EmployeeIssueOperation?.BarcodeOperations
-								.Where(b => b.Barcode.Type == BarcodeTypes.EAN13)
-								.Select(b => b.Barcode?.Id))
-							.Where(x => x != null)
-							.ToList()
-					}
+					{ "barcodes", barcodeIds }
 				}
 			};
 

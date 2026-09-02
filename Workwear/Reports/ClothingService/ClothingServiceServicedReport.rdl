@@ -30,10 +30,10 @@
 	nomenclature,
 	GROUP_CONCAT(DISTINCT type ORDER BY type SEPARATOR ', ') as type,
 	COUNT(*) as s,
-	SUM(amount) as amount,
+	IF(@sum_cost OR @group_claim, 1, SUM(amount)) as amount,
 	CAST(SUM(n_weight) / 1000.0 AS DECIMAL(10,3)) AS weight,
-	SUM(cost) as cost,
-	IF(@sum_cost OR @group_claim, SUM(cost), cost) as sum_cost,
+	IF(@sum_cost OR @group_claim, SUM(cost * amount), cost) as cost,
+	IF(@sum_cost OR @group_claim, SUM(cost * amount), amount * cost) as sum_cost,
 	date
 FROM (
 		 SELECT

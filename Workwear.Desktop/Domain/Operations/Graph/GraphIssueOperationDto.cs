@@ -16,6 +16,7 @@ namespace Workwear.Domain.Operations.Graph {
 		public int Returned { get; set; }
 		public bool OverrideBefore { get; set; }
 		public bool ManualOperation { get; set; }
+		public int? NormAmount { get; set; }
 
 		/// <inheritdoc />
 		public IGraphIssueOperation IssuedOperation { get; set; }
@@ -32,4 +33,3 @@ namespace Workwear.Domain.Operations.Graph {
 		public int ProtectionToolsId { get; set; }
 	}
 }
-

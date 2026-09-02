@@ -162,7 +162,7 @@ namespace Workwear.Domain.Company
 			foreach(var interval in Graph.OrderedIntervalsReverse) {
 				if(interval.StartDate <= onDate 
 				   && showed.Count == 1 
-				   && showed.First().Value.amount == ((EmployeeIssueOperation)showed.First().Value.item.IssueOperation).NormItem?.Amount
+				   && showed.First().Value.amount == showed.First().Value.item.IssueOperation.NormAmount
 				                                      && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.ColDayAheadOfShedule), showed.First().Value.item.IssueOperation) == 0 )
 					break;
 				
@@ -218,7 +218,6 @@ namespace Workwear.Domain.Company
 				? NumberToTextRus.FormatCase((int)(DateTime.Today - NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
 				: String.Empty;
 		public virtual string NextIssueText => ProtectionTools?.Dispenser ?? false ? String.Empty : $"{NextIssue:d}";
-		public virtual string TonText => ActiveNormItem?.NormParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 		#endregion
 		public EmployeeCardItem () { }

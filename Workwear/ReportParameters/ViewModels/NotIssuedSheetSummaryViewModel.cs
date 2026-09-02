@@ -93,6 +93,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"show_sex", ShowSex },
 					{"show_employees", ShowEmployees },
 					{"exclude_in_vacation", ExcludeInVacation },
+					{"exclude_dismiss_after", ExcludeDismissAfter },
 					{"condition", Condition },
 					{"exclude_before", ExcludeBefore },
 					{"show_stock", Warehouse.Id != -2},
@@ -145,7 +146,13 @@ namespace workwear.ReportParameters.ViewModels
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
-		
+
+		private bool excludeDismissAfter;
+		public virtual bool ExcludeDismissAfter {
+			get => excludeDismissAfter;
+			set => SetField(ref excludeDismissAfter, value);
+		}
+
 		private bool condition;
 		public virtual bool Condition {
 			get => condition;

@@ -3,7 +3,7 @@
   <Description></Description>
   <Author>Тимирева Екатерина</Author>
   <PageHeight>8.27in</PageHeight>
-  <PageWidth>16.7in</PageWidth>
+  <PageWidth>20in</PageWidth>
   <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
@@ -30,34 +30,59 @@
     DATE_FORMAT(dismiss_date, '%d.%m.%Y') as 'dismiss_date',
     DATE_FORMAT(hire_date, '%d.%m.%Y') as 'hire_date',
     phone_number,
-    en.id as 'employee_norm_id'
+    (SELECT GROUP_CONCAT(CONCAT(n.id, ' - ', n.name) ORDER BY n.name SEPARATOR '\n')
+     FROM employees_norms en
+          JOIN norms n ON n.id = en.norm_id
+     WHERE en.employee_id = employees.id AND n.archival = 0) as 'active_norms'
     FROM employees
          LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
          LEFT JOIN departments on employees.department_id = departments.id
          LEFT JOIN posts on posts.id = employees.post_id
-         LEFT JOIN employees_norms en on en.employee_id=employees.id
-         LEFT JOIN norms on en.norm_id = norms.id
-WHERE (((@only_without_norms AND (en.id IS NULL OR employees.id IN (SELECT arch.id FROM ((SELECT employees.id, (count(norm_id) - num_arch) as 'num'
-                                                                   FROM employees 
-                                                                       LEFT JOIN employees_norms on employees.id = employees_norms.employee_id      
-                                                                       LEFT JOIN norms on norms.id=employees_norms.norm_id
-                                                                       LEFT JOIN (SELECT employees.id, count(norm_id) as 'num_arch'
-                                                                                              FROM employees LEFT JOIN employees_norms on employees.id = employees_norms.employee_id
-                                                                                                              LEFT JOIN norms on norms.id=employees_norms.norm_id
-                                                                                              WHERE archival=1
-                                                                                              GROUP BY employees.id)arch on arch.id=employees.id
-                                                                   GROUP BY employees.id))arch
-                                                                        WHERE num=0)))
-    OR (@only_without_norms=false))
-  AND ((@only_working AND (employees.dismiss_date &gt; CURRENT_DATE OR employees.dismiss_date IS NULL)) OR (@only_working=false)))
-GROUP BY employees.id
+WHERE (
+        (@only_working AND (employees.hire_date IS NULL OR employees.hire_date &lt;= @actual_date)
+                        AND (employees.dismiss_date IS NULL OR employees.dismiss_date &gt; @actual_date))
+     OR (@only_hired AND employees.hire_date BETWEEN @hire_from AND @hire_to)
+     OR (@only_dismissed AND employees.dismiss_date BETWEEN @dismiss_from AND @dismiss_to)
+      )
+  AND (
+        (@only_without_norms AND NOT EXISTS (SELECT 1 FROM employees_norms en
+                                              JOIN norms n ON n.id = en.norm_id
+                                              WHERE en.employee_id = employees.id AND n.archival=0))
+     OR (@only_with_norms AND EXISTS (SELECT 1 FROM employees_norms en
+                                       JOIN norms n ON n.id = en.norm_id
+                                       WHERE en.employee_id = employees.id AND n.archival=0))
+      )
 ORDER BY employee_name;</CommandText>
         <QueryParameters>
+          <QueryParameter Name="only_working">
+            <Value>={?only_working}</Value>
+          </QueryParameter>
+          <QueryParameter Name="actual_date">
+            <Value>={?actual_date}</Value>
+          </QueryParameter>
+          <QueryParameter Name="only_hired">
+            <Value>={?only_hired}</Value>
+          </QueryParameter>
+          <QueryParameter Name="hire_from">
+            <Value>={?hire_from}</Value>
+          </QueryParameter>
+          <QueryParameter Name="hire_to">
+            <Value>={?hire_to}</Value>
+          </QueryParameter>
+          <QueryParameter Name="only_dismissed">
+            <Value>={?only_dismissed}</Value>
+          </QueryParameter>
+          <QueryParameter Name="dismiss_from">
+            <Value>={?dismiss_from}</Value>
+          </QueryParameter>
+          <QueryParameter Name="dismiss_to">
+            <Value>={?dismiss_to}</Value>
+          </QueryParameter>
           <QueryParameter Name="only_without_norms">
             <Value>={?only_without_norms}</Value>
           </QueryParameter>
-          <QueryParameter Name="only_working">
-            <Value>={?only_working}</Value>
+          <QueryParameter Name="only_with_norms">
+            <Value>={?only_with_norms}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -92,6 +117,10 @@ ORDER BY employee_name;</CommandText>
         </Field>
         <Field Name="phone_number">
           <DataField>phone_number</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="active_norms">
+          <DataField>active_norms</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -136,19 +165,25 @@ ORDER BY employee_name;</CommandText>
             <Width>142.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>247.9pt</Width>
+            <Width>290.1pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>252.7pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>95.8pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_phone}</Hidden>
+            </Visibility>
           </TableColumn>
           <TableColumn>
             <Width>74.2pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>92.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>200pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -249,9 +284,6 @@ ORDER BY employee_name;</CommandText>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
-                      <Visibility>
-                        <Hidden></Hidden>
-                      </Visibility>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -284,9 +316,22 @@ ORDER BY employee_name;</CommandText>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
-                      <Visibility>
-                        <Hidden>={?only_working}</Hidden>
-                      </Visibility>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox11">
+                      <Value>Активные нормы</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -383,9 +428,6 @@ ORDER BY employee_name;</CommandText>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
-                      <Visibility>
-                        <Hidden></Hidden>
-                      </Visibility>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -416,9 +458,20 @@ ORDER BY employee_name;</CommandText>
                         <BorderColor />
                         <BorderWidth />
                       </Style>
-                      <Visibility>
-                        <Hidden>={?only_working}</Hidden>
-                      </Visibility>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="active_norms">
+                      <Value>=Fields!active_norms.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                      </Style>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -454,6 +507,102 @@ ORDER BY employee_name;</CommandText>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <ReportParameters >
+    <ReportParameter Name="only_working">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="actual_date">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2026-08-21</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="only_hired">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="hire_from">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2025-08-21</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="hire_to">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2026-08-21</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="only_dismissed">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="dismiss_from">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2025-08-21</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="dismiss_to">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2026-08-21</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
     <ReportParameter Name="only_without_norms">
       <DataType>Boolean</DataType>
       <DefaultValue>
@@ -466,7 +615,19 @@ ORDER BY employee_name;</CommandText>
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
-    <ReportParameter Name="only_working">
+    <ReportParameter Name="only_with_norms">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_phone">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
