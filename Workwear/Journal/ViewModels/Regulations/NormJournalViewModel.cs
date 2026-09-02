@@ -141,6 +141,10 @@ namespace workwear.Journal.ViewModels.Regulations
 				(nodes) => nodes.Cast<NormJournalNode>().Any(x => x.UsagesWorked > 0),
 				(arg) => SelectionMode == JournalSelectionMode.None,
 				UpdateWearItems));
+			NodeActionsList.Add(new JournalAction("Справочник ЕТН",
+				(arg) => true,
+				(arg) => SelectionMode == JournalSelectionMode.None,
+				(arg) => NavigationManager.OpenViewModel<EtnNormJournalViewModel>(this)));
 		}
 
 		#region Popupmenu action implementation

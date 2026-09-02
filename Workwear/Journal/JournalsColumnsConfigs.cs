@@ -5,6 +5,7 @@ using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Cloud.WearLk.Manage;
+using QS.Cloud.WorkwearDictionary.Grpc.Contracts;
 using QS.Journal.GtkUI;
 using QS.Measurement.Journal;
 using QS.Utilities;
@@ -300,6 +301,14 @@ namespace workwear.Journal
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
 					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
+					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<EtnNormJournalViewModel>(
+				() => FluentColumnsConfig<Norm>.Create()
+					.AddColumn("№ в приказе").AddReadOnlyTextRenderer(node => node.NumberNorm).SearchHighlight()
+					.AddColumn("Должность").Resizable().AddReadOnlyTextRenderer(node => node.PostName).SearchHighlight()
+					.AddColumn("Количество строк").AddReadOnlyTextRenderer(node => node.ItemsCount.ToString()).XAlign(0.5f)
 					.Finish()
 			);
 			TreeViewColumnsConfigFactory.Register<DutyNormsJournalViewModel>(

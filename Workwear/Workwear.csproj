@@ -325,6 +325,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Regulations.ProtectionToolsView.cs" />
     <Compile Include="Journal\ViewModels\Regulations\ProtectionToolsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Regulations\NormJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\EtnNormJournalViewModel.cs" />
     <Compile Include="ViewModels\Stock\ItemTypeViewModel.cs" />
     <Compile Include="Views\Stock\ItemTypeView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.ItemTypeView.cs" />
