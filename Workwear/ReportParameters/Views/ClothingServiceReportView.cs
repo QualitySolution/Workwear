@@ -77,6 +77,10 @@ namespace Workwear.ReportParameters.Views {
             ycheckbuttonGroupclaim.Binding
 	            .AddBinding(ViewModel, vm => vm.VisibleGroupClaim, v => v.Visible)
 	            .AddBinding(ViewModel, vm => vm.GroupClaim, w => w.Active).InitializeFromSource();
+            ylabelInfo.UseMarkup = true;
+            ylabelInfo.Binding
+	            .AddBinding(ViewModel, vm => vm.InfoLabelText, w => w.LabelProp)
+	            .AddBinding(ViewModel, vm => vm.VisibleInfoLabel, v => v.Visible).InitializeFromSource();
             choiceServises.ViewModel = ViewModel.ChoiceServiceViewModel;
             expanderServises.Visible = ViewModel.VisibleChoiceService;
             ViewModel.PropertyChanged += (sender, args) => {
