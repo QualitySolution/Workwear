@@ -45,6 +45,7 @@ namespace Workwear.Domain.Operations {
 			get => dutyNormItem;
 			set => SetField(ref dutyNormItem, value);
 		}
+		int? IGraphIssueOperation.NormAmount => DutyNormItem?.Amount;
 		
 		DateTime operationTime = DateTime.Now;
 		[Display(Name = "Время операции")]
