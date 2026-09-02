@@ -614,6 +614,10 @@
       <Project>{2983a1a1-9b12-48bd-8211-1745049d5a00}</Project>
       <Name>QS.Cloud.Postomat.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QS.Cloud.WorkwearDictionary.Client\QS.Cloud.WorkwearDictionary.Client.csproj">
+      <Project>{562724e7-aa46-4093-a00e-46fe9c6ec443}</Project>
+      <Name>QS.Cloud.WorkwearDictionary.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj">
       <Project>{190cea0d-ea23-4c91-8030-203a5afed7b7}</Project>
       <Name>Gamma.Binding</Name>

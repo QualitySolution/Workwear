@@ -11,6 +11,7 @@ using QS.Measurement.ViewModels;
 using QS.Cloud.Client;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.WearLk.Client;
+using QS.Cloud.WorkwearDictionary.Client;
 using QS.Configuration;
 using QS.Deletion.Views;
 using QS.Deletion;
@@ -376,6 +377,7 @@ namespace workwear
 			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<ProductsManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<EtnDictionaryService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели

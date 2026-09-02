@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+		<Company>Quality Solution</Company>
+		<ProjectGuid>{562724E7-AA46-4093-A00E-46FE9C6EC443}</ProjectGuid>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Google.Protobuf" Version="3.22.1" />
+      <PackageReference Include="Grpc.Core" Version="2.46.6" />
+      <PackageReference Include="Grpc.Tools" Version="2.52.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <None Remove="Protos\ETNService.proto" />
+      <Protobuf Include="Protos\ETNService.proto" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj" />
+    </ItemGroup>
+
+</Project>
