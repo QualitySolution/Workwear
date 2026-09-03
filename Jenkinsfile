@@ -62,17 +62,25 @@ node {
    }
    if (params.Publish) {
       stage('VirusTotal'){
-         sh 'vt scan file WinInstall/workwear-*.exe > file_hash'
-         waitUntil (){
-            sleep(30) //VirusTotal позволяет выполнить не более 4-х запросов за минуту.
-            sh 'cut file_hash -d" " -f2 | vt analysis - > analysis'
-            return readFile('analysis').contains('status: "completed"')
-         }
-         sh 'cat analysis'
-         script {
-            def status = readFile(file: "analysis")
-            if ( !(status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
-               unstable('VirusTotal in not clean')
+         withCredentials([usernamePassword(credentialsId: 'virustotal-http-proxy', usernameVariable: 'VT_PROXY_USER', passwordVariable: 'VT_PROXY_PASSWORD')]) {
+            sh '''
+               export HTTPS_PROXY="http://${VT_PROXY_USER}:${VT_PROXY_PASSWORD}@proxy.vpn.qsolution.ru:3128"
+               vt scan file WinInstall/workwear-*.exe > file_hash
+            '''
+            waitUntil (){
+               sleep(30) //VirusTotal позволяет выполнить не более 4-х запросов за минуту.
+               sh '''
+                  export HTTPS_PROXY="http://${VT_PROXY_USER}:${VT_PROXY_PASSWORD}@proxy.vpn.qsolution.ru:3128"
+                  cut file_hash -d" " -f2 | vt analysis - > analysis
+               '''
+               return readFile('analysis').contains('status: "completed"')
+            }
+            sh 'cat analysis'
+            script {
+               def status = readFile(file: "analysis")
+               if ( !(status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
+                  unstable('VirusTotal in not clean')
+               }
             }
          }
       }
