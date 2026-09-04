@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NHibernate;
+using NHibernate.Criterion;
 using QS.DomainModel.UoW;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Operations;
@@ -187,7 +188,28 @@ namespace Workwear.Tools.Barcodes
 
 			Barcode bAlias = null;
 			WarehouseOperation who = null;
-			int barcodesInStock = unitOfWork.Session.QueryOver<BarcodeOperation>()
+			BarcodeOperation boAlias = null;
+			BarcodeOperation lastOperationSubAlias = null;
+			EmployeeIssueOperation lastEmpSubAlias = null;
+			DutyNormIssueOperation lastDutyNormSubAlias = null;
+			WarehouseOperation lastWhSubAlias = null;
+			OverNormOperation lastOverNormSubAlias = null;
+			var lastOperationIdSubQuery = QueryOver.Of(() => lastOperationSubAlias)
+				.Left.JoinAlias(() => lastOperationSubAlias.WarehouseOperation, () => lastWhSubAlias)
+				.Left.JoinAlias(() => lastOperationSubAlias.EmployeeIssueOperation, () => lastEmpSubAlias)
+				.Left.JoinAlias(() => lastOperationSubAlias.DutyNormIssueOperation, () => lastDutyNormSubAlias)
+				.Left.JoinAlias(() => lastOperationSubAlias.OverNormOperation, () => lastOverNormSubAlias)
+				.Where(() => lastOperationSubAlias.Barcode.Id == bAlias.Id)
+				.OrderBy(Projections.SqlFunction("coalesce", NHibernateUtil.Date,
+					Projections.Property(() => lastEmpSubAlias.OperationTime),
+					Projections.Property(() => lastDutyNormSubAlias.OperationTime),
+					Projections.Property(() => lastOverNormSubAlias.OperationTime),
+					Projections.Property(() => lastWhSubAlias.OperationTime)))
+					.Desc
+				.Select(x => x.Id)
+				.Take(1);
+
+			int barcodesInStock = unitOfWork.Session.QueryOver<BarcodeOperation>(() => boAlias)
 				.JoinAlias(bo => bo.Barcode, () => bAlias)
 				.JoinAlias(bo => bo.WarehouseOperation, () => who)
 				.Where(b =>
@@ -197,6 +219,7 @@ namespace Workwear.Tools.Barcodes
 					who.WearPercent == stockPosition.WearPercent &&
 					who.Owner == stockPosition.Owner)
 				.Where(() => who.ReceiptWarehouse.Id == warehouse.Id)
+				.Where(Subqueries.WhereProperty(() => boAlias.Id).Eq(lastOperationIdSubQuery))
 				.SelectList(list => list
 					.SelectCountDistinct(() => bAlias.Id)
 				)
