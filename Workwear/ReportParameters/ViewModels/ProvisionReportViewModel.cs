@@ -71,6 +71,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
 			{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 			{"show_employees", ShowEmployees },
+			{"exclude_full_employees", ExcludeFullEmployees },
 			{"show_stock", ShowStock },
 			{"show_dismissed", ShowDismissed},
 			{"issue_type", IssueType?.ToString() },
@@ -163,6 +164,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		public virtual bool ShowEmployees {
 			get => showEmployees;
 			set => SetField(ref showEmployees, value);
+		}
+
+		private bool excludeFullEmployees;
+		public virtual bool ExcludeFullEmployees {
+			get => excludeFullEmployees;
+			set => SetField(ref excludeFullEmployees, value);
 		}
 
 		private bool showDismissed;

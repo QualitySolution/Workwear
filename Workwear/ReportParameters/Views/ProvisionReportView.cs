@@ -37,6 +37,10 @@ namespace Workwear.ReportParameters.Views {
 			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.ShowEmployees, w => w.Active).InitializeFromSource();
 			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
 			ylabelShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
+			ycheckExcludeFullEmployees.Binding.AddBinding(ViewModel, v => v.ExcludeFullEmployees, w => w.Active).InitializeFromSource();
+			ycheckExcludeFullEmployees.Binding.AddBinding(ViewModel, v => v.ShowEmployees, w => w.Sensitive).InitializeFromSource();
+			ycheckExcludeFullEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
+			ylabelExcludeFullEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
 			
 			comboReportType.ItemsEnum = typeof(ProvisionReportViewModel.ProvisionReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();

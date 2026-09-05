@@ -34,20 +34,7 @@ FROM (SELECT
           SUM(
                   LEAST(
                           norms_item.amount,
-                          IFNULL(
-                                  (SELECT
-                                       SUM(
-                                                   o.issued - IFNULL(
-                                                       (SELECT SUM(ret.returned)
-                                                        FROM operation_issued_by_employee ret
-                                                        WHERE ret.issued_operation_id = o.id),
-                                                       0)
-                                           )
-                                   FROM operation_issued_by_employee o
-                                   WHERE o.employee_id = employee_cards_item.employee_id
-                                     AND o.protection_tools_id = employee_cards_item.protection_tools_id
-                                     AND (o.auto_writeoff_date IS NULL OR o.auto_writeoff_date &gt;= CURRENT_DATE)),
-                                  0)
+                          IFNULL(personalBalance.balance, 0)
                       )
               ) as 'balance',
           IF(@show_stock,
@@ -93,18 +80,39 @@ FROM (SELECT
                  , 0)
               ,null) AS 'in_stock',
           IF(@show_employees,
-             LEFT(GROUP_CONCAT(CONCAT_WS('',
-                                     CONCAT(employees.last_name, ' '),
-                                     IF(employees.first_name = '',
-                                        NULL,
-                                        CONCAT(LEFT(employees.first_name, 1), '.')),
-                                     IF(employees.patronymic_name = '',
-                                        NULL,
-                                        CONCAT(LEFT(employees.patronymic_name, 1), '.'))) SEPARATOR ', '), 5000)
+             LEFT(GROUP_CONCAT(
+                     IF(@exclude_full_employees AND IFNULL(personalBalance.balance, 0) &gt;= norms_item.amount,
+                        NULL,
+                        CONCAT_WS('',
+                                  CONCAT(employees.last_name, ' '),
+                                  IF(employees.first_name = '',
+                                     NULL,
+                                     CONCAT(LEFT(employees.first_name, 1), '.')),
+                                  IF(employees.patronymic_name = '',
+                                     NULL,
+                                     CONCAT(LEFT(employees.patronymic_name, 1), '.')))
+                     ) SEPARATOR ', '), 5000)
               ,null) AS 'employees'
       FROM employee_cards_item
                JOIN employees ON employees.id = employee_cards_item.employee_id
                LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id
+               LEFT JOIN (
+                   SELECT
+                       o.employee_id,
+                       o.protection_tools_id,
+                       SUM(
+                               o.issued - IFNULL(
+                                   (SELECT SUM(ret.returned)
+                                    FROM operation_issued_by_employee ret
+                                    WHERE ret.issued_operation_id = o.id),
+                                   0)
+                           ) AS 'balance'
+                   FROM operation_issued_by_employee o
+                   WHERE (o.auto_writeoff_date IS NULL OR o.auto_writeoff_date &gt;= CURRENT_DATE)
+                   GROUP BY o.employee_id, o.protection_tools_id
+               ) AS personalBalance
+                         ON personalBalance.employee_id = employee_cards_item.employee_id
+                        AND personalBalance.protection_tools_id = employee_cards_item.protection_tools_id
                JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
@@ -190,6 +198,9 @@ FROM (SELECT
           </QueryParameter>
           <QueryParameter Name="show_employees">
             <Value>=Parameters!show_employees</Value>
+          </QueryParameter>
+          <QueryParameter Name="exclude_full_employees">
+            <Value>=Parameters!exclude_full_employees</Value>
           </QueryParameter>
           <QueryParameter Name="employee_groups_ids">
             <Value>=Parameters!employee_groups_ids</Value>
@@ -578,7 +589,7 @@ FROM (SELECT
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox50">
-                      <Value>ФИО сотрудников</Value>
+                      <Value>=Iif({?exclude_full_employees}, "ФИО необеспеченных сотрудников", "ФИО сотрудников")</Value>
                       <Style>
                         <TextAlign>Left</TextAlign>
                         <BorderStyle>
@@ -917,6 +928,18 @@ FROM (SELECT
       <DefaultValue>
         <Values>
           <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_full_employees">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>
