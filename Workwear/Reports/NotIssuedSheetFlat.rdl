@@ -156,7 +156,7 @@
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
                       <Visibility>
-                        <Hidden></Hidden>
+                        <Hidden>=false</Hidden>
                       </Visibility>
                     </Textbox>
                   </ReportItems>
