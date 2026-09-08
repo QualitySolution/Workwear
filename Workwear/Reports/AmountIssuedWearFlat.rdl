@@ -3,7 +3,7 @@
   <Description>Справка о выданной спецодежде</Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>35in</PageWidth>
+  <PageWidth>40in</PageWidth>
   <Width>7.5in</Width>
   <TopMargin>.20in</TopMargin>
   <LeftMargin>.20in</LeftMargin>
@@ -15,7 +15,7 @@
     <PrintOnLastPage>true</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>78.1pt</Height>
+    <Height>54.9pt</Height>
     <ReportItems>
       <Table Name="Table1" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <DataSetName>Data</DataSetName>
@@ -79,6 +79,9 @@
           </TableColumn>
           <TableColumn>
             <Width>346.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>344.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>88.0pt</Width>
@@ -317,6 +320,23 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="TextboxProtectionToolsName">
+                      <Value>={protection_tools_name}</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Left</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox13">
                       <Value>={size} + Iif(Fields!growth.IsMissing, "", "/" + {growth})</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -517,234 +537,6 @@
         <Header>
           <TableRows>
             <TableRow>
-              <Height>16.4pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox27">
-                      <Value>="Справка по выданному на " + Format(Convert.ToDateTime({?dateStart}), "dd.MM.yyyy") + "-" + Format(Convert.ToDateTime({?dateEnd}), "dd.MM.yyyy")  + " от " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Left</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                        <FontWeight>Bold</FontWeight>
-                        <FontSize>12pt</FontSize>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                  <ColSpan>12</ColSpan>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox56">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox57">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="TextboxManualOperationHeader1">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox58">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox59">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox60">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox61">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox62">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox19">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox33">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Top>None</Top>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <BackgroundColor>#E9E9E9</BackgroundColor>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
-            <TableRow>
               <Height>24.4pt</Height>
               <TableCells>
                 <TableCell>
@@ -897,6 +689,22 @@
                     <Textbox Name="Textbox29">
                       <Value>Наименование</Value>
                       <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <BackgroundColor>#E9E9E9</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="TextboxProtectionToolsNameHeader">
+                      <Value>Номенклатура нормы</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
                         </BorderStyle>
@@ -1117,7 +925,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>select
@@ -1137,6 +945,7 @@
     IF(@byEmployee, IF(employees.sex = 'M','М',IF(employees.sex = 'F','Ж','-')) , NULL) AS sex,
     IF(@byEmployee, DATE_FORMAT(employees.dismiss_date, '%d.%m.%Y'), NULL) AS dismiss_date,
     nomenclature.name as nomen,
+    protection_tools.name as protection_tools_name,
     sum(issued) as amount,
     nomenclature.number,
     if(@alternativeName, IFNULL(sizeAlias.alternative_name, sizeAlias.name), sizeAlias.name) as size,
@@ -1288,7 +1097,7 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), department, employee, nomen, size, 
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="subdivision_id">
           <DataField>subdivision_id</DataField>
           <TypeName>System.UInt32</TypeName>
@@ -1331,6 +1140,10 @@ ORDER BY CAST(subdivision_code AS UNSIGNED), department, employee, nomen, size, 
         </Field>
         <Field Name="nomen">
           <DataField>nomen</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="protection_tools_name">
+          <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
         </Field>
         <Field Name="amount">
