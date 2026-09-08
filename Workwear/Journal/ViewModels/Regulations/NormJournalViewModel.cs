@@ -49,7 +49,7 @@ namespace workwear.Journal.ViewModels.Regulations
 			EmployeeIssueModel employeeIssueModel,
 			FeaturesService featuresService,
 			IDeleteEntityService deleteEntityService = null,
-			ICurrentPermissionService currentPermissionService = null) 
+			ICurrentPermissionService currentPermissionService = null)
 			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -141,10 +141,6 @@ namespace workwear.Journal.ViewModels.Regulations
 				(nodes) => nodes.Cast<NormJournalNode>().Any(x => x.UsagesWorked > 0),
 				(arg) => SelectionMode == JournalSelectionMode.None,
 				UpdateWearItems));
-			NodeActionsList.Add(new JournalAction("Справочник ЕТН",
-				(arg) => true,
-				(arg) => SelectionMode == JournalSelectionMode.None,
-				(arg) => NavigationManager.OpenViewModel<EtnNormJournalViewModel>(this)));
 		}
 
 		#region Popupmenu action implementation

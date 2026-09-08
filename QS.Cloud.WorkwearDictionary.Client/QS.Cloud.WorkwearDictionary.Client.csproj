@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj" />
+      <ProjectReference Include="..\QSProjects\QS.BaseParameters\QS.BaseParameters.csproj" />
     </ItemGroup>
 
 </Project>

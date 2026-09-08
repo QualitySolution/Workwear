@@ -27,6 +27,7 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
+using QS.Cloud.WorkwearDictionary.Client;
 using QS.Measurement.Repository;
 
 namespace Workwear.ViewModels.Regulations
@@ -41,13 +42,14 @@ namespace Workwear.ViewModels.Regulations
 		private readonly BaseParameters baseParameters;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly ModalProgressCreator progressCreator;
+		private readonly EtnDictionaryService etnDictionaryService;
 
 		public NormViewModel(
-			IEntityUoWBuilder uowBuilder, 
+			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			UnitOfWorkProvider unitOfWorkProvider,
 			EmployeeIssueRepository employeeIssueRepository,
-			INavigationManager navigation, 
+			INavigationManager navigation,
 			IInteractiveService interactive,
 			IEntityChangeWatcher changeWatcher,
 			EmployeeRepository employeeRepository,
@@ -57,6 +59,7 @@ namespace Workwear.ViewModels.Regulations
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
 			NormToDutyNormModel normToDutyNormModel,
+			EtnDictionaryService etnDictionaryService = null,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -66,6 +69,7 @@ namespace Workwear.ViewModels.Regulations
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
+			this.etnDictionaryService = etnDictionaryService;
 
 			var performance = new PerformanceHelper(logger: logger);
 			var normConditionQuery = UoW.Session.QueryOver<NormCondition>()
@@ -134,16 +138,35 @@ namespace Workwear.ViewModels.Regulations
 		}
 
 		#region Импорт из справочника ЕТН
-		
+
 		private readonly List<Post> etnAutoCreatedPosts = new List<Post>();
 		private readonly List<ItemsType> etnAutoCreatedItemsTypes = new List<ItemsType>();
 		private readonly List<ProtectionTools> etnAutoCreatedProtectionTools = new List<ProtectionTools>();
 		private readonly List<NormCondition> etnAutoCreatedConditions = new List<NormCondition>();
+
+		public virtual bool FillFromEtnSensitive => Entity.Id == 0;
+
+		public void SelectFromEtn()
+		{
+			var page = NavigationManager.OpenViewModel<EtnNormJournalViewModel>(this, OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
+			page.ViewModel.OnSelectResult += EtnNormSelection_OnSelectResult;
+		}
+
+		private void EtnNormSelection_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var etnNode = e.GetSelectedObjects<QS.Cloud.WorkwearDictionary.Grpc.Contracts.Norm>().FirstOrDefault();
+			if(etnNode == null)
+				return;
+
+			var etnNorm = etnDictionaryService.GetNormItems(etnNode.NormId);
+			FillFromEtn(etnNorm);
+		}
 ////
 		/// <summary>
 		/// Заполняет новую норму данными, полученными из справочника ЕТН: должность и строки нормы.
 		/// Номенклатура, тип и условие нормы подбираются по точному совпадению названия, при отсутствии совпадения - создаются.
-		/// 
+		///
 		/// Комплекты пока не учитываются
 		/// </summary>
 		public void FillFromEtn(QS.Cloud.WorkwearDictionary.Grpc.Contracts.GetNormResponse etnNorm)
@@ -244,7 +267,33 @@ namespace Workwear.ViewModels.Regulations
 			cache[conditionName] = condition;
 			return condition;
 		}
-////
+
+		/// <summary>
+		/// Если при заполнении из ЕТН были созданы новые записи справочников - предупреждаем об этом
+		/// перед сохранением и даём возможность отменить сохранение.
+		/// </summary>
+		private bool ConfirmEtnAutoCreatedEntities()
+		{
+			if(!etnAutoCreatedPosts.Any() && !etnAutoCreatedProtectionTools.Any()
+				&& !etnAutoCreatedItemsTypes.Any() && !etnAutoCreatedConditions.Any())
+				return true;
+
+			var lines = new List<string>();
+			if(etnAutoCreatedPosts.Any())
+				lines.Add("Должности: " + String.Join(", ", etnAutoCreatedPosts.Select(x => x.Name)));
+			if(etnAutoCreatedProtectionTools.Any())
+				lines.Add("Номенклатура нормы: " + String.Join(", ", etnAutoCreatedProtectionTools.Select(x => x.Name)));
+			if(etnAutoCreatedItemsTypes.Any())
+				lines.Add("Типы номенклатуры: " + String.Join(", ", etnAutoCreatedItemsTypes.Select(x => x.Name)));
+			if(etnAutoCreatedConditions.Any())
+				lines.Add("Условия нормы: " + String.Join(", ", etnAutoCreatedConditions.Select(x => x.Name)));
+
+			var message = "При сохранении нормы в справочники будут добавлены новые записи, полученные из ЕТН:\n"
+				+ String.Join("\n", lines) + "\n\nПродолжить сохранение?";
+			return interactive.Question(message);
+		}
+
+////		
 		//ЕТН не различает "разовое использование"/"по необходимости" пока приводим к "до износа".
 		private NormPeriodType MapPeriodType(QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType periodType)
 		{
@@ -547,13 +596,23 @@ namespace Workwear.ViewModels.Regulations
 				.Select(x => x.GetEntity<NormItem>()).ToList();
 		}
 		
-		public override bool Save() 
+		public override bool Save()
 		{
+			if(!ConfirmEtnAutoCreatedEntities())
+				return false;
+
 			needUpdateEmployees = false;
 			needRecalculateIssue.Clear();
 			if(!base.Save())
 				return false;
-			
+
+			//Подчищаем
+			etnAutoCreatedPosts.Clear();
+			etnAutoCreatedItemsTypes.Clear();
+			etnAutoCreatedProtectionTools.Clear();
+			etnAutoCreatedConditions.Clear();
+			OnPropertyChanged(nameof(FillFromEtnSensitive));
+
 			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
 			if(needRecalculateIssue.Any()) {
 				var operations = employeeIssueRepository.GetOperationsForNormItem(

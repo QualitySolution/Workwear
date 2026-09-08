@@ -6322,7 +6322,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Regulations.NormView" design-size="409 541">
+  <widget class="Gtk.Bin" id="Workwear.Views.Regulations.NormView" design-size="482 541">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -6365,6 +6365,21 @@
               </packing>
             </child>
             <child>
+              <widget class="Gamma.GtkWidgets.yButton" id="ybuttonFromETN">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Заполнить из ЕТН</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckArchival">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
@@ -6375,7 +6390,7 @@
               </widget>
               <packing>
                 <property name="PackType">End</property>
-                <property name="Position">2</property>
+                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
@@ -6393,7 +6408,7 @@
           <widget class="Gamma.GtkWidgets.yNotebook" id="tabs">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="CurrentPage">0</property>
+            <property name="CurrentPage">1</property>
             <child>
               <widget class="Gtk.Table" id="table1">
                 <property name="MemberName" />
