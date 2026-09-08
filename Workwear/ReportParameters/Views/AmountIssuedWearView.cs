@@ -76,18 +76,18 @@ namespace workwear.ReportParameters.Views {
 			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			choicedepartmentview.ViewModel = ViewModel.ChoiceDepartmentViewModel;
-			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			expanderEmployeeGroups.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e) {
 			ViewModel.LoadReport();
 		}
 		protected void OnExpander1Activated(object sender, EventArgs e) {
-			(vbox2[expander1] as Gtk.Box.BoxChild).Expand = expander1.Expanded;
+			(vbox2[expanderSubdivisions] as Gtk.Box.BoxChild).Expand = expanderSubdivisions.Expanded;
 		}
 
 		protected void OnExpander2Activated(object sender, EventArgs e) {
-			(vbox2[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
+			(vbox2[expanderEmployeeGroups] as Gtk.Box.BoxChild).Expand = expanderEmployeeGroups.Expanded;
 		}
 
 		protected void OnExpanderDepartmentActivated(object sender, EventArgs e) {
