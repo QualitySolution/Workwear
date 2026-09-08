@@ -15860,7 +15860,6 @@
             <property name="MemberName" />
             <property name="CanFocus">True</property>
             <property name="Expanded">True</property>
-            <signal name="Activated" handler="OnExpander1Activated" />
             <child>
               <widget class="Gamma.GtkWidgets.yVBox" id="yvbox1">
                 <property name="MemberName" />
@@ -16222,7 +16221,6 @@
           <widget class="Gtk.Expander" id="expanderProtectionTools">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <signal name="Activated" handler="OnExpander1Activated" />
             <child>
               <widget class="QS.Views.Control.ChoiceListView" id="choiceprotectiontoolsview1">
                 <property name="MemberName" />
@@ -16250,7 +16248,6 @@
           <widget class="Gtk.Expander" id="expanderSubdivisions">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <signal name="Activated" handler="OnExpander1Activated" />
             <child>
               <widget class="QS.Views.Control.ChoiceListView" id="choicesubdivisionview1">
                 <property name="MemberName" />
@@ -16278,7 +16275,6 @@
           <widget class="Gtk.Expander" id="expanderDepartment">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <signal name="Activated" handler="OnExpanderDepartmentActivated" />
             <child>
               <widget class="QS.Views.Control.ChoiceListView" id="choicedepartmentview">
                 <property name="MemberName" />
@@ -16306,7 +16302,6 @@
           <widget class="Gtk.Expander" id="expanderEmployeeGroups">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <signal name="Activated" handler="OnExpander2Activated" />
             <child>
               <widget class="QS.Views.Control.ChoiceListView" id="choiceemployeegroupview1">
                 <property name="MemberName" />

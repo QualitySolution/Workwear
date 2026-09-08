@@ -522,11 +522,6 @@ namespace workwear.ReportParameters.Views
 				this.Child.ShowAll();
 			}
 			this.Hide();
-			this.expanderFiltres.Activated += new global::System.EventHandler(this.OnExpander1Activated);
-			this.expanderProtectionTools.Activated += new global::System.EventHandler(this.OnExpander1Activated);
-			this.expanderSubdivisions.Activated += new global::System.EventHandler(this.OnExpander1Activated);
-			this.expanderDepartment.Activated += new global::System.EventHandler(this.OnExpanderDepartmentActivated);
-			this.expanderEmployeeGroups.Activated += new global::System.EventHandler(this.OnExpander2Activated);
 			this.buttonPrintReport.Clicked += new global::System.EventHandler(this.OnButtonPrintReportClicked);
 		}
 	}
