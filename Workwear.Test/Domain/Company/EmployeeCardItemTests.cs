@@ -1076,6 +1076,41 @@ namespace Workwear.Test.Domain.Company
 			var dates = issues.Select(x => x.date);
 			Assert.That(dates, Has.Some.EqualTo(new DateTime(2023, 4, 6)));
 		}
+
+		[Test(Description = "Проверяем расчет последних выдач для облегченных операций графа.")]
+		public void LastIssued_GraphIssueOperationDtoCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.ColDayAheadOfShedule.Returns(10);
+
+			var graph = new IssueGraph(new List<IGraphIssueOperation> {
+				new GraphIssueOperationDto {
+					Id = 1,
+					OperationTime = new DateTime(2023, 3, 13),
+					StartOfUse = new DateTime(2023, 3, 13),
+					ExpiryByNorm = new DateTime(2023, 4, 13),
+					AutoWriteoffDate = new DateTime(2023, 4, 13),
+					NormAmount = 2,
+					Issued = 2
+				},
+				new GraphIssueOperationDto {
+					Id = 2,
+					OperationTime = new DateTime(2023, 4, 6),
+					StartOfUse = new DateTime(2023, 4, 6),
+					ExpiryByNorm = new DateTime(2023, 5, 6),
+					AutoWriteoffDate = new DateTime(2023, 5, 6),
+					NormAmount = 2,
+					Issued = 2
+				}
+			});
+
+			var item = new EmployeeCardItem {
+				Graph = graph
+			};
+
+			var issues = item.LastIssued(new DateTime(2023, 4, 10), baseParameters);
+			Assert.That(issues.Count(), Is.EqualTo(1));
+			Assert.That(issues.Single().date, Is.EqualTo(new DateTime(2023, 4, 6)));
+		}
 		
 		[Test(Description = "В противовес "+ nameof(LastIssued_NotShowOverrideIssuedCase) +", те же условия, " +
 		                    "только выдача была сделана раньше срока это не нормально поэтому предыдущая не должна скрываться.")]

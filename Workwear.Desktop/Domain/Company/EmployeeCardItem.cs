@@ -162,7 +162,7 @@ namespace Workwear.Domain.Company
 			foreach(var interval in Graph.OrderedIntervalsReverse) {
 				if(interval.StartDate <= onDate 
 				   && showed.Count == 1 
-				   && showed.First().Value.amount == ((EmployeeIssueOperation)showed.First().Value.item.IssueOperation).NormItem?.Amount
+				   && showed.First().Value.amount == showed.First().Value.item.IssueOperation.NormAmount
 				                                      && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.ColDayAheadOfShedule), showed.First().Value.item.IssueOperation) == 0 )
 					break;
 				

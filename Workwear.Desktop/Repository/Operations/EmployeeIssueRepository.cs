@@ -123,9 +123,11 @@ namespace Workwear.Repository.Operations
 			ICriterion restriction,
 			IUnitOfWork uow) {
 			EmployeeIssueOperation opAlias = null;
+			NormItem normItemAlias = null;
 			GraphIssueOperationDto dtoAlias = null;
 			var dtos = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => opAlias)
 				.Where(restriction)
+				.Left.JoinAlias(() => opAlias.NormItem, () => normItemAlias)
 				.SelectList(list => list
 					.Select(() => opAlias.Id).WithAlias(() => dtoAlias.Id)
 					.Select(() => opAlias.OperationTime).WithAlias(() => dtoAlias.OperationTime)
@@ -136,6 +138,7 @@ namespace Workwear.Repository.Operations
 					.Select(() => opAlias.Returned).WithAlias(() => dtoAlias.Returned)
 					.Select(() => opAlias.OverrideBefore).WithAlias(() => dtoAlias.OverrideBefore)
 					.Select(() => opAlias.ManualOperation).WithAlias(() => dtoAlias.ManualOperation)
+					.Select(() => normItemAlias.Amount).WithAlias(() => dtoAlias.NormAmount)
 					.Select(() => opAlias.IssuedOperation.Id).WithAlias(() => dtoAlias.IssuedOperationId)
 					.Select(() => opAlias.Employee.Id).WithAlias(() => dtoAlias.EmployeeId)
 					.Select(() => opAlias.ProtectionTools.Id).WithAlias(() => dtoAlias.ProtectionToolsId)
