@@ -94,7 +94,7 @@ namespace Workwear.ViewModels.ClothingService {
 				
 				Claim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
 				if(Claim == null)
-					BarcodeInfoViewModel.LabelInfo = BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null
+					BarcodeInfoViewModel.LabelInfo = BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null && BarcodeInfoViewModel.DutyNorm == null
 						? GetUnsupportedHolderMessage()
 						: "Спецодежда не была принята в стирку.";
 				OnPropertyChanged(nameof(CanAddClaim));
@@ -102,9 +102,7 @@ namespace Workwear.ViewModels.ClothingService {
 		}
 
 		private string GetUnsupportedHolderMessage() {
-			if(BarcodeInfoViewModel.DutyNorm != null)
-				return $"Числится на дежурной норме №{BarcodeInfoViewModel.DutyNorm.Id}. Приём пока не поддерживается.";
-			return "Спецодежда не выдана сотруднику, приём пока не поддерживается.";
+			return "Спецодежда не привязанани к цему.";
 		}
 		
 		private void ServicesListOnContentChanged(object sender, EventArgs e) {
@@ -206,7 +204,7 @@ namespace Workwear.ViewModels.ClothingService {
 
 		public virtual bool ShowTerminal => FeaturesService.Available(WorkwearFeature.Postomats);
 		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null
-			&& (BarcodeInfoViewModel.Employee != null || BarcodeInfoViewModel.Warehouse != null);
+			&& (BarcodeInfoViewModel.Employee != null || BarcodeInfoViewModel.Warehouse != null || BarcodeInfoViewModel.DutyNorm != null);
 		public virtual bool SensitiveActions => Claim != null;
 		public virtual bool SensitiveAccept => Claim != null;
 		public virtual bool SensitivePrint => (Claim?.Barcode != null);
@@ -270,7 +268,7 @@ namespace Workwear.ViewModels.ClothingService {
 				BarcodeInfoViewModel.LabelInfo = "Уже принято на обслуживание.";
 				return;
 			}
-			if(BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null) {
+			if(BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null && BarcodeInfoViewModel.DutyNorm == null) {
 				BarcodeInfoViewModel.LabelInfo = GetUnsupportedHolderMessage();
 				return;
 			}
