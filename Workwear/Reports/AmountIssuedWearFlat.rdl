@@ -98,7 +98,7 @@
           <TableColumn>
             <Width>42.4pt</Width>
             <Visibility>
-              <Hidden>=!{?showManualOperation} or !{?byOperation}</Hidden>
+              <Hidden>=!{?showManualOperation} or (!{?byOperation})</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
