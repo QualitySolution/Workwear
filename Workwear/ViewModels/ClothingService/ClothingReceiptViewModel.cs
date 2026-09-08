@@ -59,7 +59,7 @@ namespace Workwear.ViewModels.ClothingService {
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда уже в работе по заявке №{activeClaim.Id}";
 					return;
 				}
-				if(BarcodeInfoViewModel.Employee == null) {
+				if(BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null) {
 					SensitiveAccept = false;
 					BarcodeInfoViewModel.LabelInfo = GetUnsupportedHolderMessage();
 					return;
@@ -69,8 +69,6 @@ namespace Workwear.ViewModels.ClothingService {
 		}
 
 		private string GetUnsupportedHolderMessage() {
-			if(BarcodeInfoViewModel.Warehouse != null)
-				return $"Числится на складе «{BarcodeInfoViewModel.Warehouse.Name}». На данный момент приём не поддерживается.";
 			if(BarcodeInfoViewModel.DutyNorm != null)
 				return $"Числится на дежурной норме №{BarcodeInfoViewModel.DutyNorm.Id}. На данный момент приём не поддерживается.";
 			return "Спецодежда не выдана сотруднику, приём на обслуживание невозможен.";

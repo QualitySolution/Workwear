@@ -252,7 +252,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 				var terminalWarning = isTerminalReceipt ? "Если одежда все таки находится в терминале сдачи в стирку, может возникнуть путаница. " : "";
 				if(interactive.Question($"Данная операция удалит сдачу в стирку, восстановить ее будет невозможно. {terminalWarning}Вы уверены, что хотите продолжить?") == false)
 					return;
-				if(isTerminalReceipt) {
+				if(isTerminalReceipt && claim.Employee != null) {
 					//Чтобы форсировать обновление информации на терминале
 					claim.Employee.LastUpdate = DateTime.Now;
 					uow.Save(claim.Employee);
