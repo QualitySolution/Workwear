@@ -76,6 +76,7 @@ namespace workwear.ReportParameters.Views {
 			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			choicedepartmentview.ViewModel = ViewModel.ChoiceDepartmentViewModel;
+			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
 			expanderEmployeeGroups.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 		}
 

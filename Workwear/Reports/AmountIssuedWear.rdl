@@ -1903,6 +1903,7 @@ AND (@matchString = '' OR nomenclature.name LIKE CONCAT('%', @matchString, '%'))
 AND (@noMatchString = '' OR nomenclature.name NOT LIKE CONCAT('%', @noMatchString, '%'))
 AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
 AND (NOT @showOnlyWithoutNorm OR operation_issued_by_employee.protection_tools_id IS NULL)
+AND ((-1 IN (@protection_tools_ids)) OR (@without_protection_tools AND protection_tools.id IS NULL) OR protection_tools.id IN (@protection_tools_ids))
 AND ((-1 IN (@employee_groups_ids))
         OR(@without_groups AND NOT EXISTS
             (SELECT * FROM employee_group_items as gi
@@ -1981,6 +1982,12 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), department, emplo
           </QueryParameter>
           <QueryParameter Name="showManualOperation">
             <Value>={?showManualOperation}</Value>
+          </QueryParameter>
+          <QueryParameter Name="protection_tools_ids">
+            <Value>={?protection_tools_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="without_protection_tools">
+            <Value>={?without_protection_tools}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -2250,6 +2257,25 @@ ORDER BY cost_center_name, CAST(subdivision_code AS UNSIGNED), department, emplo
       <Prompt />
     </ReportParameter>
     <ReportParameter Name="showManualOperation">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protection_tools_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="without_protection_tools">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
