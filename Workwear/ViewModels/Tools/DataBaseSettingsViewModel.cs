@@ -17,6 +17,7 @@ namespace Workwear.ViewModels.Tools
 
 		#region Ограниения версии
 		public bool CollectiveIssueWithPersonalVisible { get; }
+		public bool AheadOfSheduleCollectiveVisible { get; }
 		public bool EditLockDateVisible { get; }
 		public bool MarkingVisible { get; }
 		public bool CanEdit { get; }
@@ -39,7 +40,9 @@ namespace Workwear.ViewModels.Tools
 			MarkingVisible = featuresService.Available(WorkwearFeature.Barcodes);
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
-			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
+			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedulePersonal;
+			ColDayAheadOfSheduleCollective = baseParameters.ColDayAheadOfSheduleCollective;
+			AheadOfSheduleCollectiveVisible = featuresService.Available(WorkwearFeature.CollectiveExpense);
 			ShiftExpluatacion = baseParameters.ShiftExpluatacion;
 			ExtendPeriod = baseParameters.ExtendPeriod;
 			CollectiveIssueWithPersonal = baseParameters.CollectiveIssueWithPersonal;
@@ -62,7 +65,8 @@ namespace Workwear.ViewModels.Tools
 		public override bool HasChanges => EditLockDate != baseParameters.EditLockDate
 										   || DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
 		                                   || CheckBalances != baseParameters.CheckBalances
-		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule
+		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedulePersonal
+		                                   || ColDayAheadOfSheduleCollective != baseParameters.ColDayAheadOfSheduleCollective
 		                                   || ShiftExpluatacion != baseParameters.ShiftExpluatacion
 		                                   || CollectiveIssueWithPersonal != baseParameters.CollectiveIssueWithPersonal
 		                                   || CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet
@@ -80,6 +84,7 @@ namespace Workwear.ViewModels.Tools
 		public bool DefaultAutoWriteoff { get; set; }
 		public bool CheckBalances { get; set; }
 		public int ColDayAheadOfShedule { get; set; }
+		public int ColDayAheadOfSheduleCollective { get; set; }
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
 		public BarcodeTypes ClothingMarkingType { get; set; }
@@ -100,8 +105,10 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.DefaultAutoWriteoff = DefaultAutoWriteoff;
 			if(CheckBalances != baseParameters.CheckBalances)
 				baseParameters.CheckBalances = CheckBalances;
-			if(ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule)
-				baseParameters.ColDayAheadOfShedule = ColDayAheadOfShedule;
+			if(ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedulePersonal)
+				baseParameters.ColDayAheadOfShedulePersonal = ColDayAheadOfShedule;
+			if(ColDayAheadOfSheduleCollective != baseParameters.ColDayAheadOfSheduleCollective)
+				baseParameters.ColDayAheadOfSheduleCollective = ColDayAheadOfSheduleCollective;
 			if(ShiftExpluatacion != baseParameters.ShiftExpluatacion)
 				baseParameters.ShiftExpluatacion = ShiftExpluatacion;
 			if(ExtendPeriod != baseParameters.ExtendPeriod)

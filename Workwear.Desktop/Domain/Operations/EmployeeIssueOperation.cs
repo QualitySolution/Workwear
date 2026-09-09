@@ -446,7 +446,7 @@ namespace Workwear.Domain.Operations
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
-				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
+				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)) > OperationTime.Date) {
 					switch(baseParameters.ShiftExpluatacion) {
 						case AnswerOptions.Ask:
 							if(lastAnswerRecalculateStartOfUse == null)

@@ -27,12 +27,26 @@ namespace Workwear.Tools
 		}
 		
 		/// <summary>
-		/// Разрешать выдачу раньше срока (дней)
+		/// Разрешать персональную выдачу раньше срока (дней)
 		/// </summary>
-		public virtual int ColDayAheadOfShedule {
+		public virtual int ColDayAheadOfShedulePersonal {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
-			set => Dynamic[nameof(ColDayAheadOfShedule)] = value;
+			set => Dynamic[nameof(ColDayAheadOfShedulePersonal)] = value;
 		}
+
+		/// <summary>
+		/// Разрешать коллективную выдачу раньше срока (дней)
+		/// </summary>
+		public virtual int ColDayAheadOfSheduleCollective {
+			get => Dynamic.ColDayAheadOfSheduleCollective(typeof(int)) ?? 0;
+			set => Dynamic[nameof(ColDayAheadOfSheduleCollective)] = value;
+		}
+
+		/// <summary>
+		/// Разрешать выдачу раньше срока (дней) для указанного типа выдачи.
+		/// </summary>
+		public virtual int GetColDayAheadOfShedule(IssueType issueType) =>
+			issueType == IssueType.Collective ? ColDayAheadOfSheduleCollective : ColDayAheadOfShedulePersonal;
 
 		/// <summary>
 		/// Проверять остатки при расходе со склада.

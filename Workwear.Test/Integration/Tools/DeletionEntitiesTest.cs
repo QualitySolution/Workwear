@@ -113,7 +113,7 @@ namespace Workwear.Test.Integration.Tools
 				expenseItem2.ProtectionTools = protectionTools2;
 
 				var baseParameters = Substitute.For<BaseParameters>();
-				baseParameters.ColDayAheadOfShedule.Returns(0);
+				baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 				expense.CreateIssuanceSheet(null, null, null);
 

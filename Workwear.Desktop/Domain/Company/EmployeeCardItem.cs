@@ -118,7 +118,7 @@ namespace Workwear.Domain.Company
 		{
 			if(DateTime.Today > NextIssue)
 					return "red";
-			if (DateTime.Today.AddDays(parameters.ColDayAheadOfShedule) > NextIssue)
+			if (DateTime.Today.AddDays(parameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)) > NextIssue)
 				return "darkgreen";
 			else
 				return "black";
@@ -163,7 +163,7 @@ namespace Workwear.Domain.Company
 				if(interval.StartDate <= onDate 
 				   && showed.Count == 1 
 				   && showed.First().Value.amount == showed.First().Value.item.IssueOperation.NormAmount
-				                                      && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.ColDayAheadOfShedule), showed.First().Value.item.IssueOperation) == 0 )
+				                                      && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)), showed.First().Value.item.IssueOperation) == 0 )
 					break;
 				
 				foreach(var item in interval.ActiveIssues) {
@@ -249,7 +249,7 @@ namespace Workwear.Domain.Company
 					return 0;
 			}
 
-			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule), excludeOperationIds));
+			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)), excludeOperationIds));
 		}
 
 		public virtual bool MatchStockPosition(StockPosition stockPosition) {
