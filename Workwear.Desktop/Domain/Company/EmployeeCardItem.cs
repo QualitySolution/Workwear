@@ -97,8 +97,15 @@ namespace Workwear.Domain.Company
 		public virtual string SelectedNomenclatureText =>
 			ProtectionTools.ProtectionToolsNomenclatures.Any(x => x.CanChoose) && SelectedNomenclature != null 
 				? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : null;
-		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) 
-			=> (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
+		/// <summary>
+		/// Возвращает операцию последней выдачи. Если она сейчас ДТО, подгрузит реальную из базы.
+		/// </summary>
+		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters, IUnitOfWork uow) {
+			var lastOperation = LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
+			if(lastOperation == null)
+				return null;
+			return lastOperation as EmployeeIssueOperation ?? uow.GetById<EmployeeIssueOperation>(lastOperation.Id);
+		}
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);

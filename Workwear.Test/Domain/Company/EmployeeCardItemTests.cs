@@ -1333,13 +1333,13 @@ namespace Workwear.Test.Domain.Company
 			};
 			
 			//Последняя предполагаем что DateTime.Today всегда в будущем
-			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters).OperationTime, Is.EqualTo(new DateTime(2022, 4, 1)));
+			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters, null).OperationTime, Is.EqualTo(new DateTime(2022, 4, 1)));
 		}
 
 		[Test(Description = "Проверяем проверяем что не падаем если выдач не было")]
 		public void LastIssueOperation_NotExistCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			
+
 			var graph = new IssueGraph(new List<IGraphIssueOperation> {
 			});
 
@@ -1347,7 +1347,35 @@ namespace Workwear.Test.Domain.Company
 				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
-			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters), Is.Null);
+			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters, null), Is.Null);
+		}
+
+		[Test(Description = "Граф может быть построен на облегчённых GraphIssueOperationDto (например после обновления вкладки " +
+		                     "кнопкой \"Обновить\"), в этом случае реальная сущность должна подгружаться по Id, а не падать при приведении типа.")]
+		public void LastIssueOperation_GraphIssueOperationDtoCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+
+			var graph = new IssueGraph(new List<IGraphIssueOperation> {
+				new GraphIssueOperationDto {
+					Id = 5,
+					OperationTime = new DateTime(2022, 4, 1),
+					StartOfUse = new DateTime(2022, 4, 1),
+					ExpiryByNorm = new DateTime(2023, 4, 1),
+					AutoWriteoffDate = new DateTime(2023, 4, 1),
+					Issued = 1
+				}
+			});
+
+			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
+				Graph = graph
+			};
+
+			var realOperation = new EmployeeIssueOperation { OperationTime = new DateTime(2022, 4, 1) };
+			var uow = Substitute.For<IUnitOfWork>();
+			uow.GetById<EmployeeIssueOperation>(5).Returns(realOperation);
+
+			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters, uow), Is.SameAs(realOperation));
 		}
 		#endregion
 	}
