@@ -10,6 +10,7 @@ namespace Workwear.Domain.Operations.Graph {
 		int Issued { get; set; }
 		int Returned { get; }
 		bool OverrideBefore { get; }
+		int? NormAmount { get; }
 
 		IGraphIssueOperation IssuedOperation { get; }
 	}

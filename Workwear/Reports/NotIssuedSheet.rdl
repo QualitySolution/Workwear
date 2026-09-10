@@ -943,7 +943,7 @@ FROM employee_cards_item
                             LEFT JOIN employees as b_emp ON b_op.employee_id = b_emp.id
                             LEFT JOIN protection_tools as b_pt on b_op.protection_tools_id = b_pt.id
                             LEFT JOIN operation_issued_by_employee as b_opwo on b_op.id = b_opwo.issued_operation_id
-                   WHERE (b_emp.dismiss_date &gt; CONVERT(@report_date, DATE) OR b_emp.dismiss_date is null)
+                   WHERE (b_emp.dismiss_date IS NULL OR (!@exclude_dismiss_after AND b_emp.dismiss_date &gt; CONVERT(@report_date, DATE)))
                      AND( @subdivision_id = -1 OR b_emp.subdivision_id = @subdivision_id )
                      AND (@department_id = -1 OR b_emp.department_id = @department_id)
                      AND b_op.auto_writeoff_date &gt; CONVERT(@report_date, DATE)
@@ -996,7 +996,7 @@ FROM employee_cards_item
                       AND (heightTypeAlias.id IS NULL OR stock.height_id IS NULL OR stock.height_id = employeeHeightAlias.size_id OR stock.height_id IN (SELECT IF(size_suitable.size_id = employeeHeightAlias.size_id, size_suitable.size_suitable_id, size_suitable.size_id) FROM `size_suitable` WHERE size_suitable.`size_id` = employeeHeightAlias.size_id OR size_suitable.`size_suitable_id` = employeeHeightAlias.size_id))
                       )
 WHERE
-    (employees.dismiss_date &gt; CONVERT(@report_date, DATE) OR employees.dismiss_date IS NULL)
+    (employees.dismiss_date IS NULL OR (!@exclude_dismiss_after AND employees.dismiss_date &gt; CONVERT(@report_date, DATE)))
   AND ((-1 IN (@employee_groups_ids))
     OR(@without_groups AND NOT EXISTS
         (SELECT * FROM employee_group_items as gi
@@ -1051,6 +1051,9 @@ ORDER BY
           </QueryParameter>
           <QueryParameter Name="@exclude_in_vacation">
             <Value>={?exclude_in_vacation}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@exclude_dismiss_after">
+            <Value>={?exclude_dismiss_after}</Value>
           </QueryParameter>
           <QueryParameter Name="@exclude_zero_stock">
             <Value>={?exclude_zero_stock}</Value>
@@ -1261,6 +1264,18 @@ ORDER BY
       <DefaultValue>
         <Values>
           <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_dismiss_after">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>

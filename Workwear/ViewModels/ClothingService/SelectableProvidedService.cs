@@ -11,7 +11,6 @@ namespace Workwear.ViewModels.ClothingService {
 			set {
 				if(Entity.Amount != value) {
 					Entity.Amount = value;
-					Entity.Cost = Entity.Service.Cost * value;
 					OnPropertyChanged();
 				}
 			}

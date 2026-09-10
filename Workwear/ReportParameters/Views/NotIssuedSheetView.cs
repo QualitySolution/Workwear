@@ -24,6 +24,7 @@ namespace workwear.ReportParameters.Views
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
 			ycheckExcludeInVacation.Binding.AddBinding(ViewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
+			ycheckExcludeDismissAfter.Binding.AddBinding(ViewModel, v => v.ExcludeDismissAfter, w => w.Active).InitializeFromSource();
 			
 			ycheckCondition.Binding.AddBinding(ViewModel, w => w.Condition, v => v.Active).InitializeFromSource();
 			ycheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();

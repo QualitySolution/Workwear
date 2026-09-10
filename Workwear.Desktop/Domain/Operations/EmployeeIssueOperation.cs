@@ -156,6 +156,7 @@ namespace Workwear.Domain.Operations
 			get => normItem;
 			set => SetField(ref normItem, value);
 		}
+		int? IGraphIssueOperation.NormAmount => NormItem?.Amount;
 
 		private string signCardKey;
 		[Display(Name = "UID карты доступа")]

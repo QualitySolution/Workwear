@@ -62,6 +62,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(VisibleSumCost))]
 		[PropertyChangedAlso(nameof(VisibleGroupClaim))]
 		[PropertyChangedAlso(nameof(VisibleChoiceService))]
+		[PropertyChangedAlso(nameof(VisibleInfoLabel))]
 		[PropertyChangedAlso(nameof(Title))]
 		[PropertyChangedAlso(nameof(ShowClosedLabel))]
 		public virtual ClothingServiceReportType ReportType {
@@ -241,6 +242,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool VisibleSumCost => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleGroupClaim => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleChoiceService => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleInfoLabel => VisibleGroupClaim && (SumCost || GroupClaim);
+		public string InfoLabelText => "<i>При включённой группировке каждая строка считается 1 оказанной услугой</i>";
 
 		private bool showAlternativeName;
 		public virtual bool ShowAlternativeName {
@@ -249,12 +252,14 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 
 		private bool sumCost;
+		[PropertyChangedAlso(nameof(VisibleInfoLabel))]
 		public virtual bool SumCost {
 			get => sumCost;
 			set => SetField(ref sumCost, value);
 		}
 
 		private bool groupClaim;
+		[PropertyChangedAlso(nameof(VisibleInfoLabel))]
 		public virtual bool GroupClaim {
 			get => groupClaim;
 			set => SetField(ref groupClaim, value);
