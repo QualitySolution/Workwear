@@ -101,8 +101,14 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.IsGenericName, w => w.Active)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
-			    
-		    
+
+		    ylabel_ConditionGroup.Visible = ycheckbuttonConditionGroup.Visible = ViewModel.ConditionGroupVisible;
+		    ycheckbuttonConditionGroup.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.ConditionGroupInPersonalCard, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+
+
 			CommonButtonSubscription();
 		}
 	}

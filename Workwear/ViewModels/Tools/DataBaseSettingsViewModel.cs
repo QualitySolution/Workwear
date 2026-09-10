@@ -20,6 +20,7 @@ namespace Workwear.ViewModels.Tools
 		public bool AheadOfSheduleCollectiveVisible { get; }
 		public bool EditLockDateVisible { get; }
 		public bool MarkingVisible { get; }
+		public bool ConditionGroupVisible { get; }
 		public bool CanEdit { get; }
 		public bool StartDateOfOperationsVisible { get; } = true;
 		#endregion
@@ -38,6 +39,7 @@ namespace Workwear.ViewModels.Tools
 			EditLockDate = baseParameters.EditLockDate;
 			EditLockDateVisible = featuresService.Available(WorkwearFeature.EditLockDate);
 			MarkingVisible = featuresService.Available(WorkwearFeature.Barcodes);
+			ConditionGroupVisible = featuresService.Available(WorkwearFeature.ConditionNorm);
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
 			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedulePersonal;
@@ -55,6 +57,7 @@ namespace Workwear.ViewModels.Tools
 			StartDateOfOperations = baseParameters.StartDateOfOperations;
 			IsGenericName = baseParameters.IsGenericName;
 			KitNumberingMode = baseParameters.KitNumberingMode;
+			ConditionGroupInPersonalCard = baseParameters.ConditionGroupInPersonalCard;
 		}
 		
 		#region IDialogDocumentation
@@ -77,7 +80,8 @@ namespace Workwear.ViewModels.Tools
 		                                   || StartDateOfOperations != baseParameters.StartDateOfOperations
 		                                   || ClothingMarkingType != baseParameters.ClothingMarkingType
 										   || IsGenericName != baseParameters.IsGenericName
-										   || KitNumberingMode != baseParameters.KitNumberingMode;
+										   || KitNumberingMode != baseParameters.KitNumberingMode
+										   || ConditionGroupInPersonalCard != baseParameters.ConditionGroupInPersonalCard;
 
 		#region Parameters
 		public DateTime? EditLockDate { get; set; }
@@ -97,6 +101,7 @@ namespace Workwear.ViewModels.Tools
 		public DateTime? StartDateOfOperations { get; set; }
 		public bool IsGenericName { get; set; }
 		public KitNumberingMode KitNumberingMode { get; set; }
+		public bool ConditionGroupInPersonalCard { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -133,6 +138,8 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.IsGenericName = IsGenericName;
 			if(KitNumberingMode != baseParameters.KitNumberingMode)
 				baseParameters.KitNumberingMode = KitNumberingMode;
+			if(ConditionGroupInPersonalCard != baseParameters.ConditionGroupInPersonalCard)
+				baseParameters.ConditionGroupInPersonalCard = ConditionGroupInPersonalCard;
 			return true;
 		}
 	}

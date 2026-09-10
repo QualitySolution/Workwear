@@ -134,6 +134,14 @@ namespace Workwear.Tools
 		}
 		
 		/// <summary>
+		/// На лицевой стороне карточки сотрудника делить потребности на блоки по условию нормы.
+		/// </summary>
+		public virtual bool ConditionGroupInPersonalCard {
+			get => Dynamic.ConditionGroupInPersonalCard(typeof(bool)) ?? false;
+			set => Dynamic[nameof(ConditionGroupInPersonalCard)] = value;
+		}
+
+		/// <summary>
 		/// Дата запрета редактирования документов.
 		/// </summary>
 		public virtual DateTime? EditLockDate {
