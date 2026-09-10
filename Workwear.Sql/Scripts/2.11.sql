@@ -6,6 +6,6 @@ DROP TABLE work_days;
 
 /*
  Настройку "Разрешать выдачу раньше срока" разделили по типам выдачи: персональная (осталась ColDayAheadOfShedule)
- Нужно отработать в мапинге и раскомментировать
+ Нужно переименовать в BaseParameters и раскомментировать чтобы было единообрано
  UPDATE base_parameters SET name = 'ColDayAheadOfShedulePersonal' WHERE name = 'ColDayAheadOfShedule';
 */
