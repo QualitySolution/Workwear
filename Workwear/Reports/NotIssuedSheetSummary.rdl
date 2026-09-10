@@ -646,7 +646,7 @@
                           </Style>
                           <Value>=Sum({need})</Value>
                           <Visibility>
-                            <Hidden></Hidden>
+                            <Hidden>=false</Hidden>
                           </Visibility>
                         </Textbox>
                       </ReportItems>
