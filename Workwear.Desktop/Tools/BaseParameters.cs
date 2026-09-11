@@ -31,7 +31,7 @@ namespace Workwear.Tools
 		/// </summary>
 		public virtual int ColDayAheadOfShedulePersonal {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
-			set => Dynamic[nameof(ColDayAheadOfShedulePersonal)] = value;
+			set => Dynamic["ColDayAheadOfShedule"] = value;
 		}
 
 		/// <summary>
