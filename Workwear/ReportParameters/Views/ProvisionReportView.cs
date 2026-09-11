@@ -21,25 +21,31 @@ namespace Workwear.ReportParameters.Views {
 				.AddBinding(v => v.IssueType, w => w.SelectedItemOrNull)
 				.AddBinding(v => v.VisibleIssueType, w => w.Visible).InitializeFromSource();
 			ycheckbuttonExcludeInVacation.Binding.AddBinding(ViewModel, v => v.ExcludeInVacation, w => w.Active).InitializeFromSource();
-			ycheckbuttonShowSex.Binding.AddBinding(ViewModel, v => v.ShowSex, w => w.Active).InitializeFromSource();
-			ycheckbuttonShowSex.Binding.AddBinding(ViewModel, v=>v.VisibleShowSex, w=>w.Visible).InitializeFromSource();
+			ycheckbuttonShowSex.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ShowSex, w => w.Active)
+				.AddBinding(v => v.VisibleShowSex, w => w.Visible).InitializeFromSource();
 			ylabelShowSex.Binding.AddBinding(ViewModel, v=>v.VisibleShowSex, w=>w.Visible).InitializeFromSource();
-			ycheckbuttonShowSize.Binding.AddBinding(ViewModel, v => v.ShowSize, w => w.Active).InitializeFromSource();
-			ycheckbuttonShowSize.Binding.AddBinding(ViewModel, v => v.VisibleShowSize, w => w.Visible).InitializeFromSource();
+			ycheckbuttonShowSize.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ShowSize, w => w.Active)
+				.AddBinding(v => v.VisibleShowSize, w => w.Visible).InitializeFromSource();
 			ylabelShowSize.Binding.AddBinding(ViewModel, v => v.VisibleShowSize, w => w.Visible).InitializeFromSource();
 			ycheckbuttonGroupBySubdivision.Binding.AddBinding(ViewModel, v => v.GroupBySubdivision, w => w.Active).InitializeFromSource();
-			ycheckbuttonGroupByNormAmount.Binding.AddBinding(ViewModel, v => v.GroupByNormAmount, w => w.Active).InitializeFromSource();
-			ycheckbuttonGroupByNormAmount.Binding.AddBinding(ViewModel, v => v.VisibleGroupByNormAmount, w => w.Visible).InitializeFromSource();
+			ycheckbuttonGroupByNormAmount.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.GroupByNormAmount, w => w.Active)
+				.AddBinding(v => v.VisibleGroupByNormAmount, w => w.Visible).InitializeFromSource();
 			ylabelGroupByNormAmount.Binding.AddBinding(ViewModel, v => v.VisibleGroupByNormAmount, w => w.Visible).InitializeFromSource();
-			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.ShowStock, w => w.Active).InitializeFromSource();
-			ycheckShowStock.Binding.AddBinding(ViewModel, v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();
+			ycheckShowStock.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ShowStock, w => w.Active)
+				.AddBinding(v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();
 			ylabelShowStock.Binding.AddBinding(ViewModel, v => v.VisibleShowStock, w => w.Visible).InitializeFromSource();
-			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.ShowEmployees, w => w.Active).InitializeFromSource();
-			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
+			ycheckShowEmployees.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ShowEmployees, w => w.Active)
+				.AddBinding(v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
 			ylabelShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
-			ycheckExcludeFullEmployees.Binding.AddBinding(ViewModel, v => v.ExcludeFullEmployees, w => w.Active).InitializeFromSource();
-			ycheckExcludeFullEmployees.Binding.AddBinding(ViewModel, v => v.ShowEmployees, w => w.Sensitive).InitializeFromSource();
-			ycheckExcludeFullEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
+			ycheckExcludeFullEmployees.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ExcludeFullEmployees, w => w.Active)
+				.AddBinding(v => v.ShowEmployees, w => w.Sensitive)
+				.AddBinding(v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
 			ylabelExcludeFullEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployee, w => w.Visible).InitializeFromSource();
 			
 			comboReportType.ItemsEnum = typeof(ProvisionReportViewModel.ProvisionReportType);
