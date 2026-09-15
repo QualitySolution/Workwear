@@ -47,7 +47,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			//Выполняем
 			expense.UpdateOperations(uow, baseParameters, ask);
@@ -90,7 +90,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			//Выполняем
 			expense.UpdateOperations(uow, baseParameters, ask);
@@ -140,7 +140,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			//Выполняем
 			expense.UpdateOperations(uow, baseParameters, ask);
@@ -181,7 +181,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			//Выполняем
 			expense.UpdateOperations(uow, baseParameters, ask, "80313E3A437A04");
@@ -217,7 +217,7 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var ask = Substitute.For<IInteractiveQuestion>();
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			baseParameters.DefaultAutoWriteoff.Returns(defaultAutowriteoff);
 
 			//Выполняем
