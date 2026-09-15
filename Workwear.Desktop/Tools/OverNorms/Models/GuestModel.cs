@@ -54,11 +54,9 @@ namespace Workwear.Tools.OverNorms.Models
 			if (receiptWarehouse == null) throw new ArgumentNullException(nameof(receiptWarehouse));
 
 			WarehouseOperation newWarehouseOp = new WarehouseOperation() {
+				StockPosition = operation.WarehouseOperation.StockPosition,
 				ReceiptWarehouse = receiptWarehouse,
 				Amount = operation.WarehouseOperation.Amount,
-				Nomenclature = operation.WarehouseOperation.Nomenclature,
-				WearSize = operation.WarehouseOperation.WearSize,
-				Height = operation.WarehouseOperation.Height
 			};
 			
 			OverNormOperation writeOff = CreateOperationWithBarcodes(newWarehouseOp, operation.Employee, operation.BarcodeOperations.Select(x => x.Barcode));
