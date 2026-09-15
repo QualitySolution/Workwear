@@ -19764,7 +19764,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="Workwear.Views.Communications.SendMessangeView" design-size="804 621">
+  <widget class="Gtk.Bin" id="Workwear.Views.Communications.SendMessageView" design-size="804 621">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>

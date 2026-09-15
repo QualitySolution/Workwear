@@ -27,7 +27,7 @@ using Workwear.Tools;
 
 namespace Workwear.ViewModels.Communications 
 {
-	public class SendMessangeViewModel : WindowDialogViewModelBase, IDialogDocumentation, IDisposable
+	public class SendMessageViewModel : WindowDialogViewModelBase, IDialogDocumentation, IDisposable
 	{
 		private readonly IList<EmployeeCard> employees;
 		private readonly int? warehouseId;
@@ -42,7 +42,7 @@ namespace Workwear.ViewModels.Communications
 
 		readonly IUnitOfWork uow;
 
-		public SendMessangeViewModel(int[] employeeIds, int warehouseId, DateTime? endDateIssue, int[] protectionToolsIds,
+		public SendMessageViewModel(int[] employeeIds, int warehouseId, DateTime? endDateIssue, int[] protectionToolsIds,
 			IUnitOfWorkFactory unitOfWorkFactory, DesktopEmailSenderClient emailSenderClient,
 			NotificationManagerService notificationManager, IInteractiveMessage interactive,
 			ModalProgressCreator progressCreator, MySqlConnectionStringBuilder connectionStringBuilder,
@@ -305,7 +305,7 @@ namespace Workwear.ViewModels.Communications
 				}
 				catch (OperationCanceledException) 
 				{
-					result = $"Операция отправки email уведолмений прервана.\nБыло отправлено {progressCreator.Value} email";
+					result = $"Операция отправки email уведомлений прервана.\nБыло отправлено {progressCreator.Value} email";
 				}
 			}
 
