@@ -260,12 +260,13 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_NotReceivedCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 5
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation>()),
@@ -278,12 +279,13 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_ReceivedFullyCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 4
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation> {
@@ -304,12 +306,13 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_ReceivedMoreThenNormCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 4
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation> {
@@ -330,12 +333,13 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_ReceivedPartCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 4
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation> {
@@ -356,12 +360,13 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_NextIssueIsNullCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 2
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation> {
@@ -383,12 +388,13 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_ReceiveExpiredCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 1
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation> {
@@ -409,12 +415,13 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_ReceiveBeforeExpiredCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(30);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(30);
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var norm = new NormItem {
 				Amount = 1
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation> {
@@ -435,7 +442,7 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_NormCondition_NotIssueCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0); //Тут вопрос не ясен, должна ли эта настройка учитываться в случае периода выдачи.
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0); //Тут вопрос не ясен, должна ли эта настройка учитываться в случае периода выдачи.
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var normCondition = new NormCondition {
 				Name = "Зима",
@@ -448,6 +455,7 @@ namespace Workwear.Test.Domain.Company
 				NormCondition = normCondition
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation>()),
@@ -465,7 +473,7 @@ namespace Workwear.Test.Domain.Company
 		public void CalculateRequiredIssue_NormCondition_IssuedBeforeCase()
 		{
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);  //Тут вопрос не ясен, должна ли эта настройка учитываться в случае периода выдачи.
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);  //Тут вопрос не ясен, должна ли эта настройка учитываться в случае периода выдачи.
 			var employeeCard = Substitute.For<EmployeeCard>();
 			var normCondition = new NormCondition {
 				Name = "Зима",
@@ -478,6 +486,7 @@ namespace Workwear.Test.Domain.Company
 				NormCondition = normCondition
 			};
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				EmployeeCard = employeeCard,
 				ActiveNormItem = norm,
 				Graph = new IssueGraph(new List<IGraphIssueOperation> {
@@ -749,6 +758,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 
@@ -801,6 +811,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Всегда показываем все списания!!
@@ -862,6 +873,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Отображаем только действующую выдачу.
@@ -889,6 +901,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Отображаем последнюю выдачу даже в будущем.
@@ -924,6 +937,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Отображаем все последние выдачи даже в будущем.
@@ -978,6 +992,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Отображаем все последние выдачи даже в будущем.
@@ -999,7 +1014,7 @@ namespace Workwear.Test.Domain.Company
 		                    "Этот тест специально с дыркой, на дату расчета ничего не числится.")]
 		public void LastIssued_NotShowLastWithFutureCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(10);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(10);
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 1;
 			
@@ -1025,6 +1040,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Отображаем все последние выдачи даже в будущем.
@@ -1041,7 +1057,7 @@ namespace Workwear.Test.Domain.Company
 		                    "Работать должно только при условии одной выдачи точного количества как по норме.")]
 		public void LastIssued_NotShowOverrideIssuedCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(10);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(10);
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
@@ -1067,6 +1083,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Только последнюю хотя предыдущая еще числится.
@@ -1080,7 +1097,7 @@ namespace Workwear.Test.Domain.Company
 		[Test(Description = "Проверяем расчет последних выдач для облегченных операций графа.")]
 		public void LastIssued_GraphIssueOperationDtoCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(10);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(10);
 
 			var graph = new IssueGraph(new List<IGraphIssueOperation> {
 				new GraphIssueOperationDto {
@@ -1104,6 +1121,7 @@ namespace Workwear.Test.Domain.Company
 			});
 
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 
@@ -1116,7 +1134,7 @@ namespace Workwear.Test.Domain.Company
 		                    "только выдача была сделана раньше срока это не нормально поэтому предыдущая не должна скрываться.")]
 		public void LastIssued_NotShowOverrideIssued_AheadOfScheduleCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(5);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(5);
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
@@ -1142,6 +1160,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Только последнюю хотя предыдущая еще числится.
@@ -1156,7 +1175,7 @@ namespace Workwear.Test.Domain.Company
 		[Test(Description = "В противовес "+ nameof(LastIssued_NotShowOverrideIssuedCase) +", те же условия, только для частичной выдачи, не должны срабатывать.")]
 		public void LastIssued_NotShowOverrideIssued_PartIssueCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(10);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(10);
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
@@ -1182,6 +1201,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			
@@ -1196,7 +1216,7 @@ namespace Workwear.Test.Domain.Company
 		[Test(Description = "В противовес "+ nameof(LastIssued_NotShowOverrideIssuedCase) +", те же условия, только с перевыдачей выдачи, не должны срабатывать.")]
 		public void LastIssued_NotShowOverrideIssued_SuperIssueCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(10);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(10);
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
@@ -1222,6 +1242,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			
@@ -1236,7 +1257,7 @@ namespace Workwear.Test.Domain.Company
 		[Test(Description = "В противовес "+ nameof(LastIssued_NotShowOverrideIssuedCase) +", те же условия, только перевыдача большим чистом операций, не должны срабатывать.")]
 		public void LastIssued_NotShowOverrideIssued_MultiSuperIssueCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(10);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(10);
 			var normItem = Substitute.For<NormItem>();
 			normItem.Amount = 2;
 			
@@ -1268,6 +1289,7 @@ namespace Workwear.Test.Domain.Company
 			});
 			
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			//Только последнюю хотя предыдущая еще числится.
@@ -1306,24 +1328,54 @@ namespace Workwear.Test.Domain.Company
 			});
 
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
 			
 			//Последняя предполагаем что DateTime.Today всегда в будущем
-			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters).OperationTime, Is.EqualTo(new DateTime(2022, 4, 1)));
+			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters, null).OperationTime, Is.EqualTo(new DateTime(2022, 4, 1)));
 		}
 
 		[Test(Description = "Проверяем проверяем что не падаем если выдач не было")]
 		public void LastIssueOperation_NotExistCase() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			
+
 			var graph = new IssueGraph(new List<IGraphIssueOperation> {
 			});
 
 			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
 				Graph = graph
 			};
-			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters), Is.Null);
+			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters, null), Is.Null);
+		}
+
+		[Test(Description = "Граф может быть построен на облегчённых GraphIssueOperationDto (например после обновления вкладки " +
+		                     "кнопкой \"Обновить\"), в этом случае реальная сущность должна подгружаться по Id, а не падать при приведении типа.")]
+		public void LastIssueOperation_GraphIssueOperationDtoCase() {
+			var baseParameters = Substitute.For<BaseParameters>();
+
+			var graph = new IssueGraph(new List<IGraphIssueOperation> {
+				new GraphIssueOperationDto {
+					Id = 5,
+					OperationTime = new DateTime(2022, 4, 1),
+					StartOfUse = new DateTime(2022, 4, 1),
+					ExpiryByNorm = new DateTime(2023, 4, 1),
+					AutoWriteoffDate = new DateTime(2023, 4, 1),
+					Issued = 1
+				}
+			});
+
+			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType() },
+				Graph = graph
+			};
+
+			var realOperation = new EmployeeIssueOperation { OperationTime = new DateTime(2022, 4, 1) };
+			var uow = Substitute.For<IUnitOfWork>();
+			uow.GetById<EmployeeIssueOperation>(5).Returns(realOperation);
+
+			Assert.That(item.LastIssueOperation(DateTime.Today, baseParameters, uow), Is.SameAs(realOperation));
 		}
 		#endregion
 	}
