@@ -312,21 +312,9 @@ namespace Workwear.ViewModels.ClothingService {
 					UoW.Save(item);
 				}
 
-			StateOperation newStatus = null;
-			if(State != LastStateOperation.State) {
-				newStatus = new StateOperation {
-					OperationTime = DateTime.Now,
-					State = State,
-					Claim = Claim,
-					User = userService.GetCurrentUser(),
-					Comment = Comment
-				};
-				Claim.States.Add(newStatus);
-				if(State == ClaimState.Returned)
-					Claim.IsClosed = true;
-			}
-			else if(LastStateOperation.Comment != Comment)
-				LastStateOperation.Comment = Comment;
+			var newStatus = Claim.ChangeState(State, user: userService.GetCurrentUser(), comment: Comment);
+			if(newStatus != null && State == ClaimState.Returned)
+				Claim.IsClosed = true;
 
 			claim.NeedForRepair = NeedRepair;
 			if(NeedRepair && claim.Defect != DefectText)
