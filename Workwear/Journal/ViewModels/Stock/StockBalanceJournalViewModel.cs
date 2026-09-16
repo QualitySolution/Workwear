@@ -260,10 +260,13 @@ SELECT
 		}
 		
 		public override string FooterInfo {
-			get => $"Суммарная стоимость: " +
-			       $"{CurrencyWorks.GetShortCurrencyString(DataLoader.Items.Cast<StockBalanceJournalNode>().Sum(x => x.SumSaleCost))} " +
-			       $"    Загружено:	" +
-			       $"{DataLoader.Items.Count} шт.";
+			get {
+				var items = DataLoader.Items?.Cast<StockBalanceJournalNode>().ToList() ?? new List<StockBalanceJournalNode>();
+				return $"Суммарная стоимость: " +
+				       $"{CurrencyWorks.GetShortCurrencyString(items.Sum(x => x.SumSaleCost))} " +
+				       $"    Загружено:	" +
+				       $"{items.Count} шт.";
+			}
 			set { }
 		}
 	}

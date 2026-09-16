@@ -70,6 +70,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 			DutyNorm dutyNorm = null
 			) : base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactiveService, validator, unitOfWorkProvider)
 		{
+			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.interactiveService = interactiveService;
@@ -137,6 +138,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 		private readonly FeaturesService featuresService;
 		private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger ();
 		public readonly EntityEntryViewModel<Warehouse> WarehouseEntryViewModel;
+		private readonly IUserService userService;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly IInteractiveService interactiveService;
@@ -360,6 +362,36 @@ namespace Workwear.ViewModels.Stock.Documents {
 				}
 				if(dutyNormOperations.TryGetValue(claim.Id, out var dutyNormOperation)) {
 					Entity.AddItem(dutyNormOperation, 1, claim, new[] { claim.Barcode });
+					continue;
+				}
+
+				var claimWarehouse = claim.Barcode.LastOperation?.WarehouseOperation?.ReceiptWarehouse;
+				if(claimWarehouse != null) {
+					//Штрихкод сейчас числится на складе, а не выдан сотруднику/дежурной норме/вне нормы скорее всего просто стирка
+					if(DomainHelper.EqualDomainObjects(claimWarehouse, Entity.Warehouse))
+						interactiveService.ShowMessage(ImportanceLevel.Info,
+							$"{claim.Barcode.Title}: уже числится на складе «{Entity.Warehouse.Name}», возврат не требуется.");
+					else
+						interactiveService.ShowMessage(ImportanceLevel.Warning,
+							$"{claim.Barcode.Title}: числится на складе «{claimWarehouse.Name}». " +
+							"Для перемещения на другой склад используйте документ перемещения.");
+
+					//Заявку в отдельном UoW отрабатываем, чтобы она закрываласт независимо от сохранения документа.
+					//решение принимает пользователь. По факту, здесь можно отработать мешок принесённый на склад в одно действие,
+					//даже для стирок принятых со склада и по факту не требующих отдельного документа.
+					if(!claim.IsClosed && interactiveService.Question($"Закрыть заявку на обслуживание №{claim.Id}?")) {
+						using(var claimUow = UnitOfWorkFactory.CreateWithoutRoot("Закрытие заявки на обслуживание")) {
+							var claimToClose = claimUow.GetById<ServiceClaim>(claim.Id);
+							claimToClose.ChangeState(ClaimState.Returned, user: userService.GetCurrentUser());
+							claimToClose.IsClosed = true;
+							var returnedComment = $"Возвращена на {claimWarehouse.Name}.";
+							claimToClose.Comment = string.IsNullOrWhiteSpace(claimToClose.Comment)
+								? returnedComment
+								: $"{claimToClose.Comment} {returnedComment}";
+							claimUow.Save(claimToClose);
+							claimUow.Commit();
+						}
+					}
 					continue;
 				}
 				notAddedClaims.Add(claim.Id);
