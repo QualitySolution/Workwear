@@ -345,6 +345,13 @@ namespace Workwear.ViewModels.Stock.Documents {
 				.List();
 		}
 
+		//Этот документ не предназначен для закрытия заявок на обслуживание - это лишь дополнительная опция
+		private bool ConfirmCloseClaim(ServiceClaim claim) {
+			if(claim.IsClosed)
+				return false;
+			return interactiveService.Question($"Спецодежда прикреплена к заявке на обслуживание №{claim.Id}. Закрыть заявку?");
+		}
+
 		private void AddClaims(IList<ServiceClaim> claims) {
 			var overNormOperations = overNormOperationRepository.GetActualIssuedOperations(claims, UoW);
 			var employeeOperations = employeeIssueRepository.GetActualIssuedOperations(claims, UoW);
@@ -353,15 +360,15 @@ namespace Workwear.ViewModels.Stock.Documents {
 			var notAddedClaims = new List<int>();
 			foreach(var claim in claims) {
 				if(overNormOperations.TryGetValue(claim.Id, out var overNormOperation)) {
-					Entity.AddItem(overNormOperation, 1, claim, new[] { claim.Barcode });
+					Entity.AddItem(overNormOperation, 1, ConfirmCloseClaim(claim) ? claim : null, new[] { claim.Barcode });
 					continue;
 				}
 				if(employeeOperations.TryGetValue(claim.Id, out var employeeOperation)) {
-					Entity.AddItem(employeeOperation, 1, claim, new[] { claim.Barcode });
+					Entity.AddItem(employeeOperation, 1, ConfirmCloseClaim(claim) ? claim : null, new[] { claim.Barcode });
 					continue;
 				}
 				if(dutyNormOperations.TryGetValue(claim.Id, out var dutyNormOperation)) {
-					Entity.AddItem(dutyNormOperation, 1, claim, new[] { claim.Barcode });
+					Entity.AddItem(dutyNormOperation, 1, ConfirmCloseClaim(claim) ? claim : null, new[] { claim.Barcode });
 					continue;
 				}
 
@@ -377,9 +384,9 @@ namespace Workwear.ViewModels.Stock.Documents {
 							"Для перемещения на другой склад используйте документ перемещения.");
 
 					//Заявку в отдельном UoW отрабатываем, чтобы она закрываласт независимо от сохранения документа.
-					//решение принимает пользователь. По факту, здесь можно отработать мешок принесённый на склад в одно действие,
+					//По факту, здесь можно отработать мешок принесённый на склад в одно действие,
 					//даже для стирок принятых со склада и по факту не требующих отдельного документа.
-					if(!claim.IsClosed && interactiveService.Question($"Закрыть заявку на обслуживание №{claim.Id}?")) {
+					if(ConfirmCloseClaim(claim)) {
 						using(var claimUow = UnitOfWorkFactory.CreateWithoutRoot("Закрытие заявки на обслуживание")) {
 							var claimToClose = claimUow.GetById<ServiceClaim>(claim.Id);
 							claimToClose.ChangeState(ClaimState.Returned, user: userService.GetCurrentUser());
