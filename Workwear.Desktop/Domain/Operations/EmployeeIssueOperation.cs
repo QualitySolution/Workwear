@@ -156,6 +156,7 @@ namespace Workwear.Domain.Operations
 			get => normItem;
 			set => SetField(ref normItem, value);
 		}
+		int? IGraphIssueOperation.NormAmount => NormItem?.Amount;
 
 		private string signCardKey;
 		[Display(Name = "UID карты доступа")]
@@ -445,7 +446,7 @@ namespace Workwear.Domain.Operations
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
-				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
+				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)) > OperationTime.Date) {
 					switch(baseParameters.ShiftExpluatacion) {
 						case AnswerOptions.Ask:
 							if(lastAnswerRecalculateStartOfUse == null)

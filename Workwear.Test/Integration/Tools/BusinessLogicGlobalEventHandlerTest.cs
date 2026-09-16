@@ -52,7 +52,7 @@ namespace Workwear.Test.Integration.Tools
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-            baseParameters.ColDayAheadOfShedule.Returns(0);
+            baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
 				MakeBaseParametersTable(uow);
@@ -73,7 +73,7 @@ namespace Workwear.Test.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
@@ -138,7 +138,7 @@ namespace Workwear.Test.Integration.Tools
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
 				MakeBaseParametersTable(uow);
@@ -160,7 +160,7 @@ namespace Workwear.Test.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
@@ -251,7 +251,7 @@ namespace Workwear.Test.Integration.Tools
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var builder = new ContainerBuilder();
@@ -284,12 +284,12 @@ namespace Workwear.Test.Integration.Tools
 				nomenclature2.Type = nomenclatureType2;
 				uow.Save(nomenclature2);
 
-				var protectionTools1 = new ProtectionTools();
+				var protectionTools1 = new ProtectionTools { Type = nomenclatureType };
 				protectionTools1.Name = "СИЗ для тестирования";
 				protectionTools1.AddNomenclature(nomenclature);
 				uow.Save(protectionTools1);
 
-				var protectionTools2 = new ProtectionTools();
+				var protectionTools2 = new ProtectionTools { Type = nomenclatureType };
 				protectionTools2.Name = "СИЗ для тестирования2";
 				protectionTools2.AddNomenclature(nomenclature2);
 				uow.Save(protectionTools2);
@@ -387,7 +387,7 @@ namespace Workwear.Test.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);

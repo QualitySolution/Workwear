@@ -355,7 +355,7 @@ namespace workwear.Journal.ViewModels.Communications
 				endDateIssue = Filter.EndDateIssue;
 			}
 
-			NavigationManager.OpenViewModelNamedArgs<SendMessangeViewModel>(this, new Dictionary<string, object> {
+			NavigationManager.OpenViewModelNamedArgs<SendMessageViewModel>(this, new Dictionary<string, object> {
 				{ "employeeIds", ids },
 				{ "warehouseId", Filter.SelectedWarehouse.Id },
 				{ "endDateIssue", endDateIssue },

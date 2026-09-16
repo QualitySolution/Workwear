@@ -81,7 +81,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		#region Хелперы
 
-		private IUnitOfWork UoW => employeeViewModel.UoW;
+		public IUnitOfWork UoW => employeeViewModel.UoW;
 		private EmployeeCard Entity => employeeViewModel.Entity;
 
 		#endregion
@@ -286,7 +286,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void OpenLastIssue(EmployeeCardItem row)
 		{
-			var referencedoc = employeeIssueRepository.GetReferencedDocuments(row.LastIssueOperation(DateTime.Today, BaseParameters).Id);
+			var referencedoc = employeeIssueRepository.GetReferencedDocuments(row.LastIssueOperation(DateTime.Today, BaseParameters, UoW).Id);
 			if (!referencedoc.Any() || referencedoc.First().DocumentType == null) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Не найдена ссылка на документ выдачи");
 				return;
@@ -296,7 +296,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void RecalculateLastIssue(EmployeeCardItem row)
 		{
-			var operation = row.LastIssueOperation(DateTime.Today, BaseParameters);
+			var operation = row.LastIssueOperation(DateTime.Today, BaseParameters, UoW);
 			//Если строку нормы по которой выдавали удалили, пытаемся пере-подвязать к имеющийся совпадающей по СИЗ 
 			if (!row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.IsSame(operation.NormItem))) {
 				if (row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {
@@ -340,6 +340,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				UoW.Session.Refresh(item);
 			}
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
+			foreach(var item in Entity.WorkwearItems) {
+				item.UpdateNextIssue(UoW);
+			}
 		}
 
 		public void Dispose()

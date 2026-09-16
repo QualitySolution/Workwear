@@ -57,7 +57,6 @@ namespace Workwear.Views.Company.EmployeeChildren
 		void ConfigureTable()
 		{
 			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem>()
-				.AddColumn("ТОН").Resizable().AddTextRenderer(item => item.TonText).WrapWidth(500)
 				.AddColumn("Тип выдачи").Visible(ViewModel.FeaturesService.Available(WorkwearFeature.CollectiveExpense))
 					.AddTextRenderer(item => item.ProtectionTools.Type.IssueType.GetEnumTitle())
 				.AddColumn("Наименование").Resizable().AddTextRenderer(item => item.ProtectionTools.Name).WrapWidth(700)
@@ -175,7 +174,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 				var itemOpenLastIssue = new MenuItemId<EmployeeCardItem>("Открыть документ с последней выдачей");
 				itemOpenLastIssue.ID = selected;
-				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
+				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters, ViewModel.UoW) != null;
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 
@@ -183,7 +182,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 				var itemRecalculateLastIssue = new MenuItemId<EmployeeCardItem>("Пересчитать сроки носки последней выдаче");
 				itemRecalculateLastIssue.ID = selected;
-				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
+				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters, ViewModel.UoW) != null;
 				itemRecalculateLastIssue.Activated += (sender, e) => viewModel.RecalculateLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemRecalculateLastIssue);
 

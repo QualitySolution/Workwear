@@ -175,7 +175,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Commit();
 
 				var baseParameters = Substitute.For<BaseParameters>();
-				baseParameters.ColDayAheadOfShedule.Returns(0);
+				baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 				
 				var uowProvider = new UnitOfWorkProvider(uow);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
