@@ -300,8 +300,7 @@ namespace Workwear.ViewModels.Stock.Documents
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 						filter => {
 							filter.ShowNegativeBalance = false;
-							filter.ShowWithBarcodes = !OverNormModel.CanUseWithoutBarcodes;
-							filter.CanChangeShowWithBarcodes = OverNormModel.CanChangeUseBarcodes;
+							filter.ShowOnlyWithBarcodeInStock = !OverNormModel.CanUseWithoutBarcodes;
 							filter.CanChooseAmount = OverNormModel.CanUseWithoutBarcodes;
 							filter.AddAmount = AddedAmount.One;
 							filter.Warehouse = Entity.Warehouse;
@@ -319,7 +318,7 @@ namespace Workwear.ViewModels.Stock.Documents
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
 
-			if(stockPosition.Nomenclature.UseBarcode) {
+			if(node.BarcodeCount > 0) {
 				IPage<BarcodeJournalViewModel> barcodeJournal =
 					NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
 						this,
@@ -392,6 +391,8 @@ namespace Workwear.ViewModels.Stock.Documents
 				var addedItem = addedItems.First();
 				if(!ValidateSubstituteItemsType(item, addedItem.Key.Nomenclature))
 					return;
+
+				var lastWarehouseOperation = addedItem.First().LastOperation.WarehouseOperation;
 				var addedParam = new OverNormParam(
 					item.Employee,
 					addedItem.Key.Nomenclature,
@@ -399,7 +400,9 @@ namespace Workwear.ViewModels.Stock.Documents
 					addedItem.Key.Size,
 					addedItem.Key.Height,
 					item.OverNormOperation?.SubstitutedIssueOperation,
-					addedItem.ToList());
+					addedItem.ToList(),
+					wearPercent: lastWarehouseOperation.WearPercent,
+					owner: lastWarehouseOperation.Owner);
 				OverNormModel.UseBarcodes = addedParam.Barcodes.Any();
 				AddOrUpdateItem(item, addedParam);
 			}

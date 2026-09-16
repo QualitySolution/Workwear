@@ -156,8 +156,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 						builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 							filter => {
 								filter.ShowNegativeBalance = false;
-								filter.ShowWithBarcodes = true; 
-								filter.CanChangeShowWithBarcodes = false; 
+								filter.ShowWithUseBarcodes = true;
 								filter.CanChooseAmount = true;
 								filter.AddAmount = AddedAmount.All;
 								filter.Warehouse = Entity.Warehouse;

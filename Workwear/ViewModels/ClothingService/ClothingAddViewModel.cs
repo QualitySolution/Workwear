@@ -299,7 +299,7 @@ namespace Workwear.ViewModels.ClothingService {
 		public ServiceClaim Claim { get; }
 		public bool Add { get; set; } = true;
 		public string BarcodeText => Claim.Barcode.Title;
-		public string EmployeeText => Claim.Employee.ShortName;
+		public string EmployeeText => Claim.Employee?.ShortName;
 		public string NomenclatureText => Claim.Barcode.Nomenclature.Name;
 		public string SizeText => SizeService.SizeTitle(Claim.Barcode.Size, Claim.Barcode.Height);
 	}

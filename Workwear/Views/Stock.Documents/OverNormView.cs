@@ -110,6 +110,8 @@ namespace Workwear.Views.Stock.Documents
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.WearSize?.Name)
 				.AddColumn("Рост").MinWidth(70)
 					.AddReadOnlyTextRenderer(x => x.OverNormOperation.WarehouseOperation?.Height?.Name)
+				.AddColumn("Износ").MinWidth(60)
+					.AddReadOnlyTextRenderer(x => (x.OverNormOperation.WarehouseOperation?.WearPercent ?? 0m).ToString("P0"))
 				.AddColumn("Количество").MinWidth(60)
 					.AddNumericRenderer(x => x.Amount)
 					.Editing(new Adjustment(1, 1, int.MaxValue, 1, 10, 0), ViewModel.CanEdit)
