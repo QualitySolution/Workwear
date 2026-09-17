@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Autofac;
+using Gamma.Utilities;
 using NHibernate;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
@@ -29,6 +30,13 @@ using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
 using QS.Cloud.WorkwearDictionary.Client;
 using QS.Measurement.Repository;
+//Алиасы на сервис ЕТН.
+using EtnNorm = QS.Cloud.WorkwearDictionary.Grpc.Contracts.Norm;
+using EtnNormItem = QS.Cloud.WorkwearDictionary.Grpc.Contracts.NormItem;
+using EtnGetNormResponse = QS.Cloud.WorkwearDictionary.Grpc.Contracts.GetNormResponse;
+using EtnComplectType = QS.Cloud.WorkwearDictionary.Grpc.Contracts.ComplectType;
+using EtnItemSIZ = QS.Cloud.WorkwearDictionary.Grpc.Contracts.ItemSIZ;
+using EtnPeriodType = QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType;
 
 namespace Workwear.ViewModels.Regulations
 {
@@ -138,6 +146,7 @@ namespace Workwear.ViewModels.Regulations
 		}
 
 		#region Импорт из справочника ЕТН
+		private const string EtnCreatedComment = "Создано из справочника ЕТН";
 
 		private readonly List<Post> etnAutoCreatedPosts = new List<Post>();
 		private readonly List<ItemsType> etnAutoCreatedItemsTypes = new List<ItemsType>();
@@ -155,24 +164,21 @@ namespace Workwear.ViewModels.Regulations
 
 		private void EtnNormSelection_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
 		{
-			var etnNode = e.GetSelectedObjects<QS.Cloud.WorkwearDictionary.Grpc.Contracts.Norm>().FirstOrDefault();
+			var etnNode = e.GetSelectedObjects<EtnNorm>().FirstOrDefault();
 			if(etnNode == null)
 				return;
 
 			var etnNorm = etnDictionaryService.GetNormItems(etnNode.NormId);
 			FillFromEtn(etnNorm);
 		}
-////
+		
 		/// <summary>
 		/// Заполняет новую норму данными, полученными из справочника ЕТН: должность и строки нормы.
-		/// Номенклатура, тип и условие нормы подбираются по точному совпадению названия, при отсутствии совпадения - создаются.
-		///
-		/// Комплекты пока не учитываются
 		/// </summary>
-		public void FillFromEtn(QS.Cloud.WorkwearDictionary.Grpc.Contracts.GetNormResponse etnNorm)
+		public void FillFromEtn(EtnGetNormResponse etnNorm)
 		{
 			Entity.Name = etnNorm.PostName;
-			Entity.Comment = $"Импортировано из справочника ЕТН, в приказе №{etnNorm.NumberNorm}";
+			Entity.Comment = $"{EtnCreatedComment}, в приказе №{etnNorm.NumberNorm}";
 
 			FillPostFromEtn(etnNorm.PostName);
 
@@ -180,44 +186,150 @@ namespace Workwear.ViewModels.Regulations
 			var protectionToolsCache = new Dictionary<string, ProtectionTools>();
 			var conditionsCache = new Dictionary<string, NormCondition>();
 
-			foreach(var etnComplect in etnNorm.Items) {
-				foreach(var sizItem in etnComplect.Items) {
-					var itemsType = FindOrCreateItemsType(sizItem.SizType, itemsTypesCache);
-					var protectionTools = FindOrCreateProtectionTools(sizItem.SizName, itemsType, protectionToolsCache);
-
-					var normItem = Entity.AddItem(protectionTools);
-					if(normItem == null)
-						continue; //Такая номенклатура уже добавлена в норму.
-
-					normItem.NormPeriod = MapPeriodType(sizItem.PeriodType);
-					normItem.PeriodCount = sizItem.PeriodCount;
-					normItem.Amount = sizItem.Amount > 0 ? sizItem.Amount : 1;
-					normItem.NormCondition = FindOrCreateCondition(sizItem.Condition, conditionsCache);
-				}
-			}
+			foreach(var etnComplect in etnNorm.Items)
+				ProcessEtnComplect(etnComplect, itemsTypesCache, protectionToolsCache, conditionsCache);
 
 			Entity.Posts.CollectionChanged += EtnPosts_CollectionChanged;
 			Entity.Items.CollectionChanged += EtnItems_CollectionChanged;
 		}
 
-		private void FillPostFromEtn(string postName)
+		/// <summary>
+		/// Обрабатывает комплект указанный в норме.
+		/// Комплект "или" - спрашиваем пользователя, какую строку добавить или добавить одной строкой все.
+		/// Комплект "и" - спрашиваем, добавлять позиции по отдельности, одной строкой или не добавлять.
+		/// Комплект из одной позиции считаем просто строкой.
+		/// </summary>
+		private void ProcessEtnComplect(
+			EtnNormItem etnComplect,
+			Dictionary<string, ItemsType> itemsTypesCache,
+			Dictionary<string, ProtectionTools> protectionToolsCache,
+			Dictionary<string, NormCondition> conditionsCache)
 		{
+			if(etnComplect.Items.Count > 1) {
+				if(etnComplect.ComplectType == EtnComplectType.Or) {
+					var chosen = ChooseOrVariant(etnComplect, itemsTypesCache);
+					if(chosen != null)
+						AddSizItem(chosen, itemsTypesCache, protectionToolsCache, conditionsCache);
+					return;
+				}
+
+				if(etnComplect.ComplectType == EtnComplectType.And) {
+					var answer = AskAndComplectAction(etnComplect, itemsTypesCache);
+					if(answer == "Одной записью") {
+						AddCombinedComplectItem(etnComplect, itemsTypesCache, protectionToolsCache, conditionsCache);
+						return;
+					}
+					if(answer == "Не добавлять")
+						return;
+				}
+			}
+
+			foreach(var sizItem in etnComplect.Items)
+				AddSizItem(sizItem, itemsTypesCache, protectionToolsCache, conditionsCache);
+		}
+
+		private EtnItemSIZ ChooseOrVariant(EtnNormItem etnComplect, Dictionary<string, ItemsType> itemsTypesCache) {
+			var message = String.IsNullOrWhiteSpace(etnComplect.ComplectName)
+				? "В комплекте несколько взаимозаменяемых вариантов. Выберите, какой из них добавить в норму:"
+				: $"В комплекте «{etnComplect.ComplectName}» несколько взаимозаменяемых вариантов. Выберите, какой из них добавить в норму:";
+			return interactive.ChooseOne(etnComplect.Items, x => FormatEtnSizOption(x, itemsTypesCache), message, "Выбор варианта СИЗ");
+		}
+
+		private string AskAndComplectAction(EtnNormItem etnComplect, Dictionary<string, ItemsType> itemsTypesCache) {
+			var complectTitle = String.IsNullOrWhiteSpace(etnComplect.ComplectName) ? "без названия" : etnComplect.ComplectName;
+			var itemsList = FormatEtnComplectItems(etnComplect, itemsTypesCache);
+			var message = $"Комплект \"{complectTitle}\"\nвключает несколько позиций:\n{itemsList}\n\nКак их добавить?";
+			return interactive.Question(new[] { "По отдельности", "Одной записью", "Не добавлять" }, message, "Комплект СИЗ");
+		}
+
+		private void AddCombinedComplectItem(
+			EtnNormItem etnComplect,
+			Dictionary<string, ItemsType> itemsTypesCache,
+			Dictionary<string, ProtectionTools> protectionToolsCache,
+			Dictionary<string, NormCondition> conditionsCache)
+		{
+			var firstItem = etnComplect.Items.First();
+			var complectName = String.IsNullOrWhiteSpace(etnComplect.ComplectName) ? firstItem.SizName : etnComplect.ComplectName.Trim();
+
+			var itemsType = FindOrCreateItemsType(firstItem.SizType, itemsTypesCache);
+			var complectComment = $"{EtnCreatedComment}. Комплект включает:\n{FormatEtnComplectItems(etnComplect, itemsTypesCache)}";
+			var protectionTools = FindOrCreateProtectionTools(complectName, itemsType, protectionToolsCache, complectComment);
+			//Запись уже существовала в справочнике до импорта - дописываем состав комплекта, только если у нее еще нет своего комментария.
+			if(String.IsNullOrWhiteSpace(protectionTools.Comment))
+				protectionTools.Comment = complectComment;
+
+			var normItem = Entity.AddItem(protectionTools);
+			if(normItem == null)
+				return;
+			normItem.NormPeriod = MapPeriodType(firstItem.PeriodType);
+			normItem.PeriodCount = firstItem.PeriodCount;
+			normItem.Amount = firstItem.Amount > 0 ? firstItem.Amount : 1;
+			normItem.NormCondition = FindOrCreateCondition(firstItem.Condition, conditionsCache);
+		}
+
+		private void AddSizItem(
+			EtnItemSIZ sizItem,
+			Dictionary<string, ItemsType> itemsTypesCache,
+			Dictionary<string, ProtectionTools> protectionToolsCache,
+			Dictionary<string, NormCondition> conditionsCache)
+		{
+			var itemsType = FindOrCreateItemsType(sizItem.SizType, itemsTypesCache);
+			var protectionTools = FindOrCreateProtectionTools(sizItem.SizName, itemsType, protectionToolsCache);
+
+			var normItem = Entity.AddItem(protectionTools);
+			if(normItem == null)
+				return;
+
+			normItem.NormPeriod = MapPeriodType(sizItem.PeriodType);
+			normItem.PeriodCount = sizItem.PeriodCount;
+			normItem.Amount = sizItem.Amount > 0 ? sizItem.Amount : 1;
+			normItem.NormCondition = FindOrCreateCondition(sizItem.Condition, conditionsCache);
+		}
+
+		private string FormatEtnSizOption(EtnItemSIZ item, Dictionary<string, ItemsType> itemsTypesCache) {
+			var period = MapPeriodType(item.PeriodType).GetEnumTitle();
+			return $"{item.SizName} — {FormatEtnAmount(item, itemsTypesCache)}, {item.PeriodCount} × {period}";
+		}
+
+		/// <summary>
+		/// Перечисляет позиции комплекта ЕТН по строкам, с количеством и единицей измерения.
+		/// </summary>
+		private string FormatEtnComplectItems(EtnNormItem etnComplect, Dictionary<string, ItemsType> itemsTypesCache) =>
+			String.Join("\n", etnComplect.Items.Select(x => $"{x.SizName} - {FormatEtnAmount(x, itemsTypesCache)}"));
+
+		/// <summary>
+		/// Количество позиций ЕТН с единицей измерения из типа номенклатуры.
+		/// Записи справочников здесь не создаются: список показывается до того, как пользователь решит,
+		/// добавлять ли комплект, поэтому для еще не заведенного типа берется единица измерения по умолчанию.
+		/// </summary>
+		private string FormatEtnAmount(EtnItemSIZ sizItem, Dictionary<string, ItemsType> itemsTypesCache) {
+			var typeName = EtnItemsTypeName(sizItem.SizType);
+			if(!itemsTypesCache.TryGetValue(typeName, out var itemsType))
+				itemsType = UoW.Session.QueryOver<ItemsType>().Where(x => x.Name == typeName).Take(1).SingleOrDefault();
+
+			var units = itemsType?.Units ?? MeasurementUnitRepository.GetDefaultGoodsUnit(UoW);
+			return units?.MakeAmountShortStr(sizItem.Amount) ?? sizItem.Amount.ToString();
+		}
+
+		private static string EtnItemsTypeName(string sizType) =>
+			String.IsNullOrWhiteSpace(sizType) ? "Не определено" : sizType.Trim();
+
+		private void FillPostFromEtn(string postName) {
 			postName = postName?.Trim();
 			if(String.IsNullOrWhiteSpace(postName))
 				return;
 
 			var post = UoW.Session.QueryOver<Post>().Where(x => x.Name == postName).Take(1).SingleOrDefault();
 			if(post == null) {
-				post = new Post { Name = postName };
+				post = new Post { Name = postName, Comments = EtnCreatedComment };
 				UoW.Save(post);
 				etnAutoCreatedPosts.Add(post);
 			}
 			Entity.AddPost(post);
 		}
 
-		private ItemsType FindOrCreateItemsType(string typeName, Dictionary<string, ItemsType> cache)
-		{
-			typeName = String.IsNullOrWhiteSpace(typeName) ? "Не определено" : typeName.Trim();
+		private ItemsType FindOrCreateItemsType(string typeName, Dictionary<string, ItemsType> cache) {
+			typeName = EtnItemsTypeName(typeName);
 			if(cache.TryGetValue(typeName, out var cachedType))
 				return cachedType;
 
@@ -225,6 +337,7 @@ namespace Workwear.ViewModels.Regulations
 			if(itemsType == null) {
 				itemsType = new ItemsType {
 					Name = typeName,
+					Comment = EtnCreatedComment,
 					Units = MeasurementUnitRepository.GetDefaultGoodsUnit(UoW)
 				};
 				UoW.Save(itemsType);
@@ -234,7 +347,13 @@ namespace Workwear.ViewModels.Regulations
 			return itemsType;
 		}
 
-		private ProtectionTools FindOrCreateProtectionTools(string sizName, ItemsType itemsType, Dictionary<string, ProtectionTools> cache)
+		/// <param name="comment">Комментарий создаваемой номенклатуры. Если не указан - только отметка о создании из ЕТН.
+		/// На уже существующую в справочнике номенклатуру не влияет.</param>
+		private ProtectionTools FindOrCreateProtectionTools(
+			string sizName,
+			ItemsType itemsType,
+			Dictionary<string, ProtectionTools> cache,
+			string comment = null)
 		{
 			var name = String.IsNullOrWhiteSpace(sizName) ? "Без названия" : sizName.Trim();
 			if(cache.TryGetValue(name, out var cachedTools))
@@ -242,7 +361,7 @@ namespace Workwear.ViewModels.Regulations
 
 			var protectionTools = UoW.Session.QueryOver<ProtectionTools>().Where(x => x.Name == name).Take(1).SingleOrDefault();
 			if(protectionTools == null) {
-				protectionTools = new ProtectionTools { Name = name, Type = itemsType };
+				protectionTools = new ProtectionTools { Name = name, Type = itemsType, Comment = comment ?? EtnCreatedComment };
 				UoW.Save(protectionTools);
 				etnAutoCreatedProtectionTools.Add(protectionTools);
 			}
@@ -293,23 +412,20 @@ namespace Workwear.ViewModels.Regulations
 			return interactive.Question(message);
 		}
 
-////		
-		//ЕТН не различает "разовое использование"/"по необходимости" пока приводим к "до износа".
-		private NormPeriodType MapPeriodType(QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType periodType)
-		{
+////ЕТН не различает "разовое использование"/"по необходимости" пока приводим к "до износа".
+		private NormPeriodType MapPeriodType(EtnPeriodType periodType) {
 			switch(periodType) {
-				case QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType.Year: return NormPeriodType.Year;
-				case QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType.Month: return NormPeriodType.Month;
-				case QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType.Wearout:
-				case QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType.OneUse:
-				case QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType.NeedSet:
+				case EtnPeriodType.Year: return NormPeriodType.Year;
+				case EtnPeriodType.Month: return NormPeriodType.Month;
+				case EtnPeriodType.Wearout:
+				case EtnPeriodType.OneUse:
+				case EtnPeriodType.NeedSet:
 					return NormPeriodType.Wearout;
 				default: return NormPeriodType.Year;
 			}
 		}
 
-		private void EtnPosts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		private void EtnPosts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if(e.Action != NotifyCollectionChangedAction.Remove || e.OldItems == null)
 				return;
 			foreach(Post removed in e.OldItems) {
@@ -318,8 +434,7 @@ namespace Workwear.ViewModels.Regulations
 			}
 		}
 
-		private void EtnItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		private void EtnItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if(e.Action != NotifyCollectionChangedAction.Remove || e.OldItems == null)
 				return;
 			foreach(NormItem removed in e.OldItems) {
