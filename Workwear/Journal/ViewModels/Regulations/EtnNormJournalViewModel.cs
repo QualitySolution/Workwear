@@ -11,8 +11,6 @@ using QS.Project.Journal.DataLoader;
 
 namespace workwear.Journal.ViewModels.Regulations {
 	public class EtnNormJournalViewModel : JournalViewModelBase {
-		private const int PageSize = 200;
-
 		private readonly EtnDictionaryService etnDictionaryService;
 
 		public EtnNormJournalViewModel(
@@ -24,12 +22,16 @@ namespace workwear.Journal.ViewModels.Regulations {
 		{
 			this.etnDictionaryService = etnDictionaryService ?? throw new ArgumentNullException(nameof(etnDictionaryService));
 			Title = "Справочник ЕТН";
-			DataLoader = new AnyDataLoader<Norm>(GetNodes);
+			DataLoader = new AnyDataLoader<Norm>(GetNodes, GetTotalCount);
 		}
 
-		private IList<Norm> GetNodes(CancellationToken token) {
-			var searchQuery = Search.SearchValues != null ? string.Join(" ", Search.SearchValues) : null;
-			return etnDictionaryService.GetNormsList(1, PageSize, searchQuery).Norms;
-		}
+		private IList<Norm> GetNodes(int page, int pageSize, CancellationToken token) =>
+			etnDictionaryService.GetNormsList(page, pageSize, SearchQuery).Norms;
+
+		private int GetTotalCount(CancellationToken token) =>
+			etnDictionaryService.GetNormsList(1, 1, SearchQuery).TotalCount;
+
+		private string SearchQuery =>
+			Search.SearchValues != null ? string.Join(" ", Search.SearchValues) : null;
 	}
 }
