@@ -91,6 +91,7 @@ using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Permissions;
+using Workwear.Tools.Regulations;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.OverNorms;
 using Workwear.Tools.User;
@@ -345,6 +346,7 @@ namespace workwear
 			builder.RegisterType<DutyNormIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<NormToDutyNormModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<GtkEtnComplectResolver>().As<IEtnComplectResolver>();
 			builder.RegisterType<IssuedSheetPrintModel>().AsSelf().InstancePerLifetimeScope();
 			#region Прогноз
 			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();

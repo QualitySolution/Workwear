@@ -23,6 +23,7 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
 using QS.Cloud.WorkwearDictionary.Client;
@@ -43,6 +44,8 @@ namespace Workwear.ViewModels.Regulations
 		private readonly EmployeeIssueModel issueModel;
 		private readonly ModalProgressCreator progressCreator;
 		private readonly EtnDictionaryService etnDictionaryService;
+		private readonly IEtnComplectResolver etnComplectResolver;
+		private readonly SizeService sizeService;
 
 		public NormViewModel(
 			IEntityUoWBuilder uowBuilder,
@@ -59,6 +62,8 @@ namespace Workwear.ViewModels.Regulations
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
 			EtnDictionaryService etnDictionaryService = null,
+			IEtnComplectResolver etnComplectResolver = null,
+			SizeService sizeService = null,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -69,6 +74,8 @@ namespace Workwear.ViewModels.Regulations
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.etnDictionaryService = etnDictionaryService;
+			this.etnComplectResolver = etnComplectResolver;
+			this.sizeService = sizeService;
 
 			var performance = new PerformanceHelper(logger: logger);
 			var normConditionQuery = UoW.Session.QueryOver<NormCondition>()
@@ -163,7 +170,7 @@ namespace Workwear.ViewModels.Regulations
 		/// </summary>
 		public void FillFromEtn(EtnGetNormResponse etnNorm)
 		{
-			etnImportModel = new EtnNormImportModel(UoW, Entity, interactive);
+			etnImportModel = new EtnNormImportModel(UoW, Entity, interactive, etnComplectResolver, sizeService);
 			etnImportModel.FillFromEtn(etnNorm);
 		}
 		#endregion

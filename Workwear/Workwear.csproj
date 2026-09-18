@@ -184,6 +184,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="Tools\Permissions\PermissionsService.cs" />
+    <Compile Include="Tools\Regulations\GtkEtnComplectResolver.cs" />
     <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
     <Compile Include="ViewModels\Analytics\WarehouseForecastingViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
@@ -319,6 +320,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.PostView.cs" />
     <Compile Include="Views\Regulations\NormView.cs" />
     <Compile Include="ViewModels\Regulations\NormViewModel.cs" />
+    <Compile Include="ViewModels\Regulations\EtnComplectWidgetViewModel.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Regulations.NormView.cs" />
     <Compile Include="ViewModels\Regulations\ProtectionToolsViewModel.cs" />
     <Compile Include="Views\Regulations\ProtectionToolsView.cs" />
@@ -600,6 +602,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.Documents.BarcodingView.cs" />
     <Compile Include="Views\Company\EmployeeChildren\EmployeeOverNormView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmployeeOverNormView.cs" />
+    <Compile Include="Views\Regulations\EtnComplectWidgetView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Regulations.EtnComplectWidgetView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
