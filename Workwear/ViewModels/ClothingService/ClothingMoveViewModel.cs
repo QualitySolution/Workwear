@@ -94,21 +94,13 @@ namespace Workwear.ViewModels.ClothingService {
 				
 				Claim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
 				if(Claim == null)
-					BarcodeInfoViewModel.LabelInfo = BarcodeInfoViewModel.Employee == null
-						? GetUnsupportedHolderMessage()
+					BarcodeInfoViewModel.LabelInfo = BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null && BarcodeInfoViewModel.DutyNorm == null
+						? "Спецодежда не привязана ни к чему."
 						: "Спецодежда не была принята в стирку.";
 				OnPropertyChanged(nameof(CanAddClaim));
 			}
 		}
-
-		private string GetUnsupportedHolderMessage() {
-			if(BarcodeInfoViewModel.Warehouse != null)
-				return $"Числится на складе «{BarcodeInfoViewModel.Warehouse.Name}». Приём пока не поддерживается.";
-			if(BarcodeInfoViewModel.DutyNorm != null)
-				return $"Числится на дежурной норме №{BarcodeInfoViewModel.DutyNorm.Id}. Приём пока не поддерживается.";
-			return "Спецодежда не выдана сотруднику, приём пока не поддерживается.";
-		}
-		
+	
 		private void ServicesListOnContentChanged(object sender, EventArgs e) {
 			if(!(sender is SelectableProvidedService item))
 				return;
@@ -207,7 +199,8 @@ namespace Workwear.ViewModels.ClothingService {
 		public IObservableList<StateOperation> Operations => Claim?.States ?? new ObservableList<StateOperation>();
 
 		public virtual bool ShowTerminal => FeaturesService.Available(WorkwearFeature.Postomats);
-		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null && BarcodeInfoViewModel.Employee != null;
+		public virtual bool CanAddClaim => BarcodeInfoViewModel.Barcode != null && Claim == null
+			&& (BarcodeInfoViewModel.Employee != null || BarcodeInfoViewModel.Warehouse != null || BarcodeInfoViewModel.DutyNorm != null);
 		public virtual bool SensitiveActions => Claim != null;
 		public virtual bool SensitiveAccept => Claim != null;
 		public virtual bool SensitivePrint => (Claim?.Barcode != null);
@@ -271,8 +264,8 @@ namespace Workwear.ViewModels.ClothingService {
 				BarcodeInfoViewModel.LabelInfo = "Уже принято на обслуживание.";
 				return;
 			}
-			if(BarcodeInfoViewModel.Employee == null) {
-				BarcodeInfoViewModel.LabelInfo = GetUnsupportedHolderMessage();
+			if(BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null && BarcodeInfoViewModel.DutyNorm == null) {
+				BarcodeInfoViewModel.LabelInfo = "Спецодежда не привязана ни к чему.";
 				return;
 			}
 
@@ -315,21 +308,9 @@ namespace Workwear.ViewModels.ClothingService {
 					UoW.Save(item);
 				}
 
-			StateOperation newStatus = null;
-			if(State != LastStateOperation.State) {
-				newStatus = new StateOperation {
-					OperationTime = DateTime.Now,
-					State = State,
-					Claim = Claim,
-					User = userService.GetCurrentUser(),
-					Comment = Comment
-				};
-				Claim.States.Add(newStatus);
-				if(State == ClaimState.Returned)
-					Claim.IsClosed = true;
-			}
-			else if(LastStateOperation.Comment != Comment)
-				LastStateOperation.Comment = Comment;
+			var newStatus = Claim.ChangeState(State, user: userService.GetCurrentUser(), comment: Comment);
+			if(newStatus != null && State == ClaimState.Returned)
+				Claim.IsClosed = true;
 
 			claim.NeedForRepair = NeedRepair;
 			if(NeedRepair && claim.Defect != DefectText)
@@ -438,6 +419,8 @@ namespace Workwear.ViewModels.ClothingService {
 		}
 
 		public void SendPush(StateOperation status) {
+			if(status.Claim.Employee == null)
+				return;
 			var claimState = status.State;
 			var nomenclature = status.Claim.Barcode.Nomenclature.Name;
 			var phone = status.Claim.Employee.PhoneNumber;
