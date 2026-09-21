@@ -6,9 +6,9 @@ using Workwear.ViewModels.Communications;
 
 namespace Workwear.Views.Communications
 {
-	public partial class SendMessangeView : DialogViewBase<SendMessangeViewModel>
+	public partial class SendMessageView : DialogViewBase<SendMessageViewModel>
 	{
-		public SendMessangeView(SendMessangeViewModel viewModel): base(viewModel)
+		public SendMessageView(SendMessageViewModel viewModel): base(viewModel)
 		{
 			this.Build();
 			

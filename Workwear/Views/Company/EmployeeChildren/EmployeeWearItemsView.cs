@@ -174,7 +174,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 				var itemOpenLastIssue = new MenuItemId<EmployeeCardItem>("Открыть документ с последней выдачей");
 				itemOpenLastIssue.ID = selected;
-				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
+				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters, ViewModel.UoW) != null;
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 
@@ -182,7 +182,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 				var itemRecalculateLastIssue = new MenuItemId<EmployeeCardItem>("Пересчитать сроки носки последней выдаче");
 				itemRecalculateLastIssue.ID = selected;
-				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
+				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters, ViewModel.UoW) != null;
 				itemRecalculateLastIssue.Activated += (sender, e) => viewModel.RecalculateLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemRecalculateLastIssue);
 

@@ -418,10 +418,10 @@
     <Compile Include="Journal\Filter.ViewModels\Communications\EmployeeNotificationFilterViewModel.cs" />
     <Compile Include="Journal\Filter.Views\Communications\EmployeeNotificationFilterView.cs" />
     <Compile Include="ViewModels\Communications\MessageTemplateViewModel.cs" />
-    <Compile Include="ViewModels\Communications\SendMessangeViewModel.cs" />
+    <Compile Include="ViewModels\Communications\SendMessageViewModel.cs" />
     <Compile Include="Views\Communications\MessageTemplateView.cs" />
-    <Compile Include="Views\Communications\SendMessangeView.cs" />
-    <Compile Include="gtk-gui\Workwear.Views.Communications.SendMessangeView.cs" />
+    <Compile Include="Views\Communications\SendMessageView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Communications.SendMessageView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Communications.MessageTemplateView.cs" />
     <Compile Include="Journal\ViewModels\Communications\MessageTemplateJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Communications\EmployeeNotificationJournalViewModel.cs" />
@@ -766,6 +766,10 @@
     <ProjectReference Include="..\QS.Cloud.WearLk.Client\QS.Cloud.WearLk.Client.csproj">
       <Project>{B0F853E4-43C9-4C7E-8812-2060FA43B5FE}</Project>
       <Name>QS.Cloud.WearLk.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QSProjects\QS.Cloud.Email.DesktopClient\QS.Cloud.Email.DesktopClient.csproj">
+      <Project>{26350C9F-5A51-48CD-AEA5-F5C3FD035562}</Project>
+      <Name>QS.Cloud.Email.DesktopClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\QSProjects\QS.Cloud.Client\QS.Cloud.Client.csproj">
       <Project>{390CE39B-B071-424E-9763-645E7624D9E3}</Project>

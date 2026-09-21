@@ -350,6 +350,7 @@ namespace Workwear.ViewModels.Company
 		public bool IsDocNumberInReturnSign => baseParameters.IsDocNumberInReturnSign;
 		public DateTime? StartDateOfOperations => baseParameters.StartDateOfOperations;
 		public bool IsGenericName => baseParameters.IsGenericName;
+		public bool ConditionGroupInPersonalCard => baseParameters.ConditionGroupInPersonalCard && featuresService.Available(WorkwearFeature.ConditionNorm);
 
 		#region CardUid
 		public virtual string CardUid {
@@ -668,7 +669,8 @@ namespace Workwear.ViewModels.Company
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
 					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
 					{"startDateOfOperations", StartDateOfOperations},
-					{"isGenericName", IsGenericName}
+					{"isGenericName", IsGenericName},
+					{"conditionGroup", ConditionGroupInPersonalCard}
 				}
 			};
 
