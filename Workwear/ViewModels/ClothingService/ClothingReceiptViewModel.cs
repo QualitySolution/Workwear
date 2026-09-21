@@ -61,15 +61,11 @@ namespace Workwear.ViewModels.ClothingService {
 				}
 				if(BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null && BarcodeInfoViewModel.DutyNorm == null) {
 					SensitiveAccept = false;
-					BarcodeInfoViewModel.LabelInfo = GetUnsupportedHolderMessage();
+					BarcodeInfoViewModel.LabelInfo = "Спецодежда не привязана ни к чему.";
 					return;
 				}
 				SensitiveAccept = true;
 			}
-		}
-
-		private string GetUnsupportedHolderMessage() {
-			return "Спецодежда не приввязана ни к чему.";
 		}
 
 		#region Свойства View

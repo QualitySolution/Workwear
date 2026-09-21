@@ -95,16 +95,12 @@ namespace Workwear.ViewModels.ClothingService {
 				Claim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
 				if(Claim == null)
 					BarcodeInfoViewModel.LabelInfo = BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null && BarcodeInfoViewModel.DutyNorm == null
-						? GetUnsupportedHolderMessage()
+						? "Спецодежда не привязана ни к чему."
 						: "Спецодежда не была принята в стирку.";
 				OnPropertyChanged(nameof(CanAddClaim));
 			}
 		}
-
-		private string GetUnsupportedHolderMessage() {
-			return "Спецодежда не привязанани к цему.";
-		}
-		
+	
 		private void ServicesListOnContentChanged(object sender, EventArgs e) {
 			if(!(sender is SelectableProvidedService item))
 				return;
@@ -269,7 +265,7 @@ namespace Workwear.ViewModels.ClothingService {
 				return;
 			}
 			if(BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null && BarcodeInfoViewModel.DutyNorm == null) {
-				BarcodeInfoViewModel.LabelInfo = GetUnsupportedHolderMessage();
+				BarcodeInfoViewModel.LabelInfo = "Спецодежда не привязана ни к чему.";
 				return;
 			}
 
