@@ -189,6 +189,12 @@ namespace Workwear.ViewModels.Stock.Documents
 		}
 		
 		public void MakeEmptyProtectionTools(ExpenseItem item) {
+			if(item.Nomenclature == null) {
+				interactive.ShowMessage(ImportanceLevel.Warning,
+					"Нельзя очистить номенклатуру нормы: у строки не указана обычная номенклатура, " +
+					"после очистки её будет невозможно идентифицировать. Сначала укажите номенклатуру.");
+				return;
+			}
 			item.ProtectionTools = null;
 		}
 		

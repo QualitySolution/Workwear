@@ -193,6 +193,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		}
 
 		public void MakeEmptyProtectionTools(EmployeeMovementItem item) {
+			if(item.Operation.Nomenclature == null) {
+				interactive.ShowMessage(ImportanceLevel.Warning,
+					"Нельзя очистить номенклатуру нормы: у операции не указана обычная номенклатура, " +
+					"после очистки её будет невозможно идентифицировать. Сначала укажите номенклатуру.");
+				return;
+			}
 			LogOperationReference("Операция в строке истории до очистки номенклатуры нормы", item.Operation);
 			if(item.EmployeeIssueReference?.DocumentType != null) {
 				switch(item.EmployeeIssueReference.DocumentType) {
