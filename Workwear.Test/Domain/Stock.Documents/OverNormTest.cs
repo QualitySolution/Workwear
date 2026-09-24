@@ -23,11 +23,13 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				Warehouse = new Warehouse()
 			};
 			document.AddItem(CreateOperation(barcode, nomenclature));
+			var errorsBeforeDuplicate = document.Validate(new ValidationContext(document)).ToList();
+
 			document.AddItem(CreateOperation(barcode, nomenclature));
 
 			var errors = document.Validate(new ValidationContext(document)).ToList();
 
-			Assert.That(errors.Select(x => x.ErrorMessage), Has.Some.Contains("несколько раз добавлены"));
+			Assert.That(errors, Has.Count.EqualTo(errorsBeforeDuplicate.Count + 1));
 			Assert.That(errors.Select(x => x.ErrorMessage), Has.Some.Contains(barcode.Title));
 		}
 
@@ -40,7 +42,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 				Warehouse = warehouse,
 				Date = new DateTime(2026, 7, 16)
 			};
-			document.AddItem(CreateOperation(null, nomenclature, 2));
+			var item = document.AddItem(CreateOperation(null, nomenclature, 1));
 
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.CheckBalances.Returns(true);
@@ -57,13 +59,17 @@ namespace Workwear.Test.Domain.Stock.Documents {
 					}
 				});
 
-			var errors = document.Validate(
-				new ValidationContext(document, null, new Dictionary<object, object> {
-					{ nameof(BaseParameters), baseParameters },
-					{ nameof(StockRepository), stockRepository }
-				})).ToList();
+			var validationContext = new ValidationContext(document, null, new Dictionary<object, object> {
+				{ nameof(BaseParameters), baseParameters },
+				{ nameof(StockRepository), stockRepository }
+			});
+			var errorsWithinBalance = document.Validate(validationContext).ToList();
 
-			Assert.That(errors.Select(x => x.ErrorMessage), Has.Some.Contains("Недостаточное количество"));
+			item.OverNormOperation.WarehouseOperation.Amount = 2;
+
+			var errors = document.Validate(validationContext).ToList();
+
+			Assert.That(errors, Has.Count.EqualTo(errorsWithinBalance.Count + 1));
 			Assert.That(errors.Select(x => x.ErrorMessage), Has.Some.Contains(nomenclature.Name));
 		}
 
