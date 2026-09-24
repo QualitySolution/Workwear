@@ -23,8 +23,13 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
+using QS.Cloud.WorkwearDictionary.Client;
+//Алиасы на сервис ЕТН.
+using EtnNorm = QS.Cloud.WorkwearDictionary.Grpc.Contracts.Norm;
+using EtnGetNormResponse = QS.Cloud.WorkwearDictionary.Grpc.Contracts.GetNormResponse;
 
 namespace Workwear.ViewModels.Regulations
 {
@@ -38,13 +43,16 @@ namespace Workwear.ViewModels.Regulations
 		private readonly BaseParameters baseParameters;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly ModalProgressCreator progressCreator;
+		private readonly EtnDictionaryService etnDictionaryService;
+		private readonly IEtnComplectResolver etnComplectResolver;
+		private readonly SizeService sizeService;
 
 		public NormViewModel(
-			IEntityUoWBuilder uowBuilder, 
+			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			UnitOfWorkProvider unitOfWorkProvider,
 			EmployeeIssueRepository employeeIssueRepository,
-			INavigationManager navigation, 
+			INavigationManager navigation,
 			IInteractiveService interactive,
 			IEntityChangeWatcher changeWatcher,
 			EmployeeRepository employeeRepository,
@@ -53,7 +61,9 @@ namespace Workwear.ViewModels.Regulations
 			ModalProgressCreator progressCreator,
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
-			NormToDutyNormModel normToDutyNormModel,
+			EtnDictionaryService etnDictionaryService = null,
+			IEtnComplectResolver etnComplectResolver = null,
+			SizeService sizeService = null,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -63,6 +73,9 @@ namespace Workwear.ViewModels.Regulations
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
+			this.etnDictionaryService = etnDictionaryService;
+			this.etnComplectResolver = etnComplectResolver;
+			this.sizeService = sizeService;
 
 			var performance = new PerformanceHelper(logger: logger);
 			var normConditionQuery = UoW.Session.QueryOver<NormCondition>()
@@ -129,6 +142,38 @@ namespace Workwear.ViewModels.Regulations
 			var norm = UoW.GetById<Norm>(normId);
 			Entity.CopyFromNorm(norm);
 		}
+
+		#region Импорт из справочника ЕТН
+		private EtnNormImportModel etnImportModel;
+
+		public virtual bool FillFromEtnSensitive => Entity.Id == 0;
+
+		public void SelectFromEtn()
+		{
+			var page = NavigationManager.OpenViewModel<EtnNormJournalViewModel>(this, OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
+			page.ViewModel.OnSelectResult += EtnNormSelection_OnSelectResult;
+		}
+
+		private void EtnNormSelection_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var etnNode = e.GetSelectedObjects<EtnNorm>().FirstOrDefault();
+			if(etnNode == null)
+				return;
+
+			var etnNorm = etnDictionaryService.GetNormItems(etnNode.NormId);
+			FillFromEtn(etnNorm);
+		}
+
+		/// <summary>
+		/// Заполняет новую норму данными, полученными из справочника ЕТН: должность и строки нормы.
+		/// </summary>
+		public void FillFromEtn(EtnGetNormResponse etnNorm)
+		{
+			etnImportModel = new EtnNormImportModel(UoW, Entity, interactive, etnComplectResolver, sizeService);
+			etnImportModel.FillFromEtn(etnNorm);
+		}
+		#endregion
 
 		#region Дочерние ViewModels
 		public NormEmployeesViewModel EmployeesViewModel { get; }
@@ -382,13 +427,19 @@ namespace Workwear.ViewModels.Regulations
 				.Select(x => x.GetEntity<NormItem>()).ToList();
 		}
 		
-		public override bool Save() 
+		public override bool Save()
 		{
+			if(etnImportModel != null && !etnImportModel.ConfirmAutoCreatedEntities())
+				return false;
+
 			needUpdateEmployees = false;
 			needRecalculateIssue.Clear();
 			if(!base.Save())
 				return false;
-			
+
+			etnImportModel?.ClearAutoCreated();
+			OnPropertyChanged(nameof(FillFromEtnSensitive));
+
 			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
 			if(needRecalculateIssue.Any()) {
 				var operations = employeeIssueRepository.GetOperationsForNormItem(

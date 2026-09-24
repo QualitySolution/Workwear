@@ -49,7 +49,7 @@ namespace workwear.Journal.ViewModels.Regulations
 			EmployeeIssueModel employeeIssueModel,
 			FeaturesService featuresService,
 			IDeleteEntityService deleteEntityService = null,
-			ICurrentPermissionService currentPermissionService = null) 
+			ICurrentPermissionService currentPermissionService = null)
 			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));

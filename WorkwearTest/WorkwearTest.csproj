@@ -104,6 +104,10 @@
       <Project>{b0f853e4-43c9-4c7e-8812-2060fa43b5fe}</Project>
       <Name>QS.Cloud.WearLk.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QS.Cloud.WorkwearDictionary.Client\QS.Cloud.WorkwearDictionary.Client.csproj">
+      <Project>{562724e7-aa46-4093-a00e-46fe9c6ec443}</Project>
+      <Name>QS.Cloud.WorkwearDictionary.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
       <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
       <Name>Workwear.Core</Name>

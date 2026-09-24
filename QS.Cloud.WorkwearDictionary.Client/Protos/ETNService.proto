@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package QS.Cloud.WorkwearDictionary;
+
+option csharp_namespace = "QS.Cloud.WorkwearDictionary.Grpc.Contracts";
+
+service ETNService {
+
+	rpc GetNormsList(GetNormsListRequest) returns (GetNormsListResponse);
+
+	rpc GetNormItems(GetNormRequest) returns (GetNormResponse);
+}
+
+message GetNormsListRequest {
+	int32 page = 1;
+	int32 page_size = 2;
+	string search_query = 3;
+}
+
+message GetNormsListResponse {
+	repeated Norm norms = 1;
+	int32 total_count = 2;
+}
+
+message GetNormRequest {
+	int32 id = 1;
+}
+
+message Norm {
+	int32 norm_id = 1;
+	string number_norm = 2;
+	string post_name = 3;
+	int32 items_count = 4;
+}
+
+message GetNormResponse {
+	repeated NormItem items = 1;
+	string number_norm = 2;
+	string post_name = 3;
+}
+
+message NormItem {
+	ComplectType complect_type = 1;
+	string complect_name = 2;
+	repeated ItemSIZ items = 3;
+}
+
+message ItemSIZ {
+	int32 id = 1;
+	string siz_name = 2;
+	string siz_type = 3;
+	string condition = 4;
+	int32 amount = 5;
+	int32 period_count = 6;
+	PeriodType period_type = 7;
+}
+
+enum ComplectType {
+	COMPLECT_TYPE_ONE = 0;
+	COMPLECT_TYPE_OR = 1;
+	COMPLECT_TYPE_AND = 2;
+}
+
+enum PeriodType {
+	PERIOD_TYPE_YEAR = 0;
+	PERIOD_TYPE_MONTH = 1;
+	PERIOD_TYPE_WEAROUT = 2;
+	PERIOD_TYPE_ONE_USE = 3;
+	PERIOD_TYPE_NEED_SET = 4;
+}
