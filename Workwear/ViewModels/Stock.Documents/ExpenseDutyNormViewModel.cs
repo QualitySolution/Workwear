@@ -12,6 +12,7 @@ using QS.DomainModel.UoW;
 using QS.Navigation;
 using QS.Permissions;
 using QS.Project.Domain;
+using QS.Project.Services;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
@@ -50,6 +51,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 		private readonly CurrentUserSettings currentUserSettings;
 		private readonly CommonMessages commonMessages;
 		private readonly IssuedSheetPrintModel printModel;
+		private readonly IDeleteEntityService deleteService;
 		public SizeService SizeService { get; }
 		
 		#region ViewModels
@@ -78,6 +80,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 			FeaturesService featuresService,
 			StockRepository stockRepository,
 			IssuedSheetPrintModel printModel,
+			IDeleteEntityService deleteService,
 			DutyNorm dutyNorm = null,
 			UnitOfWorkProvider unitOfWorkProvider = null)
 			: base(uowBuilder, unitOfWorkFactory, navigation, permissionService, interactive, validator, unitOfWorkProvider) {
@@ -89,6 +92,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.commonMessages = commonMessages ?? throw new ArgumentNullException(nameof(commonMessages));
 			this.printModel = printModel ?? throw new ArgumentNullException(nameof(printModel));
+			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			(stockRepository ?? throw new ArgumentNullException(nameof(stockRepository))).RepoUow = UoW;
 			SetDocumentDateProperty(e => e.Date);
 			
@@ -212,7 +216,14 @@ namespace Workwear.ViewModels.Stock.Documents {
 		}
 
 		public void DeleteItem(ExpenseDutyNormItem item) {
-			Entity.RemoveItem(item);
+			if(item.Id > 0) {
+				if(UoW.HasChanges)
+					if(!Save())
+						return;
+				deleteService.DeleteEntity<ExpenseDutyNormItem>(item.Id, UoW, () => Entity.RemoveItem(item));
+			}
+			else
+				Entity.RemoveItem(item);
 		}
 
 		public void ChooseStockPosition(ExpenseDutyNormItem item) {
@@ -366,8 +377,8 @@ namespace Workwear.ViewModels.Stock.Documents {
 				if(item.ProtectionTools != null)
 					item.DutyNormItem = Entity.DutyNorm.Items.First(x => x.ProtectionTools == item.ProtectionTools);
 			
-			foreach(var item in Entity.Items.Where(x => x.Amount <= 0).ToList()) 
-				DeleteItem(item);
+			foreach(var item in Entity.Items.Where(x => x.Id == 0 && x.Amount <= 0).ToList())
+				Entity.RemoveItem(item);
 			
 			Entity.UpdateIssuanceSheet();
 			if(Entity.IssuanceSheet != null)
