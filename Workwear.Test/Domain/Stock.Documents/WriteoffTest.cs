@@ -338,15 +338,20 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var writeoff = new Writeoff { Date = new DateTime(2024, 1, 15) };
 			writeoff.AddItem(issueOperation, 1, new[] { barcode });
-			writeoff.Items[0].Amount = 2;
 			writeoff.Items[0].MaxAmount = 2;
 
-			var errors = writeoff.Validate(new ValidationContext(writeoff, new Dictionary<object, object> {
+			var validationContext = new ValidationContext(writeoff, new Dictionary<object, object> {
 				{ nameof(BaseParameters), Substitute.For<BaseParameters>() }
-			})).ToList();
+			});
+			var errorsWithAmountByBarcodes = writeoff.Validate(validationContext).ToList();
 
-			Assert.That(errors, Has.Some.Matches<ValidationResult>(x =>
-				x.ErrorMessage.Contains("количество должно быть равно количеству выбранных штрихкодов")));
+			writeoff.Items[0].Amount = 2;
+
+			var errors = writeoff.Validate(validationContext).ToList();
+
+			//может падать при других изменениях валидации
+			Assert.That(errors, Has.Count.EqualTo(errorsWithAmountByBarcodes.Count + 1));
+			Assert.That(errors.Select(x => x.ErrorMessage), Has.Some.Contains(issueOperation.Nomenclature.Name));
 		}
 
 		[Test(Description = "Документ списания не проходит валидацию, если одна и та же метка добавлена в двух разных строках документа.")]
@@ -369,16 +374,21 @@ namespace Workwear.Test.Domain.Stock.Documents
 
 			var writeoff = new Writeoff { Date = new DateTime(2024, 1, 15) };
 			writeoff.AddItem(firstIssueOperation, 1, new[] { barcode });
-			writeoff.AddItem(secondIssueOperation, 1, new[] { barcode });
-			foreach(var item in writeoff.Items)
-				item.MaxAmount = 1;
+			writeoff.Items[0].MaxAmount = 1;
 
-			var errors = writeoff.Validate(new ValidationContext(writeoff, new Dictionary<object, object> {
+			var validationContext = new ValidationContext(writeoff, new Dictionary<object, object> {
 				{ nameof(BaseParameters), Substitute.For<BaseParameters>() }
-			})).ToList();
+			});
+			var errorsBeforeDuplicate = writeoff.Validate(validationContext).ToList();
 
-			Assert.That(errors, Has.Some.Matches<ValidationResult>(x =>
-				x.ErrorMessage.Contains("несколько раз указана одна и та же метка")));
+			writeoff.AddItem(secondIssueOperation, 1, new[] { barcode });
+			writeoff.Items[1].MaxAmount = 1;
+
+			var errors = writeoff.Validate(validationContext).ToList();
+
+			//может падать при других изменениях валидации
+			Assert.That(errors, Has.Count.EqualTo(errorsBeforeDuplicate.Count + 1));
+			Assert.That(errors.Select(x => x.ErrorMessage), Has.Some.Contains(barcode.Title));
 		}
 
 		[Test(Description = "Документ списания без повторяющихся меток проходит эту проверку валидации.")]
@@ -404,8 +414,8 @@ namespace Workwear.Test.Domain.Stock.Documents
 				{ nameof(BaseParameters), Substitute.For<BaseParameters>() }
 			})).ToList();
 
-			Assert.That(errors, Has.None.Matches<ValidationResult>(x =>
-				x.ErrorMessage.Contains("несколько раз указана одна и та же метка")));
+			//может падать при других изменениях валидации
+			Assert.That(errors, Is.Empty);
 		}
 	}
 }

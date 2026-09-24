@@ -108,6 +108,8 @@ namespace Workwear.Domain.Stock.Documents {
 		
 		public virtual void RemoveItem(ExpenseDutyNormItem item) {
 			Items.Remove(item);
+			if(item.IssuanceSheetItem != null) 
+				IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
 		}
 		
 		#region Ведомость
@@ -167,10 +169,16 @@ namespace Workwear.Domain.Stock.Documents {
 			if(Items.All(i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
 					new[] { nameof (Items)});
-			if(Items.Any (i => i.ProtectionTools == null))
-				yield return new ValidationResult ("Документ не должен содержать строки с неуказанной потребностью (Номенклатурой нормы).", 
+			if(Items.Any(i => i.Id != 0 && i.Amount <= 0))
+				yield return new ValidationResult ("Нельзя в сохранённом документе изменить в строке количество на 0. Но строку можно удалить.",
 					new[] { nameof (Items)});
-			
+			if(Items.Any (i => i.ProtectionTools == null))
+				yield return new ValidationResult ("Документ не должен содержать строки с неуказанной потребностью (Номенклатурой нормы).",
+					new[] { nameof (Items)});
+			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
+				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.",
+					new[] { nameof (Items)});
+
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
 			validationContext.Items.TryGetValue(nameof(StockRepository), out var repositoryObject);
