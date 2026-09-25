@@ -487,19 +487,21 @@ namespace workwear.Journal.ViewModels.Tools
 				return;
 			progressCreator.Start(operations.Count + 4, text: "Пересчет даты последней выдачи");
 			cancellation = progressCreator.CancellationToken;
-			issueModel.RecalculateDateOfIssue(operations, baseParameters, interactive, progress: progressCreator, cancellation: cancellation, 
-				changeLog: (employee, changes) => {
-					if(changes.Length > 0) {
-						Results[employee.Id] =
-							(NumberToTextRus.FormatCase(changes.Length, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат"), "green");
-						foreach(var message in changes)
-							loggerProcessing.Info(message);
-					}
-					else
-						Results[employee.Id] = ("Без изменений", "gray");
-				});
-			if (cancellation.IsCancellationRequested)
-				return;
+			if(operations.Any()) {
+				issueModel.RecalculateDateOfIssue(operations, baseParameters, interactive, progress: progressCreator, cancellation: cancellation,
+					changeLog: (employee, changes) => {
+						if(changes.Length > 0) {
+							Results[employee.Id] =
+								(NumberToTextRus.FormatCase(changes.Length, "изменена {0} дата", "изменено {0} даты", "изменено {0} дат"), "green");
+							foreach(var message in changes)
+								loggerProcessing.Info(message);
+						}
+						else
+							Results[employee.Id] = ("Без изменений", "gray");
+					});
+				if(cancellation.IsCancellationRequested)
+					return;
+			}
 			progressCreator.Add(text: "Завершаем...");
 			UoW.Commit();
 			progressCreator.Add(text: "Обновляем журнал");
