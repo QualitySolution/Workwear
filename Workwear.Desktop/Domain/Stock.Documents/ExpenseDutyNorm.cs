@@ -162,8 +162,11 @@ namespace Workwear.Domain.Stock.Documents {
 				yield return new ValidationResult ("Норма должна быть указана", 
 					new[] { nameof (DutyNorm)});
 			if(Warehouse == null)
-				yield return new ValidationResult ("Склад должен быть указан", 
+				yield return new ValidationResult ("Склад должен быть указан",
 					new[] { nameof (Warehouse)});
+			if(IssuanceSheet != null && ResponsibleEmployee == null)
+				yield return new ValidationResult ("Для документа с привязанной складской ведомостью ответственный сотрудник должен быть указан.",
+					new[] { nameof (ResponsibleEmployee)});
 			if(Items.All(i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
 					new[] { nameof (Items)});
