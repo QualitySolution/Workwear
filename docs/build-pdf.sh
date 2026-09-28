@@ -15,6 +15,11 @@ if ! npm list -g --depth=0 @antora/pdf-extension >/dev/null 2>&1; then
 	exit 1
 fi
 
+if ! gem list -i asciidoctor-pdf >/dev/null 2>&1; then
+	echo "Устанавливается gem asciidoctor-pdf для текущей версии Ruby..."
+	gem install --no-document asciidoctor-pdf
+fi
+
 antora antora-playbook-pdf.yml
 
 ExportDir=$(find build/pdf/workwear -type d -name _exports -print -quit)
