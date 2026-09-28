@@ -167,14 +167,16 @@ namespace Workwear.Test.Domain.Stock.Documents {
 
 			var document = new Return();
 			document.AddItem(firstIssueOperation, 1, barcodes: new[] { barcode });
+			document.Items[0].MaxAmount = 1;
+			var errorsBeforeDuplicate = document.Validate(new ValidationContext(document)).ToList();
+
 			document.AddItem(secondIssueOperation, 1, barcodes: new[] { barcode });
-			foreach(var item in document.Items)
-				item.MaxAmount = 1;
+			document.Items[1].MaxAmount = 1;
 
 			var errors = document.Validate(new ValidationContext(document)).ToList();
 
-			Assert.That(errors, Has.Some.Matches<ValidationResult>(x =>
-				x.ErrorMessage.Contains("несколько раз указана одна и та же метка")));
+			Assert.That(errors, Has.Count.EqualTo(errorsBeforeDuplicate.Count + 1));
+			Assert.That(errors.Select(x => x.ErrorMessage), Has.Some.Contains(barcode.Title));
 		}
 
 		[Test(Description = "Документ возврата без повторяющихся меток проходит эту проверку валидации.")]
@@ -198,8 +200,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 
 			var errors = document.Validate(new ValidationContext(document)).ToList();
 
-			Assert.That(errors, Has.None.Matches<ValidationResult>(x =>
-				x.ErrorMessage.Contains("несколько раз указана одна и та же метка")));
+			Assert.That(errors, Is.Empty);
 		}
 	}
 }
