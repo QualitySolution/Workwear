@@ -1,5 +1,8 @@
 Unicode true
 ;--------------------------------
+SetCompressor /SOLID lzma
+SetDatablockOptimize on
+;--------------------------------
 !define PRODUCT_VERSION "2.10.14"
 !define NET_VERSION "4.6.2"
 !define EXE_NAME "workwear"
