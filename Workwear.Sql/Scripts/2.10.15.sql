@@ -6,3 +6,7 @@ ALTER TABLE protection_tools
 -- Разрешаем приём на обслуживание спецодежды, числящейся не на сотруднике.
 ALTER TABLE clothing_service_claim
 	MODIFY employee_id int UNSIGNED NULL;
+
+-- Срок ранней выдачи разделён по типам выдачи. Коллективным выдачам переносим прежнее общее значение.
+INSERT IGNORE INTO base_parameters (name, str_value)
+SELECT 'ColDayAheadOfSheduleCollective', str_value FROM base_parameters WHERE name = 'ColDayAheadOfShedule';
