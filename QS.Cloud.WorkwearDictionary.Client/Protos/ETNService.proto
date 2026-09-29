@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package QS.Cloud.WorkwearDictionary;
 
-option csharp_namespace = "QS.Cloud.WorkwearDictionary.Grpc.Contracts";
-
+option csharp_namespace = "QS.Cloud.WorkwearDictionary.Contracts";
+ 
 service ETNService {
 
 	rpc GetNormsList(GetNormsListRequest) returns (GetNormsListResponse);
