@@ -5,9 +5,9 @@ using QS.Dialog;
 using Workwear.Models.Regulations;
 using Workwear.ViewModels.Regulations;
 using Workwear.Views.Regulations;
-using EtnNormItem = QS.Cloud.WorkwearDictionary.Grpc.Contracts.NormItem;
-using EtnItemSIZ = QS.Cloud.WorkwearDictionary.Grpc.Contracts.ItemSIZ;
-using EtnPeriodType = QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType;
+using EtnNormItem = QS.Cloud.WorkwearDictionary.NormItem;
+using EtnItemSIZ = QS.Cloud.WorkwearDictionary.ItemSIZ;
+using EtnPeriodType = QS.Cloud.WorkwearDictionary.PeriodType;
 
 namespace Workwear.Tools.Regulations {
 	/// <summary>
