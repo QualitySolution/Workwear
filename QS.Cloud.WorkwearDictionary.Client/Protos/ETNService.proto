@@ -12,9 +12,16 @@ service ETNService {
 }
 
 message GetNormsListRequest {
+	// Ноль - вернуть всё.
 	int32 page = 1;
 	int32 page_size = 2;
 	string search_query = 3;
+	//Приложение приказа
+	App app = 4;
+	// Ноль - вернуть корневые узлы.
+	int32 parent_id = 5;
+	// Отдать все дочерние для app и parent_id
+	bool recursive = 6;
 }
 
 message GetNormsListResponse {
@@ -23,26 +30,44 @@ message GetNormsListResponse {
 }
 
 message GetNormRequest {
-	int32 id = 1;
+	repeated int32 norm_ids = 1;
+	bool include_children = 2;
+	bool include_additional = 3;
 }
 
 message Norm {
 	int32 norm_id = 1;
+	// В приложении 1 - порядковый номер нормы, в 2 и 3 приложениях пункты
 	string number_norm = 2;
-	string post_name = 3;
+	// В приложении 1 должность, в 2 опасность/событие, в 3 загрязнитель или вид работ.
+	string norm_name = 3;
+	// Количество строк СИЗ с учётом дочерних узлов.
 	int32 items_count = 4;
+	int32 parent_id = 5;
+	App app = 6;
+	NormLevel level = 7;
+	NormKind kind = 8;
+	// Текст приказа вместо перечня СИЗ, если есть
+	string note = 9;
+	// Заполняется только при recursive = true в запросе.
+	repeated Norm children = 10;
 }
 
 message GetNormResponse {
 	repeated NormItem items = 1;
 	string number_norm = 2;
-	string post_name = 3;
+	string norm_name = 3;
+	App app = 4;
+	repeated Norm norms = 5;
 }
 
 message NormItem {
 	ComplectType complect_type = 1;
 	string complect_name = 2;
 	repeated ItemSIZ items = 3;
+	int32 alt_group = 4;
+	bool is_additional = 5;
+	int32 norm_id = 6;
 }
 
 message ItemSIZ {
@@ -53,6 +78,54 @@ message ItemSIZ {
 	int32 amount = 5;
 	int32 period_count = 6;
 	PeriodType period_type = 7;
+	string unit = 8;
+	string period_special = 9;
+	//Дерматологическое
+	bool dermal_ppe = 10;
+	DermalType dermal_type = 11;
+}
+
+enum App {
+	APP_UNSPECIFIED = 0;
+	// Приложение 1: нормы по профессиям (должностям).
+	APP_POSTS = 1;
+	// Приложение 2: нормы по опасностям.
+	APP_HAZARDS = 2;
+	// Приложение 3: дерматологические СИЗ и смывающие средства.
+	APP_DERMAL = 3;
+}
+
+enum NormLevel {
+	// Верхний уровень. Для приложения 2 раздел опасностей, для приложения 3 - таблица.
+	NORM_LEVEL_SECTION = 0;
+	// Опасность.
+	NORM_LEVEL_HAZARD = 1;
+	// Опасное событие. "Лист" дерева приложения 2 - к нему привязаны строки СИЗ.
+	NORM_LEVEL_EVENT = 2;
+	// Объект: загрязнитель или вид работ приложения 3, либо сама норма
+	// приложения 1 - там дерева нет, это сразу "лист". В приложении 3 не лист:
+	// строки СИЗ висят на его дочерних DERMAL_TYPE.
+	NORM_LEVEL_SUBJECT = 3;
+	// Тип ДСИЗ (защитный/очищающий/регенерирующий) - только у приложения 3.
+	// "Лист" дерева приложения 3: к нему привязаны строки СИЗ.
+	NORM_LEVEL_DERMAL_TYPE = 4;
+}
+
+enum NormKind {
+	NORM_KIND_HAZARD = 0;
+	NORM_KIND_POLLUTANT = 1;
+	NORM_KIND_WORK_TYPE = 2;
+	NORM_KIND_POST = 3;
+}
+
+// Значимо только при dermal_ppe = true
+enum DermalType {
+	// Защитного типа: гидрофильные, гидрофобные, комбинированные и прочие.
+	DERMAL_TYPE_PROTECTIVE = 0;
+	// Очищающего типа и смывающие средства.
+	DERMAL_TYPE_CLEANSING = 1;
+	// Регенерирующего (восстанавливающего) типа.
+	DERMAL_TYPE_REGENERATING = 2;
 }
 
 enum ComplectType {
@@ -67,4 +140,5 @@ enum PeriodType {
 	PERIOD_TYPE_WEAROUT = 2;
 	PERIOD_TYPE_ONE_USE = 3;
 	PERIOD_TYPE_NEED_SET = 4;
+	PERIOD_TYPE_DUTY = 5;
 }
