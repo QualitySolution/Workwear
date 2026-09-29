@@ -1,6 +1,6 @@
 -- Альтернативное наименование номенклатуры нормы для отображения на лицевой карточке сотрудника.
 ALTER TABLE protection_tools
-    ADD COLUMN `official_name` VARCHAR(800) NULL DEFAULT NULL
+    ADD COLUMN `official_name` VARCHAR(800) NULL DEFAULT NULL COMMENT 'Наименование, отображаемое на лицевой карточке сотрудника, если заполнено'
         AFTER name;
 
 -- Разрешаем приём на обслуживание спецодежды, числящейся не на сотруднике.
