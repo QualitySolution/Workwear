@@ -184,6 +184,7 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeVacationView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.VacationTypeView.cs" />
     <Compile Include="Tools\Permissions\PermissionsService.cs" />
+    <Compile Include="Tools\Regulations\GtkEtnComplectResolver.cs" />
     <Compile Include="ViewModels\Analytics\ProtectionToolsCategoryViewModel.cs" />
     <Compile Include="ViewModels\Analytics\WarehouseForecastingViewModel.cs" />
     <Compile Include="ViewModels\ClothingService\BarcodeInfoViewModel.cs" />
@@ -319,12 +320,14 @@
     <Compile Include="gtk-gui\Workwear.Views.Company.PostView.cs" />
     <Compile Include="Views\Regulations\NormView.cs" />
     <Compile Include="ViewModels\Regulations\NormViewModel.cs" />
+    <Compile Include="ViewModels\Regulations\EtnComplectWidgetViewModel.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Regulations.NormView.cs" />
     <Compile Include="ViewModels\Regulations\ProtectionToolsViewModel.cs" />
     <Compile Include="Views\Regulations\ProtectionToolsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Regulations.ProtectionToolsView.cs" />
     <Compile Include="Journal\ViewModels\Regulations\ProtectionToolsJournalViewModel.cs" />
     <Compile Include="Journal\ViewModels\Regulations\NormJournalViewModel.cs" />
+    <Compile Include="Journal\ViewModels\Regulations\EtnNormJournalViewModel.cs" />
     <Compile Include="ViewModels\Stock\ItemTypeViewModel.cs" />
     <Compile Include="Views\Stock\ItemTypeView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.ItemTypeView.cs" />
@@ -599,6 +602,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Stock.Documents.BarcodingView.cs" />
     <Compile Include="Views\Company\EmployeeChildren\EmployeeOverNormView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Company.EmployeeChildren.EmployeeOverNormView.cs" />
+    <Compile Include="Views\Regulations\EtnComplectWidgetView.cs" />
+    <Compile Include="gtk-gui\Workwear.Views.Regulations.EtnComplectWidgetView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -613,6 +618,10 @@
     <ProjectReference Include="..\QS.Cloud.Postomat.Client\QS.Cloud.Postomat.Client.csproj">
       <Project>{2983a1a1-9b12-48bd-8211-1745049d5a00}</Project>
       <Name>QS.Cloud.Postomat.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QS.Cloud.WorkwearDictionary.Client\QS.Cloud.WorkwearDictionary.Client.csproj">
+      <Project>{562724e7-aa46-4093-a00e-46fe9c6ec443}</Project>
+      <Name>QS.Cloud.WorkwearDictionary.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\QSProjects\Binding\Gamma.Binding\Gamma.Binding.csproj">
       <Project>{190cea0d-ea23-4c91-8030-203a5afed7b7}</Project>

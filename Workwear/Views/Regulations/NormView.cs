@@ -76,6 +76,9 @@ namespace Workwear.Views.Regulations
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SaveSensitive, w => w.Sensitive).InitializeFromSource();
 			buttonCancel.Binding.AddBinding(ViewModel, v => v.CancelSensitive, w => w.Sensitive).InitializeFromSource();
+
+			ybuttonFromETN.Binding.AddBinding(ViewModel, v => v.FillFromEtnSensitive, w => w.Sensitive).InitializeFromSource();
+			ybuttonFromETN.Clicked += (sender, e) => ViewModel.SelectFromEtn();
 		}
 
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)
