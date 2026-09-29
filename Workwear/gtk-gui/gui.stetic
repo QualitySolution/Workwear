@@ -6792,7 +6792,7 @@
             <child>
               <widget class="Gtk.Label" id="label10">
                 <property name="MemberName" />
-                <property name="LabelProp" translatable="yes">Выдаваемые номеклатуры</property>
+                <property name="LabelProp" translatable="yes">Выдаваемые номенклатуры</property>
               </widget>
               <packing>
                 <property name="type">tab</property>
@@ -26439,7 +26439,7 @@
           <widget class="Gamma.GtkWidgets.yCheckButton" id="checkWearoutToName">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Label" translatable="yes">Переносить "до износа" в имя номеклатуры</property>
+            <property name="Label" translatable="yes">Переносить "до износа" в имя номенклатуры</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
@@ -29355,7 +29355,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabelExcludeFullEmployees">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Исключить обеспеченых из списков</property>
+                <property name="LabelProp" translatable="yes">Исключить обеспеченных из списков</property>
               </widget>
               <packing>
                 <property name="TopAttach">9</property>

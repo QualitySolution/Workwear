@@ -254,7 +254,7 @@ namespace Workwear.ReportParameters.Views
 			this.ylabelExcludeFullEmployees = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelExcludeFullEmployees.Name = "ylabelExcludeFullEmployees";
 			this.ylabelExcludeFullEmployees.Xalign = 1F;
-			this.ylabelExcludeFullEmployees.LabelProp = global::Mono.Unix.Catalog.GetString("Исключить обеспеченых из списков");
+			this.ylabelExcludeFullEmployees.LabelProp = global::Mono.Unix.Catalog.GetString("Исключить обеспеченных из списков");
 			this.table1.Add(this.ylabelExcludeFullEmployees);
 			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelExcludeFullEmployees]));
 			w13.TopAttach = ((uint)(9));
