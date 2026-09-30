@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Workwear.Domain.Regulations;
-using EtnNormItem = QS.Cloud.WorkwearDictionary.Grpc.Contracts.NormItem;
-using EtnItemSIZ = QS.Cloud.WorkwearDictionary.Grpc.Contracts.ItemSIZ;
+using EtnNormItem = QS.Cloud.WorkwearDictionary.NormItem;
+using EtnItemSIZ = QS.Cloud.WorkwearDictionary.ItemSIZ;
 
 namespace Workwear.Models.Regulations {
 	/// <summary>

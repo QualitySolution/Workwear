@@ -386,7 +386,7 @@ namespace Workwear.Views.Regulations
 			// Notebook tab
 			this.label10 = new global::Gtk.Label();
 			this.label10.Name = "label10";
-			this.label10.LabelProp = global::Mono.Unix.Catalog.GetString("Выдаваемые номеклатуры");
+			this.label10.LabelProp = global::Mono.Unix.Catalog.GetString("Выдаваемые номенклатуры");
 			this.tabs.SetTabLabel(this.vbox1, this.label10);
 			this.label10.ShowAll();
 			this.dialog1_VBox.Add(this.tabs);

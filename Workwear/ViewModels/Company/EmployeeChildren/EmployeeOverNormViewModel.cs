@@ -36,6 +36,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 		public void LoadNodes() {
 			EmployeeOverNormNode resultAlias = null;
 			OverNormOperation overNormOperationAlias = null;
+			OverNormOperation returnedOperationAlias = null;
+			WarehouseOperation returnedWarehouseOperationAlias = null;
 			OverNormItem overNormDocItemAlias = null;
 			OverNorm overNormDocAlias = null;
 			WarehouseOperation warehouseOperationAlias = null;
@@ -52,8 +54,18 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 				NHibernateUtil.String,
 				Projections.Property(() => barcodeAlias.Title));
 
+			var returnedAmountSubquery = QueryOver.Of(() => returnedOperationAlias)
+				.JoinAlias(() => returnedOperationAlias.WarehouseOperation, () => returnedWarehouseOperationAlias)
+				.Where(() => returnedOperationAlias.ReturnFromOperation.Id == overNormOperationAlias.Id)
+				.Select(Projections.Sum(() => returnedWarehouseOperationAlias.Amount));
+			var removedProjection = Projections.SqlFunction(
+				new SQLFunctionTemplate(NHibernateUtil.Int32, "IFNULL(?1, 0)"),
+				NHibernateUtil.Int32,
+				Projections.SubQuery(returnedAmountSubquery));
+
 			var query = UoW.Session.QueryOver(() => overNormOperationAlias)
-				.Where(e => e.Employee.Id == Entity.Id);
+				.Where(e => e.Employee.Id == Entity.Id)
+				.Where(() => overNormOperationAlias.ReturnFromOperation == null);
 			query
 				.JoinEntityAlias(() => overNormDocItemAlias, () => overNormDocItemAlias.OverNormOperation.Id == overNormOperationAlias.Id, JoinType.LeftOuterJoin)
 				.JoinAlias(() => overNormDocItemAlias.Document, () => overNormDocAlias, JoinType.LeftOuterJoin)
@@ -78,6 +90,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 					.Select(() => warehouseOperationAlias.Cost).WithAlias (() => resultAlias.AvgCost)
 					.Select(() => warehouseOperationAlias.WearPercent).WithAlias (() => resultAlias.WearPercent)
 					.Select(() => warehouseOperationAlias.Amount).WithAlias (() => resultAlias.Added)
+					.Select(removedProjection).WithAlias (() => resultAlias.Removed)
 					.Select(() => warehouseOperationAlias.OperationTime).WithAlias (() => resultAlias.Date)
 					.Select(() => overNormOperationAlias.Comment).WithAlias (() => resultAlias.Comment)
 					.Select(barcodesProjection).WithAlias (() => resultAlias.BarcodesString)
@@ -87,7 +100,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren {
 					.TransformUsing (Transformers.AliasToBean<EmployeeOverNormNode>())
 					.List<EmployeeOverNormNode>()
 					.Where(r => r.Added - r.Removed != 0);
-			foreach(var item in items) 
+			foreach(var item in items)
 				ObservableItems.Add(item);
 		}
 				

@@ -28,8 +28,8 @@ using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
 using QS.Cloud.WorkwearDictionary.Client;
 //Алиасы на сервис ЕТН.
-using EtnNorm = QS.Cloud.WorkwearDictionary.Grpc.Contracts.Norm;
-using EtnGetNormResponse = QS.Cloud.WorkwearDictionary.Grpc.Contracts.GetNormResponse;
+using EtnNorm = QS.Cloud.WorkwearDictionary.Norm;
+using EtnGetNormResponse = QS.Cloud.WorkwearDictionary.GetNormResponse;
 
 namespace Workwear.ViewModels.Regulations
 {

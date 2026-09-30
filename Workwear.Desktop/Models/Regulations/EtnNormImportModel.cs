@@ -11,11 +11,11 @@ using Workwear.Domain.Stock;
 using Workwear.Models.Import;
 using Workwear.Tools.Sizes;
 
-using EtnNormItem = QS.Cloud.WorkwearDictionary.Grpc.Contracts.NormItem;
-using EtnGetNormResponse = QS.Cloud.WorkwearDictionary.Grpc.Contracts.GetNormResponse;
-using EtnItemSIZ = QS.Cloud.WorkwearDictionary.Grpc.Contracts.ItemSIZ;
-using EtnPeriodType = QS.Cloud.WorkwearDictionary.Grpc.Contracts.PeriodType;
-using EtnComplectType = QS.Cloud.WorkwearDictionary.Grpc.Contracts.ComplectType;
+using EtnNormItem = QS.Cloud.WorkwearDictionary.NormItem;
+using EtnGetNormResponse = QS.Cloud.WorkwearDictionary.GetNormResponse;
+using EtnItemSIZ = QS.Cloud.WorkwearDictionary.ItemSIZ;
+using EtnPeriodType = QS.Cloud.WorkwearDictionary.PeriodType;
+using EtnComplectType = QS.Cloud.WorkwearDictionary.ComplectType;
 
 namespace Workwear.Models.Regulations {
 	/// <summary>
@@ -61,11 +61,11 @@ namespace Workwear.Models.Regulations {
 		}
 
 		public void FillFromEtn(EtnGetNormResponse etnNorm) {
-			norm.Name = etnNorm.PostName;
+			norm.Name = etnNorm.NormName;
 			norm.Comment = $"{CreatedComment}, №{etnNorm.NumberNorm} в приложении №1 приказа Минтруда РФ от 29.10.2021 N 767Н ";
 			normParagraph = $"п.{etnNorm.NumberNorm} Приложение 1 приказа №767Н от 29.10.2021";
 
-			FillPostFromEtn(etnNorm.PostName);
+			FillPostFromEtn(etnNorm.NormName);
 
 			var itemsTypesCache = new Dictionary<string, ItemsType>();
 			var protectionToolsCache = new Dictionary<string, ProtectionTools>();

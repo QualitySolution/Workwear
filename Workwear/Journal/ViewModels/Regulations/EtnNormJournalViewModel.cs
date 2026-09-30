@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using QS.Cloud.WorkwearDictionary.Client;
-using QS.Cloud.WorkwearDictionary.Grpc.Contracts;
+using QS.Cloud.WorkwearDictionary;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;

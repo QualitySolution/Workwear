@@ -1,6 +1,6 @@
 using QS.BaseParameters;
 using QS.Cloud.Client;
-using QS.Cloud.WorkwearDictionary.Grpc.Contracts;
+using QS.Cloud.WorkwearDictionary;
 
 namespace QS.Cloud.WorkwearDictionary.Client {
 	public class EtnDictionaryService : CloudClientServiceBase {
@@ -25,7 +25,7 @@ namespace QS.Cloud.WorkwearDictionary.Client {
 
 		public GetNormResponse GetNormItems(int normId) {
 			var client = new ETNService.ETNServiceClient(Channel);
-			var request = new GetNormRequest { Id = normId };
+			var request = new GetNormRequest { NormIds = { normId } };
 			return client.GetNormItems(request, Headers);
 		}
 		#endregion

@@ -49,8 +49,7 @@ namespace Workwear.Views.Stock.Documents {
 			ybuttonChoosePositions.Binding
 				.AddBinding(ViewModel, vm => vm.CanChooseStockPositionsSelectedItem, w => w.Sensitive).InitializeFromSource();
 			buttonIssuanceSheetOpen.Binding
-				.AddBinding(ViewModel,v=>v.IssuanceSheetOpenVisible, w=>w.Visible)
-				.AddBinding(ViewModel,v=>v.IssuanceSheetCreateSensitive, w=>w.Sensitive).InitializeFromSource();
+				.AddBinding(ViewModel,v=>v.IssuanceSheetOpenVisible, w=>w.Visible).InitializeFromSource();
 			buttonIssuanceSheetCreate.Binding
 				.AddBinding(ViewModel, v=>v.IssuanceSheetCreateVisible, w=>w.Visible).InitializeFromSource();
 			enumPrint.ItemsEnum=typeof(IssuedSheetPrint);
