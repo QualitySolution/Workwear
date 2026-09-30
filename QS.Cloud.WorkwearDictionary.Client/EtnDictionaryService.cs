@@ -16,6 +16,7 @@ namespace QS.Cloud.WorkwearDictionary.Client {
 		public GetNormsListResponse GetNormsList(int page, int pageSize, string searchQuery = null) {
 			var client = new ETNService.ETNServiceClient(Channel);
 			var request = new GetNormsListRequest {
+				App = App.Posts,
 				Page = page,
 				PageSize = pageSize,
 				SearchQuery = searchQuery ?? string.Empty
