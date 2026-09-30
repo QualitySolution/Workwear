@@ -12,7 +12,6 @@ service ETNService {
 }
 
 message GetNormsListRequest {
-	// Ноль - вернуть всё.
 	int32 page = 1;
 	int32 page_size = 2;
 	string search_query = 3;
