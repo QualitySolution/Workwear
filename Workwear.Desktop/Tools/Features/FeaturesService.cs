@@ -229,6 +229,7 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.CustomSizes:
 				case WorkwearFeature.DutyNorms:
 				case WorkwearFeature.EditLockDate:
+				case WorkwearFeature.EtnDictionary:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.ReportIssued:
 				case WorkwearFeature.ReportOrder:
@@ -290,6 +291,8 @@ namespace Workwear.Tools.Features
 		DutyNorms,
 		[Display(Name = "Дата запрета редактирования")]
 		EditLockDate,
+		[Display(Name = "Справочник ЕТН")]
+		EtnDictionary,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
 		[Display(Name = "Отпуска")]

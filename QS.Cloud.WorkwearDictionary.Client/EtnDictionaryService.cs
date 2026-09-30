@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using QS.BaseParameters;
 using QS.Cloud.Client;
 using QS.Cloud.WorkwearDictionary;
@@ -13,20 +14,30 @@ namespace QS.Cloud.WorkwearDictionary.Client {
 		}
 
 		#region Запросы
-		public GetNormsListResponse GetNormsList(int page, int pageSize, string searchQuery = null) {
+		public GetNormsListResponse GetNormsList(int page, int pageSize, string searchQuery = null,
+			App app = App.Posts, int parentId = 0, bool recursive = false) {
 			var client = new ETNService.ETNServiceClient(Channel);
 			var request = new GetNormsListRequest {
-				App = App.Posts,
 				Page = page,
 				PageSize = pageSize,
-				SearchQuery = searchQuery ?? string.Empty
+				SearchQuery = searchQuery ?? string.Empty,
+				App = app,
+				ParentId = parentId,
+				Recursive = recursive
 			};
 			return client.GetNormsList(request, Headers);
 		}
 
-		public GetNormResponse GetNormItems(int normId) {
+		public GetNormResponse GetNormItems(int normId) => GetNormItems(new[] { normId });
+
+		public GetNormResponse GetNormItems(IEnumerable<int> normIds, bool includeChildren = false,
+			bool includeAdditional = false) {
 			var client = new ETNService.ETNServiceClient(Channel);
-			var request = new GetNormRequest { NormIds = { normId } };
+			var request = new GetNormRequest {
+				IncludeChildren = includeChildren,
+				IncludeAdditional = includeAdditional
+			};
+			request.NormIds.AddRange(normIds);
 			return client.GetNormItems(request, Headers);
 		}
 		#endregion

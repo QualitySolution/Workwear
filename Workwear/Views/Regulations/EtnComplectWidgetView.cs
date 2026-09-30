@@ -29,6 +29,8 @@ namespace Workwear.Views.Regulations {
 						.FillItems(new NormPeriodType?[] { NormPeriodType.Year, NormPeriodType.Month, NormPeriodType.Wearout }, "—")
 						.Editing()
 				.AddColumn("Комментарий").AddReadOnlyTextRenderer(x => x.Comment).WrapWidth(400)
+				.RowCells()
+					.AddSetter<Gtk.CellRendererText>((c, x) => c.Weight = x.IsCombined ? 600 : 400)
 				.Finish();
 			ytreeItems.ItemsDataSource = ViewModel.Items;
 			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;

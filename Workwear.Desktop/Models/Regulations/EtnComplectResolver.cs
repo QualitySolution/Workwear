@@ -20,6 +20,12 @@ namespace Workwear.Models.Regulations {
 		/// Возвращает выбор пользователя, либо null если пользователь отказался добавлять эти позиции.
 		/// </summary>
 		IList<EtnComplectResolvedItem> ResolveNeedPeriodItems(IList<EtnItemSIZ> items);
+
+		/// <summary>
+		/// Несколько блоков-комплектов, соединённых в приказе словом "или" (приложение 2) - пользователь
+		/// выбирает один блок целиком. Возвращает выбор пользователя, null - если отказался.
+		/// </summary>
+		EtnNormItem ResolveAltGroup(IList<EtnNormItem> alternatives);
 	}
 
 	/// <summary>
@@ -47,5 +53,15 @@ namespace Workwear.Models.Regulations {
 		/// У позиции в ЕТН period_type - "разовое использование"/"по необходимости" или есть (period_special).
 		/// </summary>
 		public bool HasUndefinedPeriod { get; set; }
+
+		/// <summary>
+		/// Смывающее/дерматологическое СИЗ (приложение 3, ItemSIZ.dermal_ppe) - переносится на создаваемую ProtectionTools.DermalPpe.
+		/// </summary>
+		public bool DermalPpe { get; set; }
+
+		/// <summary>
+		/// Единица измерения из ЕТН (ItemSIZ.unit)
+		/// </summary>
+		public string Unit { get; set; }
 	}
 }

@@ -23,13 +23,14 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Regulations;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
 using QS.Cloud.WorkwearDictionary.Client;
 //Алиасы на сервис ЕТН.
 using EtnNorm = QS.Cloud.WorkwearDictionary.Norm;
-using EtnGetNormResponse = QS.Cloud.WorkwearDictionary.GetNormResponse;
+using EtnApp = QS.Cloud.WorkwearDictionary.App;
 
 namespace Workwear.ViewModels.Regulations
 {
@@ -100,6 +101,7 @@ namespace Workwear.ViewModels.Regulations
 			}
 			performance.CheckPoint("Запрос основных данных");
 			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
+			VisibleEtnDictionary = featuresService.Available(WorkwearFeature.EtnDictionary);
 
 			var thisViewModel = new TypedParameter(typeof(NormViewModel), this);
 			PostsViewModel = autofacScope.Resolve<NormPostsViewModel>(thisViewModel);
@@ -146,6 +148,14 @@ namespace Workwear.ViewModels.Regulations
 		#region Импорт из справочника ЕТН
 		private EtnNormImportModel etnImportModel;
 
+		/// <summary>
+		/// Общий на все три приложения ЕТН - чтобы авто-созданные при импорте записи справочников
+		/// копились в одном месте независимо от того, из какого приложения (1/2/3) и в каком порядке
+		/// пользователь заполнял норму, и откатывались/подтверждались все разом в Save().
+		/// </summary>
+		private EtnNormImportModel EtnImportModel =>
+			etnImportModel ?? (etnImportModel = new EtnNormImportModel(UoW, Entity, interactive, etnComplectResolver, sizeService));
+
 		public virtual bool FillFromEtnSensitive => Entity.Id == 0;
 
 		public void SelectFromEtn()
@@ -162,17 +172,27 @@ namespace Workwear.ViewModels.Regulations
 				return;
 
 			var etnNorm = etnDictionaryService.GetNormItems(etnNode.NormId);
-			FillFromEtn(etnNorm);
+			EtnImportModel.FillFromEtn(etnNorm);
 		}
 
 		/// <summary>
-		/// Заполняет новую норму данными, полученными из справочника ЕТН: должность и строки нормы.
+		/// Приложение 2 (СИЗ по опасностям) - выбор пунктов и предпросмотр строк на отдельной вкладке.
 		/// </summary>
-		public void FillFromEtn(EtnGetNormResponse etnNorm)
+		public void SelectFromEtnHazards() => OpenEtnImport(EtnApp.Hazards);
+
+		/// <summary>
+		/// Приложение 3 (дерматологические СИЗ).
+		/// </summary>
+		public void SelectFromEtnDermal() => OpenEtnImport(EtnApp.Dermal);
+
+		private void OpenEtnImport(EtnApp app)
 		{
-			etnImportModel = new EtnNormImportModel(UoW, Entity, interactive, etnComplectResolver, sizeService);
-			etnImportModel.FillFromEtn(etnNorm);
+			var page = NavigationManager.OpenViewModel<EtnImportViewModel, EtnApp>(this, app,
+				OpenPageOptions.AsSlaveIgnoreHash);
+			page.ViewModel.Accepted += EtnImport_Accepted;
 		}
+
+		private void EtnImport_Accepted(object sender, EtnImportPlan plan) => EtnImportModel.ApplyPlan(plan);
 		#endregion
 
 		#region Дочерние ViewModels
@@ -198,6 +218,7 @@ namespace Workwear.ViewModels.Regulations
 		
 		#region Visible
 		public bool VisibleNormCondition { get; }
+		public bool VisibleEtnDictionary { get; }
 		#endregion
 
 		#region Свойства

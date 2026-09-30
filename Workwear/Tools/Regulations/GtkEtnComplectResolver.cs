@@ -16,9 +16,11 @@ namespace Workwear.Tools.Regulations {
 	/// </summary>
 	public class GtkEtnComplectResolver : IEtnComplectResolver {
 		private readonly IInteractiveMessage interactiveMessage;
+		private readonly IInteractiveQuestion interactiveQuestion;
 
-		public GtkEtnComplectResolver(IInteractiveMessage interactiveMessage) {
+		public GtkEtnComplectResolver(IInteractiveMessage interactiveMessage, IInteractiveQuestion interactiveQuestion) {
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
+			this.interactiveQuestion = interactiveQuestion ?? throw new ArgumentNullException(nameof(interactiveQuestion));
 		}
 
 		public IList<EtnComplectResolvedItem> ResolveOR(EtnNormItem complect) =>
@@ -26,6 +28,14 @@ namespace Workwear.Tools.Regulations {
 
 		public IList<EtnComplectResolvedItem> ResolveNeedPeriodItems(IList<EtnItemSIZ> items) =>
 			Resolve(EtnComplectWidgetViewModel.ForNeedPeriodItems(items, interactiveMessage));
+
+		public EtnNormItem ResolveAltGroup(IList<EtnNormItem> alternatives) {
+			var choice = interactiveQuestion.Question(
+				alternatives.Select(x => x.ComplectName).ToArray(),
+				"В приказе эти позиции указаны как альтернативные варианты - выберите один:",
+				"Выбор варианта СИЗ");
+			return alternatives.FirstOrDefault(x => x.ComplectName == choice);
+		}
 
 		private static IList<EtnComplectResolvedItem> Resolve(EtnComplectWidgetViewModel viewModel) {
 			var selected = RunDialog(viewModel);
@@ -69,7 +79,9 @@ namespace Workwear.Tools.Regulations {
 			PeriodCount = node.PeriodCount,
 			PeriodType = node.PeriodType,
 			NormItemComment = node.Comment,
-			HasUndefinedPeriod = node.Source.PeriodType == EtnPeriodType.OneUse || node.Source.PeriodType == EtnPeriodType.NeedSet
+			HasUndefinedPeriod = node.Source.PeriodType == EtnPeriodType.OneUse || node.Source.PeriodType == EtnPeriodType.NeedSet,
+			DermalPpe = node.Source.DermalPpe,
+			Unit = node.Source.Unit
 		};
 	}
 }

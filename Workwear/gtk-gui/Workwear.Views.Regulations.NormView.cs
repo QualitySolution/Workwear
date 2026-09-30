@@ -12,7 +12,7 @@ namespace Workwear.Views.Regulations
 
 		private global::Gamma.GtkWidgets.yButton buttonCancel;
 
-		private global::Gamma.GtkWidgets.yButton ybuttonFromETN;
+		private global::QS.Widgets.MenuButton buttonFromETN;
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckArchival;
 
@@ -107,13 +107,15 @@ namespace Workwear.Views.Regulations
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
-			this.ybuttonFromETN = new global::Gamma.GtkWidgets.yButton();
-			this.ybuttonFromETN.CanFocus = true;
-			this.ybuttonFromETN.Name = "ybuttonFromETN";
-			this.ybuttonFromETN.UseUnderline = true;
-			this.ybuttonFromETN.Label = global::Mono.Unix.Catalog.GetString("Заполнить из ЕТН");
-			this.hbox4.Add(this.ybuttonFromETN);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.ybuttonFromETN]));
+			this.buttonFromETN = new global::QS.Widgets.MenuButton();
+			this.buttonFromETN.CanFocus = true;
+			this.buttonFromETN.Name = "buttonFromETN";
+			this.buttonFromETN.UseUnderline = true;
+			this.buttonFromETN.UseMarkup = false;
+			this.buttonFromETN.LabelXAlign = 0F;
+			this.buttonFromETN.Label = global::Mono.Unix.Catalog.GetString("Заполнить из ЕТН");
+			this.hbox4.Add(this.buttonFromETN);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox4[this.buttonFromETN]));
 			w5.Position = 2;
 			w5.Expand = false;
 			w5.Fill = false;

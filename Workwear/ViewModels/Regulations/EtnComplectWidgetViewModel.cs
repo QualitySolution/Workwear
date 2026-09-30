@@ -48,7 +48,7 @@ namespace Workwear.ViewModels.Regulations {
 		/// </summary>
 		public static EtnComplectWidgetViewModel ForNeedPeriodItems(IList<EtnItemSIZ> items, IInteractiveMessage interactiveMessage) {
 			var itemNodes = items.Select(x => new EtnComplectItemNode(x)).ToList();
-			return new EtnComplectWidgetViewModel("Проставьте сроки:", itemNodes, allowMultipleSelection: true, interactiveMessage);
+			return new EtnComplectWidgetViewModel("Выберите вариант и задайте количество и срок эксплуатации:", itemNodes, allowMultipleSelection: false, interactiveMessage);
 		}
 
 		public IList<EtnComplectItemNode> Items { get; }
@@ -116,10 +116,15 @@ namespace Workwear.ViewModels.Regulations {
 	public class EtnComplectItemNode : PropertyChangedBase {
 		public EtnComplectItemNode(EtnItemSIZ source) {
 			Source = source ?? throw new ArgumentNullException(nameof(source));
-			Name = source.SizName;
+			Name = EtnNormImportModel.FormatDermalName(source.SizName, source.DermalPpe, source.Amount, source.Unit);
 
-			//TODO: когда сервис начнёт отдавать текст особого периода (period_special), показать его тут в комментарии.
+			Comment = source.PeriodSpecial;
 			if(source.PeriodType == EtnPeriodType.NeedSet || source.PeriodType == EtnPeriodType.OneUse) {
+			} else if(source.DermalPpe) {
+				//Объём/масса вынесено в название - "Количество" тут значит "сколько упаковок выдаётся за период".
+				amount = 1;
+				periodCount = source.PeriodCount > 0 ? source.PeriodCount : (int?)null;
+				periodType = EtnNormImportModel.MapPeriodType(source.PeriodType);
 			} else {
 				amount = source.Amount > 0 ? source.Amount : (int?)null;
 				periodCount = source.PeriodCount > 0 ? source.PeriodCount : (int?)null;
@@ -127,9 +132,11 @@ namespace Workwear.ViewModels.Regulations {
 			}
 		}
 
-		private EtnComplectItemNode(string name, EtnItemSIZ representativeSource, int? amount, int? periodCount, NormPeriodType? periodType) {
+		private EtnComplectItemNode(string name, EtnItemSIZ representativeSource, int? amount, int? periodCount, NormPeriodType? periodType, string comment) {
 			Name = name;
 			Source = representativeSource;
+			IsCombined = true;
+			Comment = comment;
 			this.amount = amount;
 			this.periodCount = periodCount;
 			this.periodType = periodType;;
@@ -144,12 +151,18 @@ namespace Workwear.ViewModels.Regulations {
 				joined = joined.Substring(0, maxNameLength - 1) + "…";
 
 			var representative = items.First();
-			return new EtnComplectItemNode(joined, representative.Source, representative.Amount, representative.PeriodCount, representative.PeriodType);
+			var comment = String.Join(". ", items.Select(x => x.Comment).Where(x => !String.IsNullOrWhiteSpace(x)).Distinct());
+			return new EtnComplectItemNode(joined, representative.Source, representative.Amount, representative.PeriodCount, representative.PeriodType, comment);
 		}
 
 		public EtnItemSIZ Source { get; }
 		public string Name { get; }
 		public string Comment { get; }
+
+		/// <summary>
+		/// Объединённый вариант ("все через или") - выделяется в виджете
+		/// </summary>
+		public bool IsCombined { get; }
 
 		private int? amount;
 		public virtual int? Amount {
