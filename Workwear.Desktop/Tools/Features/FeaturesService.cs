@@ -188,6 +188,10 @@ namespace Workwear.Tools.Features
 				}
 			}
 
+			if(feature == WorkwearFeature.EtnDictionary)
+				//Сервис поддерживает авторизацию по серийному номеру.
+				return serialNumberEncoder.IsValid;
+
 			switch(feature) {
 				case WorkwearFeature.PrintPromo:
 					return ProductEdition == 0 || ProductEdition == 1;
@@ -229,7 +233,6 @@ namespace Workwear.Tools.Features
 				case WorkwearFeature.CustomSizes:
 				case WorkwearFeature.DutyNorms:
 				case WorkwearFeature.EditLockDate:
-				case WorkwearFeature.EtnDictionary:
 				case WorkwearFeature.LoadExcel:
 				case WorkwearFeature.ReportIssued:
 				case WorkwearFeature.ReportOrder:

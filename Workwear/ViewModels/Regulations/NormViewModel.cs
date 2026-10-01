@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Grpc.Core;
 using NHibernate;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
@@ -158,8 +159,31 @@ namespace Workwear.ViewModels.Regulations
 
 		public virtual bool FillFromEtnSensitive => Entity.Id == 0;
 
+		/// <summary>
+		/// Сервис ЕТН авторизует по серийному номеру. Проверяем доступ заранее, чтобы показать понятное сообщение,
+		/// а не ошибку загрузки в открывшемся диалоге.
+		/// </summary>
+		private bool CheckEtnAccess()
+		{
+			try {
+				etnDictionaryService.GetNormsList(1, 1);
+				return true;
+			}
+			catch(RpcException e) when(e.StatusCode == StatusCode.Unauthenticated) {
+				interactive.ShowMessage(ImportanceLevel.Warning,
+					"Справочник ЕТН работает с доступом по серийному номеру программы. " +
+					"Проверьте введённый серийный номер (меню «Справка» → «Ввести серийный номер...»). " +
+					"Если, по вашему мнению, он корректен, обратитесь в техническую поддержку разработчика.\n\n" +
+					$"Ответ сервера: {e.Status.Detail}",
+					"Нет доступа к справочнику ЕТН");
+				return false;
+			}
+		}
+
 		public void SelectFromEtn()
 		{
+			if(!CheckEtnAccess())
+				return;
 			var page = NavigationManager.OpenViewModel<EtnNormJournalViewModel>(this, OpenPageOptions.AsSlave);
 			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			page.ViewModel.OnSelectResult += EtnNormSelection_OnSelectResult;
@@ -187,6 +211,8 @@ namespace Workwear.ViewModels.Regulations
 
 		private void OpenEtnImport(EtnApp app)
 		{
+			if(!CheckEtnAccess())
+				return;
 			var page = NavigationManager.OpenViewModel<EtnImportViewModel, EtnApp>(this, app,
 				OpenPageOptions.AsSlaveIgnoreHash);
 			page.ViewModel.Accepted += EtnImport_Accepted;
