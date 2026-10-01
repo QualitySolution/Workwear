@@ -82,8 +82,7 @@ namespace Workwear.Views.Regulations {
 					.AddSetter((c, n) => c.Visible = n.Selectable)
 				.AddColumn("№").AddReadOnlyTextRenderer(x => x.Code)
 				.AddColumn("Наименование").Resizable()
-					.AddReadOnlyTextRenderer(x => x.Name).WrapWidth(600)
-				.AddColumn("Строк СИЗ").AddReadOnlyTextRenderer(x => x.ItemsCountText).WrapWidth(400)
+					.AddReadOnlyTextRenderer(x => x.NameWithNote).WrapWidth(600)
 				.RowCells()
 					.AddSetter<Gtk.CellRendererText>((c, n) => c.Weight = n.Selected ? 600 : 400)
 				.Finish();
@@ -127,7 +126,7 @@ namespace Workwear.Views.Regulations {
 						.SetDisplayListFunc(FormatPeriodType)
 						.FillItems(new NormPeriodType?[] { NormPeriodType.Year, NormPeriodType.Month, NormPeriodType.Wearout }, "—")
 						.Editing()
-				.AddColumn("Комментарий").AddReadOnlyTextRenderer(x => x.Comment).WrapWidth(200)
+				.AddColumn("Комментарий").AddTextRenderer(x => x.Comment).Editable().WrapWidth(200)
 				.RowCells()
 					//Жирным - строки, где от пользователя ещё требуется действие: в приложении 2 дофига строк без определённого срока выдачи.
 					.AddSetter<Gtk.CellRendererText>((c, n) => c.Weight = n.IsComplete ? 400 : 600)

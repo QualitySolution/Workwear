@@ -32,9 +32,9 @@ namespace Workwear.Models.Regulations {
 		#region Построение плана
 
 		/// <summary>
-		/// Добавляет в план строки одного выбранного узла дерева. 
+		/// Добавляет в план строки одного выбранного узла дерева.
 		/// </summary>
-		public void AddFrom(EtnGetNormResponse response, int appendixNumber, int sourceKey) {
+		public void AddFrom(EtnGetNormResponse response, int appendixNumber, int sourceKey, string sourceNumber = null, string sourceName = null) {
 			if(response == null)
 				throw new ArgumentNullException(nameof(response));
 
@@ -42,10 +42,12 @@ namespace Workwear.Models.Regulations {
 
 			foreach(var byNorm in response.Items.GroupBy(x => x.NormId)) {
 				sources.TryGetValue(byNorm.Key, out var source);
-				var paragraph = $"п.{source?.NumberNorm} Приложение {appendixNumber} приказа №767Н от 29.10.2021";
+				var number = String.IsNullOrWhiteSpace(sourceNumber) ? source?.NumberNorm : sourceNumber;
+				var name = String.IsNullOrWhiteSpace(sourceName) ? source?.NormName : sourceName;
+				var paragraph = $"п.{number} Приложение {appendixNumber} приказа №767Н от 29.10.2021";
 
 				foreach(var alternatives in SplitIntoBlocks(byNorm))
-					AddBlock(new EtnImportBlock(this, alternatives, paragraph, source?.NormName, sourceKey));
+					AddBlock(new EtnImportBlock(this, alternatives, paragraph, name, sourceKey));
 			}
 		}
 
@@ -286,6 +288,9 @@ namespace Workwear.Models.Regulations {
 		private void Apply(EtnItemSIZ source, string name) {
 			Source = source;
 			Name = name;
+			//Как и количество со сроком - при смене варианта комментарий берётся от нового варианта,
+			//правка пользователя относилась к прежнему.
+			comment = Block.RowComment(this);
 
 			NeedsPeriod = source.PeriodType == EtnPeriodType.OneUse || source.PeriodType == EtnPeriodType.NeedSet;
 			if(NeedsPeriod) {
@@ -313,7 +318,15 @@ namespace Workwear.Models.Regulations {
 		public string NormParagraph => Block.NormParagraph;
 		public string SourceName => Block.SourceName;
 		public bool IsAdditional => Block.IsAdditional;
-		public string Comment => Block.RowComment(this);
+
+		private string comment;
+		/// <summary>
+		/// Комментарий будущей строки нормы. Заполняется особым периодом из приказа, пользователь может поправить.
+		/// </summary>
+		public virtual string Comment {
+			get => comment;
+			set => SetField(ref comment, value);
+		}
 
 		/// <summary>
 		/// Выбор варианта блока. Свойство проброшено для биндинга.

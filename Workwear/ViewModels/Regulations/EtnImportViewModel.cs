@@ -40,7 +40,7 @@ namespace Workwear.ViewModels.Regulations {
 				? "ЕТН: дерматологические СИЗ (приложение 3)"
 				: "ЕТН: СИЗ по опасностям (приложение 2)";
 			HeadComment = app == EtnApp.Dermal
-				? "Отметьте объекты загрязнения или виды работ. Отметка на объекте берёт все типы средств под ним."
+				? "Отметьте объекты загрязнения или виды работ. В норму попадут все средства пункта - защитные, очищающие и регенерирующие."
 				: "Отметьте опасные события. Отметка на опасности берёт все её события сразу.";
 
 			Plan.Rows.PropertyOfElementChanged += (s, e) => UpdateSummary();
@@ -140,6 +140,12 @@ namespace Workwear.ViewModels.Regulations {
 		}
 
 		private void AddNode(EtnNorm source, EtnSubjectNode parent) {
+			if(source.Level == EtnNormLevel.DermalType) {
+				foreach(var dermalChild in source.Children)
+					AddNode(dermalChild, parent);
+				return;
+			}
+
 			var node = new EtnSubjectNode(source, parent);
 			allNodes.Add(node);
 			node.PropertyChanged += NodePropertyChanged;
@@ -208,8 +214,8 @@ namespace Workwear.ViewModels.Regulations {
 		private void LoadSource(EtnSubjectNode node) {
 			try {
 				var response = etnDictionaryService.GetNormItems(new[] { node.NormId },
-					includeChildren: false, includeAdditional: IncludeAdditional);
-				Plan.AddFrom(response, AppendixNumber, node.NormId);
+					includeChildren: node.ItemsOnHiddenChildren, includeAdditional: IncludeAdditional);
+				Plan.AddFrom(response, AppendixNumber, node.NormId, node.Code, node.Name);
 			} catch(Exception ex) {
 				interactive.ShowMessage(ImportanceLevel.Error,
 					$"Не удалось получить строки пункта «{node.Name}» из справочника ЕТН.\n\n{ex.Message}",
@@ -289,14 +295,15 @@ namespace Workwear.ViewModels.Regulations {
 
 		public bool Selectable => Level != EtnNormLevel.Section && Source.ItemsCount > 0;
 
+		public bool ItemsOnHiddenChildren => Source.Children.Any(x => x.Level == EtnNormLevel.DermalType);
+
 		/// <summary>
-		/// У некоторых событий приложения 2 вместо перечня СИЗ стоит текст приказа - показываем его
-		/// вместо количества строк, иначе пункт выглядел бы пустым без объяснения.
+		/// У некоторых событий приложения 2 вместо перечня СИЗ стоит текст приказа.
 		/// </summary>
-		public string ItemsCountText =>
+		public string NameWithNote =>
 			Source.ItemsCount == 0 && !String.IsNullOrWhiteSpace(Source.Note)
-				? Source.Note
-				: Source.ItemsCount.ToString();
+				? $"{Name}\n{Source.Note.Trim()}"
+				: Name;
 
 		private bool selected;
 		public virtual bool Selected {
