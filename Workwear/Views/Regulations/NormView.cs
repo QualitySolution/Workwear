@@ -83,13 +83,13 @@ namespace Workwear.Views.Regulations
 				.AddBinding(ViewModel, v => v.VisibleEtnDictionary, w => w.Visible)
 				.InitializeFromSource();
 			var etnMenu = new Menu();
-			var etnPostsItem = new yMenuItem("По должности (766н Прил.1)");
+			var etnPostsItem = new yMenuItem("По должности (767н Прил.1)");
 			etnPostsItem.Activated += (sender, e) => ViewModel.SelectFromEtn();
 			etnMenu.Add(etnPostsItem);
-			var etnHazardsItem = new yMenuItem("По рискам (766н Прил.2)");
+			var etnHazardsItem = new yMenuItem("По рискам (767н Прил.2)");
 			etnHazardsItem.Activated += (sender, e) => ViewModel.SelectFromEtnHazards();
 			etnMenu.Add(etnHazardsItem);
-			var etnDermalItem = new yMenuItem("Смывающие (766н Прил.3)");
+			var etnDermalItem = new yMenuItem("Смывающие (767н Прил.3)");
 			etnDermalItem.Activated += (sender, e) => ViewModel.SelectFromEtnDermal();
 			etnMenu.Add(etnDermalItem);
 			buttonFromETN.Menu = etnMenu;

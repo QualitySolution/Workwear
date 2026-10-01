@@ -15,7 +15,7 @@ using EtnNormLevel = QS.Cloud.WorkwearDictionary.NormLevel;
 
 namespace Workwear.ViewModels.Regulations {
 	/// <summary>
-	/// Выбор пунктов приложений 2 и 3 приказа 766н и предпросмотр строк, которые из них попадут в норму.
+	/// Выбор пунктов приложений 2 и 3 приказа 767н и предпросмотр строк, которые из них попадут в норму.
 	/// Список не большой и грузится целиком, а поиск фильтрует дерево на клиенте.
 	/// </summary>
 	public class EtnImportViewModel : DialogViewModelBase {

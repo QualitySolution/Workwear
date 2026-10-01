@@ -42,7 +42,7 @@ namespace Workwear.Models.Regulations {
 
 			foreach(var byNorm in response.Items.GroupBy(x => x.NormId)) {
 				sources.TryGetValue(byNorm.Key, out var source);
-				var paragraph = $"п.{source?.NumberNorm} Приложение {appendixNumber} приказа №766Н от 29.10.2021";
+				var paragraph = $"п.{source?.NumberNorm} Приложение {appendixNumber} приказа №767Н от 29.10.2021";
 
 				foreach(var alternatives in SplitIntoBlocks(byNorm))
 					AddBlock(new EtnImportBlock(this, alternatives, paragraph, source?.NormName, sourceKey));

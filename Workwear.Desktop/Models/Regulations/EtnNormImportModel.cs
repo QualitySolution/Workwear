@@ -71,8 +71,8 @@ namespace Workwear.Models.Regulations {
 		/// </summary>
 		public void FillFromEtn(EtnGetNormResponse etnNorm) {
 			norm.Name = etnNorm.NormName;
-			norm.Comment = $"{CreatedComment}, №{etnNorm.NumberNorm} в приложении №1 приказа Минтруда РФ от 29.10.2021 N 766Н ";
-			normParagraph = $"п.{etnNorm.NumberNorm} Приложение 1 приказа №766Н от 29.10.2021";
+			norm.Comment = $"{CreatedComment}, №{etnNorm.NumberNorm} в приложении №1 приказа Минтруда РФ от 29.10.2021 N 767Н ";
+			normParagraph = $"п.{etnNorm.NumberNorm} Приложение 1 приказа №767Н от 29.10.2021";
 
 			FillPostFromEtn(etnNorm.NormName);
 			ProcessComplects(etnNorm.Items);
@@ -82,7 +82,7 @@ namespace Workwear.Models.Regulations {
 		/// Добавляет в норму строки приложений 2 (СИЗ по опасностям) или 3 (дерматологические СИЗ)
 		/// </summary>
 		public void AddItemsFromEtn(EtnGetNormResponse etnNorm, int appendixNumber) {
-			normParagraph = $"п.{etnNorm.NumberNorm} Приложение {appendixNumber} приказа №766Н от 29.10.2021";
+			normParagraph = $"п.{etnNorm.NumberNorm} Приложение {appendixNumber} приказа №767Н от 29.10.2021";
 			ProcessComplects(etnNorm.Items);
 		}
 
