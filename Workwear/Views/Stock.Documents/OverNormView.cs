@@ -6,7 +6,6 @@ using Gtk;
 using QS.Views.Dialog;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock.Documents;
-using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.Views.Stock.Documents 
@@ -86,6 +85,7 @@ namespace Workwear.Views.Stock.Documents
 			buttonAddEmployee.Clicked += (s, a) => ViewModel.SelectEmployees();
 			buttonAddEmployeeIssue.Clicked += (s, a) => ViewModel.SelectEmployeeIssue();
 			buttonAddNomenclature.Clicked += (s, a) => ViewModel.SelectNomenclature(ytreeItems.GetSelectedObject<OverNormItem>());
+			buttonPrint.Clicked += (s, a) => ViewModel.Print();
 			
 			labelSum.Binding
 				.AddBinding(ViewModel, vm => vm.Total, w => w.LabelProp)

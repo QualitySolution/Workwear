@@ -13,6 +13,8 @@ using QS.Navigation;
 using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -534,6 +536,25 @@ namespace Workwear.ViewModels.Stock.Documents
 			else
 				logger.Warn("Ошибка при сохранении документа.");
 			return result;
+		}
+		#endregion
+
+		#region Печать
+		public void Print()
+		{
+			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if(!Save())
+				return;
+
+			var reportInfo = new ReportInfo {
+				Title = $"Выдача вне нормы №{Entity.DocNumber ?? Entity.Id.ToString()}",
+				Identifier = "Documents.OverNorm",
+				Parameters = new Dictionary<string, object> {
+					{ "id", Entity.Id },
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 		#endregion
 		
