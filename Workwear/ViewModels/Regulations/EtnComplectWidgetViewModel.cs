@@ -22,12 +22,12 @@ namespace Workwear.ViewModels.Regulations {
 		public EtnComplectWidgetViewModel(
 			string headComment,
 			IList<EtnComplectItemNode> items,
-			bool allowMultipleSelection,
+			bool addAllItems,
 			IInteractiveMessage interactiveMessage)
 		{
 			this.interactiveMessage = interactiveMessage ?? throw new ArgumentNullException(nameof(interactiveMessage));
 			Items = items ?? throw new ArgumentNullException(nameof(items));
-			AllowMultipleSelection = allowMultipleSelection;
+			AddAllItems = addAllItems;
 
 			HeadTitle = "Добавление комплекта";
 			HeadComment = headComment;
@@ -40,7 +40,7 @@ namespace Workwear.ViewModels.Regulations {
 			var itemNodes = complect.Items.Select(x => new EtnComplectItemNode(x)).ToList();
 			var items = new List<EtnComplectItemNode> { EtnComplectItemNode.CreateOrCombined(itemNodes, CombinedNameMaxLength) };
 			items.AddRange(itemNodes);
-			return new EtnComplectWidgetViewModel("Выберите вариант:", items, allowMultipleSelection: false, interactiveMessage);
+			return new EtnComplectWidgetViewModel("Выберите используемый у вас вариант:", items, addAllItems: false, interactiveMessage);
 		}
 
 		/// <summary>
@@ -48,12 +48,19 @@ namespace Workwear.ViewModels.Regulations {
 		/// </summary>
 		public static EtnComplectWidgetViewModel ForNeedPeriodItems(IList<EtnItemSIZ> items, IInteractiveMessage interactiveMessage) {
 			var itemNodes = items.Select(x => new EtnComplectItemNode(x)).ToList();
-			return new EtnComplectWidgetViewModel("Выберите вариант и задайте количество и срок эксплуатации:", itemNodes, allowMultipleSelection: false, interactiveMessage);
+			return new EtnComplectWidgetViewModel("Проставьте количество и сроки эксплуатации для всех позиций:", itemNodes, addAllItems: true, interactiveMessage) {
+				HeadTitle = "Количество и сроки эксплуатации"
+			};
 		}
 
 		public IList<EtnComplectItemNode> Items { get; }
 
-		public bool AllowMultipleSelection { get; }
+		/// <summary>
+		/// Все позиции требуют заполнения и добавляются вместе, независимо от выделения строк.
+		/// </summary>
+		public bool AddAllItems { get; }
+
+		public bool CanAddAllItems => Items.Count > 0 && !Items.Any(IsInvalid);
 
 		private string headTitle;
 		public virtual string HeadTitle {
@@ -78,9 +85,11 @@ namespace Workwear.ViewModels.Regulations {
 		public event EventHandler Canceled;
 
 		/// <summary>
-		/// Пытается добавить выбранные позиции с проверкой количества и периода на null и 0
+		/// Проверяет количество и срок всех позиций в режиме заполнения или выбранного варианта комплекта.
 		/// </summary>
 		public void AddSelected(EtnComplectItemNode[] selected) {
+			if(AddAllItems)
+				selected = Items.ToArray();
 			if(selected == null || selected.Length == 0)
 				return;
 

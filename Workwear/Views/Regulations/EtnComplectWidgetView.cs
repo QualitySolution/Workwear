@@ -14,7 +14,7 @@ namespace Workwear.Views.Regulations {
 			ylabelHeadTitle.Binding.AddBinding(ViewModel, v => v.HeadTitle, w => w.LabelProp).InitializeFromSource();
 			ylabelHeadComment.Binding.AddBinding(ViewModel, v => v.HeadComment, w => w.LabelProp).InitializeFromSource();
 
-			ytreeItems.Selection.Mode = ViewModel.AllowMultipleSelection ? Gtk.SelectionMode.Multiple : Gtk.SelectionMode.Single;
+			ytreeItems.Selection.Mode = ViewModel.AddAllItems ? Gtk.SelectionMode.Multiple : Gtk.SelectionMode.Single;
 			ytreeItems.ColumnsConfig = FluentColumnsConfig<EtnComplectItemNode>.Create()
 				.AddColumn("Название").AddReadOnlyTextRenderer(x => x.Name).WrapWidth(400)
 				.AddColumn("Количество")
@@ -33,15 +33,22 @@ namespace Workwear.Views.Regulations {
 					.AddSetter<Gtk.CellRendererText>((c, x) => c.Weight = x.IsCombined ? 600 : 400)
 				.Finish();
 			ytreeItems.ItemsDataSource = ViewModel.Items;
-			ytreeItems.Selection.Changed += YtreeItems_Selection_Changed;
-			ybuttonAddSelected.Sensitive = false;
+			ytreeItems.Selection.Changed += (sender, e) => UpdateAddButton();
+			if(ViewModel.AddAllItems) {
+				ybuttonAddSelected.Label = "Добавить все";
+				foreach(var item in ViewModel.Items)
+					item.PropertyChanged += (sender, e) => UpdateAddButton();
+			}
+			UpdateAddButton();
 
 			ybuttonAddSelected.Clicked += (sender, e) => ViewModel.AddSelected(ytreeItems.GetSelectedObjects<EtnComplectItemNode>());
 			ybuttonCancel.Clicked += (sender, e) => ViewModel.Cancel();
 		}
 
-		void YtreeItems_Selection_Changed(object sender, EventArgs e) {
-			ybuttonAddSelected.Sensitive = ytreeItems.Selection.CountSelectedRows() > 0;
+		void UpdateAddButton() {
+			ybuttonAddSelected.Sensitive = ViewModel.AddAllItems
+				? ViewModel.CanAddAllItems
+				: ytreeItems.Selection.CountSelectedRows() > 0;
 		}
 
 		string FormatPeriodType(NormPeriodType? value) => value.HasValue ? value.Value.GetEnumTitle() : "—";
