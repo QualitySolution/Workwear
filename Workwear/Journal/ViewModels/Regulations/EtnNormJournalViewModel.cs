@@ -26,10 +26,10 @@ namespace workwear.Journal.ViewModels.Regulations {
 		}
 
 		private IList<Norm> GetNodes(int page, int pageSize, CancellationToken token) =>
-			etnDictionaryService.GetNormsList(page, pageSize, SearchQuery).Norms;
+			etnDictionaryService.GetNormsList(page, pageSize, SearchQuery, App.Posts).Norms;
 
 		private int GetTotalCount(CancellationToken token) =>
-			etnDictionaryService.GetNormsList(1, 1, SearchQuery).TotalCount;
+			etnDictionaryService.GetNormsList(1, 1, SearchQuery, App.Posts).TotalCount;
 
 		private string SearchQuery =>
 			Search.SearchValues != null ? string.Join(" ", Search.SearchValues) : null;

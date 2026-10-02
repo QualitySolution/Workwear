@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Grpc.Core;
 using NHibernate;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
@@ -23,13 +24,14 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Regulations;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
 using QS.Cloud.WorkwearDictionary.Client;
 //Алиасы на сервис ЕТН.
 using EtnNorm = QS.Cloud.WorkwearDictionary.Norm;
-using EtnGetNormResponse = QS.Cloud.WorkwearDictionary.GetNormResponse;
+using EtnApp = QS.Cloud.WorkwearDictionary.App;
 
 namespace Workwear.ViewModels.Regulations
 {
@@ -100,6 +102,7 @@ namespace Workwear.ViewModels.Regulations
 			}
 			performance.CheckPoint("Запрос основных данных");
 			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
+			VisibleEtnDictionary = featuresService.Available(WorkwearFeature.EtnDictionary);
 
 			var thisViewModel = new TypedParameter(typeof(NormViewModel), this);
 			PostsViewModel = autofacScope.Resolve<NormPostsViewModel>(thisViewModel);
@@ -146,10 +149,41 @@ namespace Workwear.ViewModels.Regulations
 		#region Импорт из справочника ЕТН
 		private EtnNormImportModel etnImportModel;
 
+		/// <summary>
+		/// Общий на все три приложения ЕТН - чтобы авто-созданные при импорте записи справочников
+		/// копились в одном месте независимо от того, из какого приложения (1/2/3) и в каком порядке
+		/// пользователь заполнял норму, и откатывались/подтверждались все разом в Save().
+		/// </summary>
+		private EtnNormImportModel EtnImportModel =>
+			etnImportModel ?? (etnImportModel = new EtnNormImportModel(UoW, Entity, interactive, etnComplectResolver, sizeService));
+
 		public virtual bool FillFromEtnSensitive => Entity.Id == 0;
+
+		/// <summary>
+		/// Сервис ЕТН авторизует по серийному номеру. Проверяем доступ заранее, чтобы показать понятное сообщение,
+		/// а не ошибку загрузки в открывшемся диалоге.
+		/// </summary>
+		private bool CheckEtnAccess()
+		{
+			try {
+				etnDictionaryService.GetNormsList(1, 1);
+				return true;
+			}
+			catch(RpcException e) when(e.StatusCode == StatusCode.Unauthenticated) {
+				interactive.ShowMessage(ImportanceLevel.Warning,
+					"Справочник ЕТН работает с доступом по серийному номеру программы. " +
+					"Проверьте введённый серийный номер (меню «Справка» → «Ввести серийный номер...»). " +
+					"Если, по вашему мнению, он корректен, обратитесь в техническую поддержку разработчика.\n\n" +
+					$"Ответ сервера: {e.Status.Detail}",
+					"Нет доступа к справочнику ЕТН");
+				return false;
+			}
+		}
 
 		public void SelectFromEtn()
 		{
+			if(!CheckEtnAccess())
+				return;
 			var page = NavigationManager.OpenViewModel<EtnNormJournalViewModel>(this, OpenPageOptions.AsSlave);
 			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
 			page.ViewModel.OnSelectResult += EtnNormSelection_OnSelectResult;
@@ -162,17 +196,29 @@ namespace Workwear.ViewModels.Regulations
 				return;
 
 			var etnNorm = etnDictionaryService.GetNormItems(etnNode.NormId);
-			FillFromEtn(etnNorm);
+			EtnImportModel.FillFromEtn(etnNorm);
 		}
 
 		/// <summary>
-		/// Заполняет новую норму данными, полученными из справочника ЕТН: должность и строки нормы.
+		/// Приложение 2 (СИЗ по опасностям) - выбор пунктов и предпросмотр строк на отдельной вкладке.
 		/// </summary>
-		public void FillFromEtn(EtnGetNormResponse etnNorm)
+		public void SelectFromEtnHazards() => OpenEtnImport(EtnApp.Hazards);
+
+		/// <summary>
+		/// Приложение 3 (дерматологические СИЗ).
+		/// </summary>
+		public void SelectFromEtnDermal() => OpenEtnImport(EtnApp.Dermal);
+
+		private void OpenEtnImport(EtnApp app)
 		{
-			etnImportModel = new EtnNormImportModel(UoW, Entity, interactive, etnComplectResolver, sizeService);
-			etnImportModel.FillFromEtn(etnNorm);
+			if(!CheckEtnAccess())
+				return;
+			var page = NavigationManager.OpenViewModel<EtnImportViewModel, EtnApp>(this, app,
+				OpenPageOptions.AsSlaveIgnoreHash);
+			page.ViewModel.Accepted += EtnImport_Accepted;
 		}
+
+		private void EtnImport_Accepted(object sender, EtnImportPlan plan) => EtnImportModel.ApplyPlan(plan);
 		#endregion
 
 		#region Дочерние ViewModels
@@ -198,6 +244,7 @@ namespace Workwear.ViewModels.Regulations
 		
 		#region Visible
 		public bool VisibleNormCondition { get; }
+		public bool VisibleEtnDictionary { get; }
 		#endregion
 
 		#region Свойства

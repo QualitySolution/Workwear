@@ -3,7 +3,7 @@ syntax = "proto3";
 package QS.Cloud.WorkwearDictionary;
 
 option csharp_namespace = "QS.Cloud.WorkwearDictionary";
- 
+
 service ETNService {
 
 	rpc GetNormsList(GetNormsListRequest) returns (GetNormsListResponse);
