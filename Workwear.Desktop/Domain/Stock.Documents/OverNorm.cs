@@ -43,7 +43,7 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 
-		public virtual string Title => $"Выдача вне нормы ({Type.GetEnumTitle()}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} ({Type.GetEnumTitle()}) от {Date:d}";
+		public virtual string Title => $"Выдача вне нормы ({Type.GetEnumTitle()}) №{(string.IsNullOrEmpty(DocNumber) ? Id.ToString() : DocNumber)} от {Date:d}";
 		
 		public virtual OverNormItem AddItem(OverNormOperation operation)
 		{

@@ -188,6 +188,10 @@ namespace Workwear.Tools.Features
 				}
 			}
 
+			if(feature == WorkwearFeature.EtnDictionary)
+				//Сервис поддерживает авторизацию по серийному номеру.
+				return serialNumberEncoder.IsValid;
+
 			switch(feature) {
 				case WorkwearFeature.PrintPromo:
 					return ProductEdition == 0 || ProductEdition == 1;
@@ -290,6 +294,8 @@ namespace Workwear.Tools.Features
 		DutyNorms,
 		[Display(Name = "Дата запрета редактирования")]
 		EditLockDate,
+		[Display(Name = "Справочник ЕТН")]
+		EtnDictionary,
 		[Display(Name = "Загрузка из Excel")]
 		LoadExcel,
 		[Display(Name = "Отпуска")]

@@ -26,8 +26,14 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
 		   
-		    spbutAheadOfShedule.Binding.AddSource(ViewModel)
+		    spbutAheadOfShedule_personal.Binding.AddSource(ViewModel)
 			    .AddBinding(v => v.ColDayAheadOfShedule, w => w.ValueAsInt)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+
+		    ylabel2_AheadOfShedule_collective.Visible = spbutAheadOfShedule_collective.Visible = viewModel.AheadOfSheduleCollectiveVisible;
+		    spbutAheadOfShedule_collective.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.ColDayAheadOfSheduleCollective, w => w.ValueAsInt)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
 		   
@@ -95,8 +101,14 @@ namespace Workwear.Views.Tools {
 			    .AddBinding(v => v.IsGenericName, w => w.Active)
 			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
 			    .InitializeFromSource();
-			    
-		    
+
+		    ylabel_ConditionGroup.Visible = ycheckbuttonConditionGroup.Visible = ViewModel.ConditionGroupVisible;
+		    ycheckbuttonConditionGroup.Binding.AddSource(ViewModel)
+			    .AddBinding(v => v.ConditionGroupInPersonalCard, w => w.Active)
+			    .AddBinding(v => v.CanEdit, w => w.Sensitive)
+			    .InitializeFromSource();
+
+
 			CommonButtonSubscription();
 		}
 	}

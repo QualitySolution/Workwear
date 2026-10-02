@@ -1,5 +1,6 @@
 using System;
 using Gamma.ColumnConfig;
+using Gamma.GtkWidgets;
 using Gtk;
 using QS.Utilities.Text;
 using QS.Utilities;
@@ -76,6 +77,23 @@ namespace Workwear.Views.Regulations
 
 			buttonSave.Binding.AddBinding(ViewModel, v => v.SaveSensitive, w => w.Sensitive).InitializeFromSource();
 			buttonCancel.Binding.AddBinding(ViewModel, v => v.CancelSensitive, w => w.Sensitive).InitializeFromSource();
+
+			buttonFromETN.Binding
+				.AddBinding(ViewModel, v => v.FillFromEtnSensitive, w => w.Sensitive)
+				.AddBinding(ViewModel, v => v.VisibleEtnDictionary, w => w.Visible)
+				.InitializeFromSource();
+			var etnMenu = new Menu();
+			var etnPostsItem = new yMenuItem("По должности (767н Прил.1)");
+			etnPostsItem.Activated += (sender, e) => ViewModel.SelectFromEtn();
+			etnMenu.Add(etnPostsItem);
+			var etnHazardsItem = new yMenuItem("По рискам (767н Прил.2)");
+			etnHazardsItem.Activated += (sender, e) => ViewModel.SelectFromEtnHazards();
+			etnMenu.Add(etnHazardsItem);
+			var etnDermalItem = new yMenuItem("Смывающие (767н Прил.3)");
+			etnDermalItem.Activated += (sender, e) => ViewModel.SelectFromEtnDermal();
+			etnMenu.Add(etnDermalItem);
+			buttonFromETN.Menu = etnMenu;
+			etnMenu.ShowAll();
 		}
 
 		void YtreeItems_Selection_Changed (object sender, EventArgs e)

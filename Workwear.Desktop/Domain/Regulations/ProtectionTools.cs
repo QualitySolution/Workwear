@@ -42,6 +42,14 @@ namespace Workwear.Domain.Regulations
 			set { SetField(ref type, value, () => Type); }
 		}
 		
+		private string officialName;
+		[Display(Name = "Наименование в карточке")]
+		[StringLength(800)]
+		public virtual string OfficialName {
+			get { return officialName; }
+			set { SetField(ref officialName, value?.Trim()); }
+		}
+
 		private bool archival;
 		[Display(Name ="Архивная")]
 		public virtual bool Archival {

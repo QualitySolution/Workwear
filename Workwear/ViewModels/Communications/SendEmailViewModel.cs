@@ -1,6 +1,5 @@
 ﻿using System;
-using QS.Cloud.WearLk.Client;
-using QS.Cloud.WearLk.Manage;
+using QS.Cloud.Email.DesktopClient;
 using QS.Dialog;
 using QS.Navigation;
 using QS.Utilities.Text;
@@ -11,16 +10,16 @@ namespace Workwear.ViewModels.Communications {
 	public delegate void SetAddress (string address);
 	public class SendEmailViewModel : WindowDialogViewModelBase {
 		
-		private readonly EmailManagerService emailManagerService;
+		private readonly DesktopEmailSenderClient emailSenderClient;
 		private readonly IInteractiveService interactive;
 		
 		public SendEmailViewModel(
-			EmailManagerService emailManagerService,
+			DesktopEmailSenderClient emailSenderClient,
 			IInteractiveService interactive,
 			INavigationManager navigation
 			) : base(navigation)
 		{
-			this.emailManagerService = emailManagerService ?? throw new ArgumentNullException(nameof(emailManagerService));
+			this.emailSenderClient = emailSenderClient ?? throw new ArgumentNullException(nameof(emailSenderClient));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
         }
 		
@@ -70,14 +69,7 @@ namespace Workwear.ViewModels.Communications {
 			}
 			
 			try {
-				result = emailManagerService.SendMessages(
-					new[] {
-						new EmailMessage() {
-							Address = EmailAddress,
-							Subject = Topic,
-							Text = Message
-						}
-					});
+				result = emailSenderClient.SendMessage(EmailAddress, Topic, Message);
 			}
 			catch (OperationCanceledException) {
 				result = $"Операция отправки email уведомлений прервана.";

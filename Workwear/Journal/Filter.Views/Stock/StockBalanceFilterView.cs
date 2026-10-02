@@ -11,7 +11,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.Build();
 
 			chShowWithBarcodes.Binding.AddSource(ViewModel)
-				.AddBinding(vm => vm.ShowWithBarcodes, w => w.Active)
+				.AddBinding(vm => vm.ShowWithUseBarcodes, w => w.Active)
 				.AddBinding(vm => vm.CanChangeShowWithBarcodes, w => w.Sensitive)
 				.AddBinding(vm => vm.VisibleBarcodes, w => w.Visible)
 				.InitializeFromSource();

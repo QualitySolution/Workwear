@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Grpc.Core;
 using NHibernate;
 using QS.Dialog;
 using QS.Dialog.ViewModels;
@@ -23,8 +24,14 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
+using Workwear.Tools.Regulations;
+using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Regulations.NormChildren;
 using Workwear.ViewModels.Stock;
+using QS.Cloud.WorkwearDictionary.Client;
+//Алиасы на сервис ЕТН.
+using EtnNorm = QS.Cloud.WorkwearDictionary.Norm;
+using EtnApp = QS.Cloud.WorkwearDictionary.App;
 
 namespace Workwear.ViewModels.Regulations
 {
@@ -38,13 +45,16 @@ namespace Workwear.ViewModels.Regulations
 		private readonly BaseParameters baseParameters;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly ModalProgressCreator progressCreator;
+		private readonly EtnDictionaryService etnDictionaryService;
+		private readonly IEtnComplectResolver etnComplectResolver;
+		private readonly SizeService sizeService;
 
 		public NormViewModel(
-			IEntityUoWBuilder uowBuilder, 
+			IEntityUoWBuilder uowBuilder,
 			IUnitOfWorkFactory unitOfWorkFactory,
 			UnitOfWorkProvider unitOfWorkProvider,
 			EmployeeIssueRepository employeeIssueRepository,
-			INavigationManager navigation, 
+			INavigationManager navigation,
 			IInteractiveService interactive,
 			IEntityChangeWatcher changeWatcher,
 			EmployeeRepository employeeRepository,
@@ -53,7 +63,9 @@ namespace Workwear.ViewModels.Regulations
 			ModalProgressCreator progressCreator,
 			FeaturesService featuresService,
 			ILifetimeScope autofacScope,
-			NormToDutyNormModel normToDutyNormModel,
+			EtnDictionaryService etnDictionaryService = null,
+			IEtnComplectResolver etnComplectResolver = null,
+			SizeService sizeService = null,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
@@ -63,6 +75,9 @@ namespace Workwear.ViewModels.Regulations
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
+			this.etnDictionaryService = etnDictionaryService;
+			this.etnComplectResolver = etnComplectResolver;
+			this.sizeService = sizeService;
 
 			var performance = new PerformanceHelper(logger: logger);
 			var normConditionQuery = UoW.Session.QueryOver<NormCondition>()
@@ -87,6 +102,7 @@ namespace Workwear.ViewModels.Regulations
 			}
 			performance.CheckPoint("Запрос основных данных");
 			VisibleNormCondition = featuresService.Available(WorkwearFeature.ConditionNorm);
+			VisibleEtnDictionary = featuresService.Available(WorkwearFeature.EtnDictionary);
 
 			var thisViewModel = new TypedParameter(typeof(NormViewModel), this);
 			PostsViewModel = autofacScope.Resolve<NormPostsViewModel>(thisViewModel);
@@ -130,6 +146,81 @@ namespace Workwear.ViewModels.Regulations
 			Entity.CopyFromNorm(norm);
 		}
 
+		#region Импорт из справочника ЕТН
+		private EtnNormImportModel etnImportModel;
+
+		/// <summary>
+		/// Общий на все три приложения ЕТН - чтобы авто-созданные при импорте записи справочников
+		/// копились в одном месте независимо от того, из какого приложения (1/2/3) и в каком порядке
+		/// пользователь заполнял норму, и откатывались/подтверждались все разом в Save().
+		/// </summary>
+		private EtnNormImportModel EtnImportModel =>
+			etnImportModel ?? (etnImportModel = new EtnNormImportModel(UoW, Entity, interactive, etnComplectResolver, sizeService));
+
+		public virtual bool FillFromEtnSensitive => Entity.Id == 0;
+
+		/// <summary>
+		/// Сервис ЕТН авторизует по серийному номеру. Проверяем доступ заранее, чтобы показать понятное сообщение,
+		/// а не ошибку загрузки в открывшемся диалоге.
+		/// </summary>
+		private bool CheckEtnAccess()
+		{
+			try {
+				etnDictionaryService.GetNormsList(1, 1);
+				return true;
+			}
+			catch(RpcException e) when(e.StatusCode == StatusCode.Unauthenticated) {
+				interactive.ShowMessage(ImportanceLevel.Warning,
+					"Справочник ЕТН работает с доступом по серийному номеру программы. " +
+					"Проверьте введённый серийный номер (меню «Справка» → «Ввести серийный номер...»). " +
+					"Если, по вашему мнению, он корректен, обратитесь в техническую поддержку разработчика.\n\n" +
+					$"Ответ сервера: {e.Status.Detail}",
+					"Нет доступа к справочнику ЕТН");
+				return false;
+			}
+		}
+
+		public void SelectFromEtn()
+		{
+			if(!CheckEtnAccess())
+				return;
+			var page = NavigationManager.OpenViewModel<EtnNormJournalViewModel>(this, OpenPageOptions.AsSlave);
+			page.ViewModel.SelectionMode = QS.Project.Journal.JournalSelectionMode.Single;
+			page.ViewModel.OnSelectResult += EtnNormSelection_OnSelectResult;
+		}
+
+		private void EtnNormSelection_OnSelectResult(object sender, QS.Project.Journal.JournalSelectedEventArgs e)
+		{
+			var etnNode = e.GetSelectedObjects<EtnNorm>().FirstOrDefault();
+			if(etnNode == null)
+				return;
+
+			var etnNorm = etnDictionaryService.GetNormItems(etnNode.NormId);
+			EtnImportModel.FillFromEtn(etnNorm);
+		}
+
+		/// <summary>
+		/// Приложение 2 (СИЗ по опасностям) - выбор пунктов и предпросмотр строк на отдельной вкладке.
+		/// </summary>
+		public void SelectFromEtnHazards() => OpenEtnImport(EtnApp.Hazards);
+
+		/// <summary>
+		/// Приложение 3 (дерматологические СИЗ).
+		/// </summary>
+		public void SelectFromEtnDermal() => OpenEtnImport(EtnApp.Dermal);
+
+		private void OpenEtnImport(EtnApp app)
+		{
+			if(!CheckEtnAccess())
+				return;
+			var page = NavigationManager.OpenViewModel<EtnImportViewModel, EtnApp>(this, app,
+				OpenPageOptions.AsSlaveIgnoreHash);
+			page.ViewModel.Accepted += EtnImport_Accepted;
+		}
+
+		private void EtnImport_Accepted(object sender, EtnImportPlan plan) => EtnImportModel.ApplyPlan(plan);
+		#endregion
+
 		#region Дочерние ViewModels
 		public NormEmployeesViewModel EmployeesViewModel { get; }
 		public NormPostsViewModel PostsViewModel { get; }
@@ -153,6 +244,7 @@ namespace Workwear.ViewModels.Regulations
 		
 		#region Visible
 		public bool VisibleNormCondition { get; }
+		public bool VisibleEtnDictionary { get; }
 		#endregion
 
 		#region Свойства
@@ -382,13 +474,19 @@ namespace Workwear.ViewModels.Regulations
 				.Select(x => x.GetEntity<NormItem>()).ToList();
 		}
 		
-		public override bool Save() 
+		public override bool Save()
 		{
+			if(etnImportModel != null && !etnImportModel.ConfirmAutoCreatedEntities())
+				return false;
+
 			needUpdateEmployees = false;
 			needRecalculateIssue.Clear();
 			if(!base.Save())
 				return false;
-			
+
+			etnImportModel?.ClearAutoCreated();
+			OnPropertyChanged(nameof(FillFromEtnSensitive));
+
 			//Проверяем если есть активные выдачи измененным строкам нормы, предлагаем пользователю их пересчитать.
 			if(needRecalculateIssue.Any()) {
 				var operations = employeeIssueRepository.GetOperationsForNormItem(

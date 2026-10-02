@@ -59,7 +59,7 @@ namespace Workwear.Test.Domain.Operations
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
@@ -100,7 +100,7 @@ namespace Workwear.Test.Domain.Operations
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
@@ -152,7 +152,7 @@ namespace Workwear.Test.Domain.Operations
 			ask.Question(Arg.Any<string>()).ReturnsForAnyArgs(false);
 
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(15);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(15);
 
 			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
@@ -201,7 +201,7 @@ namespace Workwear.Test.Domain.Operations
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
@@ -255,7 +255,7 @@ namespace Workwear.Test.Domain.Operations
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			issue.RecalculateDatesOfIssueOperation(graph, baseParameters, ask);
 
@@ -364,7 +364,7 @@ namespace Workwear.Test.Domain.Operations
 		[Test(Description = "Проверяем, что дата начала использования не NULL (при выдачах сверх нормы).")]
 		public void Update_WithoutNorm() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			var uow = Substitute.For<IUnitOfWork>();
 			var employee = Substitute.For<EmployeeCard>();
 			var protectionTools = Substitute.For<ProtectionTools>();
@@ -402,7 +402,7 @@ namespace Workwear.Test.Domain.Operations
 		[Test(Description = "Проверяем, что дата начала использования после пересчета не NULL (при выдачах сверх нормы).")]
 		public void RecalculateStartOfUse_WithoutNorm() {
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			var employee = Substitute.For<EmployeeCard>();
 			var protectionTools = Substitute.For<ProtectionTools>();
 			var nomenclature = Substitute.For<Nomenclature>();

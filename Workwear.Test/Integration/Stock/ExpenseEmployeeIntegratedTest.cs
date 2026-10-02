@@ -69,6 +69,7 @@ namespace Workwear.Test.Integration.Stock
 				var position2 = new StockPosition(nomenclature2, 0, size, height, null);
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "СИЗ для тестирования"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -120,7 +121,7 @@ namespace Workwear.Test.Integration.Stock
 
 				var baseParameters = Substitute.For<BaseParameters>();
 				baseParameters.DefaultAutoWriteoff.Returns(true);
-				baseParameters.ColDayAheadOfShedule.Returns(0);
+				baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
@@ -148,7 +149,7 @@ namespace Workwear.Test.Integration.Stock
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.DefaultAutoWriteoff.Returns(true);
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -176,6 +177,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(height);
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "СИЗ для тестирования"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -300,10 +302,11 @@ namespace Workwear.Test.Integration.Stock
 				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				//Поднимаем id сиза до 3.
-				uow.Save(new ProtectionTools { Name = "Id = 1" });
-				uow.Save(new ProtectionTools { Name = "Id = 2" });
+				uow.Save(new ProtectionTools { Type = nomenclatureType,  Name = "Id = 1" });
+				uow.Save(new ProtectionTools { Type = nomenclatureType,  Name = "Id = 2" });
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "СИЗ для тестирования"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -341,7 +344,7 @@ namespace Workwear.Test.Integration.Stock
 				expenseItem1.ProtectionTools = protectionTools;
 
 				var baseParameters = Substitute.For<BaseParameters>();
-				baseParameters.ColDayAheadOfShedule.Returns(0);
+				baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
@@ -366,7 +369,7 @@ namespace Workwear.Test.Integration.Stock
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -390,6 +393,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "СИЗ для тестирования"
 				};
 				protectionTools.AddNomenclature(nomenclature);

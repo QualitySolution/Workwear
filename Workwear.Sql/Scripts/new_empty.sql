@@ -40,7 +40,7 @@ ENGINE = InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE TABLE `clothing_service_claim` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `barcode_id` int(10) unsigned NOT NULL,
-  `employee_id` int UNSIGNED NOT NULL,
+  `employee_id` int UNSIGNED NULL,
   `is_closed` tinyint(1) NOT NULL DEFAULT 0,
   `preferred_terminal_id` int(11) unsigned null,
   `need_for_repair` tinyint(1) NOT NULL,
@@ -920,6 +920,7 @@ DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 CREATE TABLE IF NOT EXISTS `protection_tools` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(800) NOT NULL,
+  `official_name` VARCHAR(800) NULL DEFAULT NULL COMMENT 'Наименование, отображаемое на лицевой карточке сотрудника, если заполнено',
   `item_types_id` INT UNSIGNED NOT NULL DEFAULT 1,
   `dermal_ppe` tinyint(1) default 0 not null,
   `dispenser` tinyint(1) default 0 not null,
@@ -3133,7 +3134,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('product_name', 'workwear');
-INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.14');
+INSERT INTO `base_parameters` (`name`, `str_value`) VALUES ('version', '2.10.15');
 
 COMMIT;
 

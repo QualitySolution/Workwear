@@ -42,7 +42,7 @@ namespace Workwear.Test.Integration.Organization
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			baseParameters.ExtendPeriod.Returns(AnswerOptions.No);
 			baseParameters.ShiftExpluatacion.Returns(AnswerOptions.No);
 

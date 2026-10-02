@@ -147,7 +147,7 @@ namespace Workwear.Domain.Regulations {
 			if(Graph == null)
 				throw new NullReferenceException($"Перед выполнением расчета {nameof(CalculateRequiredIssue)}, Graph должен быть заполнен!");
 			
-			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
+			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType))));
 		}
 
 		public virtual void UpdateNextIssue() {

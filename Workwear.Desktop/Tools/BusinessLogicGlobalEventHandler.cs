@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
@@ -8,6 +9,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Models.Operations;
 using Workwear.Models.Supply;
 using Workwear.Repository.Operations;
 
@@ -28,6 +30,10 @@ namespace Workwear.Tools
 			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteEmployeeIssueOperation)
 				.IfEntity<EmployeeIssueOperation>()
 				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
+
+			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleUpdateEmployeeIssueOperation)
+				.IfEntity<EmployeeIssueOperation>()
+				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Update);
 
 			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteReturnServiceClaim)
 				.IfEntity<Return>()
@@ -76,6 +82,44 @@ namespace Workwear.Tools
 					}
 					uow.Commit();
 				}
+			}
+		}
+
+		[ThreadStatic]
+		private static bool isRecalculatingIssueOperation;
+
+		private static void HandleUpdateEmployeeIssueOperation(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents)
+		{
+			if(isRecalculatingIssueOperation)
+				return;
+
+			isRecalculatingIssueOperation = true;
+			try {
+				using(var scope = LifetimeScope.BeginLifetimeScope()) {
+					var unitOfWorkFactory = scope.Resolve<IUnitOfWorkFactory>();
+					using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик изменения операций выдачи")) {
+						var interactive = scope.Resolve<IInteractiveQuestion>();
+						var baseParameters = scope.Resolve<BaseParameters>();
+						var employeeIssueRepository = scope.Resolve<EmployeeIssueRepository>(new TypedParameter(typeof(UnitOfWorkProvider), new UnitOfWorkProvider(uow)));
+						var issueModel = new EmployeeIssueModel(employeeIssueRepository, new UnitOfWorkProvider(uow));
+
+						var operationsToRecalculate = new List<EmployeeIssueOperation>();
+						foreach(var employeeGroup in changeEvents.GroupBy(x => (x.Entity as EmployeeIssueOperation).Employee.Id)) {
+							var employee = uow.GetById<EmployeeCard>(employeeGroup.Key);
+							if(employee == null)
+								continue;
+							operationsToRecalculate.AddRange(
+								employeeGroup
+									.Select(x => uow.GetById<EmployeeIssueOperation>((x.Entity as EmployeeIssueOperation).Id))
+									.Where(x => x != null));
+						}
+
+						if(operationsToRecalculate.Any())
+							issueModel.RecalculateDateOfIssue(operationsToRecalculate, baseParameters, interactive, uow: uow);
+					}
+				}
+			} finally {
+				isRecalculatingIssueOperation = false;
 			}
 		}
 

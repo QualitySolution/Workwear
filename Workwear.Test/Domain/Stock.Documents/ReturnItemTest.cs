@@ -151,15 +151,17 @@ namespace Workwear.Test.Domain.Stock.Documents {
 			var issuedOperation = CreateEmployeeIssueOperation(selectedBarcode);
 			var document = new Return();
 			var item = new ReturnItem(document, issuedOperation, 1, barcodes: new[] { selectedBarcode }) {
-				Nomenclature = new Nomenclature()
+				Nomenclature = new Nomenclature(),
+				MaxAmount = 2
 			};
-			item.Amount = 2;
 			document.Items.Add(item);
+			var errorsWithAmountByBarcodes = document.Validate(new ValidationContext(document)).ToList();
+
+			item.Amount = 2;
 
 			var errors = document.Validate(new ValidationContext(document)).ToList();
 
-			Assert.That(errors, Has.Some.Matches<ValidationResult>(x =>
-				x.ErrorMessage.Contains("количество должно быть равно количеству выбранных штрихкодов")));
+			Assert.That(errors, Has.Count.EqualTo(errorsWithAmountByBarcodes.Count + 1));
 		}
 
 		[Test(Description = "Документ возврата выдачи вне нормы не проверяется как строка числящегося за сотрудником.")]
@@ -178,8 +180,7 @@ namespace Workwear.Test.Domain.Stock.Documents {
 
 			var errors = document.Validate(new ValidationContext(document)).ToList();
 
-			Assert.That(errors, Has.None.Matches<ValidationResult>(x =>
-				x.ErrorMessage.Contains("не из числящегося за данным сотрудником")));
+			Assert.That(errors, Is.Empty);
 		}
 
 		[Test(Description = "Для строки возврата без штрихкодов количество можно редактировать.")]

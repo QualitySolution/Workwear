@@ -13,6 +13,8 @@ using QS.Navigation;
 using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Report;
+using QS.Report.ViewModels;
 using QS.Services;
 using QS.Validation;
 using QS.ViewModels.Control.EEVM;
@@ -300,8 +302,7 @@ namespace Workwear.ViewModels.Stock.Documents
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 						filter => {
 							filter.ShowNegativeBalance = false;
-							filter.ShowWithBarcodes = !OverNormModel.CanUseWithoutBarcodes;
-							filter.CanChangeShowWithBarcodes = OverNormModel.CanChangeUseBarcodes;
+							filter.ShowOnlyWithBarcodeInStock = !OverNormModel.CanUseWithoutBarcodes;
 							filter.CanChooseAmount = OverNormModel.CanUseWithoutBarcodes;
 							filter.AddAmount = AddedAmount.One;
 							filter.Warehouse = Entity.Warehouse;
@@ -319,7 +320,7 @@ namespace Workwear.ViewModels.Stock.Documents
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
 
-			if(stockPosition.Nomenclature.UseBarcode) {
+			if(node.BarcodeCount > 0) {
 				IPage<BarcodeJournalViewModel> barcodeJournal =
 					NavigationManager.OpenViewModel<BarcodeJournalViewModel>(
 						this,
@@ -392,6 +393,8 @@ namespace Workwear.ViewModels.Stock.Documents
 				var addedItem = addedItems.First();
 				if(!ValidateSubstituteItemsType(item, addedItem.Key.Nomenclature))
 					return;
+
+				var lastWarehouseOperation = addedItem.First().LastOperation.WarehouseOperation;
 				var addedParam = new OverNormParam(
 					item.Employee,
 					addedItem.Key.Nomenclature,
@@ -399,7 +402,9 @@ namespace Workwear.ViewModels.Stock.Documents
 					addedItem.Key.Size,
 					addedItem.Key.Height,
 					item.OverNormOperation?.SubstitutedIssueOperation,
-					addedItem.ToList());
+					addedItem.ToList(),
+					wearPercent: lastWarehouseOperation.WearPercent,
+					owner: lastWarehouseOperation.Owner);
 				OverNormModel.UseBarcodes = addedParam.Barcodes.Any();
 				AddOrUpdateItem(item, addedParam);
 			}
@@ -531,6 +536,25 @@ namespace Workwear.ViewModels.Stock.Documents
 			else
 				logger.Warn("Ошибка при сохранении документа.");
 			return result;
+		}
+		#endregion
+
+		#region Печать
+		public void Print()
+		{
+			if(UoW.HasChanges && !interactive.Question("Перед печатью документ будет сохранён. Продолжить?"))
+				return;
+			if(!Save())
+				return;
+
+			var reportInfo = new ReportInfo {
+				Title = $"Выдача вне нормы №{Entity.DocNumber ?? Entity.Id.ToString()}",
+				Identifier = "Documents.OverNorm",
+				Parameters = new Dictionary<string, object> {
+					{ "id", Entity.Id },
+				}
+			};
+			NavigationManager.OpenViewModel<RdlViewerViewModel, ReportInfo>(this, reportInfo);
 		}
 		#endregion
 		

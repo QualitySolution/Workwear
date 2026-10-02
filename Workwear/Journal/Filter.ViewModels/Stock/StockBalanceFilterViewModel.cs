@@ -83,16 +83,24 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref sensitiveDate, value);
 		}
 
-		private bool showWithBarcodes;
-		public virtual bool ShowWithBarcodes {
-			get => showWithBarcodes;
-			set => SetField(ref showWithBarcodes, value);
+		//Только маркируемые номенклатуры (useBarcode)
+		private bool showWithUseBarcodes;
+		public virtual bool ShowWithUseBarcodes {
+			get => showWithUseBarcodes;
+			set => SetField(ref showWithUseBarcodes, value);
 		}
 
 		private bool canChangeShowWithBarcodes = true;
 		public virtual bool CanChangeShowWithBarcodes {
 			get => canChangeShowWithBarcodes;
 			set => SetField(ref canChangeShowWithBarcodes, value);
+		}
+
+		//Есть невыданные промаркированные позиции
+		private bool showOnlyWithBarcodeInStock;
+		public virtual bool ShowOnlyWithBarcodeInStock {
+			get => showOnlyWithBarcodeInStock;
+			set => SetField(ref showOnlyWithBarcodeInStock, value);
 		}
 	
 		private ItemsType itemsType;

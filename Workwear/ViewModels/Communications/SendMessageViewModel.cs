@@ -8,8 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using fyiReporting.RDL;
 using Gamma.Utilities;
-using Google.Protobuf;
 using MySqlConnector;
+using QS.Cloud.Email.DesktopClient;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
 using QS.Dialog;
@@ -27,13 +27,13 @@ using Workwear.Tools;
 
 namespace Workwear.ViewModels.Communications 
 {
-	public class SendMessangeViewModel : WindowDialogViewModelBase, IDialogDocumentation, IDisposable
+	public class SendMessageViewModel : WindowDialogViewModelBase, IDialogDocumentation, IDisposable
 	{
 		private readonly IList<EmployeeCard> employees;
 		private readonly int? warehouseId;
 		private readonly DateTime? endDateIssue;
 		private readonly int[] protectionToolsIds;
-		private readonly EmailManagerService emailManagerService;
+		private readonly DesktopEmailSenderClient emailSenderClient;
 		private readonly NotificationManagerService notificationManager;
 		private readonly IInteractiveMessage interactive;
 		private readonly ModalProgressCreator progressCreator;
@@ -42,8 +42,8 @@ namespace Workwear.ViewModels.Communications
 
 		readonly IUnitOfWork uow;
 
-		public SendMessangeViewModel(int[] employeeIds, int warehouseId, DateTime? endDateIssue, int[] protectionToolsIds,
-			IUnitOfWorkFactory unitOfWorkFactory, EmailManagerService emailManagerService,
+		public SendMessageViewModel(int[] employeeIds, int warehouseId, DateTime? endDateIssue, int[] protectionToolsIds,
+			IUnitOfWorkFactory unitOfWorkFactory, DesktopEmailSenderClient emailSenderClient,
 			NotificationManagerService notificationManager, IInteractiveMessage interactive,
 			ModalProgressCreator progressCreator, MySqlConnectionStringBuilder connectionStringBuilder,
 			IGuiDispatcher guiDispatcher,
@@ -52,7 +52,7 @@ namespace Workwear.ViewModels.Communications
 			this.warehouseId = warehouseId;
 			this.endDateIssue = endDateIssue;
 			this.protectionToolsIds = protectionToolsIds;
-			this.emailManagerService = emailManagerService ?? throw new ArgumentNullException(nameof(emailManagerService));
+			this.emailSenderClient = emailSenderClient ?? throw new ArgumentNullException(nameof(emailSenderClient));
 			this.notificationManager = notificationManager ?? throw new ArgumentNullException(nameof(notificationManager));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
@@ -300,12 +300,12 @@ namespace Workwear.ViewModels.Communications
 			{
 				try 
 				{
-					IEnumerable<EmailMessage> messages = availableEmp.Select(MakeEmailMessage);
-					result = await emailManagerService.SendMessagesAsync(messages, progress, token);
+					IEnumerable<DesktopEmailMessage> messages = availableEmp.Select(MakeEmailMessage);
+					result = await emailSenderClient.SendMessagesAsync(messages, progress, token);
 				}
 				catch (OperationCanceledException) 
 				{
-					result = $"Операция отправки email уведолмений прервана.\nБыло отправлено {progressCreator.Value} email";
+					result = $"Операция отправки email уведомлений прервана.\nБыло отправлено {progressCreator.Value} email";
 				}
 			}
 
@@ -330,16 +330,10 @@ namespace Workwear.ViewModels.Communications
 			return message;
 		}
 
-		private EmailMessage MakeEmailMessage(EmployeeCard employee) 
+		private DesktopEmailMessage MakeEmailMessage(EmployeeCard employee)
 		{
-			EmailMessage message = new EmailMessage()
-			{
-				Address = employee.Email,
-				Subject = MessageTitle,
-				Text = MessageText
-			};
-
-			if(!FileAttachSelected) return message;
+			if(!FileAttachSelected)
+				return new DesktopEmailMessage(employee.Email, MessageTitle, MessageText);
 			
 			ReportInfo reportInfo = new ReportInfo
 			{
@@ -353,14 +347,8 @@ namespace Workwear.ViewModels.Communications
 				{ "endDateIssue", endDateIssue ?? DateTime.Now },
 				{ "protection_tools_ids", protectionToolsIds }
 			});
-			message.Files.Add(new Attachment() 
-				{
-					FileName = $"{Filename}.pdf",
-					File = ByteString.CopyFrom(bytes)
-				}
-			);
-			
-			return message;
+			var attachment = new EmailAttachment(bytes, $"{Filename}.pdf");
+			return new DesktopEmailMessage(employee.Email, MessageTitle, MessageText, new[] { attachment });
 		}
 
 		private byte[] ConvertReportToByte(ReportInfo reportInfo, Dictionary<string, object> parameters) 

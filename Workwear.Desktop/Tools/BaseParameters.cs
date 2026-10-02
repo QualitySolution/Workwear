@@ -27,12 +27,26 @@ namespace Workwear.Tools
 		}
 		
 		/// <summary>
-		/// Разрешать выдачу раньше срока (дней)
+		/// Разрешать персональную выдачу раньше срока (дней)
 		/// </summary>
-		public virtual int ColDayAheadOfShedule {
+		public virtual int ColDayAheadOfShedulePersonal {
 			get => Dynamic.ColDayAheadOfShedule(typeof(int)) ?? 0;
-			set => Dynamic[nameof(ColDayAheadOfShedule)] = value;
+			set => Dynamic["ColDayAheadOfShedule"] = value;
 		}
+
+		/// <summary>
+		/// Разрешать коллективную выдачу раньше срока (дней)
+		/// </summary>
+		public virtual int ColDayAheadOfSheduleCollective {
+			get => Dynamic.ColDayAheadOfSheduleCollective(typeof(int)) ?? 0;
+			set => Dynamic[nameof(ColDayAheadOfSheduleCollective)] = value;
+		}
+
+		/// <summary>
+		/// Разрешать выдачу раньше срока (дней) для указанного типа выдачи.
+		/// </summary>
+		public virtual int GetColDayAheadOfShedule(IssueType issueType) =>
+			issueType == IssueType.Collective ? ColDayAheadOfSheduleCollective : ColDayAheadOfShedulePersonal;
 
 		/// <summary>
 		/// Проверять остатки при расходе со склада.
@@ -119,6 +133,14 @@ namespace Workwear.Tools
 			set => Dynamic[nameof(IsGenericName)] = value;
 		}
 		
+		/// <summary>
+		/// На лицевой стороне карточки сотрудника делить потребности на блоки по условию нормы.
+		/// </summary>
+		public virtual bool ConditionGroupInPersonalCard {
+			get => Dynamic.ConditionGroupInPersonalCard(typeof(bool)) ?? false;
+			set => Dynamic[nameof(ConditionGroupInPersonalCard)] = value;
+		}
+
 		/// <summary>
 		/// Дата запрета редактирования документов.
 		/// </summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using QS.Views;
 using workwear.ReportParameters.ViewModels;
 using Workwear.Domain.Stock;
@@ -76,22 +77,46 @@ namespace workwear.ReportParameters.Views {
 			choiceemployeegroupview1.ViewModel = ViewModel.ChoiceEmployeeGroupViewModel;
 			choiceemployeegroupview1.Visible = ViewModel.VisibleChoiceEmployeeGroup;
 			choicedepartmentview.ViewModel = ViewModel.ChoiceDepartmentViewModel;
-			expander2.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
+			expanderEmployeeGroups.Visible = ViewModel.VisibleChoiceEmployeeGroup;
+
+			expanders = new[]
+				{ expanderFiltres, expanderProtectionTools, expanderSubdivisions, expanderDepartment, expanderEmployeeGroups };
+			foreach(var expander in expanders)
+				expander.AddNotification("expanded", OnExpanderExpandedChanged);
+			KeepExpandedOnly(expanders.FirstOrDefault(x => x.Expanded));
+		}
+
+		private Gtk.Expander[] expanders;
+		private bool applyingExpanders;
+
+		/// <summary>
+		/// Hаскрытым может быть только один блок. Т.к. иначе можно "выжать" часть за пределы средних экрпнов.
+		/// </summary>
+		private void KeepExpandedOnly(Gtk.Expander expanded) {
+			if(applyingExpanders)
+				return;
+			applyingExpanders = true;
+			try {
+				foreach(var expander in expanders) {
+					if(expanded != null && expander != expanded)
+						expander.Expanded = false;
+					if(vbox2[expander] is Gtk.Box.BoxChild child)
+						child.Expand = expander.Expanded;
+				}
+			}
+			finally {
+				applyingExpanders = false;
+			}
+		}
+
+		private void OnExpanderExpandedChanged(object sender, GLib.NotifyArgs args) {
+			var changed = (Gtk.Expander)sender;
+			KeepExpandedOnly(changed.Expanded ? changed : null);
 		}
 
 		protected void OnButtonPrintReportClicked(object sender, EventArgs e) {
 			ViewModel.LoadReport();
-		}
-		protected void OnExpander1Activated(object sender, EventArgs e) {
-			(vbox2[expander1] as Gtk.Box.BoxChild).Expand = expander1.Expanded;
-		}
-
-		protected void OnExpander2Activated(object sender, EventArgs e) {
-			(vbox2[expander2] as Gtk.Box.BoxChild).Expand = expander2.Expanded;
-		}
-
-		protected void OnExpanderDepartmentActivated(object sender, EventArgs e) {
-			(vbox2[expanderDepartment] as Gtk.Box.BoxChild).Expand = expanderDepartment.Expanded;
 		}
 	}
 }

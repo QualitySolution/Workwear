@@ -9,8 +9,10 @@ using QS.Measurement.Domain;
 using QS.Measurement.Views;
 using QS.Measurement.ViewModels;
 using QS.Cloud.Client;
+using QS.Cloud.Email.DesktopClient;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.WearLk.Client;
+using QS.Cloud.WorkwearDictionary.Client;
 using QS.Configuration;
 using QS.Deletion.Views;
 using QS.Deletion;
@@ -90,6 +92,7 @@ using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Permissions;
+using Workwear.Tools.Regulations;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.OverNorms;
 using Workwear.Tools.User;
@@ -344,6 +347,7 @@ namespace workwear
 			builder.RegisterType<DutyNormIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<NormToDutyNormModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<GtkEtnComplectResolver>().As<IEtnComplectResolver>();
 			builder.RegisterType<IssuedSheetPrintModel>().AsSelf().InstancePerLifetimeScope();
 			#region Прогноз
 			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
@@ -369,13 +373,14 @@ namespace workwear
 			builder.RegisterType<CloudClientService>().AsSelf().SingleInstance();
 			builder.RegisterType<LkUserManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<MessagesService>().AsSelf().SingleInstance();
-			builder.RegisterType<EmailManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<DesktopEmailSenderClient>().AsSelf().SingleInstance();
 			builder.RegisterType<NotificationManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<SpecCoinManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<ProductsManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<EtnDictionaryService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели

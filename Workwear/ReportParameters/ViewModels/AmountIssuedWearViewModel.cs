@@ -12,7 +12,9 @@ using QS.Report.ViewModels;
 using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
+using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
+using Workwear.Repository.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -23,11 +25,13 @@ namespace workwear.ReportParameters.ViewModels {
 		public ChoiceListViewModel<EmployeeGroup> ChoiceEmployeeGroupViewModel;
 		public ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
 		public ChoiceListViewModel<Department> ChoiceDepartmentViewModel;
-		
+		public ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
+
 		public AmountIssuedWearViewModel(
-			RdlViewerViewModel rdlViewerViewModel, 
-			IUnitOfWorkFactory uowFactory, 
-			FeaturesService featuresService) : base(rdlViewerViewModel, uowFactory) 
+			RdlViewerViewModel rdlViewerViewModel,
+			IUnitOfWorkFactory uowFactory,
+			FeaturesService featuresService,
+			ProtectionToolsRepository protectionToolsRepository) : base(rdlViewerViewModel, uowFactory)
 		{
 			FeaturesService = featuresService;
 			Title = "Справка о выданной спецодежде";
@@ -36,7 +40,7 @@ namespace workwear.ReportParameters.ViewModels {
 			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
 			ChoiceSubdivisionViewModel.ShowNullValue(true, "Без подраздеения");
 			ChoiceSubdivisionViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
-			
+
 			var employeeGroupsList = UoW.GetAll<EmployeeGroup>().ToList();
 			ChoiceEmployeeGroupViewModel = new ChoiceListViewModel<EmployeeGroup>(employeeGroupsList);
 			ChoiceEmployeeGroupViewModel.ShowNullValue(true, "Без группы");
@@ -46,6 +50,11 @@ namespace workwear.ReportParameters.ViewModels {
 			ChoiceDepartmentViewModel = new ChoiceListViewModel<Department>(departmentsList);
 			ChoiceDepartmentViewModel.ShowNullValue(true, "Без отдела");
 			ChoiceDepartmentViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
+
+			var protectionToolsList = protectionToolsRepository.GetActiveProtectionTools(UoW);
+			ChoiceProtectionToolsViewModel = new ChoiceListViewModel<ProtectionTools>(protectionToolsList);
+			ChoiceProtectionToolsViewModel.ShowNullValue(true, "Без нормы");
+			ChoiceProtectionToolsViewModel.PropertyChanged += ChoiceViewModelOnPropertyChanged;
 
 			if(FeaturesService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -86,7 +95,9 @@ namespace workwear.ReportParameters.ViewModels {
 					{"byDepartment", ByDepartment},
 					{"departments", ChoiceDepartmentViewModel.SelectedIdsMod},
 					{"withoutDepartment", ChoiceDepartmentViewModel.NullIsSelected},
-					{"showManualOperation", ShowManualOperation}
+					{"showManualOperation", ShowManualOperation},
+					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIdsMod},
+					{"without_protection_tools", ChoiceProtectionToolsViewModel.NullIsSelected}
 		};
 
 		public override string Identifier { 
@@ -224,7 +235,8 @@ namespace workwear.ReportParameters.ViewModels {
 		public bool VisibleByOperation => ReportType == AmountIssuedWearReportType.Flat;
 		public bool SensetiveLoad => !ChoiceSubdivisionViewModel.AllUnSelected && StartDate != null && EndDate != null && startDate <= endDate
 									&& !ChoiceEmployeeGroupViewModel.AllUnSelected
-									&& !ChoiceDepartmentViewModel.AllUnSelected;
+									&& !ChoiceDepartmentViewModel.AllUnSelected
+									&& !ChoiceProtectionToolsViewModel.AllUnSelected;
 		public bool SensetiveBySubdiviion => !ByOperation;
 		public bool SensetiveByEmployee => !ByOperation;
 		public bool SensetiveBySize => !ByOperation;
@@ -236,6 +248,8 @@ namespace workwear.ReportParameters.ViewModels {
 			if(nameof(ChoiceEmployeeGroupViewModel.AllUnSelected)== e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 			if(nameof(ChoiceDepartmentViewModel.AllUnSelected) == e.PropertyName)
+				OnPropertyChanged(nameof(SensetiveLoad));
+			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
 				OnPropertyChanged(nameof(SensetiveLoad));
 		}
 		#endregion
