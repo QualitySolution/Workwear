@@ -156,8 +156,7 @@ namespace Workwear.Test.Integration.Regulations {
 				var model = new EtnNormImportModel(uow, norm, Substitute.For<IInteractiveService>(), Substitute.For<IEtnComplectResolver>());
 				model.AddItemsFromEtn(etnResponse, appendixNumber: 2);
 
-				Assert.That(norm.Items.First().Comment, Does.Contain("Доп. СИЗ по результатам оценки профрисков"));
-				Assert.That(norm.Items.First().Comment, Does.Contain("Дополнительный комплект"));
+				Assert.That(norm.Items.First().Comment, Is.EqualTo("Доп. СИЗ по результатам оценки профрисков"));
 			}
 		}
 
