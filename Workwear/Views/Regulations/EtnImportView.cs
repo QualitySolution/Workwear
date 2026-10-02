@@ -80,9 +80,9 @@ namespace Workwear.Views.Regulations {
 			ytreeSubjects.ColumnsConfig = FluentColumnsConfig<EtnSubjectNode>.Create()
 				.AddColumn("☑").AddToggleRenderer(x => x.Selected).Editing()
 					.AddSetter((c, n) => c.Visible = n.Selectable)
-				.AddColumn("№").AddReadOnlyTextRenderer(x => x.Code)
+				.AddColumn("№").AddReadOnlyTextRenderer(x => x.Code).SearchHighlight()
 				.AddColumn("Наименование").Resizable()
-					.AddReadOnlyTextRenderer(x => x.NameWithNote).WrapWidth(600)
+					.AddReadOnlyTextRenderer(x => x.NameWithNote).WrapWidth(600).SearchHighlight()
 				.RowCells()
 					.AddSetter<Gtk.CellRendererText>((c, n) => c.Weight = n.Selected ? 600 : 400)
 				.Finish();
@@ -93,6 +93,7 @@ namespace Workwear.Views.Regulations {
 		}
 
 		private void RenewSubjectsModel() {
+			ytreeSubjects.SearchHighlightText = ViewModel.SearchText?.Trim();
 			ytreeSubjects.YTreeModel = new Gamma.Binding.RecursiveTreeModel<EtnSubjectNode>(
 				ViewModel.VisibleRoots, x => x.Parent, x => x.Children);
 			if(String.IsNullOrWhiteSpace(ViewModel.SearchText))
