@@ -67,7 +67,10 @@ namespace Workwear.ViewModels.Postomats {
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWorkFactory), unitOfWorkFactory} })));
-			Entity.Items.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(CanChangePostomat));
+			Entity.Items.CollectionChanged += (sender, args) => {
+				OnPropertyChanged(nameof(CanChangePostomat));
+				OnPropertyChanged(nameof(TotalText));
+			};
 		}
 
 		#region IDialogDocumentation
@@ -139,12 +142,14 @@ namespace Workwear.ViewModels.Postomats {
 				.List();
 			foreach(var i in items) 
 				Entity.AddItem(i, AvailableCells().FirstOrDefault(), userService.GetCurrentUser());
-			OnPropertyChanged(nameof(TotalText));
 		}
 
 		public void ReturnFromService() {
 			var selectPage = NavigationManager.OpenViewModel<ClaimsJournalViewModel>(this, OpenPageOptions.AsSlave,
-				model => model.ExcludeInDocs = true,
+				model => {
+					model.ExcludeInDocs = true;
+					model.ExcludeClaimIds = Entity.Items.Select(x => x.ServiceClaim.Id).ToList();
+				},
 				addingRegistrations: builder => {
 					builder.RegisterInstance<Action<ClaimsJournalFilterViewModel>>(
 						filter => {
@@ -188,7 +193,6 @@ namespace Workwear.ViewModels.Postomats {
 				UoW.Save(Entity);
 				UoW.Commit();
 			}
-			OnPropertyChanged(nameof(TotalText));
 		}
 		#endregion
 
