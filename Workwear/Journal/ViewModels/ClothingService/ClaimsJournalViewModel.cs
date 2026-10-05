@@ -35,6 +35,7 @@ namespace workwear.Journal.ViewModels.ClothingService {
 
 		#region Внешние прараметры
 		public bool ExcludeInDocs = false;
+		public IList<int> ExcludeClaimIds;
 		#endregion
 
 		public ClaimsJournalFilterViewModel Filter { get; set; }
@@ -146,6 +147,8 @@ namespace workwear.Journal.ViewModels.ClothingService {
 
 			if(ExcludeInDocs)
 				query.WithSubquery.WhereNotExists(subqueryInDocument);
+			if(ExcludeClaimIds != null && ExcludeClaimIds.Any())
+				query.WhereRestrictionOn(() => serviceClaimAlias.Id).Not.IsIn(ExcludeClaimIds.ToArray());
 
 			return query
 				.Where(GetSearchCriterion(
