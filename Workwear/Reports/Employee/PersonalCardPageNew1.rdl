@@ -89,7 +89,7 @@ WHERE
     <DataSet Name="Norms">
       <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT IFNULL(protection_tools.alternative_name, protection_tools.name) AS type_name,
+        <CommandText>SELECT IFNULL(protection_tools.official_name, protection_tools.name) AS type_name,
        norms_item.norm_paragraph AS ton_paragraph,
        norms_item.amount AS amount,
        CONCAT(
