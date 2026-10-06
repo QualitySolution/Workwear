@@ -4,7 +4,6 @@ SetCompressor /SOLID lzma
 SetDatablockOptimize on
 ;--------------------------------
 !define PRODUCT_VERSION "2.10.15"
-!define NET_VERSION "4.6.2"
 !define EXE_NAME "workwear"
 !define PRODUCT_NAME "QS: Спецодежда"
 !define SHORTCUT_NAME "QS Спецодежда"
@@ -235,10 +234,10 @@ Section "${PRODUCT_NAME}" SecProgram
 
 SectionEnd
 
-Section "MS .NET Framework ${NET_VERSION}" SecFramework
+Section "MS .NET Framework 4.6.2" SecFramework
   SectionIn RO
 
-  !insertmacro CheckNetFramework 461
+  !insertmacro CheckNetFramework 462
  
 SectionEnd
 
