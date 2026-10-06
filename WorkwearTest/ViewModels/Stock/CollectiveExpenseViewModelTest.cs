@@ -32,7 +32,6 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.Tools.User;
-using Workwear.ViewModels.Stock;
 using Workwear.ViewModels.Stock.Documents;
 
 namespace WorkwearTest.ViewModels.Stock
@@ -198,6 +197,95 @@ namespace WorkwearTest.ViewModels.Stock
 					Assert.That(savedIssuanceSheet.Items.Count, Is.EqualTo(1));
 					Assert.That(savedIssuanceSheet.Items.First().CollectiveExpenseItem.Id,
 						Is.EqualTo(savedExpense.Items.First().Id));
+				}
+			}
+		}
+
+		[Test(Description = "Проверяем что после сохранения новой коллективной выдачи пересчитанная дата следующей выдачи записана в базу.")]
+		[Category("Integrated")]
+		public void Create_SavesNextIssueToDb()
+		{
+			NewSessionWithSameDB();
+			NotifyConfiguration.Enable();
+
+			var userService = Substitute.For<IUserService>();
+			var currentUserSettings = Substitute.For<CurrentUserSettings>();
+			currentUserSettings.Settings.DefaultOrganization.Returns(null as Organization);
+			currentUserSettings.Settings.DefaultLeader.Returns(null as Leader);
+			currentUserSettings.Settings.DefaultResponsiblePerson.Returns(null as Leader);
+			var containerBuilder = MakeContainer(userService, currentUserSettings);
+			containerBuilder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
+			var container = containerBuilder.Build();
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var user = new UserBase();
+				uow.Save(user);
+				userService.GetCurrentUser().Returns(user);
+
+				var itemType = new ItemsType {
+					Name = "Тип"
+				};
+				uow.Save(itemType);
+
+				var nomenclature = new Nomenclature {
+					Type = itemType
+				};
+				uow.Save(nomenclature);
+
+				var protectionTools = new ProtectionTools {
+					Name = "Тестовый СИЗ",
+					Type = itemType
+				};
+				protectionTools.AddNomenclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(protectionTools);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.DismissDate = null;
+				employee.AddUsedNorm(norm);
+				employee.WorkwearItems.First().NextIssue = new DateTime(2022, 1, 1); 
+				uow.Save(employee);
+
+				var warehouseOperation = new WarehouseOperation {
+					Amount = 10,
+					ReceiptWarehouse = warehouse,
+					Nomenclature = nomenclature,
+				};
+				uow.Save(warehouseOperation);
+
+				uow.Commit();
+
+				using(var scope = container.BeginLifetimeScope()) {
+					var vmCreate = scope.Resolve<CollectiveExpenseViewModel>(
+						new TypedParameter(typeof(IEntityUoWBuilder), EntityUoWBuilder.ForCreate())
+					);
+					vmCreate.Entity.Date = new DateTime(2022, 04, 12);
+					vmCreate.Entity.Warehouse = vmCreate.UoW.GetById<Warehouse>(warehouse.Id);
+
+					var employeeInSession = vmCreate.UoW.GetById<EmployeeCard>(employee.Id);
+					var nomenclatureInSession = vmCreate.UoW.GetById<Nomenclature>(nomenclature.Id);
+					vmCreate.Entity.AddItem(
+						employeeInSession.WorkwearItems.First(),
+						new StockPosition(nomenclatureInSession, 0, null, null, null),
+						1
+					);
+
+					Assert.That(vmCreate.Save(), Is.True);
+				}
+
+				//Читаем из новой сессии, чтобы увидеть именно то что записано в базу.
+				using(var checkUow = UnitOfWorkFactory.CreateWithoutRoot()) {
+					var savedEmployee = checkUow.GetById<EmployeeCard>(employee.Id);
+					Assert.That(savedEmployee.WorkwearItems.First().NextIssue, Is.EqualTo(new DateTime(2023, 4, 12)));
 				}
 			}
 		}
