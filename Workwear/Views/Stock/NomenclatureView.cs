@@ -51,7 +51,7 @@ namespace Workwear.Views.Stock {
 			ytextComment.Binding
 				.AddBinding(Entity, e => e.Comment, w => w.Buffer.Text).InitializeFromSource();
 			ycheckArchival.Binding
-				.AddBinding(Entity, e => e.Archival, w => w.Active).InitializeFromSource();
+				.AddBinding(ViewModel, vm => vm.Archival, w => w.Active).InitializeFromSource();
 			labelSaleCost.Visible = ViewModel.VisibleSaleCost;
 			yspinbuttonSaleCost.Visible = ylabel_Currency1.Visible = ViewModel.VisibleSaleCost;
 			ylabel_Currency1.Binding.AddBinding(ViewModel, vm => vm.UsedCurrency, w => w.LabelProp).InitializeFromSource();
