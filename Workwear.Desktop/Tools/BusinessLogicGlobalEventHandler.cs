@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using QS.Dialog;
+using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
@@ -102,6 +103,24 @@ namespace Workwear.Tools
 						var baseParameters = scope.Resolve<BaseParameters>();
 						var employeeIssueRepository = scope.Resolve<EmployeeIssueRepository>(new TypedParameter(typeof(UnitOfWorkProvider), new UnitOfWorkProvider(uow)));
 						var issueModel = new EmployeeIssueModel(employeeIssueRepository, new UnitOfWorkProvider(uow));
+
+						//Возврат, списание должны быть в той же номенклатуре нормы, что и выдача, иначе граф их не учтёт.
+						var changedProtectionToolsIds = changeEvents
+							.Where(x => x.UpdateEvent?.OldState != null
+								&& (x.Entity as EmployeeIssueOperation).Issued > 0
+								&& !DomainHelper.EqualDomainObjects(
+									x.GetOldValueCast<EmployeeIssueOperation, ProtectionTools>(e => e.ProtectionTools),
+									(x.Entity as EmployeeIssueOperation).ProtectionTools))
+							.Select(x => (x.Entity as EmployeeIssueOperation).Id)
+							.ToArray();
+						if(changedProtectionToolsIds.Any()) {
+							foreach(var child in employeeIssueRepository.GetChildOperations(changedProtectionToolsIds, uow)
+								        .Where(c => !DomainHelper.EqualDomainObjects(c.ProtectionTools, c.IssuedOperation.ProtectionTools))) {
+								child.ProtectionTools = child.IssuedOperation.ProtectionTools;
+								uow.Save(child);
+							}
+							uow.Commit();
+						}
 
 						var operationsToRecalculate = new List<EmployeeIssueOperation>();
 						foreach(var employeeGroup in changeEvents.GroupBy(x => (x.Entity as EmployeeIssueOperation).Employee.Id)) {
