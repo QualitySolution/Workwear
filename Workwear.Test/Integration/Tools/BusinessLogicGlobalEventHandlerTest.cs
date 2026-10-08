@@ -363,6 +363,97 @@ namespace Workwear.Test.Integration.Tools
 			}
 		}
 
+		[Test(Description = "При смене номенклатуры нормы у выдачи списание по ней переходит в ту же номенклатуру нормы и учитывается в графе.")]
+		[Category("real case")]
+		public void HandleUpdateEmployeeIssueOperation_ChangeProtectionTools_MoveWriteoffToNewProtectionToolsTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на смену номенклатуры нормы у выдачи")) {
+				MakeBaseParametersTable(uow);
+				var builder = new ContainerBuilder();
+				builder.RegisterInstance(ask).As<IInteractiveQuestion>();
+				builder.RegisterInstance(baseParameters).As<BaseParameters>();
+				builder.RegisterInstance(UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+				builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+				var container = builder.Build();
+
+				BusinessLogicGlobalEventHandler.Init(container);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var oldProtectionTools = new ProtectionTools { Type = nomenclatureType };
+				oldProtectionTools.Name = "Старая номенклатура нормы";
+				oldProtectionTools.AddNomenclature(nomenclature);
+				uow.Save(oldProtectionTools);
+
+				var newProtectionTools = new ProtectionTools { Type = nomenclatureType };
+				newProtectionTools.Name = "Новая номенклатура нормы";
+				newProtectionTools.AddNomenclature(nomenclature);
+				uow.Save(newProtectionTools);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(newProtectionTools);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				uow.Save(employee);
+
+				var warehouseOperation = new WarehouseOperation();
+				warehouseOperation.Nomenclature = nomenclature;
+				uow.Save(warehouseOperation);
+
+				var issueOp = new EmployeeIssueOperation();
+				issueOp.OperationTime = new DateTime(2024, 1, 10);
+				issueOp.Employee = employee;
+				issueOp.Nomenclature = nomenclature;
+				issueOp.ProtectionTools = oldProtectionTools;
+				issueOp.Issued = 1;
+				issueOp.WarehouseOperation = warehouseOperation;
+				uow.Save(issueOp);
+
+				var writeoffOp = new EmployeeIssueOperation();
+				writeoffOp.OperationTime = new DateTime(2024, 6, 10);
+				writeoffOp.Employee = employee;
+				writeoffOp.Nomenclature = nomenclature;
+				writeoffOp.ProtectionTools = oldProtectionTools;
+				writeoffOp.Returned = 1;
+				writeoffOp.IssuedOperation = issueOp;
+				uow.Save(writeoffOp);
+				uow.Commit();
+
+				//Перепривязываем выдачу к новой номенклатуре нормы
+				issueOp.ProtectionTools = newProtectionTools;
+				issueOp.NormItem = normItem;
+				uow.Save(issueOp);
+				uow.Commit();
+
+				//проверяем данные
+				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot("Тест на смену номенклатуры нормы у выдачи uow2")) {
+					var resultWriteoff = uow2.GetById<EmployeeIssueOperation>(writeoffOp.Id);
+					Assert.That(resultWriteoff.ProtectionTools.Id, Is.EqualTo(newProtectionTools.Id));
+
+					var resultEmployee = uow2.GetById<EmployeeCard>(employee.Id);
+					resultEmployee.FillWearReceivedInfo(new EmployeeIssueRepository(uow2));
+					var item = resultEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == newProtectionTools.Id);
+					Assert.That(item.Graph.AmountAtEndOfDay(new DateTime(2024, 7, 1)), Is.EqualTo(0));
+				}
+			}
+		}
+
 		[Test(Description = "Проверяем что не падаем при удаления сотрудника")]
 		[Category("real case")]
 		public void HandleDelete_CanDeleteEmployeeTest()
