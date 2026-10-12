@@ -69,6 +69,7 @@ namespace Workwear.ViewModels.Visits {
 		
 		public void UpdateNodes(Warehouse warehouse, bool needPerformance = true) {
 			employeeCardItems.Clear();
+			EmployeeCardItemsNodeList.Clear();
 			GroupedList.Clear();
 			ProgressPerformanceHelper performance = null;
 			if(needPerformance)
