@@ -31,10 +31,7 @@ namespace Workwear.Models.Supply {
 				(uow ?? UoW).Save(item);
 			}
 			
-			doc.FullReceived = doc.Items.All(i => i.Received >= i.Ordered);
-			doc.HasReceive = operations.Any();
-			if(doc.FullReceived && doc.Status != ShipmentStatus.Received)
-				doc.Status = ShipmentStatus.Received;
+			doc.UpdateStatus();
 			(uow ?? UoW).Save(doc);
 			
 			(uow ?? UoW).Commit();
