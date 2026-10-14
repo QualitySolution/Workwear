@@ -149,7 +149,7 @@ namespace Workwear.Tools
 				using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик удаления документов поступления на склад")) {
 					ShipmentCalculateModel sCalcModel = scope.Resolve<ShipmentCalculateModel>(new TypedParameter(typeof(UnitOfWorkProvider), new UnitOfWorkProvider(uow)));
 					foreach(var doc in changeEvents.Select(x => (x.Entity as Income)))
-						if(doc != null)
+						if(doc?.Shipment != null)
 							sCalcModel.UpdateShipment(doc.Shipment.Id, uow);
 					uow.Commit();
 				}
