@@ -61,24 +61,24 @@ namespace Workwear.Views.Regulations
 			ylabelSupplyUni.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyUnisex, w => w.Visible).InitializeFromSource();
 			ybutton_remUni.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyUnisex, w => w.Visible).InitializeFromSource();
 			ylistcomboboxSupplyUni.SetRenderTextFunc<Nomenclature>((n => $"({n.Sex.GetEnumShortTitle()}) {n.Name}"));
+			ylistcomboboxSupplyUni.ItemsList = ViewModel.SupplyNomenclatures;
 			ylistcomboboxSupplyUni.Binding.AddSource(Entity)
-				.AddBinding(e => e.Nomenclatures, w => w.ItemsList)
 				.AddBinding(e => e.SupplyNomenclatureUnisex, w => w.SelectedItem)
 				.AddBinding(ViewModel, vm => vm.ShowSupplyUnisex, w => w.Visible)
 				.InitializeFromSource();
 			ylabelSupplyMale.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible).InitializeFromSource();
 			ylistcomboboxSupplyMale.SetRenderTextFunc<Nomenclature>((n => $"({n.Sex.GetEnumShortTitle()}) {n.Name}"));			
 			ybutton_remMale.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible).InitializeFromSource();
+			ylistcomboboxSupplyMale.ItemsList = ViewModel.SupplyNomenclatures;
 			ylistcomboboxSupplyMale.Binding.AddSource(Entity)
-				.AddBinding(e => e.Nomenclatures, w => w.ItemsList)
 				.AddBinding(e => e.SupplyNomenclatureMale, w => w.SelectedItem)
 				.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible)
 				.InitializeFromSource();
 			ylabelSupplyFemale.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible).InitializeFromSource(); 
 			ylistcomboboxSupplyFemale.SetRenderTextFunc<Nomenclature>((n => $"({n.Sex.GetEnumShortTitle()}) {n.Name}"));			
 			ybutton_remFemale.Binding.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible).InitializeFromSource();
+			ylistcomboboxSupplyFemale.ItemsList = ViewModel.SupplyNomenclatures;
 			ylistcomboboxSupplyFemale.Binding.AddSource(Entity)
-				.AddBinding(e => e.Nomenclatures, w => w.ItemsList)
 				.AddBinding(e => e.SupplyNomenclatureFemale, w => w.SelectedItem)
 				.AddBinding(ViewModel, vm => vm.ShowSupplyTwosex, w => w.Visible)
 				.InitializeFromSource();

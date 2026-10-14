@@ -260,6 +260,16 @@ namespace Workwear.Repository.Operations
 		}
 
 		/// <summary>
+		/// Получаем дочерние операции (возврат, списание), ссылающиеся на указанные операции выдачи. 
+		/// </summary>
+		public IList<EmployeeIssueOperation> GetChildOperations(int[] issueOperationIds, IUnitOfWork uow = null) {
+			return (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.IssuedOperation.Id.IsIn(issueOperationIds))
+				.Fetch(SelectMode.Fetch, o => o.IssuedOperation)
+				.List();
+		}
+
+		/// <summary>
 		/// Получаем все операции выдачи выданные по указанной строке нормы.
 		/// </summary>
 		/// <returns></returns>

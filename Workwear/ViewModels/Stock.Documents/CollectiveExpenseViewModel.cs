@@ -208,6 +208,7 @@ namespace Workwear.ViewModels.Stock.Documents
 			if(changedOperations.Any()) {
 				progressCreator.UpdateMax(6 + changedOperations.Length + 1);
 				issueModel.UpdateNextIssue(changedOperations, progressCreator);
+				UoW.Commit();
 			}
 			
 			performance.CheckPoint("Завершение...");

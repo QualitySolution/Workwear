@@ -108,6 +108,8 @@ namespace workwear.Journal.ViewModels.Supply {
 			get { //Не забываем править ColorsLegendText
 				if(EndPeriod < DateTime.Now && !HasReceive)
 					return "red";
+				if(HasReceive && !FullReceived)
+					return "orange";
 				if(Status == ShipmentStatus.Ordered) {
 					if(FullOrdered)
 						return "green";

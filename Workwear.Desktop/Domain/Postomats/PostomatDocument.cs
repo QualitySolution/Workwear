@@ -82,6 +82,8 @@ namespace Workwear.Domain.Postomats {
 
 		#region Строки документа
 		public virtual void AddItem(ServiceClaim claim, CellLocation location, UserBase user) {
+			if(Items.Any(x => DomainHelper.EqualDomainObjects(x.ServiceClaim, claim)))
+				return;
 			var newItem = new PostomatDocumentItem {
 				Document = this,
 				Employee = claim.Employee,
@@ -101,6 +103,8 @@ namespace Workwear.Domain.Postomats {
 				yield return new ValidationResult("Не выбран постамат.", new[] { nameof(TerminalId) });
 			if(Items.Count == 0)
 				yield return new ValidationResult("Не заполнены строки документа.", new[] { nameof(Items) });
+			foreach(var duplicate in Items.Where(x => x.ServiceClaim != null).GroupBy(x => x.ServiceClaim.Id).Where(g => g.Count() > 1))
+				yield return new ValidationResult($"Заявка №{duplicate.Key} ({duplicate.First().Barcode?.Title}) добавлена в документ несколько раз.", new[] { nameof(Items) });
 
 			if(status != DocumentStatus.Deleted) {
 				using(var uow = (validationContext.Items[nameof(IUnitOfWorkFactory)] as IUnitOfWorkFactory)?.CreateWithoutRoot()) {

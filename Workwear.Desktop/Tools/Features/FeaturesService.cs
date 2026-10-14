@@ -99,6 +99,8 @@ namespace Workwear.Tools.Features
 			this.dataBaseInfo = dataBaseInfo;
 			if(dataBaseInfo?.IsDemo == true) {
 				ProductEdition = 0;
+				//Для сервисов с авторизацией по серийному номеру.
+				serialNumberEncoder.Number = parametersService.Dynamic.serial_number;
 				return;
 			}
 

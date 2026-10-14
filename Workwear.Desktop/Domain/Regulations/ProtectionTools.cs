@@ -172,6 +172,12 @@ namespace Workwear.Domain.Regulations
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if(ProtectionToolsNomenclatures.Count(x => x.CanChoose) == 1)
 					yield return new ValidationResult($"Отмечен только 1 возможный вариант для выбора. Допустимо не менее 2.");
+			if(SupplyNomenclatureUnisex?.Archival == true)
+				yield return new ValidationResult($"Закупаемая номенклатура (унисекс) «{SupplyNomenclatureUnisex.Name}» архивная. Выберите другую.");
+			if(SupplyNomenclatureMale?.Archival == true)
+				yield return new ValidationResult($"Закупаемая номенклатура (мужская) «{SupplyNomenclatureMale.Name}» архивная. Выберите другую.");
+			if(SupplyNomenclatureFemale?.Archival == true)
+				yield return new ValidationResult($"Закупаемая номенклатура (женская) «{SupplyNomenclatureFemale.Name}» архивная. Выберите другую.");
 		}
 		#endregion
 	}

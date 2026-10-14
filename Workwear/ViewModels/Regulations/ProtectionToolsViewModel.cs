@@ -129,6 +129,8 @@ namespace Workwear.ViewModels.Regulations
 		#endregion
 
 		#region Cвойства VM и проброс из Entyty
+		public IEnumerable<Nomenclature> SupplyNomenclatures => Entity.Nomenclatures.Where(n => !n.Archival);
+
 		public virtual SupplyType SupplyType {
 			get => Entity.SupplyType;
 			set {
