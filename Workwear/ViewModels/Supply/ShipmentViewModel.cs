@@ -158,7 +158,9 @@ namespace Workwear.ViewModels.Supply {
 		                                  SelectedItems.Any(i => i.Requested != i.Ordered);
 		public virtual bool CanEditDiffCause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
 		public virtual bool CanEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
-		public virtual bool CanEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
+		//Было обсуждение с СПС. Для смены количества заказанного нужно явно сменить статус и сохранить документ,
+		//чтобы не злоупотребляли и чтобы было проще отследить по истории изменений.
+		public virtual bool CanEditOrdered => Entity.Status != ShipmentStatus.Ordered && Entity.Status != ShipmentStatus.Received;
 		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
 		public virtual bool CanAddSize => SelectedItems != null && SelectedItems.Any(x => x.WearSizeType != null || x.HeightType != null) && SelectedItems.Length == 1;
 		public virtual bool VisibleWarehouseForecastingDate => Entity.WarehouseForecastingDate != null;
@@ -362,7 +364,10 @@ namespace Workwear.ViewModels.Supply {
 
 		public override bool Save() {
 			logger.Info ("Запись документа...");
-			
+
+			Entity.FullOrdered = Items.All(i => i.Ordered >= i.Requested);
+			Entity.UpdateStatus();
+
 			logger.Info("Валидация...");
 			if(!Validate()) {
 				logger.Warn("Валидация не пройдена, сохранение отменено.");
@@ -379,10 +384,8 @@ namespace Workwear.ViewModels.Supply {
 			}
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactive.Question($"В документе есть повторяющиеся позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
-			
-			Entity.FullOrdered = Items.All(i => i.Ordered >= i.Requested);
-			
-			if(Entity.Id == 0) 
+
+			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Today;
 			UoW.Save(Entity);
 			UoW.Commit();
