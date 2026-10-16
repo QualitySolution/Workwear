@@ -160,7 +160,8 @@ namespace Workwear.ViewModels.Stock.Documents
 					item.EmployeeCardItem = Entity.Employee.WorkwearItems
 						.FirstOrDefault(x => x.ProtectionTools == normItem.ProtectionTools);
 					item.ProtectionTools = normItem.ProtectionTools;
-					item.UpdateOperations(UoW,BaseParameters,interactive);
+					if(Entity.IssueDate != null)
+						item.UpdateOperations(UoW,BaseParameters,interactive);
 				}
 			}
 			CalculateTotal();

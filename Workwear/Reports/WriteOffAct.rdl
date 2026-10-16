@@ -39,6 +39,7 @@ FROM
          DATE_FORMAT(IFNULL(stock_write_off.creation_date, stock_return.creation_date),'%d.%m.%Y') as 'Создан документ',
          users.name as 'Автор',
          IFNULL(stock_write_off.comment, stock_return.comment) as 'Комментарий документа',
+         causes_write_off.name as 'Причина списания',
          IFNULL(stock_write_off_detail.cause, stock_return_items.comment_return)as 'Комментарий операции',
          nomenclature.sale_cost as 'Стоимость номенклатуры',
          IF(@service_detail AND bc.id IS NOT NULL, 1, IF(opwo.id is null, opis.issued, opis.returned)) * nomenclature.sale_cost as 'Сумма списанного',
@@ -50,6 +51,7 @@ FROM
      FROM operation_issued_by_employee opis #операция списания (или автосписанная операция выдачи) 
               LEFT JOIN stock_write_off_detail on opis.id = stock_write_off_detail.employee_issue_operation_id
               LEFT JOIN stock_write_off on stock_write_off_detail.stock_write_off_id = stock_write_off.id
+              LEFT JOIN causes_write_off on stock_write_off_detail.cause_write_off_id = causes_write_off.id
               LEFT JOIN operation_issued_by_employee opwo on opwo.id = opis.issued_operation_id #списываемая операция
               LEFT JOIN stock_return_items on opis.id = stock_return_items.employee_issue_operation_id
               LEFT JOIN stock_return on stock_return_items.stock_return_id = stock_return.id
@@ -177,6 +179,10 @@ ORDER BY `Тип`, `Дата`;</CommandText>
         </Field>
         <Field Name="Комментарий_документа">
           <DataField>Комментарий документа</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Причина_списания">
+          <DataField>Причина списания</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Комментарий_операции">
@@ -326,6 +332,9 @@ ORDER BY `Тип`, `Дата`;</CommandText>
             <Visibility>
               <Hidden>=!{?service_detail}</Hidden>
             </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>120.0pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>166.0pt</Width>
@@ -755,6 +764,24 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                  </TableCell>
                  <TableCell>
                    <ReportItems>
+                     <Textbox Name="TextboxHdrCause">
+                       <Value>Причина списания</Value>
+                       <Style>
+                         <TextAlign>Center</TextAlign>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                           <Bottom>None</Bottom>
+                         </BorderStyle>
+                         <FontWeight>Bold</FontWeight>
+                         <BorderColor />
+                         <BorderWidth />
+                         <VerticalAlign>Middle</VerticalAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
                      <Textbox Name="Textbox20">
                        <Value>Комментарий документа</Value>
                        <Style>
@@ -1137,6 +1164,23 @@ ORDER BY `Тип`, `Дата`;</CommandText>
                          </BorderStyle>
                          <PaddingRight>2pt</PaddingRight>
                          <TextAlign>Right</TextAlign>
+                       </Style>
+                     </Textbox>
+                   </ReportItems>
+                 </TableCell>
+                 <TableCell>
+                   <ReportItems>
+                     <Textbox Name="Причина_списания">
+                       <Value>=Fields!Причина_списания.Value</Value>
+                       <CanGrow>false</CanGrow>
+                       <Style>
+                         <BorderStyle>
+                           <Default>Solid</Default>
+                         </BorderStyle>
+                         <PaddingRight>2pt</PaddingRight>
+                         <TextAlign>Right</TextAlign>
+                         <BorderColor />
+                         <BorderWidth />
                        </Style>
                      </Textbox>
                    </ReportItems>
