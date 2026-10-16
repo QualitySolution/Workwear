@@ -408,6 +408,7 @@ namespace Workwear.ViewModels.Stock
 			//Загружаем справочник заранее, чтобы Owner из остатков не загружались по одному.
 			uow.Session.QueryOver<Owner>().List();
 			Expense = new Expense();
+			Expense.IssueDate = Expense.Date;
 			Expense.CreatedbyUser = userService.GetCurrentUser();
 			Expense.Employee = Employee;
 			Expense.Warehouse = Warehouse;
