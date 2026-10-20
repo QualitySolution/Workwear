@@ -161,6 +161,7 @@
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServicesCodeViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\VacationsReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\IssuedSizesViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\RentMovementsViewModel.cs" />
@@ -607,6 +608,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Regulations.EtnComplectWidgetView.cs" />
     <Compile Include="Views\Regulations\EtnImportView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Regulations.EtnImportView.cs" />
+    <Compile Include="ReportParameters\Views\VacationsReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.VacationsReportView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -1095,6 +1098,9 @@
     <None Include="Reports\ProvisionReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Reports\VacationsReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
