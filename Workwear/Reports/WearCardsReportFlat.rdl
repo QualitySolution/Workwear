@@ -33,11 +33,17 @@
     (SELECT GROUP_CONCAT(CONCAT(n.id, ' - ', n.name) ORDER BY n.name SEPARATOR '\n')
      FROM employees_norms en
           JOIN norms n ON n.id = en.norm_id
-     WHERE en.employee_id = employees.id AND n.archival = 0) as 'active_norms'
+     WHERE en.employee_id = employees.id AND n.archival = 0) as 'active_norms',
+    vacations.vacations as 'vacations'
     FROM employees
          LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
          LEFT JOIN departments on employees.department_id = departments.id
          LEFT JOIN posts on posts.id = employees.post_id
+         LEFT JOIN (SELECT ev.employee_id,
+                           GROUP_CONCAT(CONCAT(DATE_FORMAT(ev.begin_date, '%d.%m.%Y'), ' - ', DATE_FORMAT(ev.end_date, '%d.%m.%Y')) ORDER BY ev.begin_date SEPARATOR '\n') as vacations
+                    FROM employees_vacations ev
+                    WHERE ev.begin_date &lt;= CONVERT(@actual_date, DATE) AND ev.end_date &gt;= CONVERT(@actual_date, DATE)
+                    GROUP BY ev.employee_id) vacations ON vacations.employee_id = employees.id
 WHERE (
         (@only_working AND (employees.hire_date IS NULL OR employees.hire_date &lt;= @actual_date)
                         AND (employees.dismiss_date IS NULL OR employees.dismiss_date &gt; @actual_date))
@@ -52,6 +58,7 @@ WHERE (
                                        JOIN norms n ON n.id = en.norm_id
                                        WHERE en.employee_id = employees.id AND n.archival=0))
       )
+  AND (!@exclude_vacation OR vacations.employee_id IS NULL)
 ORDER BY employee_name;</CommandText>
         <QueryParameters>
           <QueryParameter Name="only_working">
@@ -83,6 +90,9 @@ ORDER BY employee_name;</CommandText>
           </QueryParameter>
           <QueryParameter Name="only_with_norms">
             <Value>={?only_with_norms}</Value>
+          </QueryParameter>
+          <QueryParameter Name="exclude_vacation">
+            <Value>={?exclude_vacation}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -121,6 +131,10 @@ ORDER BY employee_name;</CommandText>
         </Field>
         <Field Name="active_norms">
           <DataField>active_norms</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="vacations">
+          <DataField>vacations</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -184,6 +198,12 @@ ORDER BY employee_name;</CommandText>
           </TableColumn>
           <TableColumn>
             <Width>200pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>130pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_vacations}</Hidden>
+            </Visibility>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -335,6 +355,20 @@ ORDER BY employee_name;</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox12">
+                      <Value>В отпуске</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -465,6 +499,20 @@ ORDER BY employee_name;</CommandText>
                   <ReportItems>
                     <Textbox Name="active_norms">
                       <Value>=Fields!active_norms.Value</Value>
+                      <CanGrow>true</CanGrow>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="vacations">
+                      <Value>=Fields!vacations.Value</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
@@ -628,6 +676,30 @@ ORDER BY employee_name;</CommandText>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_phone">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_vacation">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_vacations">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>
