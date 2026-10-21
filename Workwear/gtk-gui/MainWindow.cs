@@ -247,6 +247,8 @@ public partial class MainWindow
 
 	private global::Gtk.Action EmailAction;
 
+	private global::Gtk.Action ActionVacationsReport;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -661,6 +663,9 @@ public partial class MainWindow
 		this.EmailAction = new global::Gtk.Action("EmailAction", global::Mono.Unix.Catalog.GetString("Email-рассылка"), null, null);
 		this.EmailAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Email-рассылка");
 		w1.Add(this.EmailAction, null);
+		this.ActionVacationsReport = new global::Gtk.Action("ActionVacationsReport", global::Mono.Unix.Catalog.GetString("Отпуска"), null, null);
+		this.ActionVacationsReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Отпуска");
+		w1.Add(this.ActionVacationsReport, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -744,26 +749,27 @@ public partial class MainWindow
 				"eetDetail\' action=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedS" +
 				"heetSummary\' action=\'ActionNotIssuedSheetSummary\'/></menu><separator/><menuitem " +
 				"name=\'ActionWearCardsReport\' action=\'ActionWearCardsReport\'/><menuitem name=\'Act" +
-				"ionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'" +
-				"ActionProvision\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeComplete" +
-				"nessReport\' action=\'ActionBarcodeCompletenessReport\'/><menu name=\'ActionDutyNorm" +
-				"Reports\' action=\'ActionDutyNormReports\'><menuitem name=\'ActionDutyNormIssuedRepo" +
-				"rt\' action=\'ActionDutyNormIssuedReport\'/></menu><separator/><menuitem name=\'Acti" +
-				"onRentMovements\' action=\'ActionRentMovements\'/><menuitem name=\'ActionRentAct\' ac" +
-				"tion=\'ActionRentAct\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuit" +
-				"em name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionPracticalGuide\'" +
-				" action=\'ActionPracticalGuide\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionA" +
-				"dminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'Action" +
-				"History\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuite" +
-				"m name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'Act" +
-				"ionChannelStable\' action=\'ActionChannelStable\'/><menuitem name=\'ActionOffAutoUpd" +
-				"ate\' action=\'ActionOffAutoUpdate\'/></menu><menuitem name=\'ActionUpdate\' action=\'" +
-				"ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><men" +
-				"u name=\'Action48\' action=\'Action48\'><menuitem name=\'TelegramAction\' action=\'Tele" +
-				"gramAction\'/><menuitem name=\'MAXAction\' action=\'MAXAction\'/><menuitem name=\'Emai" +
-				"lAction\' action=\'EmailAction\'/></menu><separator/><menuitem name=\'ActionSN\' acti" +
-				"on=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></" +
-				"menu></menubar></ui>");
+				"ionVacationsReport\' action=\'ActionVacationsReport\'/><menuitem name=\'ActionAmount" +
+				"EmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionPro" +
+				"vision\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessRepor" +
+				"t\' action=\'ActionBarcodeCompletenessReport\'/><menu name=\'ActionDutyNormReports\' " +
+				"action=\'ActionDutyNormReports\'><menuitem name=\'ActionDutyNormIssuedReport\' actio" +
+				"n=\'ActionDutyNormIssuedReport\'/></menu><separator/><menuitem name=\'ActionRentMov" +
+				"ements\' action=\'ActionRentMovements\'/><menuitem name=\'ActionRentAct\' action=\'Act" +
+				"ionRentAct\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'" +
+				"helpAction\' action=\'helpAction\'/><menuitem name=\'ActionPracticalGuide\' action=\'A" +
+				"ctionPracticalGuide\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide" +
+				"\'/><separator/><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu name" +
+				"=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionChanne" +
+				"lCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' ac" +
+				"tion=\'ActionChannelStable\'/><menuitem name=\'ActionOffAutoUpdate\' action=\'ActionO" +
+				"ffAutoUpdate\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><sepa" +
+				"rator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menu name=\'Action48\' ac" +
+				"tion=\'Action48\'><menuitem name=\'TelegramAction\' action=\'TelegramAction\'/><menuit" +
+				"em name=\'MAXAction\' action=\'MAXAction\'/><menuitem name=\'EmailAction\' action=\'Ema" +
+				"ilAction\'/></menu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><sepa" +
+				"rator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>" +
+				"");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -773,6 +779,7 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbuttonbox1 = new global::Gtk.HButtonBox();
+		this.hbuttonbox1.Name = "hbuttonbox1";
 		this.vbox1.Add(this.hbuttonbox1);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
 		w3.Position = 1;
@@ -1011,6 +1018,7 @@ public partial class MainWindow
 		this.TelegramAction.Activated += new global::System.EventHandler(this.OnTelegramActionActivated);
 		this.MAXAction.Activated += new global::System.EventHandler(this.OnMAXActionActivated);
 		this.EmailAction.Activated += new global::System.EventHandler(this.OnEmailActionActivated);
+		this.ActionVacationsReport.Activated += new global::System.EventHandler(this.OnActionVacationsReportActivated);
 		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }
