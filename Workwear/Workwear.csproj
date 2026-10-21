@@ -158,6 +158,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportParameters\ViewModels\AmountIssuedDutyNormsViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\NotIssuedDutyNormsViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\BarcodeCompletenessReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServiceReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ClothingServicesCodeViewModel.cs" />
@@ -608,6 +609,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Regulations.EtnComplectWidgetView.cs" />
     <Compile Include="Views\Regulations\EtnImportView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Regulations.EtnImportView.cs" />
+    <Compile Include="ReportParameters\Views\NotIssuedDutyNormsView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.NotIssuedDutyNormsView.cs" />
     <Compile Include="ReportParameters\Views\VacationsReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.VacationsReportView.cs" />
   </ItemGroup>
@@ -1025,6 +1028,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Reports\DutyNorms\AmountIssuedDutyNormsFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Reports\DutyNorms\NotIssuedDutyNorms.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
