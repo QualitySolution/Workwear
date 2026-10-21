@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Gamma.Utilities;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
+using QS.Report;
 using QS.Report.ViewModels;
 using QS.ViewModels.Control;
 using Workwear.Domain.Company;
@@ -59,12 +62,23 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"warehouse_id", Warehouse.Id },
 			{"exclude_zero_stock", ExcludeZeroStock },
 			{"hide_worn", HideWorn },
+			{"show_shipment", ShowShipment },
 			{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo) },
 		};
 
-		public override string Identifier => "DutyNorms.NotIssuedDutyNorms";
+		public override string Identifier {
+			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
+			set => throw new InvalidOperationException();
+		}
 
 		#region Параметры
+		private NotIssuedDutyNormsReportType reportType;
+		[PropertyChangedAlso(nameof(VisibleShowShipment))]
+		public virtual NotIssuedDutyNormsReportType ReportType {
+			get => reportType;
+			set => SetField(ref reportType, value);
+		}
+
 		private DateTime? reportDate = DateTime.Today;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
 		public virtual DateTime? ReportDate {
@@ -102,6 +116,12 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => warehouse.Id != -2 && hideWorn;
 			set => SetField(ref hideWorn, value);
 		}
+
+		private bool showShipment;
+		public virtual bool ShowShipment {
+			get => warehouse.Id != -2 && showShipment;
+			set => SetField(ref showShipment, value);
+		}
 		#endregion
 
 		#region Свойства
@@ -109,6 +129,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		                             && !ChoiceProtectionToolsViewModel.AllUnSelected
 		                             && !ChoiceSubdivisionViewModel.AllUnSelected;
 		public bool StockElementsSensetive => warehouse.Id != -2;
+		public bool VisibleShowShipment => featuresService.Available(WorkwearFeature.Shipment) && ReportType == NotIssuedDutyNormsReportType.Flat;
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(e.PropertyName == nameof(ChoiceProtectionToolsViewModel.AllUnSelected))
@@ -120,5 +141,14 @@ namespace Workwear.ReportParameters.ViewModels {
 		public readonly ChoiceListViewModel<ProtectionTools> ChoiceProtectionToolsViewModel;
 		public readonly ChoiceListViewModel<Subdivision> ChoiceSubdivisionViewModel;
 		#endregion
+	}
+
+	public enum NotIssuedDutyNormsReportType {
+		[ReportIdentifier("DutyNorms.NotIssuedDutyNorms")]
+		[Display(Name = "Форматировано")]
+		Common,
+		[ReportIdentifier("DutyNorms.NotIssuedDutyNormsFlat")]
+		[Display(Name = "Только данные")]
+		Flat
 	}
 }

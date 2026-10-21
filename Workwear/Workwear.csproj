@@ -1033,6 +1033,9 @@
     <None Include="Reports\DutyNorms\NotIssuedDutyNorms.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\DutyNorms\NotIssuedDutyNormsFlat.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Reports\ProvisionReportNeedIssue.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

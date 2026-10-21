@@ -7,6 +7,9 @@ namespace Workwear.ReportParameters.Views {
 		public NotIssuedDutyNormsView(NotIssuedDutyNormsViewModel viewModel) : base(viewModel) {
 			this.Build();
 
+			comboReportType.ItemsEnum = typeof(NotIssuedDutyNormsReportType);
+			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();
+
 			ydateReport.Binding.AddBinding(ViewModel, v => v.ReportDate, w => w.DateOrNull).InitializeFromSource();
 			dateExcludeBefore.Binding.AddBinding(ViewModel, v => v.ExcludeBefore, w => w.DateOrNull).InitializeFromSource();
 
@@ -21,6 +24,11 @@ namespace Workwear.ReportParameters.Views {
 			ycheckHideWorn.Binding.AddSource(ViewModel)
 				.AddBinding(v => v.HideWorn, w => w.Active)
 				.AddBinding(v => v.StockElementsSensetive, w => w.Sensitive)
+				.InitializeFromSource();
+			ycheckShowShipment.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ShowShipment, w => w.Active)
+				.AddBinding(v => v.StockElementsSensetive, w => w.Sensitive)
+				.AddBinding(v => v.VisibleShowShipment, w => w.Visible)
 				.InitializeFromSource();
 
 			choiceprotectiontoolsview1.ViewModel = ViewModel.ChoiceProtectionToolsViewModel;
