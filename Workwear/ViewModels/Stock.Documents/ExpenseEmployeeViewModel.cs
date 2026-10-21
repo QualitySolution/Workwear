@@ -461,7 +461,8 @@ namespace Workwear.ViewModels.Stock.Documents {
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;
-					if(Entity.Items.Any() && interactive.Question("Обновить количество по потребности на новую дату документа?"))
+
+					if(Entity.Date != default(DateTime) && Entity.Items.Any() && interactive.Question("Обновить количество по потребности на новую дату документа?"))
 						UpdateAmounts();
 					break;
 				case nameof(Entity.Employee):

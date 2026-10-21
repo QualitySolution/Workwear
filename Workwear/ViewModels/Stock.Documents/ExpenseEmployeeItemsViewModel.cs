@@ -359,6 +359,8 @@ namespace Workwear.ViewModels.Stock.Documents
 				return null;
 			if(item.Id != 0)
 				return null;
+			if(Entity.Date == default(DateTime))
+				return null;
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(item.ProtectionTools?.Type.IssueType == IssueType.Collective) 
 				return item.Amount > 0 ? "#7B3F00" : "Burlywood";
