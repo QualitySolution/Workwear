@@ -408,6 +408,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
+		ActionVacationsReport.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionVisits.Visible = FeaturesService.Available(WorkwearFeature.Visits);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
@@ -1143,7 +1144,7 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionRentActActivated(object sender, EventArgs e) {
 	}
-	
+
 	protected void OnActionCausesIssueActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<CauseIssueJournalViewModel>(null);
 	}
@@ -1161,5 +1162,9 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnEmailActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenEmail");
 		OpenHelper.OpenUrl("https://forms.msndr.net/subscriptions/3db9fe188746bac0e094a6a715d45444/form");
+	}
+
+	protected void OnActionVacationsReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(VacationsReportViewModel));
 	}
 }
