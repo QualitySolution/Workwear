@@ -1127,6 +1127,10 @@ public partial class MainWindow : Gtk.Window {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountIssuedDutyNormsViewModel));
 	}
 
+	protected void OnActionNotIssuedDutyNormsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(NotIssuedDutyNormsViewModel));
+	}
+
 	protected void OnActionRentMovementsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RentMovementsViewModel));
 	}

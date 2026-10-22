@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Description></Description>
+  <Author></Author>
+  <PageHeight>297mm</PageHeight>
+  <PageWidth>210mm</PageWidth>
+  <Width>1pt</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>4mm</LeftMargin>
+  <RightMargin>4mm</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <PageHeader>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>false</PrintOnFirstPage>
+    <PrintOnLastPage>false</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <Height>159.3pt</Height>
+    <Columns>1</Columns>
+    <ReportItems>
+      <Table Name="Table1">
+        <DataSetName>Data</DataSetName>
+        <NoRows>Нет данных.</NoRows>
+        <Style>
+          <BorderStyle>
+            <Default>Solid</Default>
+          </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <TableColumns>
+          <TableColumn>
+            <Width>261.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>60.1pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>28.9pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>39.1pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>64.6pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>64.6pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>51.9pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_stock}</Hidden>
+            </Visibility>
+          </TableColumn>
+        </TableColumns>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <Height>36pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox13">
+                      <Value>Наименование</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox12">
+                      <Value>Оценочная стоимость</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox17">
+                      <Value>Ед.</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox28">
+                      <Value>Коли-чество</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox31">
+                      <Value>Дата выдачи по сроку</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox34">
+                      <Value>Количество дней просрочки</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox45">
+                      <Value>Кол-во на складе</Value>
+                      <Style>
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+        </Header>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <Height>12 pt</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox14">
+                      <Value>=Fields!protection_tools_name.Value</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox15">
+                      <Value>={protection_tools_assessed_cost}</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0.00</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox18">
+                      <Value>={unit}</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox30">
+                      <Value>={need}</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor>=Iif(Fields!need.Value&lt;Fields!amount_by_norm.Value, "#FFFFCC", "")</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox33">
+                      <Value>={next_issue}</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>d</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <BackgroundColor>=Iif(Fields!last_issue.IsMissing, "#CCCCFF", "")</BackgroundColor>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox36">
+                      <Value>={delay}</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <TextAlign>Center</TextAlign>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox54">
+                      <Value>=Iif(Fields!in_stock.IsMissing, 0, {in_stock})</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Center</TextAlign>
+                        <Format>0</Format>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Left>0.0pt</Left>
+        <Top>46.9pt</Top>
+        <TableGroups>
+          <TableGroup>
+            <Grouping Name="Subdivision">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={subdivision_id}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox3">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>12pt</FontSize>
+                          </Style>
+                          <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value)</Value>
+                          <CanGrow>true</CanGrow>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>6</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox1">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <FontWeight>Bold</FontWeight>
+                            <FontSize>12pt</FontSize>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Footer>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>19.9pt</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox55">
+                          <Style>
+                            <BorderStyle>
+                              <Default>None</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                          <Value>="Дежурных норм по подразделению: " + Countdistinct({duty_norm_id})</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox16">
+                          <Value>=Sum({protection_tools_assessed_cost})</Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>None</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Top</VerticalAlign>
+                            <Format>0.00</Format>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox19">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>None</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox61">
+                          <Style>
+                            <BorderStyle>
+                              <Default>None</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Center</TextAlign>
+                            <VerticalAlign>Top</VerticalAlign>
+                          </Style>
+                          <Value>=Sum({need})</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox62">
+                          <Style>
+                            <BorderStyle>
+                              <Default>None</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                          <Value>="Видов СИЗ: " + Countdistinct({protection_tools_id})</Value>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>2</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox20">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>None</Default>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Footer>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={subdivision_name}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+          <TableGroup>
+            <Grouping Name="DutyNorm">
+              <PageBreakAtStart>false</PageBreakAtStart>
+              <PageBreakAtEnd>false</PageBreakAtEnd>
+              <GroupExpressions>
+                <GroupExpression>={duty_norm_id}</GroupExpression>
+              </GroupExpressions>
+            </Grouping>
+            <Header>
+              <RepeatOnNewPage>false</RepeatOnNewPage>
+              <TableRows>
+                <TableRow>
+                  <Height>.2in</Height>
+                  <TableCells>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox5">
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <TextAlign>Left</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <BackgroundColor>#EFEFEF</BackgroundColor>
+                            <PaddingLeft>5pt</PaddingLeft>
+                          </Style>
+                          <Value>=Iif(Fields!duty_norm_name.IsMissing, "Дежурная норма №" + {duty_norm_id}, {duty_norm_name}) + Iif(Fields!responsible.IsMissing, "", " [" + {responsible} + "]")</Value>
+                          <CanGrow>true</CanGrow>
+                        </Textbox>
+                      </ReportItems>
+                      <ColSpan>6</ColSpan>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="Textbox2">
+                          <Value></Value>
+                          <Style>
+                            <BorderStyle>
+                              <Default>Solid</Default>
+                              <Right>Solid</Right>
+                            </BorderStyle>
+                            <BorderColor />
+                            <BorderWidth />
+                            <BackgroundColor>#EFEFEF</BackgroundColor>
+                          </Style>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                  </TableCells>
+                </TableRow>
+              </TableRows>
+            </Header>
+            <Sorting>
+              <SortBy>
+                <SortExpression>={duty_norm_name}</SortExpression>
+                <Direction>Ascending</Direction>
+              </SortBy>
+            </Sorting>
+          </TableGroup>
+        </TableGroups>
+      </Table>
+      <Textbox Name="Textbox50">
+        <Height>20.21pt</Height>
+        <Width>561.64pt</Width>
+        <Value>="Справка по невыданному по дежурным нормам на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy") + " от " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
+        <ZIndex>1</ZIndex>
+        <Left>0.00pt</Left>
+        <Top>5.70pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <TextAlign>Center</TextAlign>
+          <FontWeight>Bold</FontWeight>
+          <FontSize>16pt</FontSize>
+        </Style>
+      </Textbox>
+      <!-- Легенда цветов -->
+      <Textbox Name="Textbox23">
+        <Height>12pt</Height>
+        <Width>29.7pt</Width>
+        <Value></Value>
+        <Left>314.9pt</Left>
+        <Top>28.7pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <BackgroundColor>#FFFFCC</BackgroundColor>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox24">
+        <Height>12pt</Height>
+        <Width>111.3pt</Width>
+        <Value> - неполная выдача</Value>
+        <Left>344.6pt</Left>
+        <Top>28.7pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox6">
+        <Height>12pt</Height>
+        <Width>29.7pt</Width>
+        <Value></Value>
+        <Left>455.9pt</Left>
+        <Top>28.7pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+          <BackgroundColor>#CCCCFF</BackgroundColor>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox11">
+        <Height>12pt</Height>
+        <Width>88.2pt</Width>
+        <Value> - первая выдача</Value>
+        <Left>485.6pt</Left>
+        <Top>28.7pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+      </Textbox>
+    </ReportItems>
+  </Body>
+  <PageFooter>
+    <Height>13.8pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+    <ReportItems>
+      <Textbox Name="Textbox21">
+        <Height>12.00pt</Height>
+        <Width>266.47pt</Width>
+        <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
+        <ZIndex>1</ZIndex>
+        <Left>306.1pt</Left>
+        <Top>1pt</Top>
+        <Style>
+          <BorderStyle />
+          <BorderColor />
+          <BorderWidth />
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Visibility>
+          <Hidden>=!{?printPromo}</Hidden>
+        </Visibility>
+      </Textbox>
+    </ReportItems>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <Timeout>1500</Timeout>
+        <CommandText>
+SELECT
+    duty_norms.id AS duty_norm_id,
+    duty_norms.name AS duty_norm_name,
+    IF(leaders.id IS NOT NULL, CONCAT_WS(' ', leaders.surname, leaders.name, leaders.patronymic),
+       IF(employees.id IS NOT NULL, CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name),
+          NULL)
+    ) AS responsible,
+    subdivisions.id AS subdivision_id,
+    subdivisions.name AS subdivision_name,
+    duty_norm_items.protection_tools_id,
+    protection_tools.name AS protection_tools_name,
+    measurement_units.name AS unit,
+    duty_norm_items.next_issue,
+    DATEDIFF(CONVERT(@report_date, DATE), duty_norm_items.next_issue) AS delay,
+    (SELECT MAX(l_op.operation_time) FROM operation_issued_by_duty_norm AS l_op
+     WHERE l_op.duty_norm_item_id = duty_norm_items.id AND l_op.issued &gt; 0) AS last_issue,
+    duty_norm_items.amount AS amount_by_norm,
+    IFNULL(balance.amount, 0) AS amount_balance,
+    GREATEST(CAST(duty_norm_items.amount AS SIGNED) - IFNULL(balance.amount, 0), 0) AS need,
+    protection_tools.assessed_cost * GREATEST(CAST(duty_norm_items.amount AS SIGNED) - IFNULL(balance.amount, 0), 0) AS protection_tools_assessed_cost,
+    IF(@show_stock, IFNULL(stock.amount, 0), NULL) AS in_stock
+FROM duty_norm_items
+        JOIN duty_norms ON duty_norms.id = duty_norm_items.duty_norm_id
+        JOIN protection_tools ON protection_tools.id = duty_norm_items.protection_tools_id
+        LEFT JOIN item_types ON protection_tools.item_types_id = item_types.id
+        LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
+        LEFT JOIN subdivisions ON duty_norms.subdivision_id = subdivisions.id
+        LEFT JOIN leaders ON duty_norms.responsible_leder_id = leaders.id
+        LEFT JOIN employees ON duty_norms.responsible_employee_id = employees.id
+        #Числится по строке дежурной нормы. Как в IssueGraph: без даты автосписания (до износа) числится всегда.
+        #Возвраты и списания агрегируем до одной строки на выдачу, чтобы не размножать выданное.
+        LEFT JOIN (SELECT b_op.duty_norm_item_id,
+                          SUM(b_op.issued - IFNULL(b_wo.returned, 0)) AS amount
+                   FROM operation_issued_by_duty_norm AS b_op
+                            LEFT JOIN (SELECT wo.issued_operation_id, SUM(wo.returned) AS returned
+                                       FROM operation_issued_by_duty_norm AS wo
+                                       WHERE wo.issued_operation_id IS NOT NULL
+                                       GROUP BY wo.issued_operation_id
+                            ) AS b_wo ON b_wo.issued_operation_id = b_op.id
+                   WHERE b_op.issued &gt; 0
+                     AND b_op.duty_norm_item_id IS NOT NULL
+                     AND (b_op.auto_writeoff_date IS NULL OR b_op.auto_writeoff_date &gt; CONVERT(@report_date, DATE))
+                   GROUP BY b_op.duty_norm_item_id
+            ) AS balance ON balance.duty_norm_item_id = duty_norm_items.id
+        #Остатки на складе. У дежурной нормы нет пола и размеров, поэтому считаем всё по номенклатурам позиции.
+        LEFT JOIN (SELECT sptn.protection_tools_id AS ptid,
+                          SUM(IF(sopwh.warehouse_receipt_id IS NOT NULL AND
+                                 (@all_warehouse OR sopwh.warehouse_receipt_id = @warehouse_id), sopwh.amount, 0))
+                              - SUM(IF(sopwh.warehouse_expense_id IS NOT NULL AND
+                                       (@all_warehouse OR sopwh.warehouse_expense_id = @warehouse_id), sopwh.amount, 0)) AS amount
+                   FROM protection_tools_nomenclature AS sptn
+                            JOIN operation_warehouse AS sopwh ON sopwh.nomenclature_id = sptn.nomenclature_id
+                   WHERE @show_stock
+                     AND sopwh.operation_time &lt; ADDDATE(@report_date, INTERVAL 1 DAY)
+                     AND (!@hide_worn OR sopwh.wear_percent = 0.00)
+                     AND (@all_warehouse
+                         OR sopwh.warehouse_receipt_id = @warehouse_id
+                         OR sopwh.warehouse_expense_id = @warehouse_id)
+                     AND ((-1 IN (@protection_tools_ids)) OR sptn.protection_tools_id IN (@protection_tools_ids))
+                   GROUP BY sptn.protection_tools_id
+            ) AS stock ON stock.ptid = duty_norm_items.protection_tools_id
+WHERE
+    duty_norms.archival = 0
+  AND ((-1 IN (@subdivisions)) OR (@withoutsub AND duty_norms.subdivision_id IS NULL) OR duty_norms.subdivision_id IN (@subdivisions))
+  AND ((-1 IN (@protection_tools_ids)) OR duty_norm_items.protection_tools_id IN (@protection_tools_ids))
+  AND duty_norm_items.next_issue &lt;= CONVERT(@report_date, DATE)
+  AND (@exclude_before IS NULL OR @exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; duty_norm_items.next_issue)
+  AND duty_norm_items.amount &gt; IFNULL(balance.amount, 0)
+  AND (@exclude_zero_stock = false OR stock.amount &gt; 0)
+ORDER BY
+    subdivision_name,
+    duty_norm_name,
+    protection_tools_name</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@report_date">
+            <Value>={?report_date}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@subdivisions">
+            <Value>={?subdivisions}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@withoutsub">
+            <Value>={?withoutsub}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@protection_tools_ids">
+            <Value>={?protection_tools_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@exclude_before">
+            <Value>={?exclude_before}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@exclude_zero_stock">
+            <Value>={?exclude_zero_stock}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@show_stock">
+            <Value>={?show_stock}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@hide_worn">
+            <Value>={?hide_worn}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@all_warehouse">
+            <Value>={?all_warehouse}</Value>
+          </QueryParameter>
+          <QueryParameter Name="@warehouse_id">
+            <Value>={?warehouse_id}</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="duty_norm_id">
+          <DataField>duty_norm_id</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="duty_norm_name">
+          <DataField>duty_norm_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="responsible">
+          <DataField>responsible</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="subdivision_id">
+          <DataField>subdivision_id</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="subdivision_name">
+          <DataField>subdivision_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="protection_tools_id">
+          <DataField>protection_tools_id</DataField>
+          <TypeName>System.UInt32</TypeName>
+        </Field>
+        <Field Name="protection_tools_name">
+          <DataField>protection_tools_name</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="unit">
+          <DataField>unit</DataField>
+          <TypeName>System.String</TypeName>
+        </Field>
+        <Field Name="next_issue">
+          <DataField>next_issue</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="delay">
+          <DataField>delay</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+        <Field Name="last_issue">
+          <DataField>last_issue</DataField>
+          <TypeName>System.DateTime</TypeName>
+        </Field>
+        <Field Name="amount_by_norm">
+          <DataField>amount_by_norm</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+        <Field Name="amount_balance">
+          <DataField>amount_balance</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+        <Field Name="need">
+          <DataField>need</DataField>
+          <TypeName>System.Int32</TypeName>
+        </Field>
+        <Field Name="protection_tools_assessed_cost">
+          <DataField>protection_tools_assessed_cost</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+        <Field Name="in_stock">
+          <DataField>in_stock</DataField>
+          <TypeName>System.Decimal</TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString></ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters>
+    <ReportParameter Name="report_date">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2024-02-01</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="subdivisions">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="withoutsub">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="protection_tools_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_before">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="exclude_zero_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="hide_worn">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="warehouse_id">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="all_warehouse">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="printPromo">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>
