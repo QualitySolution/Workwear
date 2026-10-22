@@ -165,14 +165,16 @@
     <Compile Include="ReportParameters\ViewModels\IssuedSizesViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\RentMovementsViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\WearStatementViewModel.cs" />
+    <Compile Include="ReportParameters\Views\WearStatementView.cs" />
+    <Compile Include="ReportParameters\ViewModels\AmountEmployeeGetWearViewModel.cs" />
+    <Compile Include="ReportParameters\Views\AmountEmployeeGetWearView.cs" />
     <Compile Include="ReportParameters\ViewModels\ShipmentReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\StockAllWearViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\WarehouseTransferReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\WearCardsReportViewModel.cs" />
     <Compile Include="ReportParameters\Views\NotIssuedSheetSummaryView.cs" />
     <Compile Include="ReportParameters\ViewModels\WriteOffActViewModel.cs" />
-    <Compile Include="ReportsDlg\WearStatement.cs" />
-    <Compile Include="gtk-gui\workwear.WearStatement.cs" />
     <Compile Include="Tools\Import\ReaderDocumentFromXml1C.cs" />
     <Compile Include="Tools\Import\Xml1CDocument.cs" />
     <Compile Include="Tools\Import\Xml1CDocumentItem.cs" />
@@ -343,8 +345,6 @@
     <Compile Include="Views\Stock.Documents\ExpenseDocItemEmployeeView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.Stock.Documents.ExpenseDocItemEmployeeView.cs" />
     <Compile Include="ViewModels\Stock.Documents\ExpenseEmployeeItemsViewModel.cs" />
-    <Compile Include="ReportsDlg\AmountEmployeeGetWearDlg.cs" />
-    <Compile Include="gtk-gui\workwear.ReportsDlg.AmountEmployeeGetWearDlg.cs" />
     <Compile Include="Views\User\UserSettingsView.cs" />
     <Compile Include="gtk-gui\Workwear.Views.User.UserSettingsView.cs" />
     <Compile Include="ViewModels\User\UserSettingsViewModel.cs" />
@@ -610,6 +610,8 @@
     <Compile Include="gtk-gui\Workwear.Views.Regulations.EtnImportView.cs" />
     <Compile Include="ReportParameters\Views\VacationsReportView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.VacationsReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.AmountEmployeeGetWearView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.WearStatementView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -65,7 +65,6 @@ using Workwear.Models.Import.Norms;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
-using workwear.ReportsDlg;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -518,12 +517,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnAction10Activated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("ReportWearStatement");
-		WearStatement widget = new WearStatement();
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearStatementViewModel));
 	}
 
 	protected void OnAction12Activated(object sender, EventArgs e) =>
@@ -792,12 +786,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionAmountEmployeeGetWearActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("ReportAmountEmployeeGetWear");
-		AmountEmployeeGetWearDlg widget = new AmountEmployeeGetWearDlg("AmountEmployeeGetWear", "Количество сотрудников получивших СИЗ");
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountEmployeeGetWearViewModel));
 	}
 
 	protected void OnActionAmountIssuedWearActivated(object sender, EventArgs e) {
