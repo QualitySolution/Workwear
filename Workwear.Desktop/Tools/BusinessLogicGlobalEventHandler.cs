@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using NHibernate;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -10,8 +11,10 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Visits;
 using Workwear.Models.Operations;
 using Workwear.Models.Supply;
+using Workwear.Models.Visits;
 using Workwear.Repository.Operations;
 
 namespace Workwear.Tools
@@ -43,6 +46,44 @@ namespace Workwear.Tools
 			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleDeleteIncome)
 				.IfEntity<Income>()
 				.AndChangeType(QS.DomainModel.NotifyChange.TypeOfChangeEvent.Delete);
+
+			QS.DomainModel.NotifyChange.NotifyConfiguration.Instance.BatchSubscribe(HandleChangeCollectiveExpense)
+				.IfEntity<CollectiveExpense>()
+				.Or.IfEntity<CollectiveExpenseItem>();
+		}
+
+		private static void HandleChangeCollectiveExpense(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents)
+		{
+			var issuanceRequestIds = new HashSet<int>();
+			foreach(var changeEvent in changeEvents) {
+				if(changeEvent.Entity is CollectiveExpense document) {
+					if(document.IssuanceRequest != null)
+						issuanceRequestIds.Add(document.IssuanceRequest.Id);
+					//Если заявку отвязали или изменили.
+					var oldRequest = changeEvent.GetOldValueCast<CollectiveExpense, IssuanceRequest>(e => e.IssuanceRequest);
+					if(oldRequest != null)
+						issuanceRequestIds.Add(oldRequest.Id);
+				}
+				else if(changeEvent.Entity is CollectiveExpenseItem item
+				   && item.Document != null
+				   && NHibernateUtil.IsInitialized(item.Document)
+				   && item.Document.IssuanceRequest != null)
+					issuanceRequestIds.Add(item.Document.IssuanceRequest.Id);
+			}
+			if(!issuanceRequestIds.Any())
+				return;
+
+			using(var scope = LifetimeScope.BeginLifetimeScope()) {
+				var unitOfWorkFactory = scope.Resolve<IUnitOfWorkFactory>();
+				using(var uow = unitOfWorkFactory.CreateWithoutRoot("Глобальный обработчик пересчета статуса заявок на выдачу")) {
+					var baseParameters = scope.Resolve<BaseParameters>();
+					var employeeIssueRepository = scope.Resolve<EmployeeIssueRepository>(new TypedParameter(typeof(UnitOfWorkProvider), new UnitOfWorkProvider(uow)));
+					var issueModel = new EmployeeIssueModel(employeeIssueRepository, new UnitOfWorkProvider(uow));
+					var issuanceRequestModel = new IssuanceRequestModel(issueModel, baseParameters, new UnitOfWorkProvider(uow));
+					issuanceRequestModel.UpdateStatuses(issuanceRequestIds);
+					uow.Commit();
+				}
+			}
 		}
 
 		private static void HandleDeleteEmployeeVacation(QS.DomainModel.NotifyChange.EntityChangeEvent[] changeEvents)

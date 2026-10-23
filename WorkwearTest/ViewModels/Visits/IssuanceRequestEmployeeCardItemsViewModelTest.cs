@@ -22,6 +22,7 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using Workwear.Models.Operations;
+using Workwear.Models.Visits;
 using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
@@ -75,6 +76,7 @@ namespace WorkwearTest.ViewModels.Visits
 			builder.RegisterType<EmployeeIssueRepository>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
 			builder.RegisterType<StockBalanceModel>().AsSelf();
+			builder.RegisterType<IssuanceRequestModel>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<IssuanceRequestViewModel>().AsSelf();
