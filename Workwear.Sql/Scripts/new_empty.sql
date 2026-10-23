@@ -2664,6 +2664,8 @@ create table shipment_items
 	quantity int unsigned not null,
 	ordered int unsigned not null,
 	received int unsigned not null,
+	in_stock_on_create int null default null,
+	creation_date datetime null default null,
 	cost decimal(10, 2) unsigned default 0.00 not null,
 	size_id int unsigned null,
 	height_id int unsigned null,
