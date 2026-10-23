@@ -82,6 +82,7 @@ using Workwear.Models.Regulations;
 using Workwear.Models.Sizes;
 using workwear.Models.Stock;
 using Workwear.Models.Supply;
+using Workwear.Models.Visits;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
@@ -346,6 +347,7 @@ namespace workwear
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<DutyNormIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<IssuanceRequestModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<NormToDutyNormModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<GtkEtnComplectResolver>().As<IEtnComplectResolver>();
 			builder.RegisterType<IssuedSheetPrintModel>().AsSelf().InstancePerLifetimeScope();

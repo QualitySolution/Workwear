@@ -411,9 +411,13 @@ namespace Workwear.ViewModels.Stock.Documents
 		#endregion
 		#region Обновление документа
 
+		//Проставленное вручную пользователем сбросится
 		private void UpdateAmounts() {
+			var documentOperationIds = new HashSet<int>(Entity.Items
+				.Where(x => x.EmployeeIssueOperation?.Id > 0)
+				.Select(x => x.EmployeeIssueOperation.Id));
 			foreach(var item in Entity.Items) {
-				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date) ?? 0;
+				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date, excludeOperationIds: documentOperationIds) ?? 0;
 			}
 		}
 
