@@ -509,7 +509,34 @@ namespace Workwear.Test.Domain.Company
 			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2023, 4, 16)), Is.EqualTo(0));
 			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2024, 3, 10)), Is.EqualTo(1));
 		}
-		
+
+		[Test(Description = "Документ выдачи перенесли на дату раньше. Его же операция не должны влиять на расчёт (могли по правилу выдачи раньше срока).")]
+		public void CalculateRequiredIssue_ExcludeOperationInAheadOfScheduleWindowCase()
+		{
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.GetColDayAheadOfShedule(IssueType.Collective).Returns(15);
+			var employeeCard = Substitute.For<EmployeeCard>();
+			var norm = new NormItem {
+				Amount = 2
+			};
+			var documentOperation = new EmployeeIssueOperation {
+				Id = 10,
+				OperationTime = new DateTime(2026, 10, 21),
+				StartOfUse = new DateTime(2026, 10, 21),
+				ExpiryByNorm = new DateTime(2027, 10, 21),
+				AutoWriteoffDate = new DateTime(2027, 10, 21),
+				Issued = 2
+			};
+			var item = new EmployeeCardItem {
+				ProtectionTools = new ProtectionTools { Type = new ItemsType { IssueType = IssueType.Collective } },
+				EmployeeCard = employeeCard,
+				ActiveNormItem = norm,
+				Graph = new IssueGraph(new List<IGraphIssueOperation> { documentOperation })
+			};
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2026, 10, 10)), Is.EqualTo(0));
+			Assert.That(item.CalculateRequiredIssue(baseParameters, new DateTime(2026, 10, 10), excludeOperationIds: new HashSet<int> { 10 }), Is.EqualTo(2));
+		}
+
 		#endregion
 		#region MatchStockPosition
 

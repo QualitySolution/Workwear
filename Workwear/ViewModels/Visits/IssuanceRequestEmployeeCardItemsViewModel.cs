@@ -7,10 +7,9 @@ using QS.ViewModels;
 using Workwear.Domain.Company;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
-using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using Workwear.Models.Operations;
-using Workwear.Tools;
+using Workwear.Models.Visits;
 using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Visits {
@@ -18,23 +17,27 @@ namespace Workwear.ViewModels.Visits {
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly EmployeeIssueModel employeeIssueModel;
 		private readonly StockBalanceModel stockBalanceModel;
-		private readonly BaseParameters baseParameters;
+		private readonly IssuanceRequestModel issuanceRequestModel;
 		private readonly IssuanceRequestViewModel parent;
 		private readonly ModalProgressCreator modalProgress;
 		public IssuanceRequestEmployeeCardItemsViewModel(
-			EmployeeIssueModel employeeIssueModel, 
-			StockBalanceModel stockBalanceModel, 
-			BaseParameters baseParameters,
+			EmployeeIssueModel employeeIssueModel,
+			StockBalanceModel stockBalanceModel,
+			IssuanceRequestModel issuanceRequestModel,
 			IssuanceRequestViewModel parent,
-			ModalProgressCreator modalProgress) 
+			ModalProgressCreator modalProgress)
 		{
 			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
-			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.issuanceRequestModel = issuanceRequestModel ?? throw new ArgumentNullException(nameof(issuanceRequestModel));
 			this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
 			this.modalProgress = modalProgress ?? throw new ArgumentNullException(nameof(modalProgress));
 		}
 		public IObservableList<EmployeeCardItemsVmNode> GroupedList = new ObservableList<EmployeeCardItemsVmNode>();
+		/// <summary>
+		/// Потребности по строкам карточек сотрудников, по ним считается статус заявки.
+		/// </summary>
+		public IList<IssuanceRequestNeed> Needs { get; private set; } = new List<IssuanceRequestNeed>();
 		public IList<EmployeeCardItemsVmNode> EmployeeCardItemsNodeList = new List<EmployeeCardItemsVmNode>();
 		private IList<EmployeeCardItem> employeeCardItems = new List<EmployeeCardItem>();
 		private IList<EmployeeCardItemsVmNode> groupedEmployeeCardItems;
@@ -74,36 +77,11 @@ namespace Workwear.ViewModels.Visits {
 			ProgressPerformanceHelper performance = null;
 			if(needPerformance)
 				performance =  new ProgressPerformanceHelper(modalProgress, 10,"Старт" ,logger);
-			
-			CollectiveExpense collectiveExpenseAlias = null;
 
-			performance?.CheckPoint(nameof(employeeIssueModel.PreloadEmployeeInfo));
-			
-			var employees = employeeIssueModel.PreloadEmployeeInfo(IssuanceRequest.Employees.Select(x => x.Id).ToArray());
-			
-			performance?.CheckPoint(nameof(employeeIssueModel.PreloadWearItems));
-			employeeIssueModel.PreloadWearItems(employees.Select(x => x.Id).ToArray());
-			
-			performance?.CheckPoint("Загрузка потребностей");
-			employeeCardItems = employees
-				.SelectMany(x => x.WorkwearItems)
-				/*Подгружаем только коллективные выдачи, исключая индивидуальные выдачи сотруднику.
-				Чтобы не забыть, когда будем считать и обычные выдачи (!)*/
-				.Where(x => x.ProtectionTools.Type.IssueType == IssueType.Collective)
-				.ToList();
-			
-			performance?.CheckPoint("Загрузка строк док-в коллективной выдачи");
-			var collectiveExpenseItems = parent.UoW.Session.QueryOver<CollectiveExpenseItem>()
-				.JoinAlias(x => x.Document, () => collectiveExpenseAlias)
-				.Where(() => collectiveExpenseAlias.IssuanceRequest.Id == IssuanceRequest.Id)
-				.List();
-			
-			performance?.CheckPoint(nameof(employeeIssueModel.FillWearReceivedInfo));
-			employeeIssueModel.FillWearReceivedInfo(employeeCardItems.ToArray());
-
-			var alreadyIssuedOperationsIds = new HashSet<int>(collectiveExpenseItems.Select(x => x.EmployeeIssueOperation.Id));
-			performance?.CheckPoint("Заполнение потребностей");
-			foreach(var item in employeeCardItems) {
+			Needs = issuanceRequestModel.CalculateNeeds(IssuanceRequest, step => performance?.CheckPoint(step));
+			employeeCardItems = Needs.Select(x => x.EmployeeCardItem).ToList();
+			foreach(var need in Needs) {
+				var item = need.EmployeeCardItem;
 				var wearSize = item.EmployeeCard.Sizes
 					.Where(x => x.SizeType == item.ProtectionTools.Type.SizeType)
 					.Where(x => x.SizeType.CategorySizeType == CategorySizeType.Size)
@@ -114,11 +92,6 @@ namespace Workwear.ViewModels.Visits {
 					.Where(x => x.SizeType.CategorySizeType == CategorySizeType.Height)
 					.Select(x => x.Size)
 					.FirstOrDefault();
-				var issuedByCollectiveExpense = collectiveExpenseItems
-					.Where(x => x.ProtectionTools.Id == item.ProtectionTools.Id)
-					.Where(x => x.Employee.Id == item.EmployeeCard.Id)
-					.Sum(x => x.Amount);
-				var need = item.CalculateRequiredIssue(baseParameters, IssuanceRequest.ReceiptDate.AddSeconds(-1), excludeOperationIds: alreadyIssuedOperationsIds);
 				EmployeeCardItemsVmNode employeeCardItemsNode = new EmployeeCardItemsVmNode() {
 					Id = item.Id,
 					EmployeeCardId = item.EmployeeCard.Id,
@@ -127,8 +100,8 @@ namespace Workwear.ViewModels.Visits {
 					WearSize = wearSize,
 					Height = height,
 					Units = item.ProtectionTools.Type?.Units?.Name,
-					Need = need,
-					Issued = Math.Min(issuedByCollectiveExpense, need),
+					Need = need.Need,
+					Issued = need.Issued,
 				};
 				EmployeeCardItemsNodeList.Add(employeeCardItemsNode);
 			}
