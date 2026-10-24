@@ -15,6 +15,7 @@ using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
@@ -36,7 +37,6 @@ namespace Workwear.ViewModels.Operations
 		private readonly IInteractiveQuestion interactive;
 		private readonly ProtectionTools protectionTools;
 		private readonly EmployeeCard employee;
-		private readonly EmployeeIssueModel issueModel;
 		private readonly BaseParameters baseParameters;
 
 		public ManualEmployeeIssueOperationsViewModel(
@@ -48,7 +48,6 @@ namespace Workwear.ViewModels.Operations
 			BarcodeService barcodeService,
 			ILifetimeScope autofacScope,
 			IInteractiveQuestion interactive,
-			EmployeeIssueModel issueModel,
 			BaseParameters baseParameters,
 			EmployeeCardItem cardItem = null,
 			EmployeeIssueOperation selectOperation = null,
@@ -59,7 +58,6 @@ namespace Workwear.ViewModels.Operations
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.barcodeService = barcodeService ?? throw new ArgumentNullException(nameof(barcodeService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
-			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			if(cardItem != null) {
 				this.protectionTools = cardItem.ProtectionTools;
@@ -131,6 +129,8 @@ namespace Workwear.ViewModels.Operations
 		public EmployeeIssueOperation SelectOperation {
 			get => selectOperation;
 			set {
+				if(selectOperation == value)
+					return;
 				changingOperation = true;
 
 				if(SetField(ref selectOperation, value)) {
@@ -152,6 +152,8 @@ namespace Workwear.ViewModels.Operations
 					OnPropertyChanged(nameof(WearPercent));
 					OnPropertyChanged(nameof(IssueDate));
 					OnPropertyChanged(nameof(AutoWriteoffDate));
+					OnPropertyChanged(nameof(OverrideBefore));
+					OnPropertyChanged(nameof(Comment));
 					OnPropertyChanged(nameof(BarcodesText));
 					changingOperation = false;
 				}
@@ -274,8 +276,9 @@ namespace Workwear.ViewModels.Operations
 				if(changingOperation) 
 					return;
 				if(SelectOperation != null && value != SelectOperation.OverrideBefore){
-					SelectOperation.OverrideBefore = value;;
-                    OnPropertyChanged();
+					SelectOperation.OverrideBefore = value;
+					RecalculateDatesOfSelectedOperation();
+					OnPropertyChanged();
 				}
 			}
 		}
@@ -389,9 +392,9 @@ namespace Workwear.ViewModels.Operations
 		void RecalculateDatesOfSelectedOperation() {
 			if(EmployeeCardItem is null)
 				return;
-			if(EmployeeCardItem.Graph is null) 
-				issueModel.FillWearReceivedInfo(new[] { SelectOperation.Employee });
-			SelectOperation.RecalculateDatesOfIssueOperation( EmployeeCardItem.Graph, baseParameters, interactive);
+			//Учитываем несохранённые изменения других операций.
+			var graph = IssueGraph.MakeIssueGraph(UoW, employee, protectionTools, Operations.ToArray());
+			SelectOperation.RecalculateDatesOfIssueOperation(graph, baseParameters, interactive);
 			AutoWriteoffDate = SelectOperation.AutoWriteoffDate;
 		}
 		#endregion
