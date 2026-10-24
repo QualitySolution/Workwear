@@ -14,6 +14,8 @@ namespace Workwear.HibernateMapping.Supply {
 			Map(x=>x.Requested).Column ("quantity");
 			Map(x=>x.Ordered).Column ("ordered");
 			Map(x=>x.Received).Column ("received");
+			Map(x=>x.InStockOnCreate).Column ("in_stock_on_create");
+			Map(x=>x.CreationDate).Column ("creation_date");
 			Map(x => x.Cost).Column ("cost");
 			Map(x=>x.DiffCause).Column("diff_cause");
 			Map(x => x.StartPeriod).Column("start_period");
