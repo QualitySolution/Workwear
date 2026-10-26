@@ -57,7 +57,20 @@ namespace Workwear.ReportParameters.ViewModels {
 				HiddenReportType = hiddenReportTypes.ToArray();
 		}
 		#region IDialogDocumentation
-		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#report-service-claims");
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#" + DocumentationAnchor);
+		private string DocumentationAnchor {
+			get {
+				switch(ReportType) {
+					case ClothingServiceReportType.ClaimForStatus: return "report-service-claims-status";
+					case ClothingServiceReportType.ClaimMetric: return "report-service-claims-metric";
+					case ClothingServiceReportType.ClaimCount: return "report-service-claims-count";
+					case ClothingServiceReportType.PostamatUse: return "report-service-claims-postamat-use";
+					case ClothingServiceReportType.PostamatFullness: return "report-service-claims-postamat-fullness";
+					case ClothingServiceReportType.Serviced: return "report-service-claims-serviced";
+					default: return "report-service-claims";
+				}
+			}
+		}
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
 		
@@ -178,6 +191,11 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 
 		private bool IsPostamatFullness => reportType == ClothingServiceReportType.PostamatFullness;
+
+		//На windows целом до 120 дней различимо, но уже знатно плыёт. 90 подобрано экспериментально
+		private const int MaxPostamatFullnessDays = 90;
+		private bool PostamatFullnessPeriodTooLong =>
+			IsPostamatFullness && (EndDate.Date - StartDate.Date).TotalDays + 1 > MaxPostamatFullnessDays;
 		
 		public virtual object[] HiddenStates { get; }
 		
@@ -246,6 +264,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		private DateTime startDate = DateTime.Now.AddMonths(-1);
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(InfoLabelText))]
 		[PropertyChangedAlso(nameof(Title))]
 		public virtual DateTime StartDate {
 			get => startDate;
@@ -254,13 +273,15 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		private DateTime endDate =  DateTime.Now;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(InfoLabelText))]
 		[PropertyChangedAlso(nameof(Title))]
 		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
 		}
 
-		public bool SensetiveLoad => !ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate);
+		public bool SensetiveLoad => (!ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate))
+			&& !PostamatFullnessPeriodTooLong;
 		public bool VisiblePeriodOfBegitn =>
 			reportType == ClothingServiceReportType.ClaimCount ||
 			(VisibleShowClosed && ShowClosed) ||
@@ -284,8 +305,9 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool VisibleInfoLabel => VisibleGroupClaim && (SumCost || GroupClaim)
 			|| IsPostamatFullness;
 		public string InfoLabelText => IsPostamatFullness
-			? "<i>Загрузка за день — наибольшее число одновременно занятых ячеек\nв процентах от числа ячеек постамата</i>"
-			: "<i>При включённой группировке каждая строка считается 1 оказанной услугой</i>";
+			? "<i>Показывает наибольшую загруженность \nза день в процентах.</i>"
+			  + (PostamatFullnessPeriodTooLong ? $"\n<span foreground=\"red\">Период должен быть не больше {MaxPostamatFullnessDays} дней</span>" : "")
+			:"<i>При включённой группировке каждая строка считается 1 оказанной услугой</i>";
 
 		private bool showAlternativeName;
 		public virtual bool ShowAlternativeName {
@@ -324,7 +346,7 @@ namespace Workwear.ReportParameters.ViewModels {
         [Display(Name = "Использование постаматов")]
         PostamatUse,
 		[ReportIdentifier("ClothingService.ClothingServicePostamatFullnessReport")]
-		[Display(Name = "Загрузка постаматов")]
+		[Display(Name = "Загруженность постаматов")]
 		PostamatFullness,
 		[ReportIdentifier("ClothingService.ClothingServiceServicedReport")]
 		[Display(Name = "Оказанные услуги")]
