@@ -772,7 +772,7 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>(SELECT
-    IF(@isGenericName, protection_tools.name, IFNULL(nomenclature.name, protection_tools.name))
+    IF(@isGenericName, IFNULL(protection_tools.name, nomenclature.name), IFNULL(nomenclature.name, protection_tools.name))
         AS name_siz,
     nomenclature.number
         AS nom_number,
@@ -835,7 +835,7 @@ FROM
                     return_detail.employee_id = @id AND return_detail.returned &gt; 0
         ) AS returned ON returned.issued_operation_id = operation_issued_by_employee.id
 WHERE
-    operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !protection_tools.archival
+    operation_issued_by_employee.employee_id = @id AND operation_issued_by_employee.issued &gt; 0 AND !IFNULL(protection_tools.archival, FALSE)
     AND (@startDateOfOperations = '' OR DATE(operation_issued_by_employee.operation_time) &gt;= NULLIF(@startDateOfOperations, ''))
 GROUP BY
     operation_issued_by_employee.id
