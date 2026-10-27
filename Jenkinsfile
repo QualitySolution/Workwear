@@ -63,7 +63,7 @@ node {
    if (params.Publish) {
       stage('VirusTotal'){
          withCredentials([usernamePassword(credentialsId: 'virustotal-http-proxy', usernameVariable: 'VT_PROXY_USER', passwordVariable: 'VT_PROXY_PASSWORD')]) {
-            sh '''
+            def scanStatus = sh(returnStatus: true, script: '''
                export HTTPS_PROXY="http://${VT_PROXY_USER}:${VT_PROXY_PASSWORD}@proxy.vpn.qsolution.ru:3128"
                vt scan file WinInstall/workwear-*.exe > file_hash
                if ! grep -Eq '^WinInstall/workwear-[^[:space:]]+\.exe [A-Za-z0-9+/_=-]+$' file_hash; then
@@ -71,20 +71,24 @@ node {
                   cat file_hash
                   exit 1
                fi
-            '''
-            waitUntil (){
-               sleep(30) //VirusTotal позволяет выполнить не более 4-х запросов за минуту.
-               sh '''
-                  export HTTPS_PROXY="http://${VT_PROXY_USER}:${VT_PROXY_PASSWORD}@proxy.vpn.qsolution.ru:3128"
-                  cut file_hash -d" " -f2 | vt analysis - > analysis
-               '''
-               return readFile('analysis').contains('status: "completed"')
-            }
-            sh 'cat analysis'
-            script {
-               def status = readFile(file: "analysis")
-               if ( !(status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
-                  unstable('VirusTotal in not clean')
+            ''')
+            if (scanStatus != 0) {
+               unstable('VirusTotal did not return an analysis ID')
+            } else {
+               waitUntil (){
+                  sleep(30) //VirusTotal позволяет выполнить не более 4-х запросов за минуту.
+                  sh '''
+                     export HTTPS_PROXY="http://${VT_PROXY_USER}:${VT_PROXY_PASSWORD}@proxy.vpn.qsolution.ru:3128"
+                     cut file_hash -d" " -f2 | vt analysis - > analysis
+                  '''
+                  return readFile('analysis').contains('status: "completed"')
+               }
+               sh 'cat analysis'
+               script {
+                  def status = readFile(file: "analysis")
+                  if ( !(status.contains('harmless: 0') && status.contains('malicious: 0') && status.contains('suspicious: 0'))) {
+                     unstable('VirusTotal in not clean')
+                  }
                }
             }
          }
