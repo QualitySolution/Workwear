@@ -28,6 +28,7 @@ using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.Models.Operations;
+using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Analytics;
@@ -48,6 +49,7 @@ namespace Workwear.ViewModels.Supply {
 			IUserService userService,
 			IEntityChangeWatcher watcher,
 			StockBalanceModel stockBalanceModel,
+			StockRepository stockRepository,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			List<WarehouseForecastingItem> forecastingItems = null,
@@ -59,7 +61,9 @@ namespace Workwear.ViewModels.Supply {
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
-            			
+			//Отдельная модель, чтобы фиксируемый остаток не зависел от выбранного в диалоге склада.
+			stockOnCreateBalanceModel = new StockBalanceModel(unitOfWorkProvider, stockRepository);
+
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			
@@ -323,6 +327,8 @@ namespace Workwear.ViewModels.Supply {
 		}
 
 		#region Складские остатки
+		private readonly StockBalanceModel stockOnCreateBalanceModel;
+
 		private Warehouse warehouse;
 		public virtual Warehouse Warehouse {
 			get => warehouse;
@@ -355,8 +361,11 @@ namespace Workwear.ViewModels.Supply {
 				StockBalanceModel.Warehouse = null;
 			var allNomenclatures = Entity.Items.Select(x => x.Nomenclature).Distinct().ToList();
 			StockBalanceModel.AddNomenclatures(allNomenclatures);
+			stockOnCreateBalanceModel.AddNomenclatures(allNomenclatures);
 			foreach(var item in Entity.Items) {
 				item.InStock = StockBalanceModel.GetShipmentItemInStock(item.StockPosition, IsNullWearPercent);
+				if(item.Id == 0)
+					item.InStockOnCreate = stockOnCreateBalanceModel.GetShipmentItemInStock(item.StockPosition, false);
 			}
 		}
 		#endregion

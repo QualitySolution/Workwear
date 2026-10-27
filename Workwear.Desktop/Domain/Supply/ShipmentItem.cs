@@ -69,6 +69,20 @@ namespace Workwear.Domain.Supply{
             set => SetField(ref received, value);
 		}
 
+		private int? inStockOnCreate;
+		[Display (Name = "На складе при создании")]
+		public virtual int? InStockOnCreate {
+			get => inStockOnCreate;
+			set => SetField(ref inStockOnCreate, value);
+		}
+
+		private DateTime? creationDate = DateTime.Now;
+		[Display (Name = "Дата добавления")]
+		public virtual DateTime? CreationDate {
+			get => creationDate;
+			set => SetField(ref creationDate, value);
+		}
+
 		private decimal cost;
 		[Display (Name = "Цена")]
 		[PropertyChangedAlso(nameof(TotalOrdered))]

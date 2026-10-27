@@ -14,6 +14,7 @@ using QS.Navigation;
 using QS.Permissions;
 using QS.Project.Domain;
 using QS.Project.Journal;
+using QS.Project.Services;
 using QS.Report;
 using QS.Report.ViewModels;
 using QS.Services;
@@ -63,6 +64,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 			BarcodeOperationRepository barcodeOperationRepository,
 			BarcodeRepository barcodeRepository,
 			ICurrentPermissionService permissionService,
+			IDeleteEntityService deleteService,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			EmployeeCard employee = null,
@@ -79,6 +81,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
 			this.barcodeOperationRepository = barcodeOperationRepository ?? throw new ArgumentNullException(nameof(barcodeOperationRepository));
 			this.barcodeRepository = barcodeRepository ?? throw new ArgumentNullException(nameof(barcodeRepository));
+			this.deleteService = deleteService ?? throw new ArgumentNullException(nameof(deleteService));
 			DutyNorm = UoW.GetInSession(dutyNorm);
 			featuresService = autofacScope.Resolve<FeaturesService>();
 			SetDocumentDateProperty(e => e.Date);
@@ -147,6 +150,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 		private readonly EmployeeIssueRepository employeeIssueRepository;
 		private readonly BarcodeOperationRepository barcodeOperationRepository;
 		private readonly BarcodeRepository barcodeRepository;
+		private readonly IDeleteEntityService deleteService;
 
 		private List<Owner> owners = new List<Owner>();
 		public List<Owner> Owners => owners;
@@ -612,7 +616,14 @@ namespace Workwear.ViewModels.Stock.Documents {
 		}
 		
 		public void DeleteItem(ReturnItem item) {
-			Entity.RemoveItem(item); 
+			if(item.Id > 0) {
+				if(UoW.HasChanges)
+					if(!Save())//Сохраняем документ если есть добавленные строки или другие изменения. Иначе получим исключение.
+						return;
+				deleteService.DeleteEntity<ReturnItem>(item.Id, UoW, () => Entity.RemoveItem(item));
+			}
+			else
+				Entity.RemoveItem(item);
 			OnPropertyChanged(nameof(CanRemoveItem));
 			OnPropertyChanged(nameof(CanSetNomenclature));
 			CalculateTotal();
