@@ -66,7 +66,7 @@ node {
             def scanStatus = sh(returnStatus: true, script: '''
                export HTTPS_PROXY="http://${VT_PROXY_USER}:${VT_PROXY_PASSWORD}@proxy.vpn.qsolution.ru:3128"
                vt scan file WinInstall/workwear-*.exe > file_hash
-               if ! grep -Eq '^WinInstall/workwear-[^[:space:]]+\.exe [A-Za-z0-9+/_=-]+$' file_hash; then
+               if ! grep -Eq '^WinInstall/workwear-[^[:space:]]+[.]exe [A-Za-z0-9+/_=-]+$' file_hash; then
                   echo 'VirusTotal did not return an analysis ID:'
                   cat file_hash
                   exit 1
