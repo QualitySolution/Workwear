@@ -3,7 +3,7 @@ Unicode true
 SetCompressor /SOLID lzma
 SetDatablockOptimize on
 ;--------------------------------
-!define PRODUCT_VERSION "2.10.16"
+!define PRODUCT_VERSION "2.10.17
 !define EXE_NAME "workwear"
 !define PRODUCT_NAME "QS: Спецодежда"
 !define SHORTCUT_NAME "QS Спецодежда"
