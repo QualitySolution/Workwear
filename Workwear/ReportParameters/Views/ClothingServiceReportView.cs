@@ -9,7 +9,7 @@ namespace Workwear.ReportParameters.Views {
 			this.Build();
 			comboReportType.ItemsEnum = typeof(ClothingServiceReportType);
 			if(ViewModel.HiddenReportType != null)
-            	comboStatus.HiddenItems = ViewModel.HiddenReportType;
+            	comboReportType.HiddenItems = ViewModel.HiddenReportType;
 			comboReportType.Binding
 				.AddBinding(ViewModel, vm => vm.ReportType, w => w.SelectedItem).InitializeFromSource();
 			ylabelStatus.Binding
@@ -83,9 +83,13 @@ namespace Workwear.ReportParameters.Views {
 	            .AddBinding(ViewModel, vm => vm.VisibleInfoLabel, v => v.Visible).InitializeFromSource();
             choiceServises.ViewModel = ViewModel.ChoiceServiceViewModel;
             expanderServises.Visible = ViewModel.VisibleChoiceService;
+            choiceTerminals.ViewModel = ViewModel.ChoiceTerminalViewModel;
+            expanderTerminals.Visible = ViewModel.VisibleChoiceTerminal;
             ViewModel.PropertyChanged += (sender, args) => {
 	            if(args.PropertyName == nameof(ViewModel.VisibleChoiceService))
 		            expanderServises.Visible = ViewModel.VisibleChoiceService;
+	            if(args.PropertyName == nameof(ViewModel.VisibleChoiceTerminal))
+		            expanderTerminals.Visible = ViewModel.VisibleChoiceTerminal;
             };
             buttonRun.Clicked += OnButtonRunClicked;
 			buttonRun.Binding

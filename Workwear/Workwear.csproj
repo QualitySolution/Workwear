@@ -1020,6 +1020,9 @@
     <None Include="Reports\ClothingService\ClothingServicePostamatReport.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Reports\ClothingService\ClothingServicePostamatFullnessReport.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Reports\ListBySizeFlat.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

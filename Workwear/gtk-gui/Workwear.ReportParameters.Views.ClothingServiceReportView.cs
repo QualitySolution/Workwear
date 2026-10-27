@@ -62,6 +62,12 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yLabel ylabelSubdivisionAsMVZ;
 
+		private global::Gtk.Expander expanderTerminals;
+
+		private global::QS.Views.Control.ChoiceListView choiceTerminals;
+
+		private global::Gtk.Label GtkLabel19;
+
 		private global::Gtk.Expander expanderServises;
 
 		private global::QS.Views.Control.ChoiceListView choiceServises;
@@ -434,6 +440,24 @@ namespace Workwear.ReportParameters.Views
 			w28.Expand = false;
 			w28.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
+			this.expanderTerminals = new global::Gtk.Expander(null);
+			this.expanderTerminals.CanFocus = true;
+			this.expanderTerminals.Name = "expanderTerminals";
+			this.expanderTerminals.Expanded = true;
+			// Container child expanderTerminals.Gtk.Container+ContainerChild
+			this.choiceTerminals = new global::QS.Views.Control.ChoiceListView();
+			this.choiceTerminals.Events = ((global::Gdk.EventMask)(256));
+			this.choiceTerminals.Name = "choiceTerminals";
+			this.expanderTerminals.Add(this.choiceTerminals);
+			this.GtkLabel19 = new global::Gtk.Label();
+			this.GtkLabel19.Name = "GtkLabel19";
+			this.GtkLabel19.LabelProp = global::Mono.Unix.Catalog.GetString("Постоматы");
+			this.GtkLabel19.UseUnderline = true;
+			this.expanderTerminals.LabelWidget = this.GtkLabel19;
+			this.vbox1.Add(this.expanderTerminals);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.expanderTerminals]));
+			w30.Position = 2;
+			// Container child vbox1.Gtk.Box+BoxChild
 			this.expanderServises = new global::Gtk.Expander(null);
 			this.expanderServises.CanFocus = true;
 			this.expanderServises.Name = "expanderServises";
@@ -445,12 +469,12 @@ namespace Workwear.ReportParameters.Views
 			this.expanderServises.Add(this.choiceServises);
 			this.GtkLabel18 = new global::Gtk.Label();
 			this.GtkLabel18.Name = "GtkLabel18";
-			this.GtkLabel18.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатуры нормы");
+			this.GtkLabel18.LabelProp = global::Mono.Unix.Catalog.GetString("Услуги");
 			this.GtkLabel18.UseUnderline = true;
 			this.expanderServises.LabelWidget = this.GtkLabel18;
 			this.vbox1.Add(this.expanderServises);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.expanderServises]));
-			w30.Position = 2;
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.expanderServises]));
+			w32.Position = 3;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
@@ -458,11 +482,11 @@ namespace Workwear.ReportParameters.Views
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox1.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.buttonRun]));
-			w31.PackType = ((global::Gtk.PackType)(1));
-			w31.Position = 3;
-			w31.Expand = false;
-			w31.Fill = false;
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.buttonRun]));
+			w33.PackType = ((global::Gtk.PackType)(1));
+			w33.Position = 4;
+			w33.Expand = false;
+			w33.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{
