@@ -428,8 +428,15 @@ namespace workwear.Journal.ViewModels.Stock
 				writeoffQuery.Where(o => o.Date >= Filter.StartDate.Value);
 			if(Filter.EndDate.HasValue)
 				writeoffQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
-			if(Filter.Warehouse != null)
-				writeoffQuery.Where(() => writeoffItemAlias.Warehouse == Filter.Warehouse);
+			if(Filter.Warehouse != null) {
+				if(isCounting)
+					writeoffQuery.WithSubquery.WhereExists(QueryOver.Of<WriteoffItem>()
+						.Where(x => x.Document.Id == writeoffAlias.Id)
+						.Where(x => x.Warehouse == Filter.Warehouse)
+						.Select(x => x.Id));
+				else
+					writeoffQuery.Where(() => writeoffItemAlias.Warehouse == Filter.Warehouse);
+			}
 
 			writeoffQuery.Where(GetSearchCriterion(
 				() => writeoffAlias.Id,
@@ -455,9 +462,9 @@ namespace workwear.Journal.ViewModels.Stock
 				NHibernateUtil.String,
 				Projections.Property(() => dutyNormAlias.Name));
 
+			writeoffQuery.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin);
 			if(!isCounting) {
 				writeoffQuery
-					.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => writeoffItemAlias.EmployeeWriteoffOperation, () => employeeIssueOperationAlias, JoinType.LeftOuterJoin)

@@ -9,6 +9,8 @@ namespace Workwear.ReportParameters.Views {
 
 			ycheckbuttonOnlyWorking.Binding.AddBinding(ViewModel, v=>v.OnlyWorking, w=>w.Active).InitializeFromSource();
 			ydateActualEmployee.Binding.AddBinding(ViewModel, v=>v.ActualDate, w=>w.Date).InitializeFromSource();
+			ycheckbuttonExcludeVacation.Binding.AddBinding(ViewModel, v=>v.ExcludeVacation, w=>w.Active).InitializeFromSource();
+			ycheckbuttonExcludeVacation.Visible = ylabelExcludeVacation.Visible = ViewModel.VisibleVacation;
 
 			ycheckbuttonHire.Binding.AddBinding(ViewModel, v=>v.OnlyHired, w=>w.Active).InitializeFromSource();
 			ydateperiodpicker_.Binding.AddSource(ViewModel)

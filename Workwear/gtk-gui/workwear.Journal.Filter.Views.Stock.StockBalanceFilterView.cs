@@ -38,6 +38,7 @@ namespace workwear.Journal.Filter.Views.Stock
 			this.Name = "workwear.Journal.Filter.Views.Stock.StockBalanceFilterView";
 			// Container child workwear.Journal.Filter.Views.Stock.StockBalanceFilterView.Gtk.Container+ContainerChild
 			this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(3)), false);
+			this.table1.Name = "table1";
 			this.table1.RowSpacing = ((uint)(6));
 			this.table1.ColumnSpacing = ((uint)(6));
 			// Container child table1.Gtk.Table+TableChild

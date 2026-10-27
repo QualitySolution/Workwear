@@ -40,6 +40,8 @@ namespace Workwear.ViewModels.Company
         #endregion
 
         public override bool Save() {
+            if(!Validate())
+                return false;
             if (Entity.Id == 0) {
                 Entity.Employee.AddVacation(Entity);
             }

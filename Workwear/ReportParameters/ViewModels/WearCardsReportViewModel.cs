@@ -3,10 +3,14 @@ using QS.ViewModels.Extension;
 using System;
 using System.Collections.Generic;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
 	public class WearCardsReportViewModel: ReportParametersViewModelBase, IDialogDocumentation {
-		public WearCardsReportViewModel(RdlViewerViewModel rdlViewerViewModel) : base(rdlViewerViewModel) {
+		private readonly FeaturesService featuresService;
+
+		public WearCardsReportViewModel(RdlViewerViewModel rdlViewerViewModel, FeaturesService featuresService) : base(rdlViewerViewModel) {
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			Title = "Список сотрудников";
 			Identifier = "WearCardsReportFlat";
 		}
@@ -28,6 +32,8 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"only_without_norms", WithoutNorms},
 			{"only_with_norms", WithNorms},
 			{"show_phone", ShowPhone},
+			{"exclude_vacation", ExcludeVacation},
+			{"show_vacations", VisibleVacation && !ExcludeVacation},
 		};
 
 		#region Блок 1: статус сотрудника
@@ -43,6 +49,14 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => actualDate;
 			set => SetField(ref actualDate, value);
 		}
+
+		private bool excludeVacation;
+		public virtual bool ExcludeVacation {
+			get => excludeVacation;
+			set => SetField(ref excludeVacation, value);
+		}
+
+		public bool VisibleVacation => featuresService.Available(WorkwearFeature.Vacation);
 
 		private bool onlyHired;
 		public virtual bool OnlyHired {

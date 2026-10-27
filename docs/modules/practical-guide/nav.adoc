@@ -3,4 +3,5 @@
 * xref:launch.adoc[Ввод в эксплуатацию]
 ** xref:launch-manual.adoc[Ручной ввод данных]
 ** xref:launch-import.adoc[Импорт данных]
+** xref:launch-sizes.adoc[Настройка размеров для выдачи и закупок]
 * xref:accounting.adoc[Оперативный учет]

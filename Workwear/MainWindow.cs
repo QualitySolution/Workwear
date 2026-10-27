@@ -65,7 +65,6 @@ using Workwear.Models.Import.Norms;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
-using workwear.ReportsDlg;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -408,6 +407,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
+		ActionVacationsReport.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionVisits.Visible = FeaturesService.Available(WorkwearFeature.Visits);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
@@ -517,12 +517,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnAction10Activated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("ReportWearStatement");
-		WearStatement widget = new WearStatement();
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearStatementViewModel));
 	}
 
 	protected void OnAction12Activated(object sender, EventArgs e) =>
@@ -791,12 +786,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionAmountEmployeeGetWearActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("ReportAmountEmployeeGetWear");
-		AmountEmployeeGetWearDlg widget = new AmountEmployeeGetWearDlg("AmountEmployeeGetWear", "Количество сотрудников получивших СИЗ");
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountEmployeeGetWearViewModel));
 	}
 
 	protected void OnActionAmountIssuedWearActivated(object sender, EventArgs e) {
@@ -1137,13 +1127,17 @@ public partial class MainWindow : Gtk.Window {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountIssuedDutyNormsViewModel));
 	}
 
+	protected void OnActionNotIssuedDutyNormsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(NotIssuedDutyNormsViewModel));
+	}
+
 	protected void OnActionRentMovementsActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RentMovementsViewModel));
 	}
 
 	protected void OnActionRentActActivated(object sender, EventArgs e) {
 	}
-	
+
 	protected void OnActionCausesIssueActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<CauseIssueJournalViewModel>(null);
 	}
@@ -1161,5 +1155,9 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnEmailActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenEmail");
 		OpenHelper.OpenUrl("https://forms.msndr.net/subscriptions/3db9fe188746bac0e094a6a715d45444/form");
+	}
+
+	protected void OnActionVacationsReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(VacationsReportViewModel));
 	}
 }

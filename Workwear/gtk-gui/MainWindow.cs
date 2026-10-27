@@ -247,6 +247,10 @@ public partial class MainWindow
 
 	private global::Gtk.Action EmailAction;
 
+	private global::Gtk.Action ActionVacationsReport;
+
+	private global::Gtk.Action ActionNotIssuedDutyNorms;
+
 	private global::Gtk.VBox vbox1;
 
 	private global::Gtk.MenuBar menubar1;
@@ -661,6 +665,12 @@ public partial class MainWindow
 		this.EmailAction = new global::Gtk.Action("EmailAction", global::Mono.Unix.Catalog.GetString("Email-рассылка"), null, null);
 		this.EmailAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Email-рассылка");
 		w1.Add(this.EmailAction, null);
+		this.ActionVacationsReport = new global::Gtk.Action("ActionVacationsReport", global::Mono.Unix.Catalog.GetString("Отпуска"), null, null);
+		this.ActionVacationsReport.ShortLabel = global::Mono.Unix.Catalog.GetString("Отпуска");
+		w1.Add(this.ActionVacationsReport, null);
+		this.ActionNotIssuedDutyNorms = new global::Gtk.Action("ActionNotIssuedDutyNorms", global::Mono.Unix.Catalog.GetString("Справка по невыданному"), null, null);
+		this.ActionNotIssuedDutyNorms.ShortLabel = global::Mono.Unix.Catalog.GetString("Справка по невыданному");
+		w1.Add(this.ActionNotIssuedDutyNorms, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -744,26 +754,27 @@ public partial class MainWindow
 				"eetDetail\' action=\'ActionNotIssuedSheetDetail\'/><menuitem name=\'ActionNotIssuedS" +
 				"heetSummary\' action=\'ActionNotIssuedSheetSummary\'/></menu><separator/><menuitem " +
 				"name=\'ActionWearCardsReport\' action=\'ActionWearCardsReport\'/><menuitem name=\'Act" +
-				"ionAmountEmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'" +
-				"ActionProvision\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeComplete" +
-				"nessReport\' action=\'ActionBarcodeCompletenessReport\'/><menu name=\'ActionDutyNorm" +
-				"Reports\' action=\'ActionDutyNormReports\'><menuitem name=\'ActionDutyNormIssuedRepo" +
-				"rt\' action=\'ActionDutyNormIssuedReport\'/></menu><separator/><menuitem name=\'Acti" +
-				"onRentMovements\' action=\'ActionRentMovements\'/><menuitem name=\'ActionRentAct\' ac" +
-				"tion=\'ActionRentAct\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuit" +
-				"em name=\'helpAction\' action=\'helpAction\'/><menuitem name=\'ActionPracticalGuide\'" +
-				" action=\'ActionPracticalGuide\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionA" +
-				"dminGuide\'/><separator/><menuitem name=\'ActionHistory\' action=\'Action" +
-				"History\'/><menu name=\'ActionUpdateChannel\' action=\'ActionUpdateChannel\'><menuite" +
-				"m name=\'ActionChannelCurrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'Act" +
-				"ionChannelStable\' action=\'ActionChannelStable\'/><menuitem name=\'ActionOffAutoUpd" +
-				"ate\' action=\'ActionOffAutoUpdate\'/></menu><menuitem name=\'ActionUpdate\' action=\'" +
-				"ActionUpdate\'/><separator/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><men" +
-				"u name=\'Action48\' action=\'Action48\'><menuitem name=\'TelegramAction\' action=\'Tele" +
-				"gramAction\'/><menuitem name=\'MAXAction\' action=\'MAXAction\'/><menuitem name=\'Emai" +
-				"lAction\' action=\'EmailAction\'/></menu><separator/><menuitem name=\'ActionSN\' acti" +
-				"on=\'ActionSN\'/><separator/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></" +
-				"menu></menubar></ui>");
+				"ionVacationsReport\' action=\'ActionVacationsReport\'/><menuitem name=\'ActionAmount" +
+				"EmployeeGetWear\' action=\'ActionAmountEmployeeGetWear\'/><menuitem name=\'ActionPro" +
+				"vision\' action=\'ActionProvision\'/><menuitem name=\'ActionBarcodeCompletenessRepor" +
+				"t\' action=\'ActionBarcodeCompletenessReport\'/><menu name=\'ActionDutyNormReports\' " +
+				"action=\'ActionDutyNormReports\'><menuitem name=\'ActionDutyNormIssuedReport\' actio" +
+				"n=\'ActionDutyNormIssuedReport\'/><menuitem name=\'ActionNotIssuedDutyNorms\' action" +
+				"=\'ActionNotIssuedDutyNorms\'/></menu><separator/><menuitem name=\'ActionRentMoveme" +
+				"nts\' action=\'ActionRentMovements\'/><menuitem name=\'ActionRentAct\' action=\'Action" +
+				"RentAct\'/></menu><menu name=\'ActionHelp\' action=\'ActionHelp\'><menuitem name=\'hel" +
+				"pAction\' action=\'helpAction\'/><menuitem name=\'ActionPracticalGuide\' action=\'Acti" +
+				"onPracticalGuide\'/><menuitem name=\'ActionAdminGuide\' action=\'ActionAdminGuide\'/>" +
+				"<separator/><menuitem name=\'ActionHistory\' action=\'ActionHistory\'/><menu name=\'A" +
+				"ctionUpdateChannel\' action=\'ActionUpdateChannel\'><menuitem name=\'ActionChannelCu" +
+				"rrent\' action=\'ActionChannelCurrent\'/><menuitem name=\'ActionChannelStable\' actio" +
+				"n=\'ActionChannelStable\'/><menuitem name=\'ActionOffAutoUpdate\' action=\'ActionOffA" +
+				"utoUpdate\'/></menu><menuitem name=\'ActionUpdate\' action=\'ActionUpdate\'/><separat" +
+				"or/><menuitem name=\'ActionSite\' action=\'ActionSite\'/><menu name=\'Action48\' actio" +
+				"n=\'Action48\'><menuitem name=\'TelegramAction\' action=\'TelegramAction\'/><menuitem " +
+				"name=\'MAXAction\' action=\'MAXAction\'/><menuitem name=\'EmailAction\' action=\'EmailA" +
+				"ction\'/></menu><separator/><menuitem name=\'ActionSN\' action=\'ActionSN\'/><separat" +
+				"or/><menuitem name=\'aboutAction\' action=\'aboutAction\'/></menu></menubar></ui>");
 		this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar1")));
 		this.menubar1.Name = "menubar1";
 		this.vbox1.Add(this.menubar1);
@@ -773,6 +784,7 @@ public partial class MainWindow
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbuttonbox1 = new global::Gtk.HButtonBox();
+		this.hbuttonbox1.Name = "hbuttonbox1";
 		this.vbox1.Add(this.hbuttonbox1);
 		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbuttonbox1]));
 		w3.Position = 1;
@@ -1011,6 +1023,8 @@ public partial class MainWindow
 		this.TelegramAction.Activated += new global::System.EventHandler(this.OnTelegramActionActivated);
 		this.MAXAction.Activated += new global::System.EventHandler(this.OnMAXActionActivated);
 		this.EmailAction.Activated += new global::System.EventHandler(this.OnEmailActionActivated);
+		this.ActionVacationsReport.Activated += new global::System.EventHandler(this.OnActionVacationsReportActivated);
+		this.ActionNotIssuedDutyNorms.Activated += new global::System.EventHandler(this.OnActionNotIssuedDutyNormsActivated);
 		this.eventboxSubscriptionStatus.ButtonPressEvent += new global::Gtk.ButtonPressEventHandler(this.OnSubscriptionStatusClicked);
 	}
 }

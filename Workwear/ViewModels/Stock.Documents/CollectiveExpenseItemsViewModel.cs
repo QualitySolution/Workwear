@@ -396,6 +396,8 @@ namespace Workwear.ViewModels.Stock.Documents
 				return "red";
 			if(item.Id != 0)
 				return null;
+			if(Entity.Date == default(DateTime))
+				return null;
 			var requiredIssue = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date);
 			if(requiredIssue > 0 && item.Nomenclature == null)
 				return item.Amount == 0 ? "red" : "Dark red";
@@ -409,9 +411,13 @@ namespace Workwear.ViewModels.Stock.Documents
 		#endregion
 		#region Обновление документа
 
+		//Проставленное вручную пользователем сбросится
 		private void UpdateAmounts() {
+			var documentOperationIds = new HashSet<int>(Entity.Items
+				.Where(x => x.EmployeeIssueOperation?.Id > 0)
+				.Select(x => x.EmployeeIssueOperation.Id));
 			foreach(var item in Entity.Items) {
-				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date) ?? 0;
+				item.Amount = item.EmployeeCardItem?.CalculateRequiredIssue(BaseParameters, Entity.Date, excludeOperationIds: documentOperationIds) ?? 0;
 			}
 		}
 
@@ -456,7 +462,7 @@ namespace Workwear.ViewModels.Stock.Documents
 					break;
 				case nameof(Entity.Date):
 					stockBalanceModel.OnDate = Entity.Date;
-					if(Entity.Items.Any() && interactive.Question("Обновить количество по потребности на новую дату документа?"))
+					if(Entity.Date != default(DateTime) && Entity.Items.Any() && interactive.Question("Обновить количество по потребности на новую дату документа?"))
 						UpdateAmounts();
 					break;
 			}

@@ -32,13 +32,17 @@ namespace Workwear.Journal.Filter.Views.Stock
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.enumcomboType = new global::Gamma.Widgets.yEnumComboBox();
 			this.enumcomboType.Name = "enumcomboType";
+			this.enumcomboType.ShowSpecialStateAll = false;
+			this.enumcomboType.ShowSpecialStateNot = false;
+			this.enumcomboType.UseShortTitle = false;
+			this.enumcomboType.DefaultFirst = false;
 			this.hbox1.Add(this.enumcomboType);
 			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.enumcomboType]));
 			w2.Position = 1;
 			w2.Expand = false;
 			w2.Fill = false;
 			this.Add(this.hbox1);
-			if((this.Child != null))
+			if ((this.Child != null))
 			{
 				this.Child.ShowAll();
 			}
