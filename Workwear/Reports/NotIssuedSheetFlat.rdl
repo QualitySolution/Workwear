@@ -1004,6 +1004,7 @@ WHERE
   AND (@subdivision_id = -1 OR employees.subdivision_id = @subdivision_id )
   AND (@department_id = -1 OR employees.department_id = @department_id)
   AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
+  AND protection_tools.dispenser = 0
   AND ((-1 IN (@employee_groups_ids))
     OR(@without_groups AND NOT EXISTS
         (SELECT * FROM employee_group_items as gi
