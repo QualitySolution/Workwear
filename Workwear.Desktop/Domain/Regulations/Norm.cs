@@ -125,6 +125,13 @@ namespace Workwear.Domain.Regulations
 					new[] { nameof(item.PeriodCount) });
 				}
 			}
+			for(int i = 0; i < items.Count; i++) {
+				var previousSame = items.Take(i).Count(x => DomainHelper.EqualDomainObjects(x.ProtectionTools, items[i].ProtectionTools));
+				if(previousSame == 1) 
+					yield return new ValidationResult(
+						$"Номенклатура нормы {items[i].ProtectionTools.Name} добавлена в норму несколько раз.",
+						new[] { this.GetPropertyName(o => o.Items) });
+			}
 		}
 
 		#endregion
