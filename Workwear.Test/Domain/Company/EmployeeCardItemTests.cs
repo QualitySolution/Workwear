@@ -751,6 +751,57 @@ namespace Workwear.Test.Domain.Company
             Assert.That(bestList.Any(x => x.Position.Nomenclature == nomenclatureZero), Is.False);
 		}
 
+		[Test(Description = "Проверяем что позиции с размером и ростом предлагаются раньше позиций только с размером, а они раньше безразмерных.")]
+		public void BestChoiceInStock_SizedBeforeSizelessCase()
+		{
+			var employee = new EmployeeCard {Sex = Sex.M};
+			var sizeType = new SizeType {Id = 1, CategorySizeType = CategorySizeType.Size};
+			var heightType = new SizeType {Id = 2, CategorySizeType = CategorySizeType.Height};
+			var size52 = new Size {Id = 52, Name = "52", SizeType = sizeType};
+			var height170 = new Size {Id = 170, Name = "170", SizeType = heightType};
+			employee.Sizes.Add(new EmployeeSize{Size = size52, SizeType = sizeType});
+			employee.Sizes.Add(new EmployeeSize{Size = height170, SizeType = heightType});
+
+			var nomenclature = Substitute.For<Nomenclature>();
+			nomenclature.Id.Returns(25);
+			nomenclature.MatchingEmployeeSex(Sex.M).Returns(true);
+			var protectionTools = Substitute.For<ProtectionTools>();
+			var observableNomenclatures = new ObservableList<Nomenclature> { nomenclature };
+			protectionTools.Nomenclatures.Returns(observableNomenclatures);
+			var normItem = Substitute.For<NormItem>();
+			normItem.ProtectionTools.Returns(protectionTools);
+			var employeeItem = new EmployeeCardItem(employee, normItem);
+
+			var stockBalance = Substitute.For<StockBalanceModel>();
+			stockBalance.Balances.Returns(new List<StockBalance> {
+				new StockBalance(new StockPosition(nomenclature, 0, null, null, null), 30),
+				new StockBalance(new StockPosition(nomenclature, 0, size52, null, null), 20),
+				new StockBalance(new StockPosition(nomenclature, 0, size52, height170, null), 10)
+			});
+			employeeItem.StockBalanceModel = stockBalance;
+
+			var bestList = employeeItem.BestChoiceInStock.ToList();
+			Assert.That(bestList.Select(x => x.Amount), Is.EqualTo(new[] {10, 20, 30}));
+		}
+
+		[Test(Description = "Проверяем что отсутствие собственника равнозначно приоритету 0 и сравнение продолжается по износу.")]
+		[TestCase(false, false)]
+		[TestCase(true, true)]
+		[TestCase(false, true)]
+		[TestCase(true, false)]
+		public void BestChoiceInStockComparer_ZeroOwnerPriorityCase(bool newHasOwner, bool wornHasOwner)
+		{
+			var nomenclature = new Nomenclature {Id = 25};
+			var newOwner = newHasOwner ? new Owner {Id = 1, Priority = 0} : null;
+			var wornOwner = wornHasOwner ? new Owner {Id = 2, Priority = 0} : null;
+			var newBalance = new StockBalance(new StockPosition(nomenclature, 0, null, null, newOwner), 1);
+			var wornBalance = new StockBalance(new StockPosition(nomenclature, 0.5m, null, null, wornOwner), 1);
+			var comparer = new BestChoiceInStockComparer(new ProtectionTools());
+
+			Assert.That(comparer.Compare(newBalance, wornBalance), Is.LessThan(0));
+			Assert.That(comparer.Compare(wornBalance, newBalance), Is.GreaterThan(0));
+		}
+
 		#endregion
 		#region LastIssued
 		[Test(Description = "Проверяем базовый случай отображения последних выдач")]

@@ -393,6 +393,7 @@ namespace Workwear.Domain.Company
 		//Сортируем позиции по следующим критериям:
 		//-Сначала приоритетная номеннклатура, если задана
 		//-Позиция более приоритетного собственника
+		//-Сначала позиции с размером и ростом, затем с одним из них, затем безразмерные.
 		//-Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
 		//-Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
 		//-Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
@@ -404,8 +405,12 @@ namespace Workwear.Domain.Company
 					DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, priorityNomenclature) ||
 					DomainHelper.EqualDomainObjects(y.Position?.Nomenclature, priorityNomenclature)))
 				return DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, priorityNomenclature) ? -1 : 1;
-			if(x.Position.Owner?.Priority != y.Position.Owner?.Priority)
+			if((x.Position.Owner?.Priority ?? 0) != (y.Position.Owner?.Priority ?? 0))
 				return (y.Position.Owner?.Priority ?? 0).CompareTo(x.Position.Owner?.Priority ?? 0);
+			var xSizesCount = (x.Position.WearSize != null ? 1 : 0) + (x.Position.Height != null ? 1 : 0);
+			var ySizesCount = (y.Position.WearSize != null ? 1 : 0) + (y.Position.Height != null ? 1 : 0);
+			if((x.Position.WearSize != null ? 1 : 0) + (x.Position.Height != null ? 1 : 0) != ySizesCount)
+				return ySizesCount.CompareTo(xSizesCount);
 			var xMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();
 			var yMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(y.Position.Nomenclature)).Count();
 			if(xMatchedNomenclature != yMatchedNomenclature)
