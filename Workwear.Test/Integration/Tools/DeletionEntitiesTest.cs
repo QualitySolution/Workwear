@@ -156,6 +156,122 @@ namespace Workwear.Test.Integration.Tools
 			}
 		}
 
+		[Test(Description = "Проверяем что при удалении строки документа выдачи по дежурной норме удаляется и связанная операция выдачи, и складская операция.")]
+		[Category("Integrated")]
+		public void Deletion_ExpenseDutyNormItem_DeleteButton_Test()
+		{
+			NewSessionWithSameDB();
+			var cancel = new CancellationTokenSource();
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType { Name = "Тестовый тип номенклатуры" };
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature { Type = nomenclatureType };
+				uow.Save(nomenclature);
+
+				var protectionTools = new ProtectionTools { Name = "СИЗ для тестирования" };
+				protectionTools.AddNomenclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var dutyNorm = new DutyNorm { Name = "Тестовая дежурная норма" };
+				var dutyNormItem = dutyNorm.AddItem(protectionTools);
+				uow.Save(dutyNorm);
+
+				var document = new ExpenseDutyNorm {
+					DutyNorm = dutyNorm,
+					Warehouse = warehouse,
+					Date = new DateTime(2026, 1, 1)
+				};
+				var position = new StockPosition(nomenclature, 0, null, null, null);
+				var item = document.AddItem(position, 2, dutyNormItem);
+				item.UpdateOperation(uow);
+				uow.Save(document);
+				uow.Commit();
+
+				var itemId = item.Id;
+				var operationId = item.Operation.Id;
+				var warehouseOperationId = item.WarehouseOperation.Id;
+				Assert.That(operationId, Is.GreaterThan(0));
+				Assert.That(warehouseOperationId, Is.GreaterThan(0));
+
+				using(var uowDel = UnitOfWorkFactory.CreateWithoutRoot()) {
+					var deletionService = new DeleteCore(DeleteConfig.Main, uowDel);
+					deletionService.PrepareDeletion(typeof(ExpenseDutyNormItem), itemId, cancel.Token);
+					deletionService.RunDeletion(cancel.Token);
+					uowDel.Commit();
+				}
+
+				using(var uowCheck = UnitOfWorkFactory.CreateWithoutRoot()) {
+					Assert.That(uowCheck.GetById<ExpenseDutyNormItem>(itemId), Is.Null, "Строка документа должна быть удалена.");
+					Assert.That(uowCheck.GetById<DutyNormIssueOperation>(operationId), Is.Null, "Операция выдачи должна удаляться вместе со строкой документа.");
+					Assert.That(uowCheck.GetById<WarehouseOperation>(warehouseOperationId), Is.Null, "Складская операция должна удаляться вместе со строкой документа.");
+				}
+			}
+		}
+
+		[Test(Description = "Регрессия: смена дежурной нормы в шапке уже сохранённого документа (ExpenseDutyNormViewModel.FillUnderreceivedp) должна удалять операции.")]
+		[Category("Integrated")]
+		public void Deletion_ExpenseDutyNormItem_ClearItemsCollection_Test()
+		{
+			NewSessionWithSameDB();
+			var cancel = new CancellationTokenSource();
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse();
+				uow.Save(warehouse);
+
+				var nomenclatureType = new ItemsType { Name = "Тестовый тип номенклатуры" };
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature { Type = nomenclatureType };
+				uow.Save(nomenclature);
+
+				var protectionTools = new ProtectionTools { Name = "СИЗ для тестирования" };
+				protectionTools.AddNomenclature(nomenclature);
+				uow.Save(protectionTools);
+
+				var dutyNorm = new DutyNorm { Name = "Тестовая дежурная норма" };
+				var dutyNormItem = dutyNorm.AddItem(protectionTools);
+				uow.Save(dutyNorm);
+
+				var document = new ExpenseDutyNorm {
+					DutyNorm = dutyNorm,
+					Warehouse = warehouse,
+					Date = new DateTime(2026, 1, 1)
+				};
+				var position = new StockPosition(nomenclature, 0, null, null, null);
+				var item = document.AddItem(position, 2, dutyNormItem);
+				item.UpdateOperation(uow);
+				uow.Save(document);
+				uow.Commit();
+
+				var itemId = item.Id;
+				var operationId = item.Operation.Id;
+				var warehouseOperationId = item.WarehouseOperation.Id;
+				Assert.That(operationId, Is.GreaterThan(0));
+				Assert.That(warehouseOperationId, Is.GreaterThan(0));
+
+				foreach(var savedItem in document.Items.Where(x => x.Id > 0).ToList()) {
+					var deletionService = new DeleteCore(DeleteConfig.Main, uow);
+					deletionService.PrepareDeletion(typeof(ExpenseDutyNormItem), savedItem.Id, cancel.Token);
+					deletionService.RunDeletion(cancel.Token);
+				}
+				document.Items.Clear();
+				uow.Save(document);
+				uow.Commit();
+
+				using(var uowCheck = UnitOfWorkFactory.CreateWithoutRoot()) {
+					Assert.That(uowCheck.GetById<ExpenseDutyNormItem>(itemId), Is.Null, "Строка документа должна быть удалена.");
+					Assert.That(uowCheck.GetById<DutyNormIssueOperation>(operationId), Is.Null, "Операция выдачи не должна оставаться висячей после смены нормы в шапке документа.");
+					Assert.That(uowCheck.GetById<WarehouseOperation>(warehouseOperationId), Is.Null, "Складская операция не должна оставаться висячей после смены нормы в шапке документа.");
+				}
+			}
+		}
+
 		[Test(Description = "Проверяем удаление документа возврата выдачи вне нормы с маркировкой.")]
 		[Category("Integrated")]
 		public void Deletion_OverNormReturnWithBarcode_DoesNotDeleteSourceIssueTest()
