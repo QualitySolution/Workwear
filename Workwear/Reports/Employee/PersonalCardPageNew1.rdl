@@ -11,7 +11,7 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Card">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
     IFNULL(employees.card_number, employees.id) AS id,
@@ -39,7 +39,7 @@ WHERE
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="id">
           <DataField>id</DataField>
           <TypeName>System.String</TypeName>
@@ -809,8 +809,8 @@ LIMIT 20</CommandText>
         <Width>221.23pt</Width>
         <Value>Ответственное лицо за ведение карточек учёта выдачи СИЗ</Value>
         <ZIndex>1</ZIndex>
-        <Left>2.4pt</Left>
-        <Top>369.7pt</Top>
+        <Left>0.0pt</Left>
+        <Top>392.2pt</Top>
         <Style>
           <BorderStyle />
           <BorderColor />
@@ -823,8 +823,8 @@ LIMIT 20</CommandText>
         <Width>112.89pt</Width>
         <Value>(подпись)</Value>
         <ZIndex>1</ZIndex>
-        <Left>227.5pt</Left>
-        <Top>384.7pt</Top>
+        <Left>223.6pt</Left>
+        <Top>407.2pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -840,8 +840,8 @@ LIMIT 20</CommandText>
         <Width>207.39pt</Width>
         <Value>(Ф.И.О.)</Value>
         <ZIndex>1</ZIndex>
-        <Left>350.3pt</Left>
-        <Top>384.8pt</Top>
+        <Left>346.4pt</Left>
+        <Top>407.3pt</Top>
         <Style>
           <BorderStyle>
             <Top>Solid</Top>
@@ -962,14 +962,14 @@ LIMIT 20</CommandText>
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>404.4pt</Height>
+    <Height>461.3pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
     <Height>16.5pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
-    <ReportItems >
+    <ReportItems>
       <Textbox Name="Textbox23">
         <Height>12pt</Height>
         <Width>3in</Width>
@@ -983,7 +983,7 @@ LIMIT 20</CommandText>
           <BorderWidth />
         </Style>
       </Textbox>
-      <Textbox Name="Textbox24" >
+      <Textbox Name="Textbox24">
         <Height>12pt</Height>
         <Width>265.79pt</Width>
         <Value>Распечатано из QS: Спецодежда workwear.qsolution.ru</Value>
