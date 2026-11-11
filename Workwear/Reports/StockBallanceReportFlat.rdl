@@ -3,12 +3,12 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>11in</PageHeight>
-  <PageWidth>21in</PageWidth>
+  <PageWidth>22in</PageWidth>
   <DataSources>
     <DataSource Name="DS1">
       <ConnectionProperties>
         <DataProvider>MySqlConnector</DataProvider>
-        <ConnectString>server=192.168.1.10;user=Space;database=workwear_copy_kos_24_08_03;port=3306;password=1050;</ConnectString>
+        <ConnectString>server=192.168.1.10;user=;database=;port=3306;password=;</ConnectString>
       </ConnectionProperties>
     </DataSource>
   </DataSources>
@@ -19,22 +19,9 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT
-    main.nomenclature_number,
-    main.quantity,
-    main.nomenclature,
-    barcode_agg.barcode_list AS barcode,
-    main.life_percent,
-    main.type,
-    main.size,
-    main.growth,
-    main.owner,
-    main.unit,
-    main.summa,
-    main.sex
-FROM (
+        <CommandText>WITH main AS (
     SELECT
         IFNULL(nomenclature.number, operation_warehouse.nomenclature_id) as nomenclature_number,
         operation_warehouse.nomenclature_id as nomenclature_id,
@@ -54,12 +41,7 @@ FROM (
         owners.id as owner_id,
         owners.name AS owner,
         measurement_units.name as unit,
-        (nomenclature.sale_cost *  IF(@allWarehouses, SUM(IF(operation_warehouse.warehouse_receipt_id IS NOT NULL AND
-                                                             operation_warehouse.warehouse_expense_id IS NULL, operation_warehouse.amount, 0)) -
-                                                      SUM(IF(operation_warehouse.warehouse_receipt_id IS NULL AND
-                                                             operation_warehouse.warehouse_expense_id IS NOT NULL, operation_warehouse.amount, 0)),
-                                      (SUM(IF(operation_warehouse.warehouse_receipt_id = @warehouse_id, operation_warehouse.amount, 0)) -
-                                       SUM(IF(operation_warehouse.warehouse_expense_id = @warehouse_id, operation_warehouse.amount, 0)))) ) AS summa,
+        nomenclature.sale_cost AS sale_cost,
         IF(nomenclature.sex='Universal','Уни.', IF(nomenclature.sex='Men','Муж.', 'Жен.')) as sex
     FROM
         operation_warehouse
@@ -74,41 +56,111 @@ FROM (
         or operation_warehouse.warehouse_expense_id = @warehouse_id
         or @allWarehouses)
       AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
+  AND (-1 IN (@nomenclature_ids) OR operation_warehouse.nomenclature_id IN (@nomenclature_ids))
     GROUP BY operation_warehouse.nomenclature_id, sizeAlias.id, heightAlias.id, owners.id, wear_percent
     HAVING quantity &lt;&gt; 0
-) main
+), cb AS (
+SELECT
+    ob.barcode_id, b.title, ob.kit_number, ow.nomenclature_id,
+    ow.size_id, ow.height_id, ow.owner_id, ow.wear_percent,
+    IF(@show_over_norm, (
+        SELECT COUNT(DISTINCT issue_op.id)
+        FROM operation_barcodes issue_ob
+        JOIN operation_over_norm issue_op ON issue_op.id = issue_ob.over_norm_operation_id
+        JOIN operation_warehouse issue_ow ON issue_ow.id = issue_op.operation_warehouse_id
+        WHERE issue_ob.barcode_id = ob.barcode_id
+          AND issue_ow.warehouse_expense_id IS NOT NULL
+          AND issue_op.operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE), INTERVAL 1 DAY)
+    ), NULL) AS over_norm_count,
+    IF(@show_service, (
+        SELECT COUNT(DISTINCT claim.id)
+        FROM clothing_service_claim claim
+        JOIN clothing_service_states state ON state.claim_id = claim.id
+        WHERE claim.barcode_id = ob.barcode_id
+          AND state.operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE), INTERVAL 1 DAY)
+    ), NULL) AS service_count
+FROM operation_barcodes ob
+JOIN operation_warehouse ow ON ow.id = ob.warehouse_operation_id
+JOIN barcodes b ON b.id = ob.barcode_id
+WHERE (@show_over_norm OR @show_service)
+  AND ow.warehouse_receipt_id IS NOT NULL
+  AND (@allWarehouses OR ow.warehouse_receipt_id = @warehouse_id)
+  AND ow.operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE), INTERVAL 1 DAY)
+  AND ob.id = (
+      SELECT last_ob.id
+      FROM operation_barcodes last_ob
+      LEFT JOIN operation_issued_by_employee oe ON oe.id = last_ob.employee_issue_operation_id
+      LEFT JOIN operation_issued_by_duty_norm od ON od.id = last_ob.duty_norm_issue_operation_id
+      LEFT JOIN operation_over_norm oo ON oo.id = last_ob.over_norm_operation_id
+      LEFT JOIN operation_warehouse last_ow ON last_ow.id = last_ob.warehouse_operation_id
+      WHERE last_ob.barcode_id = ob.barcode_id
+        AND COALESCE(oe.operation_time, od.operation_time, oo.operation_time, last_ow.operation_time)
+            &lt; DATE_ADD(CONVERT(@report_date, DATE), INTERVAL 1 DAY)
+      ORDER BY COALESCE(oe.operation_time, od.operation_time, oo.operation_time, last_ow.operation_time) DESC,
+               last_ob.id DESC
+      LIMIT 1
+  )
+)
+SELECT
+    main.nomenclature_number,
+    IF(@show_barcode AND (@show_over_norm OR @show_service),
+       main.quantity - COALESCE(marked.barcode_count, 0), main.quantity) AS quantity,
+    main.nomenclature,
+    IF(@show_over_norm OR @show_service, NULL, barcode_agg.barcode_list) AS barcode,
+    main.life_percent, main.type, main.size, main.growth, main.owner, main.unit,
+    CAST(main.sale_cost * IF(@show_barcode AND (@show_over_norm OR @show_service),
+                             main.quantity - COALESCE(marked.barcode_count, 0), main.quantity) AS DECIMAL(30,6)) AS summa,
+    main.sex,
+    IF(@show_over_norm AND NOT @show_barcode, COALESCE(marked.over_norm_count, 0), NULL) AS over_norm_count,
+    IF(@show_service AND NOT @show_barcode, COALESCE(marked.service_count, 0), NULL) AS service_count
+FROM main
 LEFT JOIN (
-    SELECT
-        operation_warehouse.nomenclature_id AS nomenclature_id,
-        sizeAlias.id AS size_id,
-        heightAlias.id AS height_id,
-        owners.id AS owner_id,
-        wear_percent,
-        GROUP_CONCAT(
-            DISTINCT CONCAT(barcodes.title, IF(operation_barcodes.kit_number > 0, CONCAT(' (', operation_barcodes.kit_number, ')'), ''))
-            ORDER BY barcodes.title
-            SEPARATOR '\n'
-        ) AS barcode_list
-    FROM operation_warehouse
-        JOIN operation_barcodes ON operation_warehouse.id = operation_barcodes.warehouse_operation_id
-        JOIN barcodes ON operation_barcodes.barcode_id = barcodes.id
-        LEFT JOIN sizes AS sizeAlias ON sizeAlias.id = operation_warehouse.size_id
-        LEFT JOIN sizes AS heightAlias ON heightAlias.id = operation_warehouse.height_id
-        LEFT JOIN owners ON owners.id = operation_warehouse.owner_id
-    WHERE @show_barcode
-      AND operation_warehouse.warehouse_receipt_id IS NOT NULL
-      AND (@allWarehouses OR operation_warehouse.warehouse_receipt_id = @warehouse_id)
-      AND operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
-    GROUP BY operation_warehouse.nomenclature_id, sizeAlias.id, heightAlias.id, owners.id, wear_percent
-) barcode_agg
-    ON barcode_agg.nomenclature_id = main.nomenclature_id
-   AND barcode_agg.size_id &lt;=&gt; main.size_id
-   AND barcode_agg.height_id &lt;=&gt; main.height_id
-   AND barcode_agg.owner_id &lt;=&gt; main.owner_id
-   AND barcode_agg.wear_percent = main.life_percent
-ORDER BY main.nomenclature,
-         CAST(SUBSTRING_INDEX(main.size, '-', 1) AS DECIMAL(5,1)),
-         CAST(SUBSTRING_INDEX(main.growth, '-', 1) AS DECIMAL(5,1));</CommandText>
+    SELECT cb.nomenclature_id, cb.size_id, cb.height_id, cb.owner_id,
+           cb.wear_percent, COUNT(*) AS barcode_count,
+           SUM(cb.over_norm_count) AS over_norm_count,
+           SUM(cb.service_count) AS service_count
+    FROM cb
+    GROUP BY cb.nomenclature_id, cb.size_id, cb.height_id, cb.owner_id, cb.wear_percent
+) marked ON marked.nomenclature_id = main.nomenclature_id
+    AND marked.size_id &lt;=&gt; main.size_id
+    AND marked.height_id &lt;=&gt; main.height_id
+    AND marked.owner_id &lt;=&gt; main.owner_id
+    AND marked.wear_percent = main.life_percent
+LEFT JOIN (
+    SELECT ow.nomenclature_id, ow.size_id, ow.height_id, ow.owner_id, ow.wear_percent,
+           GROUP_CONCAT(DISTINCT CONCAT(b.title,
+               IF(ob.kit_number &gt; 0, CONCAT(' (', ob.kit_number, ')'), ''))
+               ORDER BY b.title SEPARATOR '\n') AS barcode_list
+    FROM operation_warehouse ow
+    JOIN operation_barcodes ob ON ob.warehouse_operation_id = ow.id
+    JOIN barcodes b ON b.id = ob.barcode_id
+    WHERE @show_barcode AND NOT (@show_over_norm OR @show_service)
+      AND ow.warehouse_receipt_id IS NOT NULL
+      AND (@allWarehouses OR ow.warehouse_receipt_id = @warehouse_id)
+      AND ow.operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE), INTERVAL 1 DAY)
+    GROUP BY ow.nomenclature_id, ow.size_id, ow.height_id, ow.owner_id, ow.wear_percent
+) barcode_agg ON barcode_agg.nomenclature_id = main.nomenclature_id
+    AND barcode_agg.size_id &lt;=&gt; main.size_id
+    AND barcode_agg.height_id &lt;=&gt; main.height_id
+    AND barcode_agg.owner_id &lt;=&gt; main.owner_id
+    AND barcode_agg.wear_percent = main.life_percent
+WHERE NOT (@show_barcode AND (@show_over_norm OR @show_service))
+   OR main.quantity &lt;&gt; COALESCE(marked.barcode_count, 0)
+UNION ALL
+SELECT
+    main.nomenclature_number, 1, main.nomenclature,
+    CONCAT(cb.title, IF(cb.kit_number &gt; 0, CONCAT(' (', cb.kit_number, ')'), '')),
+    main.life_percent, main.type, main.size, main.growth, main.owner, main.unit,
+    CAST(main.sale_cost AS DECIMAL(30,6)), main.sex,
+    cb.over_norm_count, cb.service_count
+FROM main
+JOIN cb ON cb.nomenclature_id = main.nomenclature_id
+    AND cb.size_id &lt;=&gt; main.size_id
+    AND cb.height_id &lt;=&gt; main.height_id
+    AND cb.owner_id &lt;=&gt; main.owner_id
+    AND cb.wear_percent = main.life_percent
+WHERE @show_barcode AND (@show_over_norm OR @show_service)
+ORDER BY nomenclature, size, growth, barcode;</CommandText>
         <QueryParameters>
           <QueryParameter Name="warehouse_id">
             <Value>=Parameters!warehouse_id</Value>
@@ -134,9 +186,18 @@ ORDER BY main.nomenclature,
           <QueryParameter Name="show_barcode">
             <Value>=Parameters!show_barcode</Value>
           </QueryParameter>
+          <QueryParameter Name="nomenclature_ids">
+            <Value>={?nomenclature_ids}</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_over_norm">
+            <Value>={?show_over_norm}</Value>
+          </QueryParameter>
+          <QueryParameter Name="show_service">
+            <Value>={?show_service}</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="nomenclature_number">
           <DataField>nomenclature_number</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -185,6 +246,14 @@ ORDER BY main.nomenclature,
           <DataField>barcode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="over_norm_count">
+          <DataField>over_norm_count</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="service_count">
+          <DataField>service_count</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -210,9 +279,9 @@ ORDER BY main.nomenclature,
             <Width>134.0pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>428.1pt</Width>
+            <Width>340pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>131.4pt</Width>
             <Visibility>
               <Hidden>=!{?show_barcode}</Hidden>
@@ -222,7 +291,7 @@ ORDER BY main.nomenclature,
             <Width>39.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>153.9pt</Width>
+            <Width>114pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>48.3pt</Width>
@@ -254,6 +323,18 @@ ORDER BY main.nomenclature,
               <Hidden>=!{?showSumm}</Hidden>
             </Visibility>
           </TableColumn>
+          <TableColumn>
+            <Width>119.8pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_over_norm}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>97.8pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_service}</Hidden>
+            </Visibility>
+          </TableColumn>
         </TableColumns>
         <Header>
           <TableRows>
@@ -279,7 +360,7 @@ ORDER BY main.nomenclature,
                       </Style>
                     </Textbox>
                   </ReportItems>
-                  <ColSpan>7</ColSpan>
+                  <ColSpan>9</ColSpan>
                 </TableCell>
                 <TableCell>
                   <ReportItems>
@@ -418,7 +499,7 @@ ORDER BY main.nomenclature,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox32">
                       <Value>Штрихкод (комплект)</Value>
@@ -578,6 +659,38 @@ ORDER BY main.nomenclature,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="OverNormHeading">
+                      <Value>Выдачи вне нормы</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <FontWeight >Bold</FontWeight>
+                        <TextAlign >Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="ServiceHeading">
+                      <Value>Обслуживалось</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor  />
+                        <BorderWidth  />
+                        <FontWeight >Bold</FontWeight>
+                        <TextAlign >Center</TextAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -618,7 +731,7 @@ ORDER BY main.nomenclature,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox33">
                       <Value>=Fields!barcode.Value</Value>
@@ -764,6 +877,30 @@ ORDER BY main.nomenclature,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="OverNormValue">
+                      <Value>=Fields!over_norm_count.Value</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="ServiceValue">
+                      <Value>=Fields!service_count.Value</Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
@@ -809,7 +946,7 @@ ORDER BY main.nomenclature,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox34">
                       <Value></Value>
@@ -980,6 +1117,30 @@ ORDER BY main.nomenclature,
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="OverNormFooter">
+                      <Value></Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="ServiceFooter">
+                      <Value></Value>
+                      <Style>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
               <Visibility>
                 <Hidden>=!{?showSumm}</Hidden>
@@ -1071,6 +1232,32 @@ ORDER BY main.nomenclature,
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_barcode">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="nomenclature_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_over_norm">
+      <DataType>Boolean</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_service">
       <DataType>Boolean</DataType>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
