@@ -30,15 +30,15 @@ namespace Workwear.ReportParameters.Views {
 			ycheckbuttonShowBarcodes.Binding.AddBinding(viewModel, v => v.ShowBarcodes, w => w.Active).InitializeFromSource();
 			ycheckbuttonOnlyMarkable.Binding
 				.AddSource(viewModel)
-				.AddBinding(v => v.VisibleFlatOptions, w => w.Visible)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
 				.AddBinding(v => v.OnlyMarkable, w => w.Active).InitializeFromSource();
 			ycheckbuttonOverNorm.Binding
 				.AddSource(viewModel)
-				.AddBinding(v => v.VisibleFlatOptions, w => w.Visible)
+				.AddBinding(v => v.VisibleOverNorm, w => w.Visible)
 				.AddBinding(v => v.ShowOverNorm, w => w.Active).InitializeFromSource();
 			ycheckbuttonService.Binding
 				.AddSource(viewModel)
-				.AddBinding(v => v.VisibleFlatOptions, w => w.Visible)
+				.AddBinding(v => v.VisibleService, w => w.Visible)
 				.AddBinding(v => v.ShowService, w => w.Active).InitializeFromSource();
             ycheckbuttonShowSex.Binding.AddBinding(viewModel,v=>v.ShowSex,w=>w.Active).InitializeFromSource();
 			buttonRun.Binding.AddBinding(ViewModel,v=>v.SensitiveLoad, w=>w.Sensitive).InitializeFromSource();

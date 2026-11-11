@@ -46,7 +46,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes) && ReportType == StockAllWearReportType.Flat;
 		public bool VisibleSumm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.Selling);
-		public bool VisibleFlatOptions => ReportType == StockAllWearReportType.Flat;
+		public bool VisibleOverNorm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.OverNorm);
+		public bool VisibleService => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.ClothingService);
 		public ChoiceListViewModel<Nomenclature> ChoiceNomenclatureViewModel { get; }
 		private readonly IList<ISelectableEntity> allNomenclatureItems;
 		
@@ -99,7 +100,9 @@ namespace Workwear.ReportParameters.ViewModels {
 				if(value != StockAllWearReportType.Flat)
 					OnlyMarkable = false;
 				OnPropertyChanged(nameof(VisibleSumm));
-				OnPropertyChanged(nameof(VisibleFlatOptions));
+				OnPropertyChanged(nameof(VisibleBarcodes));
+				OnPropertyChanged(nameof(VisibleOverNorm));
+				OnPropertyChanged(nameof(VisibleService));
 			}
 		}
 		
