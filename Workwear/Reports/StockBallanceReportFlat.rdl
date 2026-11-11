@@ -19,9 +19,10 @@
   <BottomMargin>.25in</BottomMargin>
   <DataSets>
     <DataSet Name="Data">
-      <Query>
+      <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>WITH main AS (
+        <CommandText>WITH main AS ( 
+-- Основное тело отчёта
     SELECT
         IFNULL(nomenclature.number, operation_warehouse.nomenclature_id) as nomenclature_number,
         operation_warehouse.nomenclature_id as nomenclature_id,
@@ -59,7 +60,8 @@
   AND (-1 IN (@nomenclature_ids) OR operation_warehouse.nomenclature_id IN (@nomenclature_ids))
     GROUP BY operation_warehouse.nomenclature_id, sizeAlias.id, heightAlias.id, owners.id, wear_percent
     HAVING quantity &lt;&gt; 0
-), cb AS (
+), marking AS (
+-- Данные связанные с маркировкой и отключаемыми функциями
 SELECT
     ob.barcode_id, b.title, ob.kit_number, ow.nomenclature_id,
     ow.size_id, ow.height_id, ow.owner_id, ow.wear_percent,
@@ -115,12 +117,12 @@ SELECT
     IF(@show_service AND NOT @show_barcode, COALESCE(marked.service_count, 0), NULL) AS service_count
 FROM main
 LEFT JOIN (
-    SELECT cb.nomenclature_id, cb.size_id, cb.height_id, cb.owner_id,
-           cb.wear_percent, COUNT(*) AS barcode_count,
-           SUM(cb.over_norm_count) AS over_norm_count,
-           SUM(cb.service_count) AS service_count
-    FROM cb
-    GROUP BY cb.nomenclature_id, cb.size_id, cb.height_id, cb.owner_id, cb.wear_percent
+    SELECT marking.nomenclature_id, marking.size_id, marking.height_id, marking.owner_id,
+           marking.wear_percent, COUNT(*) AS barcode_count,
+           SUM(marking.over_norm_count) AS over_norm_count,
+           SUM(marking.service_count) AS service_count
+    FROM marking
+    GROUP BY marking.nomenclature_id, marking.size_id, marking.height_id, marking.owner_id, marking.wear_percent
 ) marked ON marked.nomenclature_id = main.nomenclature_id
     AND marked.size_id &lt;=&gt; main.size_id
     AND marked.height_id &lt;=&gt; main.height_id
@@ -149,16 +151,16 @@ WHERE NOT (@show_barcode AND (@show_over_norm OR @show_service))
 UNION ALL
 SELECT
     main.nomenclature_number, 1, main.nomenclature,
-    CONCAT(cb.title, IF(cb.kit_number &gt; 0, CONCAT(' (', cb.kit_number, ')'), '')),
+    CONCAT(marking.title, IF(marking.kit_number &gt; 0, CONCAT(' (', marking.kit_number, ')'), '')),
     main.life_percent, main.type, main.size, main.growth, main.owner, main.unit,
     CAST(main.sale_cost AS DECIMAL(30,6)), main.sex,
-    cb.over_norm_count, cb.service_count
+    marking.over_norm_count, marking.service_count
 FROM main
-JOIN cb ON cb.nomenclature_id = main.nomenclature_id
-    AND cb.size_id &lt;=&gt; main.size_id
-    AND cb.height_id &lt;=&gt; main.height_id
-    AND cb.owner_id &lt;=&gt; main.owner_id
-    AND cb.wear_percent = main.life_percent
+JOIN marking ON marking.nomenclature_id = main.nomenclature_id
+    AND marking.size_id &lt;=&gt; main.size_id
+    AND marking.height_id &lt;=&gt; main.height_id
+    AND marking.owner_id &lt;=&gt; main.owner_id
+    AND marking.wear_percent = main.life_percent
 WHERE @show_barcode AND (@show_over_norm OR @show_service)
 ORDER BY nomenclature, size, growth, barcode;</CommandText>
         <QueryParameters>
@@ -197,7 +199,7 @@ ORDER BY nomenclature, size, growth, barcode;</CommandText>
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields>
+      <Fields >
         <Field Name="nomenclature_number">
           <DataField>nomenclature_number</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1124,13 +1126,13 @@ ORDER BY nomenclature, size, growth, barcode;</CommandText>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1142,13 +1144,13 @@ ORDER BY nomenclature, size, growth, barcode;</CommandText>
                       <Style>
                         <BorderStyle>
                           <Default>None</Default>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Top >None</Top>
-                          <Bottom >None</Bottom>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
                         </BorderStyle>
-                        <BorderColor  />
-                        <BorderWidth  />
+                        <BorderColor />
+                        <BorderWidth />
                       </Style>
                     </Textbox>
                   </ReportItems>
