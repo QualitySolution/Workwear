@@ -866,7 +866,7 @@
     IF(@show_stock, SUM(stock.SUM), null) AS in_stock,
     nomenclatureTypes.diff_causes,
     nomenclatureTypes.shipment_periods,
-    IF(@show_employee_groups, employeeGroups.groups, NULL) AS employee_groups
+    IF(@show_employee_groups, employeeGroups.group_names, NULL) AS employee_groups
 FROM
     employee_cards_item
         JOIN employees ON employees.id = employee_cards_item.employee_id
@@ -921,7 +921,7 @@ FROM
         ) AS nomenclatureTypes on nomenclatureTypes.protection_tools_id = protection_tools.id
         LEFT JOIN (
             SELECT egi.employee_id,
-                   GROUP_CONCAT(DISTINCT eg.name ORDER BY eg.name SEPARATOR ', ') AS groups
+                   GROUP_CONCAT(DISTINCT eg.name ORDER BY eg.name SEPARATOR ', ') AS group_names
             FROM employee_group_items AS egi
                 JOIN employee_groups AS eg ON eg.id = egi.employee_group_id
             GROUP BY egi.employee_id
