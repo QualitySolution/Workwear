@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Report;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Stock;
 using Workwear.Tools;
@@ -23,6 +24,9 @@ namespace Workwear.ReportParameters.ViewModels {
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			base.Title = "Складская ведомость";
 			Warehouses=UoW.GetAll<Warehouse>().ToList();
+			ChoiceNomenclatureViewModel = new ChoiceListViewModel<Nomenclature>(UoW.GetAll<Nomenclature>().ToList());
+			allNomenclatureItems = ChoiceNomenclatureViewModel.Items.ToList();
+			ChoiceNomenclatureViewModel.PropertyChanged += (s, e) => OnPropertyChanged(nameof(SensitiveLoad));
 			
 			if(featuresService.Available(WorkwearFeature.Owners)) {
 				Owners = UoW.GetAll<Owner>().ToList();
@@ -42,6 +46,10 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		public bool VisibleBarcodes => featuresService.Available(WorkwearFeature.Barcodes) && ReportType == StockAllWearReportType.Flat;
 		public bool VisibleSumm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.Selling);
+		public bool VisibleOverNorm => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.OverNorm);
+		public bool VisibleService => ReportType == StockAllWearReportType.Flat && featuresService.Available(WorkwearFeature.ClothingService);
+		public ChoiceListViewModel<Nomenclature> ChoiceNomenclatureViewModel { get; }
+		private readonly IList<ISelectableEntity> allNomenclatureItems;
 		
 		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
 			{"report_date", ReportDate },
@@ -54,6 +62,9 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"showSumm", ShowSumm},
 			{"showSex", ShowSex},
 			{"show_barcode", ShowBarcodes},
+			{"show_over_norm", ShowOverNorm},
+			{"show_service", ShowService},
+			{"nomenclature_ids", OnlyMarkable ? ChoiceNomenclatureViewModel.SelectedIds : ChoiceNomenclatureViewModel.SelectedIdsMod},
 			{"warehouse_name", (SelectWarehouse as Warehouse)?.Name ?? " "},
 		};
 		
@@ -86,7 +97,12 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => reportType;
 			set {
 				SetField(ref reportType, value); 
+				if(value != StockAllWearReportType.Flat)
+					OnlyMarkable = false;
 				OnPropertyChanged(nameof(VisibleSumm));
+				OnPropertyChanged(nameof(VisibleBarcodes));
+				OnPropertyChanged(nameof(VisibleOverNorm));
+				OnPropertyChanged(nameof(VisibleService));
 			}
 		}
 		
@@ -109,6 +125,35 @@ namespace Workwear.ReportParameters.ViewModels {
 			set=> SetField(ref showBarcodes, value);
 		}
 		private bool showSex;
+		private bool onlyMarkable;
+		public bool OnlyMarkable {
+			get => onlyMarkable;
+			set {
+				if(!SetField(ref onlyMarkable, value))
+					return;
+				ChoiceNomenclatureViewModel.Items.Clear();
+				//При проставлении очищаем скрываемые позиции 
+				foreach(var item in allNomenclatureItems) {
+					if(value && !((SelectableEntity<Nomenclature>)item).Entity.UseBarcode) {
+						item.Select = false;
+						continue;
+					}
+					ChoiceNomenclatureViewModel.Items.Add(item);
+				}
+				OnPropertyChanged(nameof(SensitiveLoad));
+			}
+		}
+		
+		private bool showOverNorm;
+		public bool ShowOverNorm {
+			get => showOverNorm;
+			set => SetField(ref showOverNorm, value);
+		}
+		private bool showService;
+		public bool ShowService {
+			get => showService;
+			set => SetField(ref showService, value);
+		}
 		public virtual bool ShowSex {
 			get => showSex;
 			set=>SetField(ref showSex, value);
@@ -118,7 +163,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			get => warehouses;
 			set => SetField(ref warehouses, value); 
 		}
-		public bool SensitiveLoad=>ReportDate!=null;
+		public bool SensitiveLoad => ReportDate != null && !ChoiceNomenclatureViewModel.AllUnSelected;
 
 	}
 	
