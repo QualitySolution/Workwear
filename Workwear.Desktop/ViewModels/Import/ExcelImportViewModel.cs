@@ -13,6 +13,7 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Models.Import;
+using Workwear.Models.Import.Employees;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -200,8 +201,8 @@ namespace Workwear.ViewModels.Import
 		#endregion
 		#region Сохранение
 		public new void Save() {
-			if(featuresService.Employees != 0) {
-				if(featuresService.Employees - employeeRepository.GetNumberOfEmployees() < CountersViewModel.Counters["NewEmployee"].Count) {
+			if(featuresService.Employees != 0 && ImportModel is ImportModelEmployee) {
+				if(featuresService.Employees - employeeRepository.GetNumberOfEmployees() < CountersViewModel.GetCount(CountersEmployee.NewEmployee)) {
 					interactive.ShowMessage(ImportanceLevel.Warning,$"Количество новых импортированных сотрудников превышает лимит Вашей лицензии.\n" +
 					                                                $"Лимит Вашей лицензии: {featuresService.Employees}", 
 						"Невозможно добавить сотрудников");
