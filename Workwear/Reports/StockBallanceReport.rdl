@@ -48,6 +48,7 @@ WHERE operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE),INTERVAL 1 DAY)
         or operation_warehouse.warehouse_expense_id = @warehouse_id
         or @allWarehouses)
   AND (@allOwners OR (@withoutOwner AND owners.id IS NULL) OR owners.id = @ownerId)
+  AND (-1 IN (@nomenclature_ids) OR operation_warehouse.nomenclature_id IN (@nomenclature_ids))
 GROUP BY nomenclature_id, size, growth, owner, wear_percent
 HAVING quantity &lt;&gt; 0
 ORDER BY nomenclature.name,
@@ -71,6 +72,9 @@ ORDER BY nomenclature.name,
           </QueryParameter>
           <QueryParameter Name="ownerId">
             <Value>=Parameters!ownerId</Value>
+          </QueryParameter>
+          <QueryParameter Name="nomenclature_ids">
+            <Value>={?nomenclature_ids}</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>
@@ -856,6 +860,14 @@ ORDER BY nomenclature.name,
       <Nullable>true</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="nomenclature_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue><Values><Value>-1</Value></Values></DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
   </ReportParameters>

@@ -6,6 +6,7 @@ namespace Workwear.ReportParameters.Views {
 	public partial class StockAllWearView : ViewBase<StockAllWearViewModel> {
 		public StockAllWearView(StockAllWearViewModel viewModel) : base(viewModel) {
 			this.Build();
+			choiceNomenclatures.ViewModel = ViewModel.ChoiceNomenclatureViewModel;
 			
 			ydateReport.Binding.AddBinding(ViewModel, v => v.ReportDate, w => w.DateOrNull).InitializeFromSource();
 			comboReportType.ItemsEnum = typeof(StockAllWearReportType);
@@ -27,6 +28,18 @@ namespace Workwear.ReportParameters.Views {
 			ycheckbuttonShowSumm.Binding.AddBinding(viewModel, v => v.ShowSumm, w => w.Active).InitializeFromSource();
 			ycheckbuttonShowBarcodes.Binding.AddBinding(viewModel, v => v.VisibleBarcodes, w => w.Visible).InitializeFromSource();
 			ycheckbuttonShowBarcodes.Binding.AddBinding(viewModel, v => v.ShowBarcodes, w => w.Active).InitializeFromSource();
+			ycheckbuttonOnlyMarkable.Binding
+				.AddSource(viewModel)
+				.AddBinding(v => v.VisibleBarcodes, w => w.Visible)
+				.AddBinding(v => v.OnlyMarkable, w => w.Active).InitializeFromSource();
+			ycheckbuttonOverNorm.Binding
+				.AddSource(viewModel)
+				.AddBinding(v => v.VisibleOverNorm, w => w.Visible)
+				.AddBinding(v => v.ShowOverNorm, w => w.Active).InitializeFromSource();
+			ycheckbuttonService.Binding
+				.AddSource(viewModel)
+				.AddBinding(v => v.VisibleService, w => w.Visible)
+				.AddBinding(v => v.ShowService, w => w.Active).InitializeFromSource();
             ycheckbuttonShowSex.Binding.AddBinding(viewModel,v=>v.ShowSex,w=>w.Active).InitializeFromSource();
 			buttonRun.Binding.AddBinding(ViewModel,v=>v.SensitiveLoad, w=>w.Sensitive).InitializeFromSource();
 		}
