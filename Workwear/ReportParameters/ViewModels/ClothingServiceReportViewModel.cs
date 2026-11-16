@@ -29,6 +29,8 @@ namespace Workwear.ReportParameters.ViewModels {
 			) : base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			OperationsTypeDuty = VisibleOperationsTypeDuty;
+			OperationsTypeOverNorm = VisibleOperationsTypeOverNorm;
 			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
 
 			var serviceList = UoW.GetAll<Service>().ToList();
@@ -92,6 +94,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(VisibleGroupClaim))]
 		[PropertyChangedAlso(nameof(VisibleChoiceService))]
 		[PropertyChangedAlso(nameof(VisibleChoiceTerminal))]
+		[PropertyChangedAlso(nameof(VisibleOperationsTypes))]
 		[PropertyChangedAlso(nameof(VisibleInfoLabel))]
 		[PropertyChangedAlso(nameof(InfoLabelText))]
 		[PropertyChangedAlso(nameof(Title))]
@@ -128,6 +131,10 @@ namespace Workwear.ReportParameters.ViewModels {
 			switch(ReportType) {
 				case ClothingServiceReportType.ClaimForStatus :
 					return new Dictionary<string, object> {
+						{ "source_employee", OperationsTypeEmployee },
+						{ "source_duty", OperationsTypeDuty && VisibleOperationsTypeDuty },
+						{ "source_over_norm", OperationsTypeOverNorm && VisibleOperationsTypeOverNorm },
+						{ "source_warehouse", OperationsTypeWarehouse },
 						{ "report_name", Title },
 						{ "show_comment", ShowComments },
 						{ "show_phone", ShowEmployees && ShowPhone },
@@ -140,6 +147,10 @@ namespace Workwear.ReportParameters.ViewModels {
 					};
 				case ClothingServiceReportType.ClaimMetric:
 					return new Dictionary<string, object> {
+						{ "source_employee", OperationsTypeEmployee },
+						{ "source_duty", OperationsTypeDuty && VisibleOperationsTypeDuty },
+						{ "source_over_norm", OperationsTypeOverNorm && VisibleOperationsTypeOverNorm },
+						{ "source_warehouse", OperationsTypeWarehouse },
 						{ "report_name", Title },
 						{ "show_closed", ShowClosed },
 						{ "start_date", StartDate },
@@ -215,6 +226,30 @@ namespace Workwear.ReportParameters.ViewModels {
 			set => SetField(ref groupSubdivision, value);
 		}
 		
+		private bool operationsTypeEmployee = true;
+		public virtual bool OperationsTypeEmployee {
+			get => operationsTypeEmployee;
+			set => SetField(ref operationsTypeEmployee, value);
+		}
+
+		private bool operationsTypeDuty;
+		public virtual bool OperationsTypeDuty {
+			get => operationsTypeDuty;
+			set => SetField(ref operationsTypeDuty, value);
+		}
+
+		private bool operationsTypeWarehouse = true;
+		public virtual bool OperationsTypeWarehouse {
+			get => operationsTypeWarehouse;
+			set => SetField(ref operationsTypeWarehouse, value);
+		}
+
+		private bool operationsTypeOverNorm;
+		public virtual bool OperationsTypeOverNorm {
+			get => operationsTypeOverNorm;
+			set => SetField(ref operationsTypeOverNorm, value);
+		}
+
 		private bool showComments = false;
 		public virtual bool ShowComments {
 			get => showComments;
@@ -302,6 +337,10 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool VisibleGroupClaim => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleChoiceService => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleChoiceTerminal => IsPostamatFullness;
+		public bool VisibleOperationsTypes => reportType == ClothingServiceReportType.ClaimForStatus
+			|| reportType == ClothingServiceReportType.ClaimMetric;
+		public bool VisibleOperationsTypeDuty => featuresService.Available(WorkwearFeature.DutyNorms);
+		public bool VisibleOperationsTypeOverNorm => featuresService.Available(WorkwearFeature.OverNorm);
 		public bool VisibleInfoLabel => VisibleGroupClaim && (SumCost || GroupClaim)
 			|| IsPostamatFullness;
 		public string InfoLabelText => IsPostamatFullness
