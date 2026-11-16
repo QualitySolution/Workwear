@@ -13,11 +13,39 @@
     <DataSet Name="Data">
       <Query >
         <DataSourceName>DS1</DataSourceName>
-        <CommandText>SELECT
+        <CommandText>SELECT *
+FROM (
+SELECT
+    -- Источник вещи определяется последней операцией штрихкода.
+    CASE
+        WHEN warehouse.id IS NOT NULL THEN 'Warehouse'
+        WHEN duty_norms.id IS NOT NULL THEN 'DutyNorm'
+        WHEN over_norm.id IS NOT NULL THEN 'OverNorm'
+        ELSE 'Employee'
+    END AS source_type,
     clothing_service_claim.id AS claim_id,
-    CONCAT_WS(' ', employees.last_name, employees.first_name,employees.patronymic_name) AS FIO,
+    CASE
+        WHEN warehouse.id IS NOT NULL THEN CONCAT('Склад ', warehouse.name)
+        WHEN duty_norms.id IS NOT NULL THEN TRIM(CONCAT('Дежурная №', duty_norms.id, ' ',
+            CONCAT_WS(' ',
+                IF(duty_norms.responsible_employee_id IS NOT NULL, responsible_employee.last_name, responsible_leader.surname),
+                CONCAT_WS('',
+                    CONCAT(NULLIF(LEFT(IF(duty_norms.responsible_employee_id IS NOT NULL, responsible_employee.first_name, responsible_leader.name), 1), ''), '.'),
+                    CONCAT(NULLIF(LEFT(IF(duty_norms.responsible_employee_id IS NOT NULL, responsible_employee.patronymic_name, responsible_leader.patronymic), 1), ''), '.')))))
+        WHEN over_norm.id IS NOT NULL THEN CONCAT_WS(' ',
+            CASE over_norm.type
+                WHEN 'Guest' THEN 'Гостевая'
+                WHEN 'Substitute' THEN 'Подменная'
+                WHEN 'Simple' THEN 'Разовая'
+                ELSE over_norm.type END,
+            employees.last_name,
+            CONCAT_WS('',
+                CONCAT(NULLIF(LEFT(employees.first_name, 1), ''), '.'),
+                CONCAT(NULLIF(LEFT(employees.patronymic_name, 1), ''), '.')))
+        ELSE CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name)
+    END AS FIO,
     employees.personnel_number AS tab,
-    employees.phone_number AS phone,
+    IF(duty_norms.id IS NOT NULL, responsible_employee.phone_number, employees.phone_number) AS phone,
     subdivisions.name AS subdivision,
     departments.name AS department,
     barcodes.title AS barcode,
@@ -132,15 +160,55 @@ FROM clothing_service_claim
          LEFT JOIN postomat_document_items ON clothing_service_claim.id = postomat_document_items.claim_id
          LEFT JOIN postomat_documents ON postomat_document_items.document_id = postomat_documents.id
     
-         LEFT JOIN employees ON employees.id = clothing_service_claim.employee_id
-         LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id
-         LEFT JOIN departments ON employees.department_id = departments.id
          LEFT JOIN barcodes ON clothing_service_claim.barcode_id = barcodes.id
+         LEFT JOIN operation_barcodes AS last_operation ON last_operation.id = (
+             SELECT ob.id
+             FROM operation_barcodes AS ob
+                      LEFT JOIN operation_issued_by_employee AS oe ON oe.id = ob.employee_issue_operation_id
+                      LEFT JOIN operation_issued_by_duty_norm AS od ON od.id = ob.duty_norm_issue_operation_id
+                      LEFT JOIN operation_over_norm AS oo ON oo.id = ob.over_norm_operation_id
+                      LEFT JOIN operation_warehouse AS ow ON ow.id = ob.warehouse_operation_id
+             WHERE ob.barcode_id = barcodes.id
+             ORDER BY COALESCE(oe.operation_time, od.operation_time, oo.operation_time, ow.operation_time) DESC, ob.id DESC
+             LIMIT 1
+         )
+         LEFT JOIN operation_warehouse AS last_warehouse ON last_warehouse.id = last_operation.warehouse_operation_id
+         LEFT JOIN warehouse ON warehouse.id = last_warehouse.warehouse_receipt_id
+         LEFT JOIN operation_issued_by_duty_norm AS duty_operation ON duty_operation.id = last_operation.duty_norm_issue_operation_id
+             AND duty_operation.issued &gt; 0 AND warehouse.id IS NULL
+         LEFT JOIN duty_norms ON duty_norms.id = duty_operation.duty_norm_id
+         LEFT JOIN leaders AS responsible_leader ON responsible_leader.id = duty_norms.responsible_leder_id
+         LEFT JOIN employees AS responsible_employee ON responsible_employee.id = COALESCE(duty_norms.responsible_employee_id, responsible_leader.employee_id)
+         LEFT JOIN operation_over_norm AS over_norm ON over_norm.id = last_operation.over_norm_operation_id
+             AND warehouse.id IS NULL
+         LEFT JOIN employees ON employees.id = CASE
+             WHEN warehouse.id IS NOT NULL OR duty_norms.id IS NOT NULL THEN NULL
+             WHEN over_norm.id IS NOT NULL THEN over_norm.employee_id
+             ELSE clothing_service_claim.employee_id END
+         LEFT JOIN subdivisions ON subdivisions.id = IF(duty_norms.id IS NOT NULL, duty_norms.subdivision_id, employees.subdivision_id)
+         LEFT JOIN departments ON employees.department_id = departments.id
          LEFT JOIN nomenclature ON barcodes.nomenclature_id = nomenclature.id
 WHERE 
     (@show_closed OR NOT clothing_service_claim.is_closed)
-    AND (NOT @show_closed OR (start.operation_time &gt;= CONVERT(@start_date, DATE) AND start.operation_time &lt; DATE_ADD(CONVERT(@finish_date, DATE), INTERVAL 1 DAY)))</CommandText>
+    AND (NOT @show_closed OR (start.operation_time &gt;= CONVERT(@start_date, DATE) AND start.operation_time &lt; DATE_ADD(CONVERT(@finish_date, DATE), INTERVAL 1 DAY)))
+) AS claims
+WHERE (claims.source_type = 'Employee' AND @source_employee)
+   OR (claims.source_type = 'DutyNorm' AND @source_duty)
+   OR (claims.source_type = 'OverNorm' AND @source_over_norm)
+   OR (claims.source_type = 'Warehouse' AND @source_warehouse)</CommandText>
         <QueryParameters>
+          <QueryParameter Name="source_employee">
+            <Value>=Parameters!source_employee</Value>
+          </QueryParameter>
+          <QueryParameter Name="source_duty">
+            <Value>=Parameters!source_duty</Value>
+          </QueryParameter>
+          <QueryParameter Name="source_over_norm">
+            <Value>=Parameters!source_over_norm</Value>
+          </QueryParameter>
+          <QueryParameter Name="source_warehouse">
+            <Value>=Parameters!source_warehouse</Value>
+          </QueryParameter>
           <QueryParameter Name="show_closed">
             <Value>=Parameters!show_closed</Value>
           </QueryParameter>
@@ -153,6 +221,10 @@ WHERE
         </QueryParameters>
       </Query>
       <Fields >
+        <Field Name="source_type">
+          <DataField>source_type</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="claim_id">
           <DataField>claim_id</DataField>
           <rd:TypeName>System.UInt32</rd:TypeName>
@@ -620,7 +692,7 @@ WHERE
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox3">
-                      <Value>ФИО</Value>
+                      <Value>Поступило от</Value>
                       <Style>
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -1681,6 +1753,54 @@ WHERE
     </ReportParameter>
     <ReportParameter Name="report_name">
       <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="source_employee">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="source_duty">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="source_over_norm">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="source_warehouse">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
       <Nullable>false</Nullable>
       <AllowBlank>false</AllowBlank>
       <MultiValue>false</MultiValue>
