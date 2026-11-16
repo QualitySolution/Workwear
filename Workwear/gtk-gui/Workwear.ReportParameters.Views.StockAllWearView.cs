@@ -28,6 +28,22 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonShowBarcodes;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonOverNorm;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonService;
+
+		private global::Gtk.HSeparator hseparator1;
+
+		private global::Gtk.Expander expanderNomenclatures;
+
+		private global::Gamma.GtkWidgets.yVBox yvbox1;
+
+		private global::Gamma.GtkWidgets.yCheckButton ycheckbuttonOnlyMarkable;
+
+		private global::QS.Views.Control.ChoiceListView choiceNomenclatures;
+
+		private global::Gtk.Label labelNomenclatures;
+
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
 		protected virtual void Build()
@@ -175,17 +191,82 @@ namespace Workwear.ReportParameters.Views
 			w11.Expand = false;
 			w11.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.ycheckbuttonOverNorm = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonOverNorm.CanFocus = true;
+			this.ycheckbuttonOverNorm.Name = "ycheckbuttonOverNorm";
+			this.ycheckbuttonOverNorm.Label = global::Mono.Unix.Catalog.GetString("Выдачи вне нормы");
+			this.ycheckbuttonOverNorm.DrawIndicator = true;
+			this.dialog1_VBox.Add(this.ycheckbuttonOverNorm);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonOverNorm]));
+			w12.Position = 4;
+			w12.Expand = false;
+			w12.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.ycheckbuttonService = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonService.CanFocus = true;
+			this.ycheckbuttonService.Name = "ycheckbuttonService";
+			this.ycheckbuttonService.Label = global::Mono.Unix.Catalog.GetString("Обслуживание одежды");
+			this.ycheckbuttonService.DrawIndicator = true;
+			this.dialog1_VBox.Add(this.ycheckbuttonService);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.ycheckbuttonService]));
+			w13.Position = 5;
+			w13.Expand = false;
+			w13.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.hseparator1 = new global::Gtk.HSeparator();
+			this.hseparator1.Name = "hseparator1";
+			this.dialog1_VBox.Add(this.hseparator1);
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.hseparator1]));
+			w14.Position = 6;
+			w14.Expand = false;
+			w14.Fill = false;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
+			this.expanderNomenclatures = new global::Gtk.Expander(null);
+			this.expanderNomenclatures.CanFocus = true;
+			this.expanderNomenclatures.Name = "expanderNomenclatures";
+			this.expanderNomenclatures.Expanded = true;
+			// Container child expanderNomenclatures.Gtk.Container+ContainerChild
+			this.yvbox1 = new global::Gamma.GtkWidgets.yVBox();
+			this.yvbox1.Name = "yvbox1";
+			this.yvbox1.Spacing = 6;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.ycheckbuttonOnlyMarkable = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckbuttonOnlyMarkable.CanFocus = true;
+			this.ycheckbuttonOnlyMarkable.Name = "ycheckbuttonOnlyMarkable";
+			this.ycheckbuttonOnlyMarkable.Label = global::Mono.Unix.Catalog.GetString("Только маркируемые");
+			this.ycheckbuttonOnlyMarkable.DrawIndicator = true;
+			this.yvbox1.Add(this.ycheckbuttonOnlyMarkable);
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.ycheckbuttonOnlyMarkable]));
+			w15.Position = 0;
+			w15.Expand = false;
+			w15.Fill = false;
+			// Container child yvbox1.Gtk.Box+BoxChild
+			this.choiceNomenclatures = new global::QS.Views.Control.ChoiceListView();
+			this.choiceNomenclatures.Events = ((global::Gdk.EventMask)(256));
+			this.choiceNomenclatures.Name = "choiceNomenclatures";
+			this.yvbox1.Add(this.choiceNomenclatures);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.yvbox1[this.choiceNomenclatures]));
+			w16.Position = 1;
+			this.expanderNomenclatures.Add(this.yvbox1);
+			this.labelNomenclatures = new global::Gtk.Label();
+			this.labelNomenclatures.Name = "labelNomenclatures";
+			this.labelNomenclatures.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатуры:");
+			this.expanderNomenclatures.LabelWidget = this.labelNomenclatures;
+			this.dialog1_VBox.Add(this.expanderNomenclatures);
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expanderNomenclatures]));
+			w18.Position = 7;
+			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.dialog1_VBox.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
-			w12.PackType = ((global::Gtk.PackType)(1));
-			w12.Position = 4;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.buttonRun]));
+			w19.PackType = ((global::Gtk.PackType)(1));
+			w19.Position = 8;
+			w19.Expand = false;
+			w19.Fill = false;
 			this.Add(this.dialog1_VBox);
 			if ((this.Child != null))
 			{
