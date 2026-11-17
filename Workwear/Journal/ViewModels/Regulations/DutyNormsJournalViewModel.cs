@@ -102,6 +102,12 @@ namespace workwear.Journal.ViewModels.Regulations {
 		#endregion
 
 		#region Toolbar action implementation
+		public static string ColorsLegendText =>
+			"<span color='black'>●</span> — действует или даты не указаны\n" +
+			"<span color='orange'>●</span> — начнёт действовать позже\n" +
+			"<span color='red'>●</span> — срок действия закончился\n" +
+			"<span color='gray'>●</span> — архивная";
+
 		public void CreateNodeActions() {
 			NodeActionsList.Add(new JournalAction("Пересчитать даты",
 				(selected) => selected.Any(),
@@ -138,6 +144,9 @@ namespace workwear.Journal.ViewModels.Regulations {
 		public DateTime? DateFrom { get; set; }
 		public DateTime? DateTo { get; set; }
 		public bool Archival { get; set; }
+		public string RowColor => Archival ? "gray" :
+			DateTo?.Date < DateTime.Today ? "red" :
+			DateFrom?.Date > DateTime.Today ? "orange" : "black";
 		public string DateFromString => DateFrom == null ? String.Empty : DateFrom.Value.ToString("d", _culture); 
 		public string DateToString => DateTo == null ? String.Empty : DateTo.Value.ToString("d", _culture); 
 	}
