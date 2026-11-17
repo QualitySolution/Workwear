@@ -709,6 +709,8 @@ FROM duty_norm_items
             ) AS stock ON stock.ptid = duty_norm_items.protection_tools_id
 WHERE
     duty_norms.archival = 0
+  AND (duty_norms.datefrom IS NULL OR duty_norms.datefrom &lt; ADDDATE(CONVERT(@report_date, DATE), INTERVAL 1 DAY))
+  AND (duty_norms.dateto IS NULL OR duty_norms.dateto &gt;= CONVERT(@report_date, DATE))
   AND ((-1 IN (@subdivisions)) OR (@withoutsub AND duty_norms.subdivision_id IS NULL) OR duty_norms.subdivision_id IN (@subdivisions))
   AND ((-1 IN (@protection_tools_ids)) OR duty_norm_items.protection_tools_id IN (@protection_tools_ids))
   AND duty_norm_items.next_issue &lt;= CONVERT(@report_date, DATE)
