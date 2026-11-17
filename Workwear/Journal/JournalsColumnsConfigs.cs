@@ -320,9 +320,8 @@ namespace workwear.Journal
 					.AddColumn("Окончание действия").AddTextRenderer(node => node.DateToString)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => {
-						c.Foreground = x.Archival ? "gray" : "black";
-						c.Background = x.DateFrom > DateTime.Today ? "#fff4cc" :
-							x.DateTo < DateTime.Today ? "#fce8e6" : null;
+						c.Foreground = x.RowColor;
+						c.Background = null;
 					})
 					.Finish()
 			);
