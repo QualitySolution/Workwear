@@ -164,6 +164,7 @@
     <Compile Include="ReportParameters\ViewModels\ClothingServicesCodeViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\VacationsReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\IssuedSizesViewModel.cs" />
+    <Compile Include="ReportParameters\ViewModels\OverNormIssuedReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\ProvisionReportViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\RentMovementsViewModel.cs" />
     <Compile Include="ReportParameters\ViewModels\WearStatementViewModel.cs" />
@@ -585,6 +586,8 @@
     <Compile Include="gtk-gui\Workwear.Journal.Filter.Views.Regulations.DutyNormFilterView.cs" />
     <Compile Include="ReportParameters\Views\IssuedSizesView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.IssuedSizesView.cs" />
+    <Compile Include="ReportParameters\Views\OverNormIssuedReportView.cs" />
+    <Compile Include="gtk-gui\Workwear.ReportParameters.Views.OverNormIssuedReportView.cs" />
     <Compile Include="ReportParameters\Views\AmountIssuedDutyNormsView.cs" />
     <Compile Include="gtk-gui\Workwear.ReportParameters.Views.AmountIssuedDutyNormsView.cs" />
     <Compile Include="Views\Stock\NomenclatureChildren\NomenclatureSizesView.cs" />
@@ -1029,6 +1032,9 @@
     <None Include="Reports\IssuedSizes.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Content Include="Reports\OverNormIssuedReport.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Reports\DutyNorms\AmountIssuedDutyNorms.rdl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

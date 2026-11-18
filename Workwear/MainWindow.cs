@@ -398,6 +398,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
+		ActionOverNormIssuedReport.Visible = FeaturesService.Available(WorkwearFeature.OverNorm);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
@@ -956,6 +957,10 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionBarcodeCompletenessReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(BarcodeCompletenessReportViewModel));
+	}
+
+	protected void OnActionOverNormIssuedReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(OverNormIssuedReportViewModel));
 	}
 
 	protected void OnActionPostomatDocsWithdrawActivated(object sender, EventArgs e) {
