@@ -47,9 +47,9 @@ namespace Workwear.ReportParameters.Views {
             ycheckbuttonshowclosed.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowClosed, v => v.Visible)
             	.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active).InitializeFromSource();
-            ylabelshowEmployee.Binding
+            ylabelshowInfo.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible).InitializeFromSource();
-            ycheckbuttonshowEmployees.Binding
+            ycheckbuttonshowInfo.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible)
             	.AddBinding(ViewModel, vm => vm.ShowEmployees, w => w.Active).InitializeFromSource();
             ylabelshowZero.Binding
@@ -85,6 +85,22 @@ namespace Workwear.ReportParameters.Views {
             expanderServises.Visible = ViewModel.VisibleChoiceService;
             choiceTerminals.ViewModel = ViewModel.ChoiceTerminalViewModel;
             expanderTerminals.Visible = ViewModel.VisibleChoiceTerminal;
+			ylabelOperationsType.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleOperationsTypes, w => w.Visible).InitializeFromSource();
+			yvboxOperationsTypes.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleOperationsTypes, w => w.Visible).InitializeFromSource();
+			ycheckbuttonOperationsTypeEmployee.Binding
+				.AddBinding(ViewModel, vm => vm.OperationsTypeEmployee, w => w.Active).InitializeFromSource();
+			ycheckbuttonOperationsTypeWarehouse.Binding
+				.AddBinding(ViewModel, vm => vm.OperationsTypeWarehouse, w => w.Active).InitializeFromSource();
+			ycheckbuttonOperationsTypeDuty.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.OperationsTypeDuty, w => w.Active)
+				.AddBinding(vm => vm.VisibleOperationsTypeDuty, w => w.Visible).InitializeFromSource();
+			ycheckbuttonOperationsTypeOverNorm.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.OperationsTypeOverNorm, w => w.Active)
+				.AddBinding(vm => vm.VisibleOperationsTypeOverNorm, w => w.Visible).InitializeFromSource();
             ViewModel.PropertyChanged += (sender, args) => {
 	            if(args.PropertyName == nameof(ViewModel.VisibleChoiceService))
 		            expanderServises.Visible = ViewModel.VisibleChoiceService;

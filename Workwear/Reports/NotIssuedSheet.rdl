@@ -1009,6 +1009,7 @@ WHERE
   AND( @subdivision_id = -1 OR employees.subdivision_id = @subdivision_id )
   AND (@department_id = -1 OR employees.department_id = @department_id)
   AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
+  AND protection_tools.dispenser = 0
   AND (@condition = false OR norm_conditions.issuance_start is null OR
        IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
           DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6),

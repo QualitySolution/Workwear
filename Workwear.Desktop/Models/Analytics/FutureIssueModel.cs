@@ -40,6 +40,10 @@ namespace Workwear.Models.Analytics {
 			endDate = endDate.AddDays(1); //Чтобы включить в расчёт последний день периода
 
 			foreach(var item in dutyNormItems) {
+				if(item.DutyNorm.DateFrom?.Date >= endDate.Date || item.DutyNorm.DateTo?.Date < startDate.Date) {
+					progress?.Add();
+					continue;
+				}
 				if(gc++ > 10000) {
 					GC.Collect();
 					GC.WaitForPendingFinalizers();
@@ -54,8 +58,12 @@ namespace Workwear.Models.Analytics {
 				Nomenclature nomenclature = item.ProtectionTools.GetSupplyNomenclature(null);
 
 				item.UpdateNextIssue();
+				if(!item.DutyNorm.DateFrom.HasValue && !item.Graph.Intervals.Any()) //чтобы не потерять долг
+					item.NextIssue = startDate;
 				while(item.NextIssue.HasValue && item.NextIssue < endDate) {
 					var issueDate = (!moveDebt || (DateTime)item.NextIssue > startDate) ? (DateTime)item.NextIssue : startDate;
+					if(!item.DutyNorm.IsActiveOn(issueDate))
+						break;
 					int need = item.CalculateRequiredIssue(baseParameters, issueDate);
 					if(need == 0)
 						break;

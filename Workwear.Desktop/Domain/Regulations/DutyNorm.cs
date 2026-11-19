@@ -92,6 +92,9 @@ namespace Workwear.Domain.Regulations {
 		#endregion
 		
 		#region Методы
+		public virtual bool IsActiveOn(DateTime date) => !Archival &&
+			(!DateFrom.HasValue || DateFrom.Value.Date <= date.Date) &&
+			(!DateTo.HasValue || date.Date <= DateTo.Value.Date);
 		
 		public virtual DutyNormItem AddItem(ProtectionTools tools) {
 			if(Items.Any (i => DomainHelper.EqualDomainObjects (i.ProtectionTools, tools))) {

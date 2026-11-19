@@ -81,7 +81,7 @@ FROM (SELECT
               ,null) AS 'in_stock',
           IF(@show_employees,
              LEFT(GROUP_CONCAT(
-                     IF(@exclude_full_employees AND IFNULL(personalBalance.balance, 0) &gt;= norms_item.amount,
+                     IF(@exclude_full_employees AND (protection_tools.dispenser OR IFNULL(personalBalance.balance, 0) &gt;= norms_item.amount),
                         NULL,
                         CONCAT_WS('',
                                   CONCAT(employees.last_name, ' '),

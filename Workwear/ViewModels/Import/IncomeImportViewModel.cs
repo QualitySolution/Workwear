@@ -45,7 +45,7 @@ namespace Workwear.ViewModels.Import
 			this.parser = parser;
 			SelectFileVisible = true;
 			Title = "Загрузка поступлений";
-			Warehouse = stockRepository.GetDefaultWarehouse(featuresService, userService.CurrentUserId);
+			Warehouse = stockRepository.GetDefaultWarehouse(featuresService, userService.CurrentUserId, UoW);
 			this.featuresService = featuresService;
 			this.sizeService = sizeService;
 			this.progressBar = progressBar;

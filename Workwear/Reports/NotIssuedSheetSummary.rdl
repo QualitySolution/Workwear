@@ -30,7 +30,7 @@
         </Style>
         <TableColumns>
           <TableColumn>
-            <Width>250.5pt</Width>
+            <Width>247.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>25.8pt</Width>
@@ -48,7 +48,7 @@
             <Width>61.1pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>25.7pt</Width>
+            <Width>27.3pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>40.9pt</Width>
@@ -191,7 +191,7 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox45">
                       <Value>Кол-во на складе</Value>
@@ -314,6 +314,7 @@
                         <TextAlign>Center</TextAlign>
                         <Format>0.00</Format>
                         <VerticalAlign>Middle</VerticalAlign>
+                        <FontSize >9pt</FontSize>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -357,7 +358,7 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>0.0pt</Left>
+        <Left>0.8pt</Left>
         <Top>33.7pt</Top>
         <TableGroups>
           <TableGroup>
@@ -651,7 +652,7 @@
                         </Textbox>
                       </ReportItems>
                     </TableCell>
-                    <TableCell >
+                    <TableCell>
                       <ReportItems>
                         <Textbox Name="Textbox17">
                           <Style>
@@ -820,7 +821,7 @@
     <Height>14.4pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
-    <ReportItems >
+    <ReportItems>
       <Textbox Name="Textbox1">
         <Height>12pt</Height>
         <Width>266.49pt</Width>
@@ -844,7 +845,7 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT tabel.*,
@@ -914,6 +915,7 @@ FROM(SELECT
        AND (@subdivision_id = -1 OR employees.subdivision_id = @subdivision_id )
        AND (@department_id = -1 OR employees.department_id = @department_id)
        AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
+       AND protection_tools.dispenser = 0
        AND (@condition = false OR norm_conditions.issuance_start is null OR
             IF(SUBSTRING(norm_conditions.issuance_start,6) &lt; SUBSTRING(norm_conditions.issuance_end,6),
                DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start,6) AND DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end,6),
@@ -1052,7 +1054,7 @@ ORDER BY
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
