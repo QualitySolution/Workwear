@@ -70,13 +70,13 @@ namespace workwear.ReportParameters.Views
 
 		private global::QS.Views.Control.ChoiceListView choiceprotectiontoolsview1;
 
-		private global::Gtk.Label GtkLabel19;
+		private global::Gtk.Label GtkLabel20;
 
 		private global::Gtk.Expander expander2;
 
 		private global::QS.Views.Control.ChoiceListView choiceemployeegroupview1;
 
-		private global::Gtk.Label GtkLabel23;
+		private global::Gtk.Label GtkLabel24;
 
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
@@ -180,7 +180,7 @@ namespace workwear.ReportParameters.Views
 			w6.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label();
-			this.label2.WidthRequest = 400;
+			this.label2.WidthRequest = 550;
 			this.label2.Name = "label2";
 			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("<i>Обратите внимание:</i> Отчет показывает недополученное по текущим потребностям" +
 					". При значительном удалении даты отчет от сегодняшнего дня, данные будут некорре" +
@@ -339,7 +339,7 @@ namespace workwear.ReportParameters.Views
 			this.ycheckShowSex = new global::Gamma.GtkWidgets.yCheckButton();
 			this.ycheckShowSex.CanFocus = true;
 			this.ycheckShowSex.Name = "ycheckShowSex";
-			this.ycheckShowSex.Label = global::Mono.Unix.Catalog.GetString("Да");
+			this.ycheckShowSex.Label = "";
 			this.ycheckShowSex.DrawIndicator = true;
 			this.ycheckShowSex.UseUnderline = true;
 			this.table1.Add(this.ycheckShowSex);
@@ -458,7 +458,7 @@ namespace workwear.ReportParameters.Views
 			this.ylabel7 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel7.Name = "ylabel7";
 			this.ylabel7.Xalign = 1F;
-			this.ylabel7.LabelProp = global::Mono.Unix.Catalog.GetString("Исключать уволенных после даты отчёта:");
+			this.ylabel7.LabelProp = global::Mono.Unix.Catalog.GetString("Исключать уволенных позже:");
 			this.table1.Add(this.ylabel7);
 			global::Gtk.Table.TableChild w27 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabel7]));
 			w27.TopAttach = ((uint)(9));
@@ -479,6 +479,7 @@ namespace workwear.ReportParameters.Views
 			// Container child table1.Gtk.Table+TableChild
 			this.ylabelShowEmployees = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabelShowEmployees.Name = "ylabelShowEmployees";
+			this.ylabelShowEmployees.Xalign = 1F;
 			this.ylabelShowEmployees.LabelProp = global::Mono.Unix.Catalog.GetString("Показывать список сотрудников:");
 			this.table1.Add(this.ylabelShowEmployees);
 			global::Gtk.Table.TableChild w29 = ((global::Gtk.Table.TableChild)(this.table1[this.ylabelShowEmployees]));
@@ -501,11 +502,11 @@ namespace workwear.ReportParameters.Views
 			this.choiceprotectiontoolsview1.Events = ((global::Gdk.EventMask)(256));
 			this.choiceprotectiontoolsview1.Name = "choiceprotectiontoolsview1";
 			this.expander1.Add(this.choiceprotectiontoolsview1);
-			this.GtkLabel19 = new global::Gtk.Label();
-			this.GtkLabel19.Name = "GtkLabel19";
-			this.GtkLabel19.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатуры нормы");
-			this.GtkLabel19.UseUnderline = true;
-			this.expander1.LabelWidget = this.GtkLabel19;
+			this.GtkLabel20 = new global::Gtk.Label();
+			this.GtkLabel20.Name = "GtkLabel20";
+			this.GtkLabel20.LabelProp = global::Mono.Unix.Catalog.GetString("Номенклатуры нормы");
+			this.GtkLabel20.UseUnderline = true;
+			this.expander1.LabelWidget = this.GtkLabel20;
 			this.dialog1_VBox.Add(this.expander1);
 			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander1]));
 			w32.Position = 1;
@@ -518,11 +519,11 @@ namespace workwear.ReportParameters.Views
 			this.choiceemployeegroupview1.Events = ((global::Gdk.EventMask)(256));
 			this.choiceemployeegroupview1.Name = "choiceemployeegroupview1";
 			this.expander2.Add(this.choiceemployeegroupview1);
-			this.GtkLabel23 = new global::Gtk.Label();
-			this.GtkLabel23.Name = "GtkLabel23";
-			this.GtkLabel23.LabelProp = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
-			this.GtkLabel23.UseUnderline = true;
-			this.expander2.LabelWidget = this.GtkLabel23;
+			this.GtkLabel24 = new global::Gtk.Label();
+			this.GtkLabel24.Name = "GtkLabel24";
+			this.GtkLabel24.LabelProp = global::Mono.Unix.Catalog.GetString("Группы сотрудников");
+			this.GtkLabel24.UseUnderline = true;
+			this.expander2.LabelWidget = this.GtkLabel24;
 			this.dialog1_VBox.Add(this.expander2);
 			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.dialog1_VBox[this.expander2]));
 			w34.Position = 2;

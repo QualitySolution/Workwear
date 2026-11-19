@@ -5884,6 +5884,12 @@
         <property name="ShortLabel" translatable="yes">Справка по невыданному</property>
         <signal name="Activated" handler="OnActionNotIssuedDutyNormsActivated" />
       </action>
+      <action id="ActionOverNormIssuedReport">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">Выданное вне нормы</property>
+        <property name="ShortLabel" translatable="yes">Выданное вне нормы</property>
+        <signal name="Activated" handler="OnActionOverNormIssuedReportActivated" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">QS: Спецодежда и имущество</property>
@@ -6003,6 +6009,7 @@
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionAmountIssuedWear" />
                 <node type="Menuitem" action="ActionWriteOffAct" />
+                <node type="Menuitem" action="ActionOverNormIssuedReport" />
                 <node type="Menuitem" action="ActionClothingServiceReport" />
                 <node type="Separator" />
                 <node type="Menuitem" action="ActionRequestSheet" />
@@ -6746,7 +6753,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetView" design-size="937 816">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetView" design-size="554 786">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -6912,7 +6919,7 @@
             <child>
               <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
-                <property name="WidthRequest">400</property>
+                <property name="WidthRequest">550</property>
                 <property name="LabelProp" translatable="yes">&lt;i&gt;Обратите внимание:&lt;/i&gt; Отчет показывает недополученное по текущим потребностям. Иными словами, при значительном удалении даты отчета от сегодняшнего дня данные будут некорректны.</property>
                 <property name="UseMarkup">True</property>
                 <property name="Wrap">True</property>
@@ -7021,7 +7028,7 @@
               <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckDontShowZeroStock">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Label" translatable="yes">не учитывать при отсутствии на складе</property>
+                <property name="Label" translatable="yes">исколючить при отсутствии на складе</property>
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -7232,7 +7239,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel2">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Исключать сотрудников в отпуске:</property>
+                <property name="LabelProp" translatable="yes">Без сотрудников в отпуске:</property>
               </widget>
               <packing>
                 <property name="TopAttach">8</property>
@@ -7292,7 +7299,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel6">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Показывать наличие на складе:</property>
+                <property name="LabelProp" translatable="yes">Показать остаток на складе:</property>
               </widget>
               <packing>
                 <property name="TopAttach">11</property>
@@ -7312,7 +7319,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel7">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Исключать уволенных после даты отчёта:</property>
+                <property name="LabelProp" translatable="yes">Исключать уволенных позже:</property>
               </widget>
               <packing>
                 <property name="TopAttach">7</property>
@@ -7453,7 +7460,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetSummaryView" design-size="609 844">
+  <widget class="Gtk.Bin" id="workwear.ReportParameters.Views.NotIssuedSheetSummaryView" design-size="559 794">
     <property name="MemberName" />
     <child>
       <widget class="Gtk.VBox" id="dialog1_VBox">
@@ -7616,7 +7623,7 @@
             <child>
               <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
-                <property name="WidthRequest">400</property>
+                <property name="WidthRequest">550</property>
                 <property name="LabelProp" translatable="yes">&lt;i&gt;Обратите внимание:&lt;/i&gt; Отчет показывает недополученное по текущим потребностям. При значительном удалении даты отчет от сегодняшнего дня, данные будут некорретны.</property>
                 <property name="UseMarkup">True</property>
                 <property name="Wrap">True</property>
@@ -7877,7 +7884,7 @@
               <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckShowSex">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
-                <property name="Label" translatable="yes">Да</property>
+                <property name="Label" translatable="yes" />
                 <property name="DrawIndicator">True</property>
                 <property name="HasLabel">True</property>
                 <property name="UseUnderline">True</property>
@@ -8081,7 +8088,7 @@
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabel7">
                 <property name="MemberName" />
                 <property name="Xalign">1</property>
-                <property name="LabelProp" translatable="yes">Исключать уволенных после даты отчёта:</property>
+                <property name="LabelProp" translatable="yes">Исключать уволенных позже:</property>
               </widget>
               <packing>
                 <property name="TopAttach">9</property>
@@ -8120,6 +8127,7 @@
             <child>
               <widget class="Gamma.GtkWidgets.yLabel" id="ylabelShowEmployees">
                 <property name="MemberName" />
+                <property name="Xalign">1</property>
                 <property name="LabelProp" translatable="yes">Показывать список сотрудников:</property>
               </widget>
               <packing>
@@ -8157,7 +8165,7 @@
               </widget>
             </child>
             <child>
-              <widget class="Gtk.Label" id="GtkLabel19">
+              <widget class="Gtk.Label" id="GtkLabel20">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Номенклатуры нормы</property>
                 <property name="UseUnderline">True</property>
@@ -8184,7 +8192,7 @@
               </widget>
             </child>
             <child>
-              <widget class="Gtk.Label" id="GtkLabel23">
+              <widget class="Gtk.Label" id="GtkLabel24">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">Группы сотрудников</property>
                 <property name="UseUnderline">True</property>
@@ -43504,6 +43512,144 @@
           <packing>
             <property name="PackType">End</property>
             <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="Workwear.ReportParameters.Views.OverNormIssuedReportView" design-size="414 737">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gamma.GtkWidgets.yVBox" id="yvbox2">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.Label" id="label2">
+            <property name="MemberName" />
+            <property name="WidthRequest">350</property>
+            <property name="LabelProp" translatable="yes">&lt;i&gt;Обратите внимание:&lt;/i&gt; В этот отчёт попадают только выдачи документом "Выдача вне нормы". Выданное  сверх нормы документами Персональной выдачи здесь не отображается.</property>
+            <property name="UseMarkup">True</property>
+            <property name="Wrap">True</property>
+            <property name="Justify">Fill</property>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">False</property>
+            <property name="Expand">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yHBox" id="yhbox1">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="label1">
+                <property name="MemberName" />
+                <property name="Xalign">1</property>
+                <property name="LabelProp" translatable="yes">Дата отчета:</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gamma.Widgets.yDatePicker" id="ydateReport">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+                <property name="WithTime">False</property>
+                <property name="Date">0</property>
+                <property name="IsEditable">True</property>
+                <property name="AutoSeparation">True</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowComments">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Показывать комментарии</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yCheckButton" id="ycheckbuttonShowPhone">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">Показывать телефоны</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Expander" id="expanderNomenclatures">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Expanded">True</property>
+            <child>
+              <widget class="QS.Views.Control.ChoiceListView" id="choiceNomenclatures">
+                <property name="MemberName" />
+                <property name="Events">ButtonPressMask</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="Gtk.Label" id="labelNomenclatures">
+                <property name="MemberName" />
+                <property name="LabelProp" translatable="yes">Номенклатуры:</property>
+              </widget>
+              <packing>
+                <property name="type">label_item</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">4</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gamma.GtkWidgets.yButton" id="buttonRun">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Type">TextOnly</property>
+            <property name="Label" translatable="yes">Сформировать отчет</property>
+            <property name="UseUnderline">True</property>
+          </widget>
+          <packing>
+            <property name="Position">5</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>

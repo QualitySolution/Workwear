@@ -51,20 +51,28 @@ namespace Workwear.ReportParameters.ViewModels {
 			warehouse = warehousesList.First();
 		}
 
-		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
-			{"report_date", ReportDate },
-			{"withoutsub", ChoiceSubdivisionViewModel.NullIsSelected },
-			{"subdivisions", ChoiceSubdivisionViewModel.SelectedIdsMod },
-			{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIdsMod },
-			{"exclude_before", ExcludeBefore },
-			{"show_stock", Warehouse.Id != -2 },
-			{"all_warehouse", Warehouse.Id == -1 },
-			{"warehouse_id", Warehouse.Id },
-			{"exclude_zero_stock", ExcludeZeroStock },
-			{"hide_worn", HideWorn },
-			{"show_shipment", ShowShipment },
-			{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo) },
-		};
+		protected override Dictionary<string, object> Parameters {
+			get {
+				var parameters = new Dictionary<string, object> {
+					{"report_date", ReportDate },
+					{"withoutsub", ChoiceSubdivisionViewModel.NullIsSelected },
+					{"subdivisions", ChoiceSubdivisionViewModel.SelectedIdsMod },
+					{"protection_tools_ids", ChoiceProtectionToolsViewModel.SelectedIdsMod },
+					{"exclude_before", ExcludeBefore },
+					{"show_stock", Warehouse.Id != -2 },
+					{"all_warehouse", Warehouse.Id == -1 },
+					{"warehouse_id", Warehouse.Id },
+					{"exclude_zero_stock", ExcludeZeroStock },
+					{"hide_worn", HideWorn },
+					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo) },
+				};
+
+				if(ReportType == NotIssuedDutyNormsReportType.Flat)
+					parameters.Add("show_shipment", ShowShipment);
+
+				return parameters;
+			}
+		}
 
 		public override string Identifier {
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
