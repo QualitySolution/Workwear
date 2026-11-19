@@ -6,6 +6,10 @@ namespace Workwear.Journal.Filter.Views.Regulations
 	{
 		private global::Gamma.GtkWidgets.yTable ytable1;
 
+		private global::Gamma.GtkWidgets.yButton buttonColorsLegend;
+
+		private global::Gtk.Label label1;
+
 		private global::Gamma.GtkWidgets.yCheckButton yShowArchival;
 
 		protected virtual void Build()
@@ -17,9 +21,32 @@ namespace Workwear.Journal.Filter.Views.Regulations
 			// Container child Workwear.Journal.Filter.Views.Regulations.DutyNormFilterView.Gtk.Container+ContainerChild
 			this.ytable1 = new global::Gamma.GtkWidgets.yTable();
 			this.ytable1.Name = "ytable1";
-			this.ytable1.NColumns = ((uint)(3));
+			this.ytable1.NColumns = ((uint)(4));
 			this.ytable1.RowSpacing = ((uint)(6));
 			this.ytable1.ColumnSpacing = ((uint)(6));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.buttonColorsLegend = new global::Gamma.GtkWidgets.yButton();
+			this.buttonColorsLegend.TooltipMarkup = "Цветовая легенда";
+			this.buttonColorsLegend.CanFocus = true;
+			this.buttonColorsLegend.Name = "buttonColorsLegend";
+			this.buttonColorsLegend.UseUnderline = true;
+			global::Gtk.Image w1 = new global::Gtk.Image();
+			w1.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("Workwear.icon.buttons.legend.png");
+			this.buttonColorsLegend.Image = w1;
+			this.ytable1.Add(this.buttonColorsLegend);
+			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.ytable1[this.buttonColorsLegend]));
+			w2.LeftAttach = ((uint)(3));
+			w2.RightAttach = ((uint)(4));
+			w2.XOptions = ((global::Gtk.AttachOptions)(0));
+			w2.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child ytable1.Gtk.Table+TableChild
+			this.label1 = new global::Gtk.Label();
+			this.label1.Name = "label1";
+			this.ytable1.Add(this.label1);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.ytable1[this.label1]));
+			w3.LeftAttach = ((uint)(1));
+			w3.RightAttach = ((uint)(2));
+			w3.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child ytable1.Gtk.Table+TableChild
 			this.yShowArchival = new global::Gamma.GtkWidgets.yCheckButton();
 			this.yShowArchival.CanFocus = true;
@@ -28,9 +55,9 @@ namespace Workwear.Journal.Filter.Views.Regulations
 			this.yShowArchival.DrawIndicator = true;
 			this.yShowArchival.UseUnderline = true;
 			this.ytable1.Add(this.yShowArchival);
-			global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yShowArchival]));
-			w1.XOptions = ((global::Gtk.AttachOptions)(4));
-			w1.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.ytable1[this.yShowArchival]));
+			w4.XOptions = ((global::Gtk.AttachOptions)(0));
+			w4.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add(this.ytable1);
 			if ((this.Child != null))
 			{
