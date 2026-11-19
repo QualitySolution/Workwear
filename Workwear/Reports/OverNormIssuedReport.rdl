@@ -27,10 +27,12 @@
         FROM operation_over_norm return_operation
         JOIN operation_warehouse return_warehouse ON return_warehouse.id = return_operation.operation_warehouse_id
         WHERE return_operation.return_from_operation IS NOT NULL
+          AND return_warehouse.operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE), INTERVAL 1 DAY)
         GROUP BY return_operation.return_from_operation
     ) returned ON returned.return_from_operation = operation.id
     WHERE operation.return_from_operation IS NULL
       AND warehouse.warehouse_expense_id IS NOT NULL
+      AND warehouse.operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE), INTERVAL 1 DAY)
       AND (-1 IN (@nomenclature_ids) OR operation.nomenclature_id IN (@nomenclature_ids))
 ), active_barcodes AS (
     SELECT DISTINCT issued.id AS operation_id, barcode.id AS barcode_id, barcode.title
@@ -42,8 +44,10 @@
           SELECT 1
           FROM operation_over_norm return_operation
           JOIN operation_barcodes return_barcode ON return_barcode.over_norm_operation_id = return_operation.id
+          JOIN operation_warehouse return_warehouse ON return_warehouse.id = return_operation.operation_warehouse_id
           WHERE return_operation.return_from_operation = issued.id
             AND return_barcode.barcode_id = barcode.id
+            AND return_warehouse.operation_time &lt; DATE_ADD(CONVERT(@report_date, DATE), INTERVAL 1 DAY)
       )
 ), report_rows AS (
     SELECT operation_id, barcode_id, title FROM active_barcodes
@@ -77,7 +81,7 @@ ORDER BY nomenclature.name, employee_name, employee.id, issued.issue_date, issue
             <Value>={?nomenclature_ids}</Value>
           </QueryParameter>
           <QueryParameter Name="report_date">
-            <Value>={?report_date}</Value>
+            <Value>=Format({?report_date}, "yyyy-MM-dd")</Value>
           </QueryParameter>
         </QueryParameters>
       </Query>

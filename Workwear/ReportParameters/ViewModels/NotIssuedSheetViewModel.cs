@@ -76,7 +76,9 @@ namespace workwear.ReportParameters.ViewModels
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
 		
-		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
+		protected override Dictionary<string, object> Parameters {
+			get {
+				var parameters = new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", Subdivision?.Id ?? -1 },
 					{"department_id", Department?.Id ?? -1},
@@ -94,10 +96,17 @@ namespace workwear.ReportParameters.ViewModels
 					{"exclude_zero_stock", ExcludeZeroStock},
 					{"hide_worn", HideWorn},
 					{"view_phones", ViewPhones},
-					{"show_shipment", ShowShipment},
-					{"show_employee_groups", featuresService.Available(WorkwearFeature.EmployeeGroups)},
 					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
-				 };
+				};
+
+				if(ReportType == NotIssuedSheetReportType.Flat) {
+					parameters.Add("show_shipment", ShowShipment);
+					parameters.Add("show_employee_groups", featuresService.Available(WorkwearFeature.EmployeeGroups));
+				}
+
+				return parameters;
+			}
+		}
 
 		#region Параметры
 		
