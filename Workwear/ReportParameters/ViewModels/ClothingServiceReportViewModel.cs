@@ -174,6 +174,10 @@ namespace Workwear.ReportParameters.ViewModels {
 					};
 			case ClothingServiceReportType.Serviced:
 				return new Dictionary<string, object> {
+					{ "source_employee", OperationsTypeEmployee },
+					{ "source_duty", OperationsTypeDuty && VisibleOperationsTypeDuty },
+					{ "source_over_norm", OperationsTypeOverNorm && VisibleOperationsTypeOverNorm },
+					{ "source_warehouse", OperationsTypeWarehouse },
 					{ "report_name", Title },
 					{ "start_date", StartDate },
 					{ "end_date", EndDate },
@@ -338,7 +342,8 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool VisibleChoiceService => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleChoiceTerminal => IsPostamatFullness;
 		public bool VisibleOperationsTypes => reportType == ClothingServiceReportType.ClaimForStatus
-			|| reportType == ClothingServiceReportType.ClaimMetric;
+			|| reportType == ClothingServiceReportType.ClaimMetric
+			|| reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleOperationsTypeDuty => featuresService.Available(WorkwearFeature.DutyNorms);
 		public bool VisibleOperationsTypeOverNorm => featuresService.Available(WorkwearFeature.OverNorm);
 		public bool VisibleInfoLabel => VisibleGroupClaim && (SumCost || GroupClaim)
