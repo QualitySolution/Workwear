@@ -25,6 +25,7 @@ SELECT
     posts.name as 'post',
     protection_tools.id as 'pr_id',
     protection_tools.name as 'protection_tool',
+    protection_tools.dispenser as 'protection_tools_dispenser',
     issue.name_SIZ_issue,
     issue.model_issue,
     issue.operation_date_string_issue,
@@ -165,6 +166,10 @@ ORDER BY  subdivision,
           <DataField>protection_tool</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="protection_tools_dispenser">
+          <DataField>protection_tools_dispenser</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
         <Field Name="name_SIZ_issue">
           <DataField>name_SIZ_issue</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -243,7 +248,7 @@ ORDER BY  subdivision,
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Наименование_СИЗ">
-                      <Value>=Iif(Fields!issue_id.IsMissing, "СИЗ не числится", Fields!name_SIZ_issue.Value)</Value>
+                      <Value>=Iif(Fields!protection_tools_dispenser.Value = 1, "Выдаётся дозатором", Iif(Fields!issue_id.IsMissing, "СИЗ не числится", Fields!name_SIZ_issue.Value))</Value>
                       <CanGrow>true</CanGrow>
                       <Style>
                         <BorderStyle>
