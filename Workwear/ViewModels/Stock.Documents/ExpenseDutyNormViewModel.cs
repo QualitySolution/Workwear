@@ -256,6 +256,12 @@ namespace Workwear.ViewModels.Stock.Documents {
 		/// </summary>
 		/// <param name="dutyNorm">Норма для которой заполняется. Если null документ будет очищен.</param>
 		private void FillUnderreceivedp(DutyNorm dutyNorm) {
+			if(Entity.Items.Any(x => x.Id > 0)) {
+				if(UoW.HasChanges && !Save())
+					return;
+				foreach(var item in Entity.Items.Where(x => x.Id > 0).ToList())
+					deleteService.DeleteEntity<ExpenseDutyNormItem>(item.Id, UoW, () => Entity.RemoveItem(item), forceDelete: true);
+			}
 			Entity.Items.Clear();
 			if(dutyNorm == null)
 				return;
