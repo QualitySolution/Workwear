@@ -428,7 +428,7 @@ namespace workwear.Journal
 					.AddColumn("Можно стирать").Visible(jvm.FeaturesService.Available(WorkwearFeature.ClothingService))
 						.AddTextRenderer(n => n.WashableText)
 					.AddColumn("Идентификатор в каталоге").Visible(jvm.FeaturesService.Available(WorkwearFeature.Catalog))
-						.AddTextRenderer(n => n.UseBarcodeText)
+						.AddTextRenderer(n => n.CatalogId)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
