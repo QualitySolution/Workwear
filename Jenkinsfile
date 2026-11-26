@@ -1,7 +1,8 @@
 properties([parameters([
 	booleanParam(defaultValue: false, description: 'Запускать тесты скриптов SQL', name: 'SQLTests'),
 	booleanParam(defaultValue: false, description: 'Выкладывать сборку на сервер files.qsolution.ru', name: 'Publish'),
-	booleanParam(defaultValue: false, description: 'Собирать и выкладывать RPM пакет для AltLinux в репозиторий', name: 'PublishAltLinuxRpm')
+	booleanParam(defaultValue: false, description: 'Собирать и выкладывать RPM пакет для AltLinux в репозиторий', name: 'PublishAltLinuxRpm'),
+	booleanParam(defaultValue: false, description: 'Собирать и выкладывать DEB пакет для Astra Linux в репозиторий', name: 'PublishAstraLinuxDeb')
 ])])
 node {
    stage('Git') {
@@ -61,12 +62,15 @@ node {
          }
       }
    }
+   if (params.PublishAltLinuxRpm || params.PublishAstraLinuxDeb) {
+      stage('Build Linux binaries') {
+         sh 'msbuild /p:Configuration=Release /p:Platform=x86 Workwear.sln'
+      }
+   }
    if (params.PublishAltLinuxRpm) {
       stage('Build and Publish AltLinux RPM') {
          sh 'rm -f AltLinuxRpm/qs-workwear-*.rpm'
          def version = sh(script: "grep -oP '(?<=AssemblyVersion\\(\")[^\"]+' Workwear/Properties/AssemblyInfo.cs", returnStdout: true).trim()
-         // Собираем Linux-бинарники
-         sh 'msbuild /p:Configuration=Release /p:Platform=x86 Workwear.sln'
          // Собираем Docker-образ с AltLinux + rpmbuild (сборка под непривилегированным пользователем)
          sh 'docker build -t workwear-altlinux-builder AltLinuxRpm/'
          // Даём права на запись в папку AltLinuxRpm пользователю builder (uid 1000) внутри контейнера
@@ -83,6 +87,30 @@ node {
                apt-get install -y -qq apt-repo-tools
                genbasedir --create --topdir=/repo x86_64 workwear
             "'
+         '''
+      }
+   }
+   if (params.PublishAstraLinuxDeb) {
+      stage('Build and Publish Astra Linux DEB') {
+         sh '''
+            mkdir -p AstraLinuxDeb/bin
+            rm -f AstraLinuxDeb/bin/qs-workwear_*.deb
+            SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
+            export SOURCE_DATE_EPOCH
+            docker run --rm --user "$(id -u):$(id -g)" -e SOURCE_DATE_EPOCH \
+               -v "$WORKSPACE:/workspace:ro" -v "$WORKSPACE/AstraLinuxDeb/bin:/out" \
+               registry.astralinux.ru/library/astra/ubi18:1.8.6 \
+               bash /workspace/AstraLinuxDeb/makeDeb.sh /out
+         '''
+         archiveArtifacts artifacts: 'AstraLinuxDeb/bin/qs-workwear_*.deb', onlyIfSuccessful: true
+         sh '''#!/bin/bash
+            set -e
+            host=root@odysseus.srv.qsolution.ru
+            remote_dir=$(ssh "$host" mktemp -d)
+            trap 'ssh "$host" rm -rf -- "$remote_dir"' EXIT
+            scp AstraLinuxDeb/bin/qs-workwear_*.deb "$host:$remote_dir/workwear.deb"
+            ssh "$host" env GNUPGHOME=/var/lib/qs-apt-signing bash -s -- \
+               "$remote_dir/workwear.deb" /var/www/repo/astra/workwear < AstraLinuxDeb/publishDeb.sh
          '''
       }
    }

@@ -54,3 +54,36 @@ qs-workwear
 sudo apt-get update
 sudo apt-get install qs-workwear
 ----
+
+[#astra-linux]
+== Astra Linux Special Edition
+
+Пакет предназначен для Astra Linux Special Edition 1.8 x86_64. Установка и запуск проверены на сборке 1.8.6.39.
+Для установки зависимостей подключите расширенный репозиторий Astra Linux, который соответствует версии вашей системы.
+Порядок подключения приведён в https://docs.astralinux.ru/latest/guide/compound/repo/add_install/[документации Astra Linux].
+
+=== Подключение репозитория
+
+Загрузите открытый ключ репозитория и добавьте источник пакетов.
+
+[source,bash]
+----
+sudo install -d -m 0755 /etc/apt/keyrings
+sudo curl -fsSL https://repo.qsolution.ru/astra/workwear/keyring.gpg \
+    -o /etc/apt/keyrings/qsolution-astra.gpg
+sudo chmod 0644 /etc/apt/keyrings/qsolution-astra.gpg
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/qsolution-astra.gpg] https://repo.qsolution.ru/astra/workwear/ ./' \
+    | sudo tee /etc/apt/sources.list.d/qsolution-workwear.list
+----
+
+=== Установка и обновление
+
+Выполните эти команды для установки или обновления пакета.
+
+[source,bash]
+----
+sudo apt-get update
+sudo apt-get install qs-workwear
+----
+
+Откройте «QS: Спецодежда» из меню *Офис* или выполните в терминале команду `qs-workwear`.
