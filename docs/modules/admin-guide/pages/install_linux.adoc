@@ -58,7 +58,7 @@ sudo apt-get install qs-workwear
 [#astra-linux]
 == Astra Linux Special Edition
 
-Пакет предназначен для Astra Linux Special Edition 1.8 x86_64. Установка и запуск проверены на сборке 1.8.6.39.
+Пакет предназначен для Astra Linux Special Edition 1.8 x86_64.
 Для установки зависимостей подключите расширенный репозиторий Astra Linux, который соответствует версии вашей системы.
 Порядок подключения приведён в https://docs.astralinux.ru/latest/guide/compound/repo/add_install/[документации Astra Linux].
 
