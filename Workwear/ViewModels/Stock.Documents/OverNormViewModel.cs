@@ -302,7 +302,6 @@ namespace Workwear.ViewModels.Stock.Documents
 					builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 						filter => {
 							filter.ShowNegativeBalance = false;
-							filter.ShowOnlyWithBarcodeInStock = !OverNormModel.CanUseWithoutBarcodes;
 							filter.CanChooseAmount = OverNormModel.CanUseWithoutBarcodes;
 							filter.AddAmount = AddedAmount.One;
 							filter.Warehouse = Entity.Warehouse;
@@ -316,6 +315,11 @@ namespace Workwear.ViewModels.Stock.Documents
 		}
 		public void AddNomenclature(object sender, JournalSelectedEventArgs e) {
 			StockBalanceJournalNode node = e.GetSelectedObjects<StockBalanceJournalNode>().First();
+			if(node.BarcodeCount == 0 && !OverNormModel.CanUseWithoutBarcodes) {
+				interactive.ShowMessage(ImportanceLevel.Warning, "Нельзя выбрать позицию без штрихкода.");
+				return;
+			}
+
 			StockPosition stockPosition = node.GetStockPosition(UoW);
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);
 			OverNormItem item = (OverNormItem)page.Tag;
@@ -337,7 +341,7 @@ namespace Workwear.ViewModels.Stock.Documents
 				barcodeJournal.ViewModel.SelectionMode = JournalSelectionMode.Multiple;
 				barcodeJournal.ViewModel.OnSelectResult += (s, args) => AddWithBarcode(s, args, item);
 			}
-			else if(OverNormModel.CanUseWithoutBarcodes) {
+			else {
 				var selectVM = sender as StockBalanceJournalViewModel;
 				var addedAmount = selectVM.Filter.AddAmount;
 				if(!ValidateSubstituteItemsType(item, stockPosition.Nomenclature))

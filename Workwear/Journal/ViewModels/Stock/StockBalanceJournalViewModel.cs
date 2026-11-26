@@ -63,7 +63,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CreateNodeActions();
 			CreatePopupActions();
 
-			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature));
+			UpdateOnChanges(typeof(WarehouseOperation), typeof(Nomenclature), typeof(BarcodeOperation));
 			TabName = "Остатки по складу " + 
 			          (featuresService.Available(WorkwearFeature.Warehouses) ? Filter.Warehouse?.Name : "");
 
@@ -92,7 +92,8 @@ namespace workwear.Journal.ViewModels.Stock
 				if (Filter.ProtectionTools != null && Filter.ProtectionTools.Nomenclatures.Any())
 					conductions.Add($"nomenclature.id IN ({string.Join(",", Filter.ProtectionTools.Nomenclatures.Select(x => x.Id))})");
 				
-				if(Filter.ShowWithUseBarcodes)
+				var barcodesAvailable = Filter.BarcodesAvailable;
+				if(barcodesAvailable && Filter.ShowWithUseBarcodes)
 					conductions.Add("nomenclature.use_barcode = 1");
 
 				if(Filter.ItemsType != null)
@@ -124,8 +125,7 @@ SELECT
        AND operation_sub.operation_time >= ADDDATE(@report_date, INTERVAL -1 YEAR ))
        AND NOT (operation_sub.warehouse_expense_id IS NULL)
        ) AS DailyConsumption";
-////Возможно, стоит завязать на фильтр
-	if(FeaturesService.Available(WorkwearFeature.Barcodes))
+				if(barcodesAvailable)
 				sql += @",
 		(SELECT COUNT(*)
 		 FROM barcodes b
@@ -150,8 +150,8 @@ SELECT
 		       WHERE ob2.barcode_id = b.id
 		   )
 		) AS BarcodeCount";
-				
-	sql += @"
+
+				sql += @"
     FROM (SELECT nomenclature.id        AS NomenclatureId,
                  nomenclature.name      AS NomenclatureName,
                  nomenclature.number    AS NomenclatureNumber,
@@ -194,7 +194,7 @@ SELECT
           HAVING Amount {having} 0
           ORDER BY nomenclature.name, sizealias.name, heightalias.name, nomenclature.sex, owners.name, operation.wear_percent
          ) AS stock";
-				if(FeaturesService.Available(WorkwearFeature.Barcodes) && Filter.ShowOnlyWithBarcodeInStock)
+				if(barcodesAvailable && Filter.ShowOnlyWithBarcodeInStock)
 					sql += " HAVING BarcodeCount > 0";
 
 				var onDate = Filter.Date.AddDays(1);
@@ -224,10 +224,10 @@ SELECT
 			NodeActionsList.Add(updateStatusAction);
 			
 			JournalAction releaseBarcodesAction = new JournalAction("Промаркировать",
-				(selected) => selected.Any(x =>
+				(selected) => Filter.Warehouse != null && selected.Any(x =>
 					x is StockBalanceJournalNode node &&
 					node.Amount > 0),
-				(selected) => FeaturesService.Available(WorkwearFeature.Barcodes) && Filter.VisibleBarcodes,
+				(selected) => Filter.BarcodesAvailable,
 				(selected) => NavigationManager.OpenViewModel<BarcodingViewModel, IEntityUoWBuilder, StockBalanceJournalNode, Warehouse>
                 	(null, EntityUoWBuilder.ForCreate(), selected.First() as StockBalanceJournalNode, Filter.Warehouse)
 			);

@@ -157,6 +157,7 @@ namespace Workwear.ViewModels.Stock.Documents {
 							filter => {
 								filter.ShowNegativeBalance = false;
 								filter.ShowWithUseBarcodes = true;
+								filter.ShowBarcodeInStockFilter = false;
 								filter.CanChooseAmount = true;
 								filter.AddAmount = AddedAmount.All;
 								filter.Warehouse = Entity.Warehouse;
