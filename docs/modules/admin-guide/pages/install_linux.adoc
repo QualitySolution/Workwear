@@ -42,7 +42,7 @@ sudo apt-get install qs-workwear
 
 [source,bash]
 ----
-workwear
+qs-workwear
 ----
 
 === Обновление
@@ -52,5 +52,5 @@ workwear
 [source,bash]
 ----
 sudo apt-get update
-sudo apt-get upgrade qs-workwear
+sudo apt-get install qs-workwear
 ----

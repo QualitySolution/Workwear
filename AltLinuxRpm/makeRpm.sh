@@ -4,7 +4,7 @@ set -e
 VERSION=${1:?"Укажите версию как первый аргумент: makeRpm.sh <version> [release]"}
 RELEASE=${2:-1}
 WORKSPACE=/workspace
-BUILD_DATE=$(date +"%a %b %d %Y")
+BUILD_DATE=$(LC_ALL=C date +"%a %b %d %Y")
 HOME=/home/builder
 
 echo "=== Сборка RPM для AltLinux: версия ${VERSION}-alt${RELEASE} ==="
@@ -24,8 +24,8 @@ cp -r "${WORKSPACE}/Workwear/bin/Release/"* "${SRC_DIR}/"
 tar czf ~/RPM/SOURCES/qs-workwear-${VERSION}.tar.gz \
     -C /tmp "qs-workwear-${VERSION}"
 
-# Копируем .desktop файл в SOURCES чтобы spec мог его достать
 cp "${WORKSPACE}/AltLinuxRpm/workwear.desktop" ~/RPM/SOURCES/
+cp "${WORKSPACE}/Workwear/icon/logo.png" ~/RPM/SOURCES/
 
 echo "=== Запуск rpmbuild ==="
 rpmbuild -bb ~/RPM/SPECS/workwear.spec \

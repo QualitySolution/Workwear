@@ -10,9 +10,13 @@ Group:      Office
 URL:        https://workwear.qsolution.ru/
 Source0:    %{appname}-%{version}.tar.gz
 Source1:    workwear.desktop
+Source2:    logo.png
 
-Requires:   mono
+Requires:   mono-core
+Requires:   mono-data
+Requires:   libgtk-sharp2
 Requires:   libgdiplus
+Requires:   fonts-ttf-dejavu
 
 %description
 Программа позволяет вести учёт спецодежды, выдаваемой сотрудникам предприятия.
@@ -35,8 +39,7 @@ printf '#!/bin/bash\ncd %{instdir}\nexec mono %{instdir}/workwear.exe "$@"\n' \
 chmod 755 %{buildroot}%{_bindir}/%{appname}
 
 # Иконка
-mkdir -p %{buildroot}%{_datadir}/icons/hicolor/256x256/apps
-cp %{instdir}/logo.png %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{appname}.png
+install -D -m644 %{SOURCE2} %{buildroot}%{_datadir}/pixmaps/%{appname}.png
 
 # Ярлык в меню приложений
 mkdir -p %{buildroot}%{_datadir}/applications
@@ -45,7 +48,7 @@ cp %{SOURCE1} %{buildroot}%{_datadir}/applications/%{appname}.desktop
 %files
 %{instdir}/
 %{_bindir}/%{appname}
-%{_datadir}/icons/hicolor/256x256/apps/%{appname}.png
+%{_datadir}/pixmaps/%{appname}.png
 %{_datadir}/applications/%{appname}.desktop
 
 %changelog
