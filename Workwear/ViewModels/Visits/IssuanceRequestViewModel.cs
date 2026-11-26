@@ -18,12 +18,13 @@ using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using workwear.Journal.ViewModels.Company;
+using Workwear.Models.Visits;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company;
-using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Visits {
 	public class IssuanceRequestViewModel: EntityDialogViewModelBase<IssuanceRequest> {
@@ -33,6 +34,7 @@ namespace Workwear.ViewModels.Visits {
 		private readonly EmployeeRepository employeeRepository;
 		private readonly FeaturesService featuresService;
 		private readonly IEntityChangeWatcher changeWatcher;
+		private bool isDisposed;
 		
 		public IssuanceRequestViewModel(
 			IEntityUoWBuilder uowBuilder, 
@@ -57,7 +59,7 @@ namespace Workwear.ViewModels.Visits {
 			if(Entity.Id == 0)
 				Entity.CreatedByUser = userService.GetCurrentUser();
 			Warehouses = UoW.GetAll<Warehouse>().ToList();
-			SelectWarehouseIssued =  stockRepository.GetDefaultWarehouse(UoW, featuresService, userService.CurrentUserId);
+			SelectWarehouseIssued =  stockRepository.GetDefaultWarehouse(featuresService, userService.CurrentUserId);
 			selectWarehouseStock = SelectWarehouseIssued;
 			var thisViewModel = new TypedParameter(typeof(IssuanceRequestViewModel), this);
 			EmployeeCardItemsViewModel = autofacScope.Resolve<IssuanceRequestEmployeeCardItemsViewModel>(thisViewModel);
@@ -73,7 +75,15 @@ namespace Workwear.ViewModels.Visits {
 		public virtual UserBase CreatedByUser => Entity.CreatedByUser;
 		public virtual DateTime ReceiptDate {
 			get => Entity.ReceiptDate;
-			set => Entity.ReceiptDate = value;
+			set {
+				if(Entity.ReceiptDate == value)
+					return;
+				Entity.ReceiptDate = value;
+				if(value == default(DateTime))
+					return;
+				EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock);
+				UpdateStatus();
+			}
 		}
 		public virtual IssuanceRequestStatus Status {
 			get => Entity.Status;
@@ -270,11 +280,25 @@ namespace Workwear.ViewModels.Visits {
 			return collectiveExpenses;
 		}
 		private void IssuanceRequestChangeEvent(EntityChangeEvent[] changeevents) {
-			Entity.CollectiveExpenses.Clear();
-			foreach(var doc in  LoadCollectiveExpenses())
-				Entity.CollectiveExpenses.Add(doc);
-			EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock, false);
-			UpdateStatus();
+			if(isDisposed || !UoW.IsAlive)
+				return;
+
+			if(Entity.Id > 0 && !HasChanges) {
+				if(UoW.Session.QueryOver<IssuanceRequest>().Where(x => x.Id == Entity.Id).RowCount() == 0)
+					return; //Заявку удалили, диалог закроется сам.
+				UoW.Session.Refresh(Entity);
+				OnPropertyChanged(nameof(Employees));
+				OnPropertyChanged(nameof(CollectiveExpenses));
+				OnPropertyChanged(nameof(Status));
+				EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock, false);
+			}
+			else {
+				Entity.CollectiveExpenses.Clear();
+				foreach(var doc in  LoadCollectiveExpenses())
+					Entity.CollectiveExpenses.Add(doc);
+				EmployeeCardItemsViewModel.UpdateNodes(SelectWarehouseStock, false);
+				UpdateStatus();
+			}
 			OnPropertyChanged(nameof(GroupedEmployeeCardItems));
 		}
 		
@@ -286,12 +310,7 @@ namespace Workwear.ViewModels.Visits {
 
 		//выдачи и потребности должны быть загружены
 		protected void UpdateStatus() {
-			if(CollectiveExpenses.Count == 0)
-				Status = IssuanceRequestStatus.New;
-			else if(EmployeeCardItemsViewModel.GroupedEmployeeCardItems.All(x => x.NeedToBeIssued <= 0))
-				Status = IssuanceRequestStatus.Issued;
-			else if(EmployeeCardItemsViewModel.GroupedEmployeeCardItems.Any(x => x.NeedToBeIssued > 0))
-				Status = IssuanceRequestStatus.PartiallyIssued;
+			Status = IssuanceRequestModel.CalculateStatus(Entity, EmployeeCardItemsViewModel.Needs);
 		}
 		
 		#endregion
@@ -308,9 +327,15 @@ namespace Workwear.ViewModels.Visits {
 				logger.Info("Валидация пройдена.");
 			if(Entity.Id == 0) 
 				Entity.CreationDate = DateTime.Today;
-			UoW.Save();
+			UoW.Save(Entity);
+			UoW.Commit();
 			logger.Info("Заявка сохранена");
 			return true;
+		}
+
+		public override void Dispose() {
+			isDisposed = true;
+			base.Dispose();
 		}
 		#endregion
 	}

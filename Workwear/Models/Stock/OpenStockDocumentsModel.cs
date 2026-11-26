@@ -5,6 +5,7 @@ using QS.ViewModels.Dialog;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Models.Operations;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace workwear.Models.Stock
 {
@@ -49,6 +50,12 @@ namespace workwear.Models.Stock
 				case StockDocumentType.InspectionDoc:
 					navigation.OpenViewModel<InspectionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
 					break;
+				case StockDocumentType.OverNormDoc:
+					navigation.OpenViewModel<OverNormViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
+					break;
+				case StockDocumentType.BarcodingDoc:
+					navigation.OpenViewModel<BarcodingViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForCreate());
+					break;
 				default:
 					throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 			}
@@ -91,6 +98,10 @@ namespace workwear.Models.Stock
 					return navigation.OpenViewModel<CompletionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				case StockDocumentType.InspectionDoc:
 					return navigation.OpenViewModel<InspectionViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
+				case StockDocumentType.OverNormDoc:
+					return navigation.OpenViewModel<OverNormViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
+				case StockDocumentType.BarcodingDoc:
+					return navigation.OpenViewModel<BarcodingViewModel, IEntityUoWBuilder>(master, EntityUoWBuilder.ForOpen(id));
 				default:
 					throw new NotSupportedException($"Тип документа {documentType} не поддерживается.");
 			}

@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:fyi="http://www.fyireporting.com/schemas">
+  <Description>Загрузка постаматов выдачи по дням. Параметр postomats: ";id|ячеек;" для каждого постамата, число ячеек берётся из облака. Ячейка занята с проведения документа постамата (confirm_time) до выдачи (dispense_time).</Description>
+  <Author></Author>
+  <PageHeight>11in</PageHeight>
+  <PageWidth>8.5in</PageWidth>
+  <Width>7.5in</Width>
+  <TopMargin>.25in</TopMargin>
+  <LeftMargin>.25in</LeftMargin>
+  <RightMargin>.25in</RightMargin>
+  <BottomMargin>.25in</BottomMargin>
+  <DataSets>
+    <DataSet Name="Data">
+      <Query>
+        <DataSourceName>DS1</DataSourceName>
+        <CommandText>-- Считается пиковая загрузка за день
+WITH RECURSIVE days AS (
+	SELECT CONVERT(LEFT(@start_date, 10), DATE) AS day
+	UNION ALL
+	SELECT day + INTERVAL 1 DAY FROM days WHERE day &lt; CONVERT(LEFT(@finish_date, 10), DATE)
+),
+
+postomats AS (
+	SELECT terminal_id,
+		CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(@postomats, CONCAT(';', terminal_id, '|'), -1), ';', 1) AS UNSIGNED) AS capacity,
+		IFNULL(
+			(SELECT last_document.terminal_location FROM postomat_documents AS last_document
+			 WHERE last_document.terminal_id = terminals.terminal_id AND last_document.terminal_location &lt;&gt; ''
+			 ORDER BY last_document.id DESC LIMIT 1),
+			CONCAT('Постамат №', terminal_id)) AS name
+	FROM (SELECT DISTINCT terminal_id FROM postomat_documents) AS terminals
+	WHERE LOCATE(CONCAT(';', terminal_id, '|'), @postomats) &gt; 0
+		AND (-1 IN (@postomat_ids) OR terminal_id IN (@postomat_ids))
+),
+
+cells AS (
+	SELECT postomat_documents.terminal_id,
+		postomat_documents.confirm_time AS time_in,
+		postomat_document_items.dispense_time AS time_out
+	FROM postomat_document_items
+		JOIN postomat_documents ON postomat_documents.id = postomat_document_items.document_id
+		JOIN postomats ON postomats.terminal_id = postomat_documents.terminal_id
+	WHERE postomat_documents.type = 'Income' AND postomat_documents.status = 'Done'
+		AND postomat_documents.confirm_time &lt; DATE_ADD(CONVERT(LEFT(@finish_date, 10), DATE), INTERVAL 1 DAY)
+		AND (postomat_document_items.dispense_time IS NULL OR postomat_document_items.dispense_time &gt;= CONVERT(LEFT(@start_date, 10), DATE))
+		AND (postomat_document_items.dispense_time IS NULL OR postomat_document_items.dispense_time &gt;= postomat_documents.confirm_time)
+),
+-- Закладка +1, выдача -1 и отметка 0 на начало каждого дня, чтобы у каждого дня была строка
+events AS (
+	SELECT terminal_id, time_in AS time, 1 AS delta FROM cells
+	UNION ALL
+	SELECT terminal_id, time_out, -1 FROM cells WHERE time_out IS NOT NULL
+	UNION ALL
+	SELECT terminal_id, day, 0 FROM postomats CROSS JOIN days
+),
+
+busy_after_event AS (
+	SELECT terminal_id, time,
+		SUM(delta) OVER (PARTITION BY terminal_id ORDER BY time, delta ROWS UNBOUNDED PRECEDING) AS busy
+	FROM events
+),
+-- Пик за день
+busy_by_day AS (
+	SELECT terminal_id, DATE(time) AS day, MAX(busy) AS busy
+	FROM busy_after_event
+	WHERE time &gt;= CONVERT(LEFT(@start_date, 10), DATE)
+		AND time &lt; DATE_ADD(CONVERT(LEFT(@finish_date, 10), DATE), INTERVAL 1 DAY)
+	GROUP BY terminal_id, DATE(time)
+)
+SELECT
+	postomats.terminal_id,
+	postomats.name AS postomat_name,
+	postomats.capacity,
+	busy_by_day.day,
+	DATE_FORMAT(busy_by_day.day, '%d.%m.%y') AS day_label,
+	busy_by_day.busy,
+	ROUND(busy_by_day.busy * 100 / NULLIF(postomats.capacity, 0), 1) AS percent,
+	MAX(busy_by_day.busy) OVER period AS period_max_busy,
+	ROUND(MAX(busy_by_day.busy) OVER period * 100 / NULLIF(postomats.capacity, 0), 1) AS period_max_percent,
+	ROUND(AVG(busy_by_day.busy) OVER period * 100 / NULLIF(postomats.capacity, 0), 1) AS period_avg_percent
+FROM busy_by_day
+	JOIN postomats ON postomats.terminal_id = busy_by_day.terminal_id
+WINDOW period AS (PARTITION BY busy_by_day.terminal_id)
+ORDER BY postomat_name, busy_by_day.day</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="start_date">
+            <Value>=Parameters!start_date</Value>
+          </QueryParameter>
+          <QueryParameter Name="finish_date">
+            <Value>=Parameters!finish_date</Value>
+          </QueryParameter>
+          <QueryParameter Name="postomats">
+            <Value>=Parameters!postomats</Value>
+          </QueryParameter>
+          <QueryParameter Name="postomat_ids">
+            <Value>=Parameters!postomat_ids</Value>
+          </QueryParameter>
+        </QueryParameters>
+      </Query>
+      <Fields>
+        <Field Name="terminal_id">
+          <DataField>terminal_id</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="postomat_name">
+          <DataField>postomat_name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="capacity">
+          <DataField>capacity</DataField>
+          <rd:TypeName>System.UInt64</rd:TypeName>
+        </Field>
+        <Field Name="day">
+          <DataField>day</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="day_label">
+          <DataField>day_label</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="busy">
+          <DataField>busy</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="percent">
+          <DataField>percent</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="period_max_busy">
+          <DataField>period_max_busy</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="period_max_percent">
+          <DataField>period_max_percent</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="period_avg_percent">
+          <DataField>period_avg_percent</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <PageHeader>
+    <Height>0.0pt</Height>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <Body>
+    <ReportItems>
+      <Textbox Name="TextboxTitle">
+        <Top>0pt</Top>
+        <Left>0pt</Left>
+        <Height>20pt</Height>
+        <Width>540pt</Width>
+        <Value>={?report_name}</Value>
+        <Style>
+          <FontWeight>Bold</FontWeight>
+          <FontSize>14pt</FontSize>
+          <VerticalAlign>Middle</VerticalAlign>
+        </Style>
+      </Textbox>
+      <Textbox Name="TextboxDescription">
+        <Top>22pt</Top>
+        <Left>0pt</Left>
+        <Height>14pt</Height>
+        <Width>540pt</Width>
+        <Value>Загрузка за день — наибольшее число одновременно занятых ячеек в процентах от числа ячеек постамата.</Value>
+        <Style>
+          <FontStyle>Italic</FontStyle>
+          <FontSize>9pt</FontSize>
+        </Style>
+      </Textbox>
+      <List Name="ListPostomats">
+        <DataSetName>Data</DataSetName>
+        <NoRows>Нет данных о загрузке постаматов за период</NoRows>
+        <Top>40pt</Top>
+        <Left>0pt</Left>
+        <Width>540pt</Width>
+        <Height>240pt</Height>
+        <Grouping Name="PostomatGroup">
+          <GroupExpressions>
+            <GroupExpression>=Fields!terminal_id.Value</GroupExpression>
+          </GroupExpressions>
+        </Grouping>
+        <Sorting>
+          <SortBy>
+            <SortExpression>=Fields!postomat_name.Value</SortExpression>
+            <Direction>Ascending</Direction>
+          </SortBy>
+        </Sorting>
+        <ReportItems>
+          <Textbox Name="TextboxPostomat">
+            <Top>0pt</Top>
+            <Left>0pt</Left>
+            <Height>16pt</Height>
+            <Width>540pt</Width>
+            <Value>=Fields!postomat_name.Value + " — ячеек: " + Fields!capacity.Value + ", наибольшая загрузка: " + Fields!period_max_busy.Value + " яч." + Iif(Fields!capacity.Value = 0, "", " (" + Fields!period_max_percent.Value + "%), средняя: " + Fields!period_avg_percent.Value + "%")</Value>
+            <Style>
+              <FontWeight>Bold</FontWeight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Chart Name="ChartFullness">
+            <Top>18.00pt</Top>
+            <Left>0.00pt</Left>
+            <Height>210.00pt</Height>
+            <Width>540.00pt</Width>
+            <Type>Column</Type>
+            <Subtype>Plain</Subtype>
+            <DataSetName>Data</DataSetName>
+            <NoRows>Нет данных</NoRows>
+            <Palette>Excel</Palette>
+            <Legend>
+              <Visible>false</Visible>
+            </Legend>
+            <CategoryGroupings>
+              <CategoryGrouping>
+                <DynamicCategories>
+                  <Grouping Name="DayGroup">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!day_label.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Grouping>
+                  <Sorting>
+                    <SortBy>
+                      <SortExpression>=Fields!day.Value</SortExpression>
+                      <Direction>Ascending</Direction>
+                    </SortBy>
+                  </Sorting>
+                  <Label>=Fields!day_label.Value</Label>
+                </DynamicCategories>
+              </CategoryGrouping>
+            </CategoryGroupings>
+            <ChartData>
+              <ChartSeries>
+                <DataPoints>
+                  <DataPoint>
+                    <DataValues>
+                      <DataValue>
+                        <Value>=Sum(Fields!percent.Value)</Value>
+                      </DataValue>
+                    </DataValues>
+                    <DataLabel>
+                      <Visible>false</Visible>
+                    </DataLabel>
+                    <Marker />
+                  </DataPoint>
+                </DataPoints>
+              </ChartSeries>
+            </ChartData>
+            <CategoryAxis>
+              <Axis>
+                <Visible>true</Visible>
+                <MajorTickMarks>Outside</MajorTickMarks>
+                <fyi:CanOmit>true</fyi:CanOmit>
+                <Style>
+                  <FontSize>7pt</FontSize>
+                </Style>
+              </Axis>
+            </CategoryAxis>
+            <ValueAxis>
+              <Axis>
+                <Visible>true</Visible>
+                <Min>0</Min>
+                <Max>100</Max>
+                <MajorTickMarks>Outside</MajorTickMarks>
+                <MajorGridLines>
+                  <ShowGridLines>true</ShowGridLines>
+                  <Style>
+                    <BorderStyle>
+                      <Default>Dotted</Default>
+                    </BorderStyle>
+                    <BorderColor>
+                      <Default>Gray</Default>
+                    </BorderColor>
+                  </Style>
+                </MajorGridLines>
+                <Title>
+                  <Caption>Загрузка, %</Caption>
+                  <Style>
+                    <FontSize>8pt</FontSize>
+                    <WritingMode>tb-rl</WritingMode>
+                  </Style>
+                </Title>
+                <Style>
+                  <FontSize>8pt</FontSize>
+                </Style>
+              </Axis>
+            </ValueAxis>
+            <PlotArea>
+              <Style>
+                <BorderStyle>
+                  <Default>Solid</Default>
+                </BorderStyle>
+                <BackgroundColor>White</BackgroundColor>
+              </Style>
+            </PlotArea>
+            <Style>
+              <BackgroundColor>White</BackgroundColor>
+              <BorderStyle />
+              <BorderColor />
+              <BorderWidth />
+            </Style>
+            <fyi:RenderAsVector>False</fyi:RenderAsVector>
+          </Chart>
+        </ReportItems>
+      </List>
+    </ReportItems>
+    <Height>290pt</Height>
+    <Columns>1</Columns>
+  </Body>
+  <PageFooter>
+    <Height>19.5pt</Height>
+    <ReportItems>
+      <Textbox Name="TextboxPages">
+        <Top>1pt</Top>
+        <Left>10pt</Left>
+        <Height>12pt</Height>
+        <Width>3in</Width>
+        <Value>=Globals!PageNumber + ' из ' + Globals!TotalPages</Value>
+        <Style>
+          <FontSize>10pt</FontSize>
+          <FontWeight>Normal</FontWeight>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageFooter>
+  <DataElementName>Report</DataElementName>
+  <DataElementStyle>AttributeNormal</DataElementStyle>
+  <DataSources>
+    <DataSource Name="DS1">
+      <ConnectionProperties>
+        <DataProvider>MySqlConnector</DataProvider>
+        <ConnectString>server=atlas.srv.qsolution.ru;user=SpMob;database=specposhiv_kos;port=3306;password=QlZEal1FlwZuKFc5</ConnectString>
+        <IntegratedSecurity>false</IntegratedSecurity>
+      </ConnectionProperties>
+    </DataSource>
+  </DataSources>
+  <ReportParameters>
+    <ReportParameter Name="start_date">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2026-07-26</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="finish_date">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2026-08-25</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="postomats">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>;2|27;4|6;5|48;6|42;7|39;8|26;9|26;10|25;11|38;13|27;14|62;15|49;16|35;31|20;35|32;40|18;</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="postomat_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="report_name">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Загрузка постаматов</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+  </ReportParameters>
+</Report>

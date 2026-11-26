@@ -108,11 +108,12 @@ namespace Workwear.Domain.Stock.Documents
 			
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if(UoW != null && baseParameters.CheckBalances) {
-				var repository = new StockRepository();
+			validationContext.Items.TryGetValue(nameof(StockRepository), out var repositoryObject);
+			var repository = repositoryObject as StockRepository;
+			if(repository != null && baseParameters.CheckBalances) {
 				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
-				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+				var balance = repository.StockBalances(Warehouse, nomenclatures, Date, excludeOperations);
 
 				var positionGroups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
 				foreach(var position in positionGroups) {
@@ -207,14 +208,23 @@ namespace Workwear.Domain.Stock.Documents
 			if(IssueDate != null)
 				Items.ToList().ForEach(x => x.UpdateOperations(uow, baseParameters, askUser, signCardUid));
 			else
-				Items.ToList().ForEach(x => x.UpdateWarehouseOperations(uow));
+				Items.ToList().ForEach(x => x.UpdateWarehouseOperations());
 		}
 
-		public virtual void UpdateEmployeeWearItems()
+		public virtual void SaveOperations(IUnitOfWork uow)
 		{
-			Employee.FillWearReceivedInfo(new EmployeeIssueRepository(UoW));
-			Employee.UpdateNextIssue(Items.Where(x => x.ProtectionTools != null).Select(x => x.ProtectionTools).ToArray());
-			UoW.Save(Employee);
+			foreach(var item in Items) {
+				uow.Save(item.WarehouseOperation);
+				if(item.EmployeeIssueOperation != null)
+					uow.Save(item.EmployeeIssueOperation);
+			}
+		}
+
+		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow)
+		{
+			Employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
+			Employee.UpdateNextIssue(uow, Items.Where(x => x.ProtectionTools != null).Select(x => x.ProtectionTools).ToArray());
+			uow.Save(Employee);
 		}
 
 		#region Ведомость
@@ -269,4 +279,3 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 	}
 }
-

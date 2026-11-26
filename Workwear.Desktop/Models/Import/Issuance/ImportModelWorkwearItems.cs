@@ -47,16 +47,15 @@ namespace Workwear.Models.Import.Issuance
 				.GroupBy(x => x.Employee);
 			logger.Debug($"В обработке {grouped.Count()} сотрудников.");
 			progress.Start(maxValue: grouped.Count(), text: "Подготовка");
-			issueModel.FillWearReceivedInfo(
-				grouped.Select(x => x.Key).ToArray(),
-				UsedRows.Where(x => x.Operation != null).Select(x => x.Operation).ToArray()
+			var employees = grouped.Select(x => x.Key).ToArray();
+			issueModel.UpdateNextIssueAll(
+				employees,
+				notSavedOperations: UsedRows.Where(x => x.Operation != null).Select(x => x.Operation).ToArray(),
+				uow: uow
 			);
 			progress.Add();
-			foreach(var employeeGroup in grouped) {
-				progress.Add(text: $"Подготовка {employeeGroup.Key.ShortName}");
-				employeeGroup.Key.UpdateNextIssueAll();
-				dataParser.ChangedEmployees.Add(employeeGroup.Key);
-			}
+			foreach(var employee in employees)
+				dataParser.ChangedEmployees.Add(employee);
 
 			List<object> toSave = new List<object>();
 			toSave.AddRange(SavedNomenclatures);

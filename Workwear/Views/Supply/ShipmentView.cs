@@ -73,7 +73,12 @@ namespace Workwear.Views.Supply {
 				.AddColumn("Окончание периода")
 					.AddDateRenderer(x => x.EndPeriod)
 					.Editable()
-				.AddColumn("На складе")
+				.AddColumn("На складе\nисходно")
+					.ToolTipText(x => x.CreationDate != null
+						? $"Зафиксировано {x.CreationDate:g}"
+						: "")
+					.AddReadOnlyTextRenderer(x => x.InStockOnCreate != null ? $"{x.InStockOnCreate} {x.Units?.Name}" : "—")
+				.AddColumn("На складе\nсейчас")
 					.AddReadOnlyTextRenderer(x => x.InStock.ToString() + ' ' + x.Units?.Name)
 				.AddColumn("Запрошено")
 					.AddNumericRenderer(e => e.Requested)

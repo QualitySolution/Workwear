@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -28,6 +28,7 @@ using Workwear.Domain.Sizes;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Company;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Repository.Regulations;
 using Workwear.Tools;
@@ -54,6 +55,7 @@ namespace Workwear.ViewModels.Company
 		private readonly CommonMessages messages;
 		private readonly SpecCoinManagerService specCoinManagerService;
 		private readonly BaseParameters baseParameters;
+		private readonly EmployeeIssueModel employeeIssueModel;
 		
 		public SizeService SizeService { get; }
 
@@ -77,6 +79,7 @@ namespace Workwear.ViewModels.Company
 			SizeService sizeService,
 			CommonMessages messages,
 			BaseParameters baseParameters,
+			EmployeeIssueModel employeeIssueModel,
 			SpecCoinManagerService specCoinManagerService) : base(uowBuilder, unitOfWorkFactory, navigation, validator, unitOfWorkProvider)
 		{
 			AutofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
@@ -90,6 +93,7 @@ namespace Workwear.ViewModels.Company
 			this.messages = messages ?? throw new ArgumentNullException(nameof(messages));
 			this.specCoinManagerService = specCoinManagerService ?? throw new ArgumentNullException(nameof(specCoinManagerService));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			SizeService = sizeService;
 			Performance = new ProgressPerformanceHelper(globalProgress, 12, "Загрузка размеров", logger);
 			remainingEmployees = featuresService.Employees - employeeRepository.GetNumberOfEmployees();
@@ -176,6 +180,7 @@ namespace Workwear.ViewModels.Company
 			CostCenterViewModel = AutofacScope.Resolve<EmployeeCostCentersViewModel>(parameter);
 			ListedItemsViewModel = AutofacScope.Resolve<EmployeeListedItemsViewModel>(parameter);
 			MovementsViewModel = AutofacScope.Resolve<EmployeeMovementsViewModel>(parameter);
+			EmployeeOverNormViewModel = AutofacScope.Resolve<EmployeeOverNormViewModel>(parameter);
 			InGroupsViewModel = AutofacScope.Resolve<EmployeeInGroupsViewModel>(parameter);
 			VacationsViewModel = AutofacScope.Resolve<EmployeeVacationsViewModel>(parameter);
 			//Панели
@@ -188,7 +193,10 @@ namespace Workwear.ViewModels.Company
 			Performance.CheckPoint("Создание View");
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(this));
-			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object>{{nameof(FeaturesService), featuresService}})));
+			Validations.Add(new ValidationRequest(Entity, new ValidationContext(Entity, new Dictionary<object, object> {
+				{ nameof(FeaturesService), featuresService },
+				{ nameof(IUnitOfWork), UoW }
+			})));
 		}
 
 		public readonly ProgressPerformanceHelper Performance;
@@ -209,6 +217,7 @@ namespace Workwear.ViewModels.Company
 		public bool VisibleCardUid => featuresService.Available(WorkwearFeature.IdentityCards);
 		public bool VisibleLkRegistration => featuresService.Available(WorkwearFeature.EmployeeLk);
 		public bool VisibleCostCenters => featuresService.Available(WorkwearFeature.CostCenter);
+		public bool VisibleOverNorm => featuresService.Available(WorkwearFeature.OverNorm);
 		public bool VisibleEmployeeGroups => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool VisibleDutyNorm => featuresService.Available(WorkwearFeature.DutyNorms) && Entity.RelatedDutyNorms.Count > 0;
 		public bool VisibleVacations => featuresService.Available(WorkwearFeature.Vacation);
@@ -306,7 +315,8 @@ namespace Workwear.ViewModels.Company
 
 						if(Entity.UsedNorms.Any(n => (n.Posts.Any(p => p == post) && !n.Posts.Any(p => p == value)))
 						   && interactive.Question("Заменить нормы от старой должности нормами от новой должности?")) {
-							Entity.NormFromPost(UoW, NormRepository, value);
+							var norms = NormRepository.GetNormsForPost(UoW, value).Where(x => !x.Archival);
+							employeeIssueModel.AddUsedNorms(Entity, norms, UoW);
 						}
 
 						var postsNorms = NormRepository.GetNormsForPost(UoW, value);
@@ -318,7 +328,8 @@ namespace Workwear.ViewModels.Company
 									"Норма не установлена, так как не все данные сотрудника заполнены корректно.");
 								return;
 							}
-							Entity.NormFromPost(UoW, NormRepository, value);
+							var norms = NormRepository.GetNormsForPost(UoW, value).Where(x => !x.Archival);
+							employeeIssueModel.AddUsedNorms(Entity, norms, UoW);
 						}
 					}
 					post = value;
@@ -339,6 +350,7 @@ namespace Workwear.ViewModels.Company
 		public bool IsDocNumberInReturnSign => baseParameters.IsDocNumberInReturnSign;
 		public DateTime? StartDateOfOperations => baseParameters.StartDateOfOperations;
 		public bool IsGenericName => baseParameters.IsGenericName;
+		public bool ConditionGroupInPersonalCard => baseParameters.ConditionGroupInPersonalCard && featuresService.Available(WorkwearFeature.ConditionNorm);
 
 		#region CardUid
 		public virtual string CardUid {
@@ -487,8 +499,9 @@ namespace Workwear.ViewModels.Company
 		public EmployeeCostCentersViewModel CostCenterViewModel;	//5
 		public EmployeeInGroupsViewModel InGroupsViewModel;			//6
 		public EmployeeListedItemsViewModel ListedItemsViewModel;	//7
-		public EmployeeMovementsViewModel MovementsViewModel;       //8
-		public EmployeeVacationsViewModel VacationsViewModel;       //9
+		public EmployeeOverNormViewModel EmployeeOverNormViewModel; //8
+		public EmployeeMovementsViewModel MovementsViewModel;       //9
+		public EmployeeVacationsViewModel VacationsViewModel;       //10
 
 
 		private int lastTab;
@@ -526,11 +539,13 @@ namespace Workwear.ViewModels.Company
 					if(Entity.Id != 0)
 						ListedItemsViewModel.OnShow();
 					break;
-				case 8: 
+				case 8: EmployeeOverNormViewModel.OnShow();
+					break;
+				case 9: 
 					if(Entity.Id != 0)
 						MovementsViewModel.OnShow();
 					break;
-				case 9:
+				case 10:
 					if( Entity.Id == 0) {
 						if(interactive.Question("Перед открытием отпусков необходимо сохранить сотрудника. Сохранить?", "Сохранить сотрудника?")
 								&& Save()) {
@@ -642,7 +657,7 @@ namespace Workwear.ViewModels.Company
 
 		public void Print(PersonalCardPrint doc)
 		{
-			if(UoWGeneric.HasChanges && messages.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
+			if(UoW.HasChanges && messages.SaveBeforePrint(typeof(EmployeeCard), "бумажной версии"))
 				Save();
 
 			var reportInfo = new ReportInfo {
@@ -654,7 +669,8 @@ namespace Workwear.ViewModels.Company
 					{"isDocNumberInReturnSign", IsDocNumberInReturnSign},
 					{"printPromo",featuresService.Available(WorkwearFeature.PrintPromo)},
 					{"startDateOfOperations", StartDateOfOperations},
-					{"isGenericName", IsGenericName}
+					{"isGenericName", IsGenericName},
+					{"conditionGroup", ConditionGroupInPersonalCard}
 				}
 			};
 

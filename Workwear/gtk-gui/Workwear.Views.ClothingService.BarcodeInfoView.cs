@@ -148,7 +148,7 @@ namespace Workwear.Views.ClothingService
 			this.ylabel12 = new global::Gamma.GtkWidgets.yLabel();
 			this.ylabel12.Name = "ylabel12";
 			this.ylabel12.Xalign = 1F;
-			this.ylabel12.LabelProp = global::Mono.Unix.Catalog.GetString("Сотрудник:");
+			this.ylabel12.LabelProp = global::Mono.Unix.Catalog.GetString("Числится:");
 			this.tableInfo.Add(this.ylabel12);
 			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.tableInfo[this.ylabel12]));
 			w8.YOptions = ((global::Gtk.AttachOptions)(4));

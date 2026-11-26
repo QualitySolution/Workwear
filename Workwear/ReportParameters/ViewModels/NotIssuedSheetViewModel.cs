@@ -23,9 +23,8 @@ using Workwear.ViewModels.Company;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class NotIssuedSheetViewModel : ReportParametersViewModelBase, IDisposable, IDialogDocumentation
+	public class NotIssuedSheetViewModel : ReportParametersUowViewModelBase, IDialogDocumentation
 	{
-		IUnitOfWork UoW;
 		private readonly ProtectionToolsRepository protectionToolsRepository;
 
 		public NotIssuedSheetViewModel(
@@ -35,13 +34,12 @@ namespace workwear.ReportParameters.ViewModels
 			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
 			ProtectionToolsRepository protectionToolsRepository)
-			: base(rdlViewerViewModel)
+			: base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 
 			Title = "Справка по невыданному (Детально)";
-			UoW = uowFactory.CreateWithoutRoot();
 			var builder = new CommonEEVMBuilderFactory<NotIssuedSheetViewModel>(rdlViewerViewModel, this, UoW, navigation, autofacScope);
 			SubdivisionEntry = builder.ForProperty(x => x.Subdivision)
 				.MakeByType()
@@ -78,7 +76,9 @@ namespace workwear.ReportParameters.ViewModels
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
 		
-		protected override Dictionary<string, object> Parameters => new Dictionary<string, object> {
+		protected override Dictionary<string, object> Parameters {
+			get {
+				var parameters = new Dictionary<string, object> {
 					{"report_date", ReportDate },
 					{"subdivision_id", Subdivision?.Id ?? -1 },
 					{"department_id", Department?.Id ?? -1},
@@ -88,6 +88,7 @@ namespace workwear.ReportParameters.ViewModels
 					{"issue_type", IssueType?.ToString() },
 					{"exclude_before", ExcludeBefore },
 					{"exclude_in_vacation", ExcludeInVacation },
+					{"exclude_dismiss_after", ExcludeDismissAfter },
 					{"condition", Condition },
 					{"show_stock", Warehouse.Id != -2},
 					{"all_warehouse", Warehouse.Id == -1},
@@ -96,7 +97,16 @@ namespace workwear.ReportParameters.ViewModels
 					{"hide_worn", HideWorn},
 					{"view_phones", ViewPhones},
 					{"printPromo", featuresService.Available(WorkwearFeature.PrintPromo)},
-				 };
+				};
+
+				if(ReportType == NotIssuedSheetReportType.Flat) {
+					parameters.Add("show_shipment", ShowShipment);
+					parameters.Add("show_employee_groups", featuresService.Available(WorkwearFeature.EmployeeGroups));
+				}
+
+				return parameters;
+			}
+		}
 
 		#region Параметры
 		
@@ -107,6 +117,7 @@ namespace workwear.ReportParameters.ViewModels
 		
 		private NotIssuedSheetReportType reportType;
 		[PropertyChangedAlso(nameof(VisibleChoiceEmployeeGroup))]
+		[PropertyChangedAlso(nameof(VisibleShowShipment))]
 		public virtual NotIssuedSheetReportType ReportType {
 			get => reportType;
 			set => SetField(ref reportType, value);
@@ -136,7 +147,13 @@ namespace workwear.ReportParameters.ViewModels
 			get => excludeInVacation;
 			set => SetField(ref excludeInVacation, value);
 		}
-		
+
+		private bool excludeDismissAfter;
+		public virtual bool ExcludeDismissAfter {
+			get => excludeDismissAfter;
+			set => SetField(ref excludeDismissAfter, value);
+		}
+
 		private bool condition;
 		public virtual bool Condition {
 			get => condition;
@@ -173,6 +190,12 @@ namespace workwear.ReportParameters.ViewModels
 			get =>  warehouse.Id != -2 && hideWorn;
 			set => SetField(ref hideWorn, value);
 		}
+
+		private bool showShipment;
+		public virtual bool ShowShipment {
+			get => warehouse.Id != -2 && showShipment;
+			set => SetField(ref showShipment, value);
+		}
 		#endregion
 		
 		#region Свойства
@@ -181,6 +204,7 @@ namespace workwear.ReportParameters.ViewModels
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
 		public bool SensetiveLoad => ReportDate != null && !ChoiceProtectionToolsViewModel.AllUnSelected && !ChoiceEmployeeGroupViewModel.AllUnSelected;
 		public object StockElementsSensetive => warehouse.Id != -2;
+		public bool VisibleShowShipment => featuresService.Available(WorkwearFeature.Shipment) && ReportType == NotIssuedSheetReportType.Flat;
 
 		private void ChoiceViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if(nameof(ChoiceProtectionToolsViewModel.AllUnSelected) == e.PropertyName)
@@ -218,10 +242,6 @@ namespace workwear.ReportParameters.ViewModels
 		private readonly FeaturesService featuresService;
 		#endregion
 
-		public void Dispose()
-		{
-			UoW.Dispose();
-		}
 	}
 
 	public enum NotIssuedSheetReportType {

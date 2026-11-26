@@ -16,7 +16,7 @@ namespace Workwear.Views.ClothingService {
 			treeClaims.Binding
 				.AddBinding(ViewModel, vm => vm.Items, w => w.ItemsDataSource)
 				.InitializeFromSource();
-			treeClaims.CreateFluentColumnsConfig<AddServiceClaimNode>()
+			treeClaims.CreateFluentColumnsConfig<IAddMarkNode>()
 				.AddColumn("☑").AddToggleRenderer(x => x.Add).Editing()
 				.AddColumn("Метка(штрихкод)").AddReadOnlyTextRenderer(x => x.BarcodeText)
 				.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.EmployeeText)

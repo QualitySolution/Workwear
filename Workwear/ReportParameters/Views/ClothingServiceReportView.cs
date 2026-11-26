@@ -9,7 +9,7 @@ namespace Workwear.ReportParameters.Views {
 			this.Build();
 			comboReportType.ItemsEnum = typeof(ClothingServiceReportType);
 			if(ViewModel.HiddenReportType != null)
-            	comboStatus.HiddenItems = ViewModel.HiddenReportType;
+            	comboReportType.HiddenItems = ViewModel.HiddenReportType;
 			comboReportType.Binding
 				.AddBinding(ViewModel, vm => vm.ReportType, w => w.SelectedItem).InitializeFromSource();
 			ylabelStatus.Binding
@@ -47,9 +47,9 @@ namespace Workwear.ReportParameters.Views {
             ycheckbuttonshowclosed.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowClosed, v => v.Visible)
             	.AddBinding(ViewModel, vm => vm.ShowClosed, w => w.Active).InitializeFromSource();
-            ylabelshowEmployee.Binding
+            ylabelshowInfo.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible).InitializeFromSource();
-            ycheckbuttonshowEmployees.Binding
+            ycheckbuttonshowInfo.Binding
             	.AddBinding(ViewModel, vm => vm.VisibleShowEmployees, v => v.Visible)
             	.AddBinding(ViewModel, vm => vm.ShowEmployees, w => w.Active).InitializeFromSource();
             ylabelshowZero.Binding
@@ -72,6 +72,41 @@ namespace Workwear.ReportParameters.Views {
             ycheckbuttonSumCost.Binding
 	            .AddBinding(ViewModel, vm => vm.VisibleSumCost, v => v.Visible)
 	            .AddBinding(ViewModel, vm => vm.SumCost, w => w.Active).InitializeFromSource();
+            ylabelGroupclaim.Binding
+	            .AddBinding(ViewModel, vm => vm.VisibleGroupClaim, v => v.Visible).InitializeFromSource();
+            ycheckbuttonGroupclaim.Binding
+	            .AddBinding(ViewModel, vm => vm.VisibleGroupClaim, v => v.Visible)
+	            .AddBinding(ViewModel, vm => vm.GroupClaim, w => w.Active).InitializeFromSource();
+            ylabelInfo.UseMarkup = true;
+            ylabelInfo.Binding
+	            .AddBinding(ViewModel, vm => vm.InfoLabelText, w => w.LabelProp)
+	            .AddBinding(ViewModel, vm => vm.VisibleInfoLabel, v => v.Visible).InitializeFromSource();
+            choiceServises.ViewModel = ViewModel.ChoiceServiceViewModel;
+            expanderServises.Visible = ViewModel.VisibleChoiceService;
+            choiceTerminals.ViewModel = ViewModel.ChoiceTerminalViewModel;
+            expanderTerminals.Visible = ViewModel.VisibleChoiceTerminal;
+			ylabelOperationsType.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleOperationsTypes, w => w.Visible).InitializeFromSource();
+			yvboxOperationsTypes.Binding
+				.AddBinding(ViewModel, vm => vm.VisibleOperationsTypes, w => w.Visible).InitializeFromSource();
+			ycheckbuttonOperationsTypeEmployee.Binding
+				.AddBinding(ViewModel, vm => vm.OperationsTypeEmployee, w => w.Active).InitializeFromSource();
+			ycheckbuttonOperationsTypeWarehouse.Binding
+				.AddBinding(ViewModel, vm => vm.OperationsTypeWarehouse, w => w.Active).InitializeFromSource();
+			ycheckbuttonOperationsTypeDuty.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.OperationsTypeDuty, w => w.Active)
+				.AddBinding(vm => vm.VisibleOperationsTypeDuty, w => w.Visible).InitializeFromSource();
+			ycheckbuttonOperationsTypeOverNorm.Binding
+				.AddSource(ViewModel)
+				.AddBinding(vm => vm.OperationsTypeOverNorm, w => w.Active)
+				.AddBinding(vm => vm.VisibleOperationsTypeOverNorm, w => w.Visible).InitializeFromSource();
+            ViewModel.PropertyChanged += (sender, args) => {
+	            if(args.PropertyName == nameof(ViewModel.VisibleChoiceService))
+		            expanderServises.Visible = ViewModel.VisibleChoiceService;
+	            if(args.PropertyName == nameof(ViewModel.VisibleChoiceTerminal))
+		            expanderTerminals.Visible = ViewModel.VisibleChoiceTerminal;
+            };
             buttonRun.Clicked += OnButtonRunClicked;
 			buttonRun.Binding
 				.AddBinding(ViewModel, vm=>vm.SensetiveLoad, w=>w.Sensitive).InitializeFromSource();

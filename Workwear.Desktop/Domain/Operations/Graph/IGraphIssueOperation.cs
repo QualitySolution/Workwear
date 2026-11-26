@@ -6,10 +6,16 @@ namespace Workwear.Domain.Operations.Graph {
 		DateTime OperationTime { get; }
 		DateTime? StartOfUse { get; }
 		DateTime? AutoWriteoffDate { get; }
+		DateTime? ExpiryByNorm { get; }
 		int Issued { get; set; }
 		int Returned { get; }
 		bool OverrideBefore { get; }
+		int? NormAmount { get; }
 
 		IGraphIssueOperation IssuedOperation { get; }
+	}
+
+	public interface IEmployeeGraphIssueOperation : IGraphIssueOperation {
+		bool ManualOperation { get; }
 	}
 }

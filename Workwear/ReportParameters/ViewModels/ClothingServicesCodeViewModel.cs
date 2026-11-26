@@ -6,14 +6,12 @@ using QS.ViewModels.Control;
 using Workwear.Domain.ClothingService;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ClothingServicesCodeViewModel : ReportParametersViewModelBase {
+	public class ClothingServicesCodeViewModel : ReportParametersUowViewModelBase {
 		public ClothingServicesCodeViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
 			IUnitOfWorkFactory uowFactory)
-			: base(rdlViewerViewModel)
+			: base(rdlViewerViewModel, uowFactory)
 		{ 
-			var UoW = uowFactory.CreateWithoutRoot();
-			
 			var serviceList = UoW.GetAll<Service>().ToList();
 			ChoiceServiceViewModel = new ChoiceListViewModel<Service>(serviceList);
 		}
@@ -26,5 +24,6 @@ namespace Workwear.ReportParameters.ViewModels {
 
 		public override string Title => "Коды услуг обслуживания";
 		public override string Identifier => "ClothingService.ClothingServiceCodes";
+
 	}
 }

@@ -64,9 +64,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void AddItem()
 		{
-			if(UoW.IsNew) {
+			if(Entity.Id == 0) {
 				if(CommonDialogs.SaveBeforeCreateSlaveEntity(typeof(EmployeeCard), typeof(EmployeeVacation))) {
-					UoW.Save();
+					UoW.Save(Entity);
+					UoW.Commit();
 				}
 				else
 					return;

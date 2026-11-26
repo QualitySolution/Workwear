@@ -21,6 +21,7 @@ using Workwear.Domain.Regulations;
 using workwear.Journal.Filter.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Company;
 using Workwear.Models.Regulations;
+using Workwear.Models.Operations;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -32,6 +33,7 @@ namespace workwear.Journal.ViewModels.Regulations
 	{
 		private readonly ILifetimeScope autofacScope;
 		private readonly NormToDutyNormModel normToDutyNormModel;
+		private readonly EmployeeIssueModel employeeIssueModel;
 		public NormFilterViewModel Filter { get; private set; }
 		public FeaturesService FeaturesService { get; }
 		#region IDialogDocumentation
@@ -44,13 +46,15 @@ namespace workwear.Journal.ViewModels.Regulations
 			INavigationManager navigationManager,
 			ILifetimeScope autofacScope,
 			NormToDutyNormModel normToDutyNormModel,
+			EmployeeIssueModel employeeIssueModel,
 			FeaturesService featuresService,
 			IDeleteEntityService deleteEntityService = null,
-			ICurrentPermissionService currentPermissionService = null) 
+			ICurrentPermissionService currentPermissionService = null)
 			: base(unitOfWorkFactory, interactiveService, navigationManager, deleteEntityService, currentPermissionService)
 		{
 			this.autofacScope = autofacScope ?? throw new ArgumentNullException(nameof(autofacScope));
 			this.normToDutyNormModel = normToDutyNormModel ?? throw new ArgumentNullException(nameof(normToDutyNormModel));
+			this.employeeIssueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			UseSlider = false;
 			JournalFilter = Filter = autofacScope.Resolve<NormFilterViewModel>(new TypedParameter(typeof(JournalViewModelBase), this));
@@ -68,8 +72,6 @@ namespace workwear.Journal.ViewModels.Regulations
 			Department departmentAlias = null;
 			Norm normAlias = null;
 			NormItem normItemAlias = null;
-			RegulationDoc regulationDocAlias = null;
-			RegulationDocAnnex docAnnexAlias = null;
 			EmployeeCard employeeAlias = null;
 			Norm usedNormAlias = null;
 
@@ -86,8 +88,6 @@ namespace workwear.Journal.ViewModels.Regulations
 
 
 			var norms = uow.Session.QueryOver<Norm>(() => normAlias)
-				.JoinAlias(n => n.Document, () => regulationDocAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
-				.JoinAlias(n => n.Annex, () => docAnnexAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => normAlias.Posts, () => postAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => postAlias.Subdivision, () => subdivisionAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => postAlias.Department, () => departmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
@@ -117,9 +117,6 @@ namespace workwear.Journal.ViewModels.Regulations
 			return norms
 				.SelectList(list => list
 				   .SelectGroup(() => normAlias.Id).WithAlias(() => resultAlias.Id)
-				   .Select(() => regulationDocAlias.Number).WithAlias(() => resultAlias.TonNumber)
-				   .Select(() => docAnnexAlias.Number).WithAlias(() => resultAlias.AnnexNumber)
-				   .Select(() => normAlias.TONParagraph).WithAlias(() => resultAlias.TonParagraph)
 				   .Select(() => normAlias.Name).WithAlias(() => resultAlias.Name)
 				   .Select(() => normAlias.Archival).WithAlias(() => resultAlias.Archival)
 				   .SelectSubQuery(employeesSubquery).WithAlias(() => resultAlias.Usages)
@@ -192,7 +189,7 @@ namespace workwear.Journal.ViewModels.Regulations
 				foreach(var employee in employees) {
 					progress.Add(text: $"Обработка {employee.ShortName}");
 					step++;
-					employee.UpdateWorkwearItems();
+					employeeIssueModel.UpdateWorkwearItems(new[] { employee }, localUow);
 					localUow.Save(employee);
 					if(step % 10 == 0)
 						localUow.Commit();
@@ -217,10 +214,6 @@ namespace workwear.Journal.ViewModels.Regulations
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string TonNumber { get; set; }
-		public int? AnnexNumber { get; set; }
-		public string TonAttachment => AnnexNumber?.ToString();
-		public string TonParagraph { get; set; }
 		public string Posts { get; set; }
 		public int Usages { get; set; }
 		public int UsagesWorked { get; set; }

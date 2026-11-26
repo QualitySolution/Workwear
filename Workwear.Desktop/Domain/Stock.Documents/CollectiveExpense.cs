@@ -99,15 +99,16 @@ namespace Workwear.Domain.Stock.Documents
 
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if (baseParameters.CheckBalances)
+			validationContext.Items.TryGetValue(nameof(StockRepository), out var repositoryObject);
+			var repository = repositoryObject as StockRepository;
+			if (repository != null && baseParameters.CheckBalances)
 			{
-				var repository = new StockRepository();
 				var nomenclatures =
 					Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
 				var excludeOperations =
 					Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
 				var balance =
-					repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+					repository.StockBalances(Warehouse, nomenclatures, Date, excludeOperations);
 
 				var positionGroups =
 					Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
@@ -184,6 +185,9 @@ namespace Workwear.Domain.Stock.Documents
 		public virtual void RemoveItem(CollectiveExpenseItem item)
 		{
 			Items.Remove(item);
+			if(item.IssuanceSheetItem != null) {
+				IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
+			}
 		}
 
 		public virtual void CleanupItems()
@@ -243,4 +247,3 @@ namespace Workwear.Domain.Stock.Documents
 		#endregion
 	}
 }
-

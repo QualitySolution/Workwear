@@ -7,8 +7,10 @@ using NHibernate.SqlCommand;
 using NHibernate.Transform;
 using NHibernate;
 using QS.DomainModel.UoW;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock.Documents;
 using Workwear.Models.Operations;
@@ -71,6 +73,87 @@ namespace Workwear.Repository.Operations
 			makeEager?.Invoke(query);
 
 			return query.List();
+		}
+
+		/// <summary>
+		/// Загружает операции выдачи для указанных сотрудников в виде лёгкого DTO.
+		/// В отличие от <see cref="AllOperationsFor"/>, результат НЕ попадает в Identity Map NHibernate,
+		/// что резко снижает потребление памяти при работе с большими базами.
+		/// Используется в прогнозировании склада.
+		/// </summary>
+		public virtual IList<GraphIssueOperationDto> AllOperationsForGraph(int[] employeeIds, IUnitOfWork uow = null) {
+			if(employeeIds == null)
+				throw new ArgumentNullException(nameof(employeeIds));
+			if(!employeeIds.Any())
+				return new List<GraphIssueOperationDto>();
+
+			return AllOperationsForGraph(
+				Restrictions.In(
+					Projections.Property<EmployeeIssueOperation>(x => x.Employee.Id),
+					employeeIds.Distinct().Cast<object>().ToArray()),
+				uow);
+		}
+
+		/// <summary>
+		/// Загружает операции только для переданных пар «сотрудник + номенклатура нормы».
+		/// Ключ словаря — Id номенклатуры нормы, значение — Id сотрудников.
+		/// </summary>
+		public virtual IList<GraphIssueOperationDto> AllOperationsForGraph(
+			IReadOnlyDictionary<int, int[]> employeeIdsByProtectionTools,
+			IUnitOfWork uow = null) {
+			if(employeeIdsByProtectionTools == null)
+				throw new ArgumentNullException(nameof(employeeIdsByProtectionTools));
+			if(!employeeIdsByProtectionTools.Any(x => x.Value?.Any() == true))
+				return new List<GraphIssueOperationDto>();
+
+			var requestedPairs = Restrictions.Disjunction();
+			foreach(var pair in employeeIdsByProtectionTools.Where(x => x.Value?.Any() == true)) {
+				requestedPairs.Add(Restrictions.Conjunction()
+					.Add(Restrictions.In(
+						Projections.Property<EmployeeIssueOperation>(x => x.Employee.Id),
+						pair.Value.Cast<object>().ToArray()))
+					.Add(Restrictions.Eq(
+						Projections.Property<EmployeeIssueOperation>(x => x.ProtectionTools.Id),
+						pair.Key)));
+			}
+			return AllOperationsForGraph(requestedPairs, uow);
+		}
+
+		private IList<GraphIssueOperationDto> AllOperationsForGraph(
+			ICriterion restriction,
+			IUnitOfWork uow) {
+			EmployeeIssueOperation opAlias = null;
+			NormItem normItemAlias = null;
+			GraphIssueOperationDto dtoAlias = null;
+			var dtos = (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>(() => opAlias)
+				.Where(restriction)
+				.Left.JoinAlias(() => opAlias.NormItem, () => normItemAlias)
+				.SelectList(list => list
+					.Select(() => opAlias.Id).WithAlias(() => dtoAlias.Id)
+					.Select(() => opAlias.OperationTime).WithAlias(() => dtoAlias.OperationTime)
+					.Select(() => opAlias.StartOfUse).WithAlias(() => dtoAlias.StartOfUse)
+					.Select(() => opAlias.AutoWriteoffDate).WithAlias(() => dtoAlias.AutoWriteoffDate)
+					.Select(() => opAlias.ExpiryByNorm).WithAlias(() => dtoAlias.ExpiryByNorm)
+					.Select(() => opAlias.Issued).WithAlias(() => dtoAlias.Issued)
+					.Select(() => opAlias.Returned).WithAlias(() => dtoAlias.Returned)
+					.Select(() => opAlias.OverrideBefore).WithAlias(() => dtoAlias.OverrideBefore)
+					.Select(() => opAlias.ManualOperation).WithAlias(() => dtoAlias.ManualOperation)
+					.Select(() => normItemAlias.Amount).WithAlias(() => dtoAlias.NormAmount)
+					.Select(() => opAlias.IssuedOperation.Id).WithAlias(() => dtoAlias.IssuedOperationId)
+					.Select(() => opAlias.Employee.Id).WithAlias(() => dtoAlias.EmployeeId)
+					.Select(() => opAlias.ProtectionTools.Id).WithAlias(() => dtoAlias.ProtectionToolsId)
+				)
+				.TransformUsing(Transformers.AliasToBean<GraphIssueOperationDto>())
+				.List<GraphIssueOperationDto>();
+
+			// Разрешаем ссылки IssuedOperation внутри загруженного набора.
+			var dtoById = dtos.Where(d => d.Id != 0).ToDictionary(d => d.Id);
+			foreach(var dto in dtos.Where(d => d.IssuedOperationId.HasValue)) {
+				if(dtoById.TryGetValue(dto.IssuedOperationId.Value, out var issuedOp))
+					dto.IssuedOperation = issuedOp;
+			}
+
+			return dtos;
 		}
 
 		/// <summary>
@@ -177,6 +260,16 @@ namespace Workwear.Repository.Operations
 		}
 
 		/// <summary>
+		/// Получаем дочерние операции (возврат, списание), ссылающиеся на указанные операции выдачи. 
+		/// </summary>
+		public IList<EmployeeIssueOperation> GetChildOperations(int[] issueOperationIds, IUnitOfWork uow = null) {
+			return (uow ?? RepoUow).Session.QueryOver<EmployeeIssueOperation>()
+				.Where(o => o.IssuedOperation.Id.IsIn(issueOperationIds))
+				.Fetch(SelectMode.Fetch, o => o.IssuedOperation)
+				.List();
+		}
+
+		/// <summary>
 		/// Получаем все операции выдачи выданные по указанной строке нормы.
 		/// </summary>
 		/// <returns></returns>
@@ -191,6 +284,59 @@ namespace Workwear.Repository.Operations
 			makeEager?.Invoke(query);
 			return query.List();
 		}
+		/// <summary>
+		/// Ищем действующие операции выдачи сотрудникам, на которые ссылаются заявки на обслуживание (по их штрихкодам).
+		/// </summary>
+		public virtual Dictionary<int, EmployeeIssueOperation> GetActualIssuedOperations(IEnumerable<ServiceClaim> claims, IUnitOfWork uow = null) {
+			var claimsList = claims.Where(c => c.Barcode != null).ToList();
+			var barcodeIds = claimsList.Select(c => c.Barcode.Id).Distinct().ToArray();
+			if(!barcodeIds.Any())
+				return new Dictionary<int, EmployeeIssueOperation>();
+
+			EmployeeIssueOperation issueAlias = null;
+			BarcodeOperation issuedBarcodeAlias = null;
+
+			var operations = (uow ?? RepoUow).Session.QueryOver(() => issueAlias)
+				.JoinAlias(() => issueAlias.BarcodeOperations, () => issuedBarcodeAlias)
+				.WhereRestrictionOn(() => issuedBarcodeAlias.Barcode.Id).IsIn(barcodeIds)
+				.Where(() => issueAlias.Issued > 0)
+				.Fetch(SelectMode.Fetch, x => x.Employee)
+				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
+				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
+				.Fetch(SelectMode.Fetch, x => x.WearSize)
+				.Fetch(SelectMode.Fetch, x => x.Height)
+				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
+				.OrderBy(() => issueAlias.OperationTime).Desc
+				.List()
+				.Distinct()
+				.ToList();
+
+			EmployeeIssueOperation resultIssueAlias = null;
+			BarcodeOperation resultBarcodeAlias = null;
+			var resultPairs = new HashSet<(int OperationId, int BarcodeId)>(
+				(uow ?? RepoUow).Session.QueryOver(() => resultBarcodeAlias)
+					.JoinAlias(() => resultBarcodeAlias.EmployeeIssueOperation, () => resultIssueAlias)
+					.WhereRestrictionOn(() => resultBarcodeAlias.Barcode.Id).IsIn(barcodeIds)
+					.Where(() => resultIssueAlias.IssuedOperation != null)
+					.Fetch(SelectMode.Fetch, x => x.Barcode)
+					.Fetch(SelectMode.Fetch, x => x.EmployeeIssueOperation.IssuedOperation)
+					.List()
+					.Select(bo => (bo.EmployeeIssueOperation.IssuedOperation.Id, bo.Barcode.Id)));
+
+			var result = new Dictionary<int, EmployeeIssueOperation>();
+			foreach(var claim in claimsList) {
+				var operation = operations
+					.Where(op => op.BarcodeOperations.Any(bo => bo.Barcode.Id == claim.Barcode.Id))
+					.Where(op => !resultPairs.Contains((op.Id, claim.Barcode.Id)))
+					.OrderByDescending(op => op.OperationTime)
+					.FirstOrDefault();
+				if(operation != null)
+					result[claim.Id] = operation;
+			}
+			return result;
+		}
+
 		public IList<OperationToDocumentReference> GetReferencedDocuments(params int[] operationsIds)
 		{
 			OperationToDocumentReference docAlias = null;
@@ -335,6 +481,42 @@ namespace Workwear.Repository.Operations
 				.ToList();
 			return writeOffOperations;
 		}
+
+		/// <summary>
+		/// Получает все актуальные для сотрудника номера маркированных выдач на указанную дату.
+		/// * Не учитываются ручные списания и возвраты.
+		/// </summary>
+		public virtual IList<BarcodeNumberInfo> GetBarcodeNumbersForEmployee(
+			IList<EmployeeCard> employees, 
+			DateTime onDate, 
+			IUnitOfWork uow = null)
+		{
+			EmployeeIssueOperation issueOperationAlias = null;
+			BarcodeOperation barcodeOperation = null;
+			BarcodeNumberInfo resultAlias = null;
+			
+			return (uow ?? RepoUow).Session.QueryOver(() => issueOperationAlias)
+				.WhereRestrictionOn(() => issueOperationAlias.Employee.Id).IsIn(employees.Select(e => e.Id).ToList())
+				.Where(() => issueOperationAlias.OperationTime <= onDate)
+				.Where(() => issueOperationAlias.AutoWriteoffDate == null || issueOperationAlias.AutoWriteoffDate > onDate)
+				.Where(() => issueOperationAlias.ProtectionTools != null)
+				.JoinAlias(x => x.BarcodeOperations, () => barcodeOperation)
+				.Where(() => barcodeOperation.KitNumber > 0)
+				.SelectList(list => list
+					.Select(() => issueOperationAlias.Employee.Id).WithAlias(() => resultAlias.EmployeeId)
+					.Select(() => issueOperationAlias.ProtectionTools.Id).WithAlias(() => resultAlias.ProtectionToolsId)
+					.Select(() => barcodeOperation.KitNumber).WithAlias(() => resultAlias.KitNumber))
+				.TransformUsing(Transformers.AliasToBean<BarcodeNumberInfo>())
+				.List<BarcodeNumberInfo>()
+				.ToList();
+		}
+	}
+
+	public class BarcodeNumberInfo
+	{
+		public int EmployeeId { get; set; }
+		public int ProtectionToolsId { get; set; }
+		public int? KitNumber { get; set; }
 	}
 	
 	public class EmployeeReceivedInfo

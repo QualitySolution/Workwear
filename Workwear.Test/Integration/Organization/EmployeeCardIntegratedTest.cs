@@ -37,7 +37,7 @@ namespace Workwear.Test.Integration.Organization
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -58,6 +58,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(nomenclature2);
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "Номенклатура нормы"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -95,7 +96,7 @@ namespace Workwear.Test.Integration.Organization
 				var uowProvider = new UnitOfWorkProvider(uow);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
-				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository(uowProvider));
 				stockModel.Warehouse = warehouse;
 				stockModel.OnDate = today;
 				issueModel.FillWearInStockInfo(employee, stockModel);
@@ -116,7 +117,7 @@ namespace Workwear.Test.Integration.Organization
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -147,6 +148,7 @@ namespace Workwear.Test.Integration.Organization
 				uow.Save(nomenclature2);
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "Номенклатура нормы"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -202,7 +204,7 @@ namespace Workwear.Test.Integration.Organization
 				var uowProvider = new UnitOfWorkProvider(uow);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
-				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository(uowProvider));
 				stockModel.Warehouse = warehouse;
 				stockModel.OnDate = today;
 				issueModel.FillWearInStockInfo(employee, stockModel);
@@ -229,7 +231,7 @@ namespace Workwear.Test.Integration.Organization
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -270,13 +272,13 @@ namespace Workwear.Test.Integration.Organization
 				};
 				uow.Save(nomenclature3);
 
-				var protectionTools = new ProtectionTools {Name = "Номенклатура нормы"};
+				var protectionTools = new ProtectionTools { Type = nomenclatureType, Name = "Номенклатура нормы"};
 				protectionTools.AddNomenclature(nomenclature);
 				protectionTools.AddNomenclature(nomenclature3);
 
 				uow.Save(protectionTools);
 
-				var protectionTools2 = new ProtectionTools {Name = "Номенклатура нормы_2"};
+				var protectionTools2 = new ProtectionTools { Type = nomenclatureType, Name = "Номенклатура нормы_2"};
 				protectionTools2.AddNomenclature(nomenclature2);
 				uow.Save(protectionTools2);
 
@@ -338,7 +340,7 @@ namespace Workwear.Test.Integration.Organization
 				var uowProvider = new UnitOfWorkProvider(uow);
 				var issueModel = new EmployeeIssueModel(new EmployeeIssueRepository(uowProvider), uowProvider);
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uowProvider));
-				var stockModel = new StockBalanceModel(uowProvider, new StockRepository());
+				var stockModel = new StockBalanceModel(uowProvider, new StockRepository(uowProvider));
 				stockModel.Warehouse = warehouse;
 				stockModel.OnDate = today;
 				issueModel.FillWearInStockInfo(employee, stockModel);
@@ -373,7 +375,7 @@ namespace Workwear.Test.Integration.Organization
 				nomenclature.Sex = ClothesSex.Men;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
@@ -457,7 +459,7 @@ namespace Workwear.Test.Integration.Organization
 				nomenclature.Sex = ClothesSex.Men;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
@@ -559,7 +561,7 @@ namespace Workwear.Test.Integration.Organization
 				nomenclature.Sex = ClothesSex.Men;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
@@ -641,7 +643,7 @@ namespace Workwear.Test.Integration.Organization
 				nomenclature.Sex = ClothesSex.Men;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "Номенклатура нормы";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);

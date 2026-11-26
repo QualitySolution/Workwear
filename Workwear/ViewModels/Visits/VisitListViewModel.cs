@@ -15,6 +15,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Domain.Visits;
 using Workwear.Models.Visits;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Visits {
 	public class VisitListViewModel : UowDialogViewModelBase 

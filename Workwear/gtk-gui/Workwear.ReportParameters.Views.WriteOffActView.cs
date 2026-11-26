@@ -18,6 +18,8 @@ namespace Workwear.ReportParameters.Views
 
 		private global::Gamma.GtkWidgets.yCheckButton ycheckShowAutoWriteOff;
 
+		private global::Gamma.GtkWidgets.yCheckButton ycheckShowServiceDetail;
+
 		private global::Gamma.GtkWidgets.yButton buttonRun;
 
 		protected virtual void Build()
@@ -94,17 +96,29 @@ namespace Workwear.ReportParameters.Views
 			w6.Expand = false;
 			w6.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
+			this.ycheckShowServiceDetail = new global::Gamma.GtkWidgets.yCheckButton();
+			this.ycheckShowServiceDetail.CanFocus = true;
+			this.ycheckShowServiceDetail.Name = "ycheckShowServiceDetail";
+			this.ycheckShowServiceDetail.Label = global::Mono.Unix.Catalog.GetString("Детализация по обслуживанию");
+			this.ycheckShowServiceDetail.DrawIndicator = true;
+			this.ycheckShowServiceDetail.UseUnderline = true;
+			this.vbox1.Add(this.ycheckShowServiceDetail);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.ycheckShowServiceDetail]));
+			w7.Position = 4;
+			w7.Expand = false;
+			w7.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
 			this.buttonRun = new global::Gamma.GtkWidgets.yButton();
 			this.buttonRun.CanFocus = true;
 			this.buttonRun.Name = "buttonRun";
 			this.buttonRun.UseUnderline = true;
 			this.buttonRun.Label = global::Mono.Unix.Catalog.GetString("Сформировать отчет");
 			this.vbox1.Add(this.buttonRun);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.buttonRun]));
-			w7.PackType = ((global::Gtk.PackType)(1));
-			w7.Position = 4;
-			w7.Expand = false;
-			w7.Fill = false;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.buttonRun]));
+			w8.PackType = ((global::Gtk.PackType)(1));
+			w8.Position = 5;
+			w8.Expand = false;
+			w8.Fill = false;
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

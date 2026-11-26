@@ -17,7 +17,7 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ProvisionReportViewModel : ReportParametersViewModelBase, IDialogDocumentation {
+	public class ProvisionReportViewModel : ReportParametersUowViewModelBase, IDialogDocumentation {
 		
 		private readonly FeaturesService featuresService;
 		private readonly ProtectionToolsRepository protectionToolsRepository;
@@ -27,8 +27,7 @@ namespace Workwear.ReportParameters.ViewModels {
 			IUnitOfWorkFactory uowFactory,
 			FeaturesService featuresService,
 			ProtectionToolsRepository protectionToolsRepository)
-			: base(rdlViewerViewModel) {
-			UoW = uowFactory.CreateWithoutRoot();
+			: base(rdlViewerViewModel, uowFactory) {
 			
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
@@ -72,13 +71,13 @@ namespace Workwear.ReportParameters.ViewModels {
 			{"without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },	
 			{"employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod},
 			{"show_employees", ShowEmployees },
+			{"exclude_full_employees", ExcludeFullEmployees },
 			{"show_stock", ShowStock },
 			{"show_dismissed", ShowDismissed},
 			{"issue_type", IssueType?.ToString() },
 		};
 
 		#region Параметры
-		IUnitOfWork UoW;
 		public override string Title => $"Отчёт по обеспеченности сотрудников на {reportDate?.ToString("dd MMMM yyyy") ?? "(выберите дату)"}";
 		public override string Identifier { 
 			get => ReportType.GetAttribute<ReportIdentifierAttribute>().Identifier;
@@ -167,13 +166,19 @@ namespace Workwear.ReportParameters.ViewModels {
 			set => SetField(ref showEmployees, value);
 		}
 
+		private bool excludeFullEmployees;
+		public virtual bool ExcludeFullEmployees {
+			get => excludeFullEmployees;
+			set => SetField(ref excludeFullEmployees, value);
+		}
+
 		private bool showDismissed;
 		public virtual bool ShowDismissed {
 			get=>showDismissed;
 			set=>SetField(ref showDismissed, value);
 		}
 		#endregion
-		
+
 		public enum ProvisionReportType {
 			[ReportIdentifier("ProvisionReport")]
 			[Display(Name = "Форматировано")]

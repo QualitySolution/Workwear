@@ -5,7 +5,9 @@ using Gamma.ColumnConfig;
 using Gamma.Utilities;
 using QS.Cloud.Postomat.Manage;
 using QS.Cloud.WearLk.Manage;
+using QS.Cloud.WorkwearDictionary;
 using QS.Journal.GtkUI;
+using QS.Measurement.Journal;
 using QS.Utilities;
 using QS.Utilities.Numeric;
 using Workwear.Journal.ViewModels.Analytics;
@@ -17,6 +19,7 @@ using workwear.Journal.ViewModels.Postomats;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Supply;
 using workwear.Journal.ViewModels.Tools;
 using workwear.Journal.ViewModels.Visits;
@@ -28,6 +31,8 @@ namespace workwear.Journal
 	{
 		public static void RegisterColumns()
 		{
+			MeasurementJournalColumnsConfigs.RegisterColumns();
+
 			#region Analytics
 
 			TreeViewColumnsConfigFactory.Register<ProtectionToolsCategoryJournalViewModel>(
@@ -47,7 +52,7 @@ namespace workwear.Journal
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).XAlign(0.5f)
 					.AddColumn("Метка(штрихкод)").AddTextRenderer(node => node.Barcode).SearchHighlight().XAlign(0.5f)
 					.AddColumn("Табельный").AddTextRenderer(node => node.EmployeePersonnelNumber).SearchHighlight().XAlign(1.0f)
-					.AddColumn("Сотрудник").AddTextRenderer(node => node.Employee).SearchHighlight()
+					.AddColumn("Сотрудник").AddTextRenderer(node => node.EmployeeString).SearchHighlight()
 					.AddColumn("Статус").AddReadOnlyTextRenderer(node => node.State.GetEnumTitle())
 					.AddColumn("Изменен").AddReadOnlyTextRenderer(x => x.OperationTime.ToString("g")).XAlign(0.5f)
 					.AddColumn("Номенклатура").Resizable().AddReadOnlyTextRenderer(x => x.Nomenclature).SearchHighlight().WrapWidth(500)
@@ -219,9 +224,12 @@ namespace workwear.Journal
 					.AddColumn ("Наименование").Resizable()
 					.AddTextRenderer(e => e.ItemName).WrapWidth(1000).SearchHighlight()
 					.AddSetter((w, item) => w.Foreground = item.NomenclatureName != null ? "black" : "blue")
-					.AddColumn ("Размер").Resizable().AddTextRenderer (e => e.WearSize)
-					.AddColumn ("Рост").Resizable().AddTextRenderer (e => e.Height)
+					.AddColumn ("Размер").Resizable().AddTextRenderer (e => e.WearSize).SearchHighlight()
+					.AddColumn ("Рост").Resizable().AddTextRenderer (e => e.Height).SearchHighlight()
 					.AddColumn ("Количество").AddTextRenderer (e => e.BalanceText)
+					.AddColumn("Штрихкоды").Resizable()
+						.Visible(jwm.FeaturesService.Available(WorkwearFeature.Barcodes))
+						.AddTextRenderer(e => e.Barcodes).SearchHighlight()
 					.AddColumn ("Стоимость").AddTextRenderer (e => e.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 						.AddSetter ((w, e) => w.Text = (e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : "до износа"))
@@ -290,12 +298,17 @@ namespace workwear.Journal
 				() => FluentColumnsConfig<NormJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
 					.AddColumn("Название").Resizable().AddTextRenderer(node => node.Name).WrapWidth(700).SearchHighlight()
-					.AddColumn("№ ТОН").Resizable().AddTextRenderer(node => node.TonNumber)
-					.AddColumn("№ Приложения").Resizable().AddTextRenderer(node => node.TonAttachment)
-					.AddColumn("№ Пункта").Resizable().AddTextRenderer(node => node.TonParagraph).SearchHighlight()
 					.AddColumn("Использована").ToolTipText(n => n.UsageToolTip).AddTextRenderer(node => node.UsageText)
 					.AddColumn("Должности[Подразделения›Отдел]").AddTextRenderer(node => node.Posts).SearchHighlight()
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
+					.Finish()
+			);
+
+			TreeViewColumnsConfigFactory.Register<EtnNormJournalViewModel>(
+				() => FluentColumnsConfig<Norm>.Create()
+					.AddColumn("№ в приказе").AddReadOnlyTextRenderer(node => node.NumberNorm).SearchHighlight()
+					.AddColumn("Должность").Resizable().AddReadOnlyTextRenderer(node => node.NormName).SearchHighlight()
+					.AddColumn("Количество строк").AddReadOnlyTextRenderer(node => node.ItemsCount.ToString()).XAlign(0.5f)
 					.Finish()
 			);
 			TreeViewColumnsConfigFactory.Register<DutyNormsJournalViewModel>(
@@ -306,7 +319,10 @@ namespace workwear.Journal
 					.AddColumn("Начало действия").AddTextRenderer(node => node.DateFromString)
 					.AddColumn("Окончание действия").AddTextRenderer(node => node.DateToString)
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
-					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
+					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => {
+						c.Foreground = x.RowColor;
+						c.Background = null;
+					})
 					.Finish()
 			);
 			
@@ -320,6 +336,9 @@ namespace workwear.Journal
 					.AddColumn("Размер").AddTextRenderer(node=>node.WearSize)
 					.AddColumn("Рост").AddTextRenderer(node=>node.Height)
 					.AddColumn("Количество").AddTextRenderer(node=>node.BalanceText)
+					.AddColumn("Штрихкоды").Resizable()
+						.Visible(jwm.FeaturesService.Available(WorkwearFeature.Barcodes))
+						.AddTextRenderer(node=>node.Barcodes).SearchHighlight()
 					.AddColumn("Стоимость").AddTextRenderer(node=>node.AvgCostText)
 					.AddColumn ("Износ на сегодня").AddProgressRenderer (e => ((int)(e.Percentage * 100)).Clamp(0, 100))
 						.AddSetter ((w, e) => w.Text = (e.ExpiryDate.HasValue ? $"до {e.ExpiryDate.Value:d}" : "до износа"))
@@ -409,17 +428,17 @@ namespace workwear.Journal
 					.AddColumn("Можно стирать").Visible(jvm.FeaturesService.Available(WorkwearFeature.ClothingService))
 						.AddTextRenderer(n => n.WashableText)
 					.AddColumn("Идентификатор в каталоге").Visible(jvm.FeaturesService.Available(WorkwearFeature.Catalog))
-						.AddTextRenderer(n => n.UseBarcodeText)
+						.AddTextRenderer(n => n.CatalogId)
 					.RowCells().AddSetter<Gtk.CellRendererText>((c, x) => c.Foreground = x.Archival? "gray": "black")
 					.Finish()
 			);
 
 			TreeViewColumnsConfigFactory.Register<StockBalanceJournalViewModel>(
 				sbjvm => FluentColumnsConfig<StockBalanceJournalNode>.Create()
-					.AddColumn("ИД").AddReadOnlyTextRenderer(e => e.Id.ToString()).SearchHighlight()
+					.AddColumn("ИД").AddReadOnlyTextRenderer(e => e.NomenclatureId.ToString()).SearchHighlight()
 					.AddColumn("Номер").Resizable().AddTextRenderer(e => e.NomenclatureNumber).SearchHighlight()
 					.AddColumn("Наименование").Resizable().AddTextRenderer(e => e.NomenclatureName).WrapWidth(1000).SearchHighlight()
-					.AddColumn("Пол").Resizable().AddTextRenderer(e => e.SexText).SearchHighlight()
+					.AddColumn("Пол").Resizable().AddTextRenderer(e => e.SexText)
 					.AddColumn("Размер").Resizable().AddTextRenderer(e => e.SizeName).SearchHighlight()
 					.AddColumn("Рост").Resizable().AddTextRenderer(e => e.HeightName).SearchHighlight()
 					.AddColumn("Количество").AddTextRenderer(e => e.BalanceText, useMarkup: true)
@@ -440,6 +459,9 @@ namespace workwear.Journal
 					.AddColumn("Сумма")
 						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Selling))
 						.AddTextRenderer(e => e.SumSaleCostText)
+					.AddColumn("Промаркировано")
+						.Visible(sbjvm.FeaturesService.Available(WorkwearFeature.Barcodes))
+						.AddTextRenderer(e => e.BarcodeCount.ToString())
 					.Finish()
 			);
 
@@ -473,6 +495,21 @@ namespace workwear.Journal
 					.Finish()
 			);
 
+			TreeViewColumnsConfigFactory.Register<OverNormIssuedJournalViewModel>(
+				() => FluentColumnsConfig<OverNormIssuedJournalNode>.Create()
+					.AddColumn("Дата").AddTextRenderer(node => node.DateText)
+					.AddColumn("Тип").AddTextRenderer(node => node.TypeText)
+					.AddColumn("Табельный").AddTextRenderer(node => node.PersonnelNumber).SearchHighlight()
+					.AddColumn("Сотрудник").Resizable().AddTextRenderer(node => node.EmployeeName).SearchHighlight()
+					.AddColumn("Номенклатура").Resizable().AddTextRenderer(node => node.NomenclatureName).SearchHighlight().WrapWidth(700)
+					.AddColumn("Размер").AddTextRenderer(node => node.WearSize)
+					.AddColumn("Рост").AddTextRenderer(node => node.Height)
+					.AddColumn("Количество").AddTextRenderer(node => node.Amount.ToString())
+					.AddColumn("Износ").AddTextRenderer(node => node.WearPercentText)
+					.AddColumn("Штрихкоды").Resizable().AddTextRenderer(node => node.Barcodes).SearchHighlight()
+					.Finish()
+			);
+
 			TreeViewColumnsConfigFactory.Register<WarehouseJournalViewModel>(
 				() => FluentColumnsConfig<WarehouseJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString()).SearchHighlight()
@@ -496,15 +533,24 @@ namespace workwear.Journal
 					.Finish()
 			);
 			
+			TreeViewColumnsConfigFactory.Register<CauseIssueJournalViewModel>(
+				() => FluentColumnsConfig<CauseIssueJournalNode>.Create()
+					.AddColumn("ИД").AddTextRenderer(node=>node.Id.ToString()).SearchHighlight()
+					.AddColumn("Название").AddTextRenderer(node=>node.Name).SearchHighlight()
+					.Finish()
+			);
+			
 			TreeViewColumnsConfigFactory.Register<BarcodeJournalViewModel>(
 				() => FluentColumnsConfig<BarcodeJournalNode>.Create()
 					.AddColumn("ИД").AddTextRenderer(node => node.Id.ToString())
 					.AddColumn("Значение").AddTextRenderer(node => node.Value).SearchHighlight()
+					.AddColumn("Номер").AddTextRenderer(node => node.KitNumberText).XAlign(0.5f)
 					.AddColumn("Создан").AddReadOnlyTextRenderer(x => x.CreateDate.ToShortDateString())
 					.AddColumn("Номенклатура").AddTextRenderer(node => node.Nomenclature).SearchHighlight()
 					.AddColumn("Размер").AddTextRenderer(node => node.Size)
 					.AddColumn("Рост").AddTextRenderer(node => node.Height)
-					.AddColumn("Сотрудник").AddReadOnlyTextRenderer(x => x.FullName).SearchHighlight()
+					.AddColumn("Привязан").AddReadOnlyTextRenderer(x => x.NameText).SearchHighlight()
+					.AddColumn("Название").AddReadOnlyTextRenderer(node => node.Label).SearchHighlight()
 					.AddColumn("Комментарий").AddTextRenderer(node => node.Comment).SearchHighlight()
 					.Finish()
 				);

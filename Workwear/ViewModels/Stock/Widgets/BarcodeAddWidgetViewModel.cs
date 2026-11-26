@@ -15,6 +15,7 @@ using Workwear.Domain.Stock.Documents;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Stock.Widgets {
 	public class BarcodeAddWidgetViewModel : UowDialogViewModelBase, IWindowDialogSettings {

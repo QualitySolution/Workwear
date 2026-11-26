@@ -8,6 +8,7 @@ using QS.DomainModel.Entity;
 using QSWidgetLib;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
+using Workwear.Domain.Operations.Graph;
 using Workwear.Domain.Stock;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Company.EmployeeChildren;
@@ -56,14 +57,13 @@ namespace Workwear.Views.Company.EmployeeChildren
 		void ConfigureTable()
 		{
 			ytreeWorkwear.ColumnsConfig = Gamma.GtkWidgets.ColumnsConfigFactory.Create<EmployeeCardItem>()
-				.AddColumn("ТОН").AddTextRenderer(item => item.TonText)
 				.AddColumn("Тип выдачи").Visible(ViewModel.FeaturesService.Available(WorkwearFeature.CollectiveExpense))
 					.AddTextRenderer(item => item.ProtectionTools.Type.IssueType.GetEnumTitle())
 				.AddColumn("Наименование").Resizable().AddTextRenderer(item => item.ProtectionTools.Name).WrapWidth(700)
 				.AddColumn("По норме").AddTextRenderer(item => item.AmountByNormText)
 				.AddColumn("Срок службы").AddTextRenderer(item => item.NormLifeText)
 				.AddColumn("Послед. получения")
-					.AddPixbufRenderer(item => item.LastIssued(DateTime.Today, ViewModel.BaseParameters).Any(x => ((EmployeeIssueOperation)x.item.IssueOperation).ManualOperation) ? handIcon : null)
+					.AddPixbufRenderer(item => GetManualIssueIcon(item))
 					.AddTextRenderer(item => MakeLastIssuedText(item), useMarkup: true)
 				.AddColumn("Числится").AddTextRenderer(item => item.AmountText)
 					.AddSetter((w, item) => w.Foreground = item.AmountColor)
@@ -103,6 +103,11 @@ namespace Workwear.Views.Company.EmployeeChildren
 		private string MakeLastIssuedText(EmployeeCardItem item) => String.Join("\n", 
 			item.LastIssued(DateTime.Today, ViewModel.BaseParameters)
 				.Select(x => $"{FormatOfLastIssue(x.date.Date)} - {x.amount}{ShowIfExist(x.removed)}"));
+		private Pixbuf GetManualIssueIcon(EmployeeCardItem item) =>
+			item.LastIssued(DateTime.Today, ViewModel.BaseParameters)
+				.Any(x => x.item.IssueOperation is IEmployeeGraphIssueOperation operation && operation.ManualOperation)
+					? handIcon
+					: null;
 		private string ShowIfExist(int removed) => removed > 0 ? $"(-{removed})" : "";
 
 		private string FormatOfLastIssue(DateTime issueDate) {
@@ -169,7 +174,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 				var itemOpenLastIssue = new MenuItemId<EmployeeCardItem>("Открыть документ с последней выдачей");
 				itemOpenLastIssue.ID = selected;
-				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
+				itemOpenLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters, ViewModel.UoW) != null;
 				itemOpenLastIssue.Activated += (sender, e) => viewModel.OpenLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemOpenLastIssue);
 
@@ -177,7 +182,7 @@ namespace Workwear.Views.Company.EmployeeChildren
 
 				var itemRecalculateLastIssue = new MenuItemId<EmployeeCardItem>("Пересчитать сроки носки последней выдаче");
 				itemRecalculateLastIssue.ID = selected;
-				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters) != null;
+				itemRecalculateLastIssue.Sensitive = selected?.LastIssueOperation(DateTime.Today, ViewModel.BaseParameters, ViewModel.UoW) != null;
 				itemRecalculateLastIssue.Activated += (sender, e) => viewModel.RecalculateLastIssue(((MenuItemId<EmployeeCardItem>)sender).ID);
 				menu.Add(itemRecalculateLastIssue);
 

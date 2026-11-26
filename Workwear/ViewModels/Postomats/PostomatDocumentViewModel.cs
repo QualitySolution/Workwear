@@ -24,6 +24,8 @@ using Workwear.Domain.Postomats;
 using Workwear.Journal.Filter.ViewModels.ClothingService;
 using workwear.Journal.ViewModels.ClothingService;
 using Workwear.ViewModels.ClothingService;
+using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 using CellLocation = Workwear.Domain.Postomats.CellLocation;
@@ -65,7 +67,10 @@ namespace Workwear.ViewModels.Postomats {
 			Validations.Clear();
 			Validations.Add(new ValidationRequest(Entity, 
 				new ValidationContext(Entity, new Dictionary<object, object> {{nameof(IUnitOfWorkFactory), unitOfWorkFactory} })));
-			Entity.Items.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(CanChangePostomat));
+			Entity.Items.CollectionChanged += (sender, args) => {
+				OnPropertyChanged(nameof(CanChangePostomat));
+				OnPropertyChanged(nameof(TotalText));
+			};
 		}
 
 		#region IDialogDocumentation
@@ -117,12 +122,18 @@ namespace Workwear.ViewModels.Postomats {
 		public bool CanChangePostomat => Entity.Items.Count == 0;
 		public bool CanUseBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 
+		public string TotalText => $"Позиций в документе: {Entity.Items.Count}";
+
 		#endregion
 
 		#region Команды View
 
 		public void AddFromScan() {
-			NavigationManager.OpenViewModel<ClothingAddViewModel, PostomatDocumentViewModel>(this, this);
+			//Здесь зануления других моделей обязательно чтобы их не создавал DI
+			NavigationManager.OpenViewModelTypedArgs<ClothingAddViewModel>(
+				this,
+				new[] { typeof(PostomatDocumentViewModel), typeof(OverNormViewModel), typeof(ReturnViewModel), typeof(WriteOffViewModel), typeof(WarehouseTransferViewModel) },
+				new object[] { this, null, null, null, null });
 		}
 		
 		public void AddItems(IEnumerable<ServiceClaim> claims) {
@@ -135,7 +146,10 @@ namespace Workwear.ViewModels.Postomats {
 
 		public void ReturnFromService() {
 			var selectPage = NavigationManager.OpenViewModel<ClaimsJournalViewModel>(this, OpenPageOptions.AsSlave,
-				model => model.ExcludeInDocs = true,
+				model => {
+					model.ExcludeInDocs = true;
+					model.ExcludeClaimIds = Entity.Items.Select(x => x.ServiceClaim.Id).ToList();
+				},
 				addingRegistrations: builder => {
 					builder.RegisterInstance<Action<ClaimsJournalFilterViewModel>>(
 						filter => {
@@ -204,7 +218,8 @@ namespace Workwear.ViewModels.Postomats {
 				return;
 			}
 			
-			Save();
+			if(!Save())
+				return;
 			switch(type) 
 			{
 				case PostomatPrintType.Document: PrintDocument(type);

@@ -28,6 +28,7 @@ using Workwear.Domain.Supply;
 using workwear.Journal.ViewModels.Stock;
 using Workwear.Models.Analytics.WarehouseForecasting;
 using Workwear.Models.Operations;
+using Workwear.Repository.Stock;
 using Workwear.Tools.Features;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Analytics;
@@ -48,6 +49,7 @@ namespace Workwear.ViewModels.Supply {
 			IUserService userService,
 			IEntityChangeWatcher watcher,
 			StockBalanceModel stockBalanceModel,
+			StockRepository stockRepository,
 			IValidator validator = null,
 			UnitOfWorkProvider unitOfWorkProvider = null,
 			List<WarehouseForecastingItem> forecastingItems = null,
@@ -59,7 +61,9 @@ namespace Workwear.ViewModels.Supply {
 			this.currentUserSettings = currentUserSettings ?? throw new ArgumentNullException(nameof(currentUserSettings));
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			StockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
-            			
+			//Отдельная модель, чтобы фиксируемый остаток не зависел от выбранного в диалоге склада.
+			stockOnCreateBalanceModel = new StockBalanceModel(unitOfWorkProvider, stockRepository);
+
 			if(Entity.Id == 0)
 				Entity.CreatedbyUser = userService.GetCurrentUser();
 			
@@ -158,7 +162,9 @@ namespace Workwear.ViewModels.Supply {
 		                                  SelectedItems.Any(i => i.Requested != i.Ordered);
 		public virtual bool CanEditDiffCause => Entity.Status != ShipmentStatus.New && Entity.Status != ShipmentStatus.Draft;
 		public virtual bool CanEditRequested => Entity.Status == ShipmentStatus.New || Entity.Status == ShipmentStatus.Draft;
-		public virtual bool CanEditOrdered => Entity.Status != ShipmentStatus.Ordered || Entity.Status != ShipmentStatus.Received;
+		//Было обсуждение с СПС. Для смены количества заказанного нужно явно сменить статус и сохранить документ,
+		//чтобы не злоупотребляли и чтобы было проще отследить по истории изменений.
+		public virtual bool CanEditOrdered => Entity.Status != ShipmentStatus.Ordered && Entity.Status != ShipmentStatus.Received;
 		public virtual bool CanSandEmail => featuresService.Available(WorkwearFeature.Communications);
 		public virtual bool CanAddSize => SelectedItems != null && SelectedItems.Any(x => x.WearSizeType != null || x.HeightType != null) && SelectedItems.Length == 1;
 		public virtual bool VisibleWarehouseForecastingDate => Entity.WarehouseForecastingDate != null;
@@ -223,6 +229,13 @@ namespace Workwear.ViewModels.Supply {
 		}
 		
 		public void AddFromForecasting(List<WarehouseForecastingItem> forecastingItems, ShipmentParams shipmentParameters) {
+			var skippedItemsCount = forecastingItems.Count(i => i.Nomenclature == null && GetForecastingShipmentAmount(i, shipmentParameters.Type) < 0);
+			if(skippedItemsCount > 0) {
+				interactive.ShowMessage(
+					ImportanceLevel.Warning,
+					$"В заявку на поставку не попадет {skippedItemsCount} позиций, так как для них не указана конкретная складская номенклатура.",
+					"Создание заявки на поставку");
+			}
 
 			var nomIds = forecastingItems
 				.Where( i => i.Nomenclature != null)
@@ -246,15 +259,26 @@ namespace Workwear.ViewModels.Supply {
 				.Future();
 			
 			foreach(var fitem in forecastingItems.Where( i => i.Nomenclature != null)) {
-				if(shipmentParameters.Type == ShipmentCreateType.WithDebt && fitem.WithDebt < 0 ||
-				   shipmentParameters.Type == ShipmentCreateType.WithoutDebt && fitem.WithoutDebt < 0)
+				var amount = GetForecastingShipmentAmount(fitem, shipmentParameters.Type);
+				if(amount < 0)
 					Entity.AddItem(
 						UoW.GetInSession(fitem.Nomenclature),
 						UoW.GetInSession(fitem.Size),
 						UoW.GetInSession(fitem.Height),
-						(shipmentParameters.Type == ShipmentCreateType.WithDebt ? fitem.WithDebt : fitem.WithoutDebt) * -1,
+						amount * -1,
 						fitem.Nomenclature.SaleCost ?? 0 //Возможно стоит подвязаться на переключатель типа стоимости в прогнозе
 						);
+			}
+		}
+
+		private int GetForecastingShipmentAmount(WarehouseForecastingItem item, ShipmentCreateType shipmentCreateType) {
+			switch(shipmentCreateType) {
+				case ShipmentCreateType.WithDebt:
+					return item.WithDebt;
+				case ShipmentCreateType.WithoutDebt:
+					return item.WithoutDebt;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(shipmentCreateType), shipmentCreateType, null);
 			}
 		}
 
@@ -303,6 +327,8 @@ namespace Workwear.ViewModels.Supply {
 		}
 
 		#region Складские остатки
+		private readonly StockBalanceModel stockOnCreateBalanceModel;
+
 		private Warehouse warehouse;
 		public virtual Warehouse Warehouse {
 			get => warehouse;
@@ -335,8 +361,11 @@ namespace Workwear.ViewModels.Supply {
 				StockBalanceModel.Warehouse = null;
 			var allNomenclatures = Entity.Items.Select(x => x.Nomenclature).Distinct().ToList();
 			StockBalanceModel.AddNomenclatures(allNomenclatures);
+			stockOnCreateBalanceModel.AddNomenclatures(allNomenclatures);
 			foreach(var item in Entity.Items) {
 				item.InStock = StockBalanceModel.GetShipmentItemInStock(item.StockPosition, IsNullWearPercent);
+				if(item.Id == 0)
+					item.InStockOnCreate = stockOnCreateBalanceModel.GetShipmentItemInStock(item.StockPosition, false);
 			}
 		}
 		#endregion
@@ -344,7 +373,10 @@ namespace Workwear.ViewModels.Supply {
 
 		public override bool Save() {
 			logger.Info ("Запись документа...");
-			
+
+			Entity.FullOrdered = Items.All(i => i.Ordered >= i.Requested);
+			Entity.UpdateStatus();
+
 			logger.Info("Валидация...");
 			if(!Validate()) {
 				logger.Warn("Валидация не пройдена, сохранение отменено.");
@@ -361,12 +393,11 @@ namespace Workwear.ViewModels.Supply {
 			}
 			if(!String.IsNullOrEmpty(duplicateMessage) && !interactive.Question($"В документе есть повторяющиеся позиции:\n{duplicateMessage}\n Сохранить документ?"))
 				return false;
-			
-			Entity.FullOrdered = Items.All(i => i.Ordered >= i.Requested);
-			
-			if(Entity.Id == 0) 
+
+			if(Entity.Id == 0)
 				Entity.CreationDate = DateTime.Today;
-			UoWGeneric.Save ();
+			UoW.Save(Entity);
+			UoW.Commit();
 			logger.Info ("Документ сохранён.");
 			return true;
 		}

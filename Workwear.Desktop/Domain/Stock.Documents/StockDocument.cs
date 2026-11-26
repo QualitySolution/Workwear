@@ -5,7 +5,7 @@ using QS.Project.Domain;
 
 namespace Workwear.Domain.Stock.Documents
 {
-	public class StockDocument : BusinessObjectBase<StockDocument>, IDomainObject
+	public class StockDocument : PropertyChangedBase, IDomainObject
 	{
 		public virtual int Id { get; set; }
 
@@ -65,6 +65,8 @@ namespace Workwear.Domain.Stock.Documents
 					return typeof(Expense);
 				case StockDocumentType.ExpenseDutyNormDoc:
 					return typeof(ExpenseDutyNorm);
+				case StockDocumentType.OverNormDoc:
+					return typeof(OverNorm);
 				case StockDocumentType.CollectiveExpense:
 					return typeof(CollectiveExpense);
 				case StockDocumentType.WriteoffDoc:
@@ -75,6 +77,8 @@ namespace Workwear.Domain.Stock.Documents
 					return typeof(Completion);
 				case StockDocumentType.InspectionDoc:
 					return typeof(Inspection);
+				case StockDocumentType.BarcodingDoc:
+					return typeof(Barcoding);
 			}
 			throw new NotSupportedException();
 		}
@@ -86,6 +90,8 @@ namespace Workwear.Domain.Stock.Documents
 		Income,
 		[Display(Name = "Выдача сотруднику")]
 		ExpenseEmployeeDoc,
+		[Display(Name = "Выдача вне нормы")]
+		OverNormDoc,
 		[Display(Name = "Коллективная выдача")]
 		CollectiveExpense,
 		[Display(Name = "Выдача по дежурной норме")]
@@ -99,6 +105,8 @@ namespace Workwear.Domain.Stock.Documents
 		[Display(Name = "Комплектация")]
 		Completion,
 		[Display(Name = "Оценка")]
-		InspectionDoc
+		InspectionDoc,
+        [Display(Name = "Маркировка")]
+        BarcodingDoc,
 	}
 }

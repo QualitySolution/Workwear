@@ -52,7 +52,7 @@ namespace Workwear.Test.Integration.Tools
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-            baseParameters.ColDayAheadOfShedule.Returns(0);
+            baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
 				MakeBaseParametersTable(uow);
@@ -73,7 +73,7 @@ namespace Workwear.Test.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
@@ -138,7 +138,7 @@ namespace Workwear.Test.Integration.Tools
 			var ask = Substitute.For<IInteractiveQuestion>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на обработку события удаления")) {
 				MakeBaseParametersTable(uow);
@@ -160,7 +160,7 @@ namespace Workwear.Test.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);
@@ -251,7 +251,7 @@ namespace Workwear.Test.Integration.Tools
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var builder = new ContainerBuilder();
@@ -284,12 +284,12 @@ namespace Workwear.Test.Integration.Tools
 				nomenclature2.Type = nomenclatureType2;
 				uow.Save(nomenclature2);
 
-				var protectionTools1 = new ProtectionTools();
+				var protectionTools1 = new ProtectionTools { Type = nomenclatureType };
 				protectionTools1.Name = "СИЗ для тестирования";
 				protectionTools1.AddNomenclature(nomenclature);
 				uow.Save(protectionTools1);
 
-				var protectionTools2 = new ProtectionTools();
+				var protectionTools2 = new ProtectionTools { Type = nomenclatureType };
 				protectionTools2.Name = "СИЗ для тестирования2";
 				protectionTools2.AddNomenclature(nomenclature2);
 				uow.Save(protectionTools2);
@@ -337,9 +337,10 @@ namespace Workwear.Test.Integration.Tools
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				employee.WorkwearItems.First(e => e.ProtectionTools.IsSame(protectionTools2)).Created = new DateTime(2018, 4, 22);
 				uow.Save(expense.Employee);
 				uow.Commit();
@@ -358,6 +359,97 @@ namespace Workwear.Test.Integration.Tools
 					var resultEmployee = uow2.GetById<EmployeeCard>(employee.Id);
 					Assert.That(resultEmployee.WorkwearItems.First(e => e.ProtectionTools.IsSame(protectionTools2)).NextIssue, 
 					Is.EqualTo(new DateTime(2018, 4, 22)));
+				}
+			}
+		}
+
+		[Test(Description = "При смене номенклатуры нормы у выдачи списание по ней переходит в ту же номенклатуру нормы и учитывается в графе.")]
+		[Category("real case")]
+		public void HandleUpdateEmployeeIssueOperation_ChangeProtectionTools_MoveWriteoffToNewProtectionToolsTest()
+		{
+			var ask = Substitute.For<IInteractiveQuestion>();
+			ask.Question(string.Empty).ReturnsForAnyArgs(true);
+			var baseParameters = Substitute.For<BaseParameters>();
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
+
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot("Тест на смену номенклатуры нормы у выдачи")) {
+				MakeBaseParametersTable(uow);
+				var builder = new ContainerBuilder();
+				builder.RegisterInstance(ask).As<IInteractiveQuestion>();
+				builder.RegisterInstance(baseParameters).As<BaseParameters>();
+				builder.RegisterInstance(UnitOfWorkFactory).As<IUnitOfWorkFactory>();
+				builder.RegisterType<EmployeeIssueRepository>().AsSelf();
+				var container = builder.Build();
+
+				BusinessLogicGlobalEventHandler.Init(container);
+
+				var nomenclatureType = new ItemsType();
+				nomenclatureType.Name = "Тестовый тип номенклатуры";
+				uow.Save(nomenclatureType);
+
+				var nomenclature = new Nomenclature();
+				nomenclature.Type = nomenclatureType;
+				uow.Save(nomenclature);
+
+				var oldProtectionTools = new ProtectionTools { Type = nomenclatureType };
+				oldProtectionTools.Name = "Старая номенклатура нормы";
+				oldProtectionTools.AddNomenclature(nomenclature);
+				uow.Save(oldProtectionTools);
+
+				var newProtectionTools = new ProtectionTools { Type = nomenclatureType };
+				newProtectionTools.Name = "Новая номенклатура нормы";
+				newProtectionTools.AddNomenclature(nomenclature);
+				uow.Save(newProtectionTools);
+
+				var norm = new Norm();
+				var normItem = norm.AddItem(newProtectionTools);
+				normItem.Amount = 1;
+				normItem.NormPeriod = NormPeriodType.Year;
+				normItem.PeriodCount = 1;
+				uow.Save(norm);
+
+				var employee = new EmployeeCard();
+				employee.AddUsedNorm(norm);
+				uow.Save(employee);
+
+				var warehouseOperation = new WarehouseOperation();
+				warehouseOperation.Nomenclature = nomenclature;
+				uow.Save(warehouseOperation);
+
+				var issueOp = new EmployeeIssueOperation();
+				issueOp.OperationTime = new DateTime(2024, 1, 10);
+				issueOp.Employee = employee;
+				issueOp.Nomenclature = nomenclature;
+				issueOp.ProtectionTools = oldProtectionTools;
+				issueOp.Issued = 1;
+				issueOp.WarehouseOperation = warehouseOperation;
+				uow.Save(issueOp);
+
+				var writeoffOp = new EmployeeIssueOperation();
+				writeoffOp.OperationTime = new DateTime(2024, 6, 10);
+				writeoffOp.Employee = employee;
+				writeoffOp.Nomenclature = nomenclature;
+				writeoffOp.ProtectionTools = oldProtectionTools;
+				writeoffOp.Returned = 1;
+				writeoffOp.IssuedOperation = issueOp;
+				uow.Save(writeoffOp);
+				uow.Commit();
+
+				//Перепривязываем выдачу к новой номенклатуре нормы
+				issueOp.ProtectionTools = newProtectionTools;
+				issueOp.NormItem = normItem;
+				uow.Save(issueOp);
+				uow.Commit();
+
+				//проверяем данные
+				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot("Тест на смену номенклатуры нормы у выдачи uow2")) {
+					var resultWriteoff = uow2.GetById<EmployeeIssueOperation>(writeoffOp.Id);
+					Assert.That(resultWriteoff.ProtectionTools.Id, Is.EqualTo(newProtectionTools.Id));
+
+					var resultEmployee = uow2.GetById<EmployeeCard>(employee.Id);
+					resultEmployee.FillWearReceivedInfo(new EmployeeIssueRepository(uow2));
+					var item = resultEmployee.WorkwearItems.First(x => x.ProtectionTools.Id == newProtectionTools.Id);
+					Assert.That(item.Graph.AmountAtEndOfDay(new DateTime(2024, 7, 1)), Is.EqualTo(0));
 				}
 			}
 		}
@@ -386,7 +478,7 @@ namespace Workwear.Test.Integration.Tools
 				nomenclature.Type = nomenclatureType;
 				uow.Save(nomenclature);
 
-				var protectionTools = new ProtectionTools();
+				var protectionTools = new ProtectionTools { Type = nomenclatureType };
 				protectionTools.Name = "СИЗ для тестирования";
 				protectionTools.AddNomenclature(nomenclature);
 				uow.Save(protectionTools);

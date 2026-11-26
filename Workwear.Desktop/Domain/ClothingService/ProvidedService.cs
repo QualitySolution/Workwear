@@ -41,7 +41,14 @@ namespace Workwear.Domain.ClothingService {
 			get => cost;
 			set => SetField(ref cost, value);
 		}
-		
+
+		private decimal amount = 1;
+		[Display(Name = "Количество")]
+		public virtual decimal Amount {
+			get => amount;
+			set => SetField(ref amount, value);
+		}
+
 		private DateTime serviceDate = DateTime.Now;
 		[Display(Name = "Дата оказания услуги")]
 		public virtual DateTime ServiceDate {
@@ -51,6 +58,7 @@ namespace Workwear.Domain.ClothingService {
 
 		#region Вычисляемые свойства
 		public virtual string Title => $"{Service?.Name} за {Cost} руб.";
+		public virtual decimal TotalCost => Cost * Amount;
 		#endregion
 	}
 }

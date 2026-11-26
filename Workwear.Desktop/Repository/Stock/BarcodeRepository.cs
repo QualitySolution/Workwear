@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using QS.DomainModel.UoW;
 using Workwear.Domain.ClothingService;
-using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 
@@ -21,16 +21,11 @@ namespace Workwear.Repository.Stock {
 				.SingleOrDefault();
 		}
 
-		public EmployeeCard GetLastEmployeeFor(Barcode barcode) {
-			EmployeeIssueOperation employeeIssueOperationAlias = null;
-
-			return unitOfWorkProvider.UoW.Session.QueryOver<BarcodeOperation>()
-				.Where(x => x.Barcode.Id == barcode.Id)
-				.JoinAlias(x => x.EmployeeIssueOperation, () => employeeIssueOperationAlias)
-				.Select(x => employeeIssueOperationAlias.Employee)
-				.Take(1)
-				.SingleOrDefault<EmployeeCard>();
+		public BarcodeOperation GetLastOperationAt(Barcode barcode, DateTime? date = null) {
+			var loadedBarcode = unitOfWorkProvider.UoW.GetById<Barcode>(barcode.Id);
+			return loadedBarcode?.LastOperationAt(date ?? DateTime.Now);
 		}
+
 		
 		public ServiceClaim GetActiveServiceClaimFor(Barcode barcode) {
 			return unitOfWorkProvider.UoW.Session.QueryOver<ServiceClaim>()

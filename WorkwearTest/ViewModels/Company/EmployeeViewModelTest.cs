@@ -27,6 +27,7 @@ using Workwear.Repository.Company;
 using Workwear.Repository.Operations;
 using Workwear.Repository.Regulations;
 using Workwear.Repository.Stock;
+using Workwear.Repository.Stock.Documents;
 using Workwear.Tools;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Features;
@@ -79,23 +80,26 @@ namespace WorkwearTest.ViewModels.Company {
 			builder.RegisterType<EmployeeListedItemsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeMovementsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeNormsViewModel>().AsSelf();
+			builder.RegisterType<EmployeeOverNormViewModel>().AsSelf();
 			builder.RegisterType<EmployeePhotoViewModel>().AsSelf();
 			builder.RegisterType<EmployeeRepository>().AsSelf();
 			builder.RegisterType<EmployeeVacationsViewModel>().AsSelf();
 			builder.RegisterType<EmployeeViewModel>().AsSelf();
 			builder.RegisterType<EmployeeWearItemsViewModel>().AsSelf();
+			builder.RegisterType<BarcodeService>().AsSelf();
 			builder.RegisterType<ManualEmployeeIssueOperationsViewModel>().AsSelf();
 			builder.RegisterType<NavigationManagerForTests>().AsSelf().As<INavigationManager>().SingleInstance();
 			builder.RegisterType<NormRepository>().AsSelf();
 			builder.RegisterType<PersonNames>().AsSelf();
 			builder.RegisterType<StockBalanceModel>().AsSelf();
+			builder.RegisterType<StockDocumentRepository>().AsSelf();
 			builder.RegisterType<StockRepository>().AsSelf();
 			builder.RegisterType<UnitOfWorkProvider>().AsSelf().InstancePerLifetimeScope();
-			builder.Register(x => Substitute.For<BarcodeService>(baseParameters)).AsSelf();
 			builder.Register(x => UnitOfWorkFactory).As<IUnitOfWorkFactory>();
 			builder.Register(x => baseParameters).As<BaseParameters>();
 			builder.Register(x => commonMessages).As<CommonMessages>();
 			builder.Register(x => deleteEntityService).As<IDeleteEntityService>();
+			builder.Register(x => new EntityChangeDiWatcher(NotifyConfiguration.Instance)).As<IEntityChangeWatcher>().InstancePerLifetimeScope();
 			builder.Register(x => featureService).As<FeaturesService>();
 			builder.Register(x => interactive).As<IInteractiveService>().As<IInteractiveMessage>().As<IInteractiveQuestion>();
 			builder.Register(x => lkSpecCoinManagerService).As<SpecCoinManagerService>();
@@ -154,8 +158,8 @@ namespace WorkwearTest.ViewModels.Company {
 				uow.Save(issuedOperation1);
 				uow.Commit();
 				
-				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.UpdateNextIssueAll();
+				container.Resolve<EmployeeIssueModel>()
+					.UpdateNextIssueAll(new[] { employee }, uow: uow);
 
 				var employeeItem = employee.WorkwearItems.First();
 				Assert.That(employeeItem.NextIssue, Is.EqualTo(new DateTime(2023, 11, 11)));

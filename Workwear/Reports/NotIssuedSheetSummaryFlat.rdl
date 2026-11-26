@@ -3,7 +3,7 @@
   <Description></Description>
   <Author></Author>
   <PageHeight>17in</PageHeight>
-  <PageWidth>43in</PageWidth>
+  <PageWidth>50in</PageWidth>
   <Width>1pt</Width>
   <TopMargin>.25in</TopMargin>
   <LeftMargin>4mm</LeftMargin>
@@ -15,7 +15,7 @@
     <PrintOnLastPage>false</PrintOnLastPage>
   </PageHeader>
   <Body>
-    <Height>55.0pt</Height>
+    <Height>41.7pt</Height>
     <Columns>1</Columns>
     <ReportItems>
       <Table Name="Table1">
@@ -59,16 +59,19 @@
           <TableColumn>
             <Width>74.3pt</Width>
           </TableColumn>
-          <TableColumn >
+          <TableColumn>
             <Width>193.7pt</Width>
-          </TableColumn>
-          <TableColumn >
-            <Width>179.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>109.1pt</Width>
             <Visibility>
               <Hidden>=!{?show_stock}</Hidden>
+            </Visibility>
+          </TableColumn>
+          <TableColumn>
+            <Width>675.6pt</Width>
+            <Visibility>
+              <Hidden>=!{?show_shipment}</Hidden>
             </Visibility>
           </TableColumn>
           <TableColumn>
@@ -80,180 +83,6 @@
         </TableColumns>
         <Header>
           <TableRows>
-            <TableRow>
-              <Height>19.1pt</Height>
-              <TableCells>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox1">
-                      <Value>="Справка по невыданному на " + Format(Convert.ToDateTime({?report_date}), "dd.MM.yyyy") + " от " + Format(Convert.ToDateTime(Today()), "dd.MM.yyyy")</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                  <ColSpan>6</ColSpan>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox27">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox26">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox25">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Top>None</Top>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox15">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Top>None</Top>
-                          <Left>None</Left>
-                          <Right>None</Right>
-                          <Bottom>None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox20">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox24">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell>
-                  <ReportItems>
-                    <Textbox Name="Textbox23">
-                      <Value></Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>None</Default>
-                          <Top>None</Top>
-                          <Left >None</Left>
-                          <Right >None</Right>
-                          <Bottom >None</Bottom>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-              </TableCells>
-            </TableRow>
             <TableRow>
               <Height>13.6pt</Height>
               <TableCells>
@@ -419,28 +248,10 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox16">
                       <Value>Причина расхождения</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <TextAlign>Center</TextAlign>
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                          <Top>Solid</Top>
-                        </BorderStyle>
-                        <FontWeight>Bold</FontWeight>
-                        <BorderColor />
-                        <BorderWidth />
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox21">
-                      <Value>Дата поставки</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -476,6 +287,24 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox21">
+                      <Value>Поставки</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>Solid</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox2">
                       <Value>Сотрудники</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -505,7 +334,7 @@
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox70">
-                      <Value>=Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value)</Value>
+                      <Value>=Iif({?group_by_subdivision}, Iif(Fields!subdivision_id.IsMissing, "Без подразделения", Fields!subdivision_name.Value), "")</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <BorderStyle>
                           <Default>Solid</Default>
@@ -664,24 +493,6 @@
                     </Textbox>
                   </ReportItems>
                 </TableCell>
-                <TableCell >
-                  <ReportItems>
-                    <Textbox Name="Textbox22">
-                      <Value>={shipment_periods}</Value>
-                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-                        <BorderStyle>
-                          <Default>Solid</Default>
-                        </BorderStyle>
-                        <BorderColor />
-                        <BorderWidth />
-                        <TextAlign>Center</TextAlign>
-                        <Format>0</Format>
-                        <VerticalAlign>Middle</VerticalAlign>
-                      </Style>
-                      <CanGrow>true</CanGrow>
-                    </Textbox>
-                  </ReportItems>
-                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="Textbox54">
@@ -702,6 +513,23 @@
                 </TableCell>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="Textbox22">
+                      <Value>={shipment_periods}</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <TextAlign>Left</TextAlign>
+                        <VerticalAlign>Middle</VerticalAlign>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="Textbox6">
                       <Value>={employees}</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
@@ -710,7 +538,7 @@
                         </BorderStyle>
                         <BorderColor />
                         <BorderWidth />
-                        <TextAlign>Center</TextAlign>
+                        <TextAlign>Left</TextAlign>
                         <Format>0</Format>
                         <VerticalAlign>Middle</VerticalAlign>
                       </Style>
@@ -722,8 +550,8 @@
             </TableRow>
           </TableRows>
         </Details>
-        <Left>0.8pt</Left>
-        <Top>0.0pt</Top>
+        <Left>0.0pt</Left>
+        <Top>6.3pt</Top>
       </Table>
     </ReportItems>
   </Body>
@@ -731,7 +559,7 @@
     <Height>13.8pt</Height>
     <PrintOnFirstPage>true</PrintOnFirstPage>
     <PrintOnLastPage>true</PrintOnLastPage>
-    <ReportItems >
+    <ReportItems>
       <Textbox Name="Textbox12">
         <Height>12pt</Height>
         <Width>265.75pt</Width>
@@ -755,28 +583,28 @@
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <DataSets>
     <DataSet Name="Data">
-      <Query >
+      <Query>
         <DataSourceName>DS1</DataSourceName>
         <Timeout>1500</Timeout>
         <CommandText>SELECT tabel.*,
        IF(@show_stock, SUM(stock.SUM), null) AS in_stock
 FROM (SELECT protection_tools.name                                                                     AS protection_tools_name,
-             protection_tools.assessed_cost * SUM(norms_item.amount)                                   AS protection_tools_assessed_cost,
+             protection_tools.assessed_cost * SUM(IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0), 0)) AS protection_tools_assessed_cost,
              employee_cards_item.protection_tools_id,
-             subdivisions.code                                                                              as subdivision_code,
-             subdivisions.id                                                                                as subdivision_id,
+             if(@group_by_subdivision, subdivisions.code, NULL)                                             as subdivision_code,
+             if(@group_by_subdivision, subdivisions.id, NULL)                                               as subdivision_id,
              if(@department_id, (SELECT name from departments as d where d.id = @department_id),
                 NULL)                                                                                  as department_name,
-             subdivisions.name                                                                              as subdivision_name,
+             if(@group_by_subdivision, subdivisions.name, NULL)                                             as subdivision_name,
              if(@show_employees,
-                GROUP_CONCAT(CONCAT_WS('',
+                LEFT(GROUP_CONCAT(CONCAT_WS('',
                                        CONCAT(employees.last_name, ' '),
                                        IF(employees.first_name = '',
                                           NULL,
                                           CONCAT(LEFT(employees.first_name, 1), '.')),
                                        IF(employees.patronymic_name = '',
                                           NULL,
-                                          CONCAT(LEFT(employees.patronymic_name, 1), '.'))) SEPARATOR ', ' LIMIT 500),
+                                          CONCAT(LEFT(employees.patronymic_name, 1), '.'))) SEPARATOR ', '), 5000),
                 null)
                                                                                                        AS employees,
              IF(@show_sex, employees.sex, NULL)                                                       as sex,
@@ -790,46 +618,57 @@ FROM (SELECT protection_tools.name                                              
              SUM(norms_item.amount)                                                                    AS amount_by_norm,
              SUM(IF(norms_item.amount - IFNULL(ballance.amount, 0) &gt; 0, norms_item.amount - IFNULL(ballance.amount, 0),
                     0)) AS need,
-             GROUP_CONCAT(DISTINCT NULLIF(diff.diff_causes, '') SEPARATOR ', ') AS diff_causes,
-             GROUP_CONCAT(DISTINCT IFNULL(period,
-                            IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,
-                               CONCAT(
-                                 CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%Y'),
-                                           NULLIF(
-                                             DATE_FORMAT(diff.end_period, '%d.%m.%Y'),
-                                             DATE_FORMAT(diff.start_period, '%d.%m.%Y')
-                                           )
-                                 ),
-                                ' (№', diff.shipment_id, ')'
-                               )))
-                         SEPARATOR ', ') AS shipment_periods
+             diff.diff_causes AS diff_causes,
+             diff.shipment_periods AS shipment_periods
       FROM employee_cards_item
                JOIN employees ON employees.id = employee_cards_item.employee_id
                LEFT JOIN posts ON employees.post_id = posts.id
                LEFT JOIN subdivisions ON employees.subdivision_id = subdivisions.id OR
                                     employees.subdivision_id IS NULL AND posts.subdivision_id = subdivisions.id
                JOIN protection_tools ON protection_tools.id = employee_cards_item.protection_tools_id
-               LEFT JOIN (SELECT protection_tools_nomenclature.protection_tools_id as prt_id,
-                                 shipment.id as shipment_id,
-                                 shipment.start_period,
-                                 shipment.end_period,
-                                 GROUP_CONCAT(DISTINCT NULLIF(shipment_items.diff_cause, '') SEPARATOR ', ') AS diff_causes,
-                                 IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL,
-                                    CONCAT(
-                                            CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y'),
-                                                      NULLIF(
-                                                              DATE_FORMAT(MAX(shipment_items.end_period), '%d.%m.%Y'),
-                                                              DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%Y')
-                                                      )),
-                                            ' (№', shipment.id, ')'
-                                    )) AS period
-                          FROM nomenclature
-                            LEFT JOIN protection_tools_nomenclature  ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
-                            LEFT JOIN shipment_items ON nomenclature.id = shipment_items.nomenclature_id
-                            LEFT JOIN shipment ON shipment_items.shipment_id = shipment.id
-                          WHERE shipment.status NOT LIKE 'Received'
-                          GROUP BY nomenclature.id, shipment.id) AS diff
-               ON diff.prt_id = protection_tools.id
+               LEFT JOIN (
+                   SELECT protection_tools_nomenclature.protection_tools_id as prt_id,
+                          GROUP_CONCAT(DISTINCT NULLIF(diff.diff_causes, '') SEPARATOR ', ') AS diff_causes,
+                          GROUP_CONCAT(DISTINCT IFNULL(period,
+                                         IF(diff.start_period IS NULL AND diff.end_period IS NULL, NULL,
+                                            CONCAT(
+                                              '№', diff.shipment_id,
+                                              ' (', CONCAT_WS(' - ', DATE_FORMAT(diff.start_period, '%d.%m.%y'),
+                                                        NULLIF(
+                                                          DATE_FORMAT(diff.end_period, '%d.%m.%y'),
+                                                          DATE_FORMAT(diff.start_period, '%d.%m.%y')
+                                                        )
+                                              ), ')',
+                                              IFNULL(CONCAT(' ', NULLIF(diff.comment, '')), '')
+                                            )))
+                                      SEPARATOR ', ') AS shipment_periods
+                   FROM protection_tools_nomenclature
+                       LEFT JOIN nomenclature ON nomenclature.id = protection_tools_nomenclature.nomenclature_id
+                       LEFT JOIN (SELECT nomenclature.id AS nom_id,
+                                         shipment.id as shipment_id,
+                                         shipment.start_period,
+                                         shipment.end_period,
+                                         shipment.comment,
+                                         GROUP_CONCAT(DISTINCT NULLIF(shipment_items.diff_cause, '') SEPARATOR ', ') AS diff_causes,
+                                         IF((MIN(shipment_items.start_period) AND MAX(shipment_items.end_period)) IS NULL, NULL,
+                                            CONCAT(
+                                                    '№', shipment.id,
+                                                    ' (', CONCAT_WS(' - ', DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%y'),
+                                                              NULLIF(
+                                                                      DATE_FORMAT(MAX(shipment_items.end_period), '%d.%m.%y'),
+                                                                      DATE_FORMAT(MIN(shipment_items.start_period), '%d.%m.%y')
+                                                              )),
+                                                    ')',
+                                                    IFNULL(CONCAT(' ', NULLIF(shipment.comment, '')), '')
+                                            )) AS period
+                                  FROM nomenclature
+                                        LEFT JOIN shipment_items ON nomenclature.id = shipment_items.nomenclature_id
+                                        LEFT JOIN shipment ON shipment_items.shipment_id = shipment.id
+                                  WHERE shipment.status NOT LIKE 'Received'
+                                  GROUP BY nomenclature.id, shipment.id) AS diff
+                       ON diff.nom_id = nomenclature.id
+                   GROUP BY protection_tools_nomenclature.protection_tools_id
+               ) AS diff ON diff.prt_id = protection_tools.id
                LEFT JOIN item_types ON item_types.id = protection_tools.item_types_id
                LEFT JOIN measurement_units ON item_types.units_id = measurement_units.id
                LEFT JOIN size_types AS sizeTypeAlias ON sizeTypeAlias.id = item_types.size_type_id
@@ -853,7 +692,7 @@ FROM (SELECT protection_tools.name                                              
                                    LEFT JOIN protection_tools as b_pt on b_op.protection_tools_id = b_pt.id
                                    LEFT JOIN operation_issued_by_employee as b_opwo
                                              on b_op.id = b_opwo.issued_operation_id
-                          WHERE (b_emp.dismiss_date &gt; CONVERT(@report_date, DATE) OR b_emp.dismiss_date is null)
+                          WHERE (b_emp.dismiss_date IS NULL OR (!@exclude_dismiss_after AND b_emp.dismiss_date &gt; CONVERT(@report_date, DATE)))
                             AND (@subdivision_id = -1 OR b_emp.subdivision_id = @subdivision_id)
                             AND (@department_id = -1 OR b_emp.department_id = @department_id)
                             AND b_op.auto_writeoff_date &gt; CONVERT(@report_date, DATE)
@@ -862,7 +701,7 @@ FROM (SELECT protection_tools.name                                              
                           GROUP BY b_emp.id, b_op.protection_tools_id) as ballance
                          ON (employee_cards_item.employee_id = ballance.emp_id AND
                              employee_cards_item.protection_tools_id = ballance.pt_id)
-      WHERE (employees.dismiss_date &gt; CONVERT(@report_date, DATE) OR employees.dismiss_date IS NULL)
+      WHERE (employees.dismiss_date IS NULL OR (!@exclude_dismiss_after AND employees.dismiss_date &gt; CONVERT(@report_date, DATE)))
         AND ((-1 IN (@employee_groups_ids))
           OR (@without_groups AND NOT EXISTS
               (SELECT *
@@ -877,20 +716,33 @@ FROM (SELECT protection_tools.name                                              
         AND (@subdivision_id = -1 OR employees.subdivision_id = @subdivision_id)
         AND (@department_id = -1 OR employees.department_id = @department_id)
         AND ((-1 IN (@protection_tools_ids)) OR protection_tools.id IN (@protection_tools_ids))
+        AND protection_tools.dispenser = 0
         AND (@condition = false OR norm_conditions.issuance_start is null OR
              IF(SUBSTRING(norm_conditions.issuance_start, 6) &lt; SUBSTRING(norm_conditions.issuance_end, 6),
-                SUBSTRING(@report_date, 6) &gt;= SUBSTRING(norm_conditions.issuance_start, 6) AND
-                SUBSTRING(@report_date, 6) &lt;= SUBSTRING(norm_conditions.issuance_end, 6),
-                SUBSTRING(@report_date, 6) &gt;= SUBSTRING(norm_conditions.issuance_start, 6) OR
-                SUBSTRING(@report_date, 6) &lt;= SUBSTRING(norm_conditions.issuance_end, 6)))
-        AND (@issue_type = '' OR item_types.issue_type = @issue_type)
-        AND employee_cards_item.next_issue &lt; CONVERT(@report_date, DATE)
+                DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start, 6) AND
+                DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end, 6),
+                DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &gt;= SUBSTRING(norm_conditions.issuance_start, 6) OR
+                DATE_FORMAT(CONVERT(@report_date, DATE), '%m-%d') &lt;= SUBSTRING(norm_conditions.issuance_end, 6)))
+        AND (@issue_type = '' OR EXISTS (
+              SELECT 1 FROM protection_tools_nomenclature AS itn
+                  JOIN nomenclature AS itnom ON itnom.id = itn.nomenclature_id
+                  JOIN item_types AS itnit ON itnit.id = itnom.type_id
+              WHERE itn.protection_tools_id = protection_tools.id
+                AND itnit.issue_type = @issue_type
+            )
+            #Если номенклатуры не подобраны, смотрим на тип номенклатуры нормы
+            OR (NOT EXISTS (
+                  SELECT 1 FROM protection_tools_nomenclature AS itn0
+                  WHERE itn0.protection_tools_id = protection_tools.id
+                ) AND item_types.issue_type = @issue_type))
+        AND employee_cards_item.next_issue &lt;= CONVERT(@report_date, DATE)
         AND (@exclude_before = '' OR CONVERT(@exclude_before, DATE) &lt; employee_cards_item.next_issue)
       GROUP BY IF(@group_by_subdivision, subdivisions.id, NULL),
                employee_cards_item.protection_tools_id,
                IF(@show_sex, employees.sex, NULL),
                sizeId,
                heightId
+      HAVING need &gt; 0
                ) as tabel
          #Остатки на складе
          LEFT JOIN (SELECT sex_b.ptid,
@@ -987,6 +839,9 @@ ORDER BY tabel.protection_tools_name,
           <QueryParameter Name="@exclude_in_vacation">
             <Value>={?exclude_in_vacation}</Value>
           </QueryParameter>
+          <QueryParameter Name="@exclude_dismiss_after">
+            <Value>={?exclude_dismiss_after}</Value>
+          </QueryParameter>
           <QueryParameter Name="@exclude_before">
             <Value>={?exclude_before}</Value>
           </QueryParameter>
@@ -1025,7 +880,7 @@ ORDER BY tabel.protection_tools_name,
           </QueryParameter>
         </QueryParameters>
       </Query>
-      <Fields >
+      <Fields>
         <Field Name="protection_tools_name">
           <DataField>protection_tools_name</DataField>
           <TypeName>System.String</TypeName>
@@ -1195,6 +1050,18 @@ ORDER BY tabel.protection_tools_name,
       <MultiValue>false</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
+    <ReportParameter Name="exclude_dismiss_after">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
     <ReportParameter Name="exclude_before">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1244,6 +1111,18 @@ ORDER BY tabel.protection_tools_name,
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="show_stock">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="show_shipment">
       <DataType>Boolean</DataType>
       <DefaultValue>
         <Values>

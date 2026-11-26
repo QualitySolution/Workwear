@@ -40,7 +40,7 @@ namespace Workwear.ViewModels.ClothingService {
 			foreach(var service in Entity.Barcode.Nomenclature.UseServices) { //Все услуги оказываемые для номенклатуры
 				ProvidedService provServ = Entity.ProvidedServices.FirstOrDefault(x => DomainHelper.EqualDomainObjects(service, x.Service))
 				                           ?? new ProvidedService(Entity, service); // Заготовка не сохранённая в UoW, при выборе пользователем надо сохранять
-				provideServices.Add(new SelectableEntity<ProvidedService>(service.Id, service.Name, entity: provServ)
+				provideServices.Add(new SelectableProvidedService(service.Id, service.Name, entity: provServ)
 					{ Select = provServ.Id != 0 }); //Если в базе есть, значит уже выбран
 			}
 			
@@ -75,8 +75,8 @@ namespace Workwear.ViewModels.ClothingService {
 		public virtual bool IsClosed => Entity.IsClosed;
 		public virtual IObservableList<StateOperation> States => Entity.States;
 		
-		private IObservableList<SelectableEntity<ProvidedService>> provideServices = new ObservableList<SelectableEntity<ProvidedService>>();
-		public virtual IObservableList<SelectableEntity<ProvidedService>> ProvideServices {
+		private IObservableList<SelectableProvidedService> provideServices = new ObservableList<SelectableProvidedService>();
+		public virtual IObservableList<SelectableProvidedService> ProvideServices {
 			get => provideServices;
 			set => SetField(ref provideServices, value);
 		}

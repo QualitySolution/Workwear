@@ -69,6 +69,7 @@ namespace Workwear.Test.Integration.Stock
 				var position2 = new StockPosition(nomenclature2, 0, size, height, null);
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "СИЗ для тестирования"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -120,14 +121,15 @@ namespace Workwear.Test.Integration.Stock
 
 				var baseParameters = Substitute.For<BaseParameters>();
 				baseParameters.DefaultAutoWriteoff.Returns(true);
-				baseParameters.ColDayAheadOfShedule.Returns(0);
+				baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 
 				//Тут ожидаем предложение перенести дату использование второй номенклатуры на год.
 				ask.ReceivedWithAnyArgs().Question(String.Empty);
@@ -147,7 +149,7 @@ namespace Workwear.Test.Integration.Stock
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
 			baseParameters.DefaultAutoWriteoff.Returns(true);
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -175,6 +177,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(height);
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "СИЗ для тестирования"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -229,20 +232,23 @@ namespace Workwear.Test.Integration.Stock
 				expenseItem2.ProtectionTools = protectionTools;
 
 				//Обновление операций
-				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2020 
+				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2020
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
 				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2022(неправильно)
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
 				expense.UpdateOperations(uow, baseParameters, ask); //Здесь 2024(неправильно)
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
 				employee.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-				employee.UpdateNextIssue(expense.Items.Select(x => x.ProtectionTools).ToArray());
+				employee.UpdateNextIssue(uow, expense.Items.Select(x => x.ProtectionTools).ToArray());
 
 				//Тут ожидаем предложение перенести дату использование второй номенклатуры на год.
 				ask.ReceivedWithAnyArgs().Question(String.Empty);
@@ -296,10 +302,11 @@ namespace Workwear.Test.Integration.Stock
 				var position1 = new StockPosition(nomenclature, 0, size, height, null);
 
 				//Поднимаем id сиза до 3.
-				uow.Save(new ProtectionTools { Name = "Id = 1" });
-				uow.Save(new ProtectionTools { Name = "Id = 2" });
+				uow.Save(new ProtectionTools { Type = nomenclatureType,  Name = "Id = 1" });
+				uow.Save(new ProtectionTools { Type = nomenclatureType,  Name = "Id = 2" });
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "СИЗ для тестирования"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -337,14 +344,15 @@ namespace Workwear.Test.Integration.Stock
 				expenseItem1.ProtectionTools = protectionTools;
 
 				var baseParameters = Substitute.For<BaseParameters>();
-				baseParameters.ColDayAheadOfShedule.Returns(0);
+				baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				using(var uow2 = UnitOfWorkFactory.CreateWithoutRoot()) {
@@ -361,7 +369,7 @@ namespace Workwear.Test.Integration.Stock
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
 				var warehouse = new Warehouse();
@@ -385,6 +393,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(nomenclature);
 
 				var protectionTools = new ProtectionTools {
+					Type = nomenclatureType,
 					Name = "СИЗ для тестирования"
 				};
 				protectionTools.AddNomenclature(nomenclature);
@@ -430,11 +439,12 @@ namespace Workwear.Test.Integration.Stock
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				expense.UpdateIssuanceSheet();
 				uow.Save(expense.IssuanceSheet);
 				uow.Save(expense);
 				uow.Commit();
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				Assert.That(expense.IssuanceSheet, Is.Not.Null);

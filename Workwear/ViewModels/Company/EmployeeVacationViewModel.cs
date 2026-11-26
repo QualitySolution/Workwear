@@ -40,7 +40,9 @@ namespace Workwear.ViewModels.Company
         #endregion
 
         public override bool Save() {
-            if (UoW.IsNew) {
+            if(!Validate())
+                return false;
+            if (Entity.Id == 0) {
                 Entity.Employee.AddVacation(Entity);
             }
             Entity.Employee.RecalculateDatesOfIssueOperations(UoW, new EmployeeIssueRepository(), baseParameters, new GtkQuestionDialogsInteractive(), Entity);

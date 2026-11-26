@@ -5,11 +5,14 @@ using System.IO;
 using Autofac;
 using NHibernate.Driver.MySqlConnector;
 using QS.BaseParameters;
-using QS.BusinessCommon.Domain;
-using QS.BusinessCommon;
+using QS.Measurement.Domain;
+using QS.Measurement.Views;
+using QS.Measurement.ViewModels;
 using QS.Cloud.Client;
+using QS.Cloud.Email.DesktopClient;
 using QS.Cloud.Postomat.Client;
 using QS.Cloud.WearLk.Client;
+using QS.Cloud.WorkwearDictionary.Client;
 using QS.Configuration;
 using QS.Deletion.Views;
 using QS.Deletion;
@@ -63,9 +66,7 @@ using QSOrmProject;
 using QSProjectsLib;
 using Workwear.Sql;
 using Workwear.Tools;
-using workwear.Dialogs.Regulations;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using workwear.Journal;
 using workwear.Journal.ViewModels.Communications;
 using workwear.Journal.ViewModels.Company;
@@ -81,6 +82,7 @@ using Workwear.Models.Regulations;
 using Workwear.Models.Sizes;
 using workwear.Models.Stock;
 using Workwear.Models.Supply;
+using Workwear.Models.Visits;
 using Workwear.Repository.Operations;
 using Workwear.Tools.Features;
 using workwear.Tools.IdentityCards;
@@ -91,7 +93,9 @@ using Workwear.Views.Company;
 using workwear.Models.WearLk;
 using Workwear.Tools.Barcodes;
 using Workwear.Tools.Permissions;
+using Workwear.Tools.Regulations;
 using Workwear.Tools.Sizes;
+using Workwear.Tools.OverNorms;
 using Workwear.Tools.User;
 using Workwear.ViewModels.Import;
 using Connection = QS.Project.DB.Connection;
@@ -100,13 +104,16 @@ namespace workwear
 {
 	static partial class MainClass
 	{
-		public static void CreateBaseConfig (ProgressPerformanceHelper progress)
-		{
-			logger.Info ("Настройка параметров базы...");
+			public static void CreateBaseConfig (ProgressPerformanceHelper progress)
+			{
+				logger.Info ("Настройка параметров базы...");
 
-			// Настройка ORM
-			progress.CheckPoint("Настройка подключения к базе");
-			var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
+				progress.CheckPoint("Инициализация переходных мостов QS.Project");
+				OrmMain.Init();
+
+				// Настройка ORM
+				progress.CheckPoint("Настройка подключения к базе");
+				var db = FluentNHibernate.Cfg.Db.MySQLConfiguration.Standard
 				.Dialect<MySQL57ExtendedDialect>()
 				.Driver<MySqlConnectorDriver>()
 				.ConnectionString (QSProjectsLib.QSMain.ConnectionString)
@@ -118,7 +125,7 @@ namespace workwear
 			OrmConfig.Conventions = new[] { new ObservableListConvention() };
 			OrmConfig.ConfigureOrm (db, new System.Reflection.Assembly[] {
 				System.Reflection.Assembly.GetAssembly (typeof(EmployeeCard)),
-				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnits)),
+				System.Reflection.Assembly.GetAssembly (typeof(MeasurementUnit)),
 				System.Reflection.Assembly.GetAssembly (typeof(UserBase)),
 				System.Reflection.Assembly.GetAssembly (typeof(HistoryMain)),
 
@@ -136,14 +143,6 @@ namespace workwear
 			#if DEBUG
 			NLog.LogManager.Configuration.RemoveRuleByName("HideNhibernate");
 			#endif
-
-			progress.CheckPoint("Антикварные объекты");
-			//Настраиваем классы сущностей
-			OrmMain.AddObjectDescription(MeasurementUnitsOrmMapping.GetOrmMapping());
-			//Спецодежда
-			OrmMain.AddObjectDescription<RegulationDoc>().Dialog<RegulationDocDlg>().DefaultTableView().SearchColumn("Документ", i => i.Title).OrderAsc(i => i.Name).End();
-			//Общее
-			OrmMain.AddObjectDescription<UserBase>().DefaultTableView ().Column ("Имя", e => e.Name).End ();
 
 			progress.CheckPoint("Включение уведомлений об изменениях");
 			NotifyConfiguration.Enable();
@@ -193,6 +192,7 @@ namespace workwear
 			containerBuilder.RegisterType<NHibernateFlushAfterException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<NHibernateStaleObjectStateException>().As<IErrorHandler>();
 			containerBuilder.RegisterType<ConnectionIsLost>().As<IErrorHandler>();
+			containerBuilder.RegisterType<GrpcConnectionIsLost>().As<IErrorHandler>();
 			#endregion
 			
 			#region Обновления и версии
@@ -259,6 +259,7 @@ namespace workwear
 			builder.RegisterType<CommonMessages>().AsSelf();
 			builder.RegisterType<FileDialogService>().As<IFileDialogService>();
             builder.RegisterType<ObjectValidator>().As<IValidator>();
+			builder.RegisterType<OverNormFactory>().As<IOverNormFactory>();
 			#endregion
 
 			#region Навигация
@@ -283,7 +284,8 @@ namespace workwear
 				typeof(NewVersionView),
 				typeof(UpdateProcessView),
 				typeof(SerialNumberView),
-				typeof(HistoryView)
+				typeof(HistoryView),
+				typeof(MeasurementUnitView)
 			)).As<IGtkViewResolver>();
 			builder.RegisterDecorator<IGtkViewResolver>((c, p, i) => 
 				 new RegisteredGtkViewResolver(c.Resolve<IGtkViewFactory>(), i)
@@ -333,6 +335,9 @@ namespace workwear
 			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(HistoryViewModel)))
 				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
 				.AsSelf();
+			builder.RegisterAssemblyTypes(System.Reflection.Assembly.GetAssembly(typeof(MeasurementUnitViewModel)))
+				.Where(t => t.IsAssignableTo<ViewModelBase>() && t.Name.EndsWith("ViewModel"))
+				.AsSelf();
 			#endregion
 
 			#region Common Models
@@ -342,7 +347,9 @@ namespace workwear
 			builder.RegisterType<EmployeeIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<DutyNormIssueModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<StockBalanceModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<IssuanceRequestModel>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<NormToDutyNormModel>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<GtkEtnComplectResolver>().As<IEtnComplectResolver>();
 			builder.RegisterType<IssuedSheetPrintModel>().AsSelf().InstancePerLifetimeScope();
 			#region Прогноз
 			builder.RegisterType<FutureIssueModel>().AsSelf().InstancePerLifetimeScope();
@@ -368,13 +375,14 @@ namespace workwear
 			builder.RegisterType<CloudClientService>().AsSelf().SingleInstance();
 			builder.RegisterType<LkUserManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<MessagesService>().AsSelf().SingleInstance();
-			builder.RegisterType<EmailManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<DesktopEmailSenderClient>().AsSelf().SingleInstance();
 			builder.RegisterType<NotificationManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<SpecCoinManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<ClaimsManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<RatingManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<PostomatManagerService>().AsSelf().SingleInstance();
 			builder.RegisterType<ProductsManagerService>().AsSelf().SingleInstance();
+			builder.RegisterType<EtnDictionaryService>().AsSelf().SingleInstance();
 			#endregion
 
 			#region Облако модели

@@ -42,6 +42,14 @@ namespace Workwear.Domain.Regulations
 			set { SetField(ref type, value, () => Type); }
 		}
 		
+		private string officialName;
+		[Display(Name = "Наименование в карточке")]
+		[StringLength(800)]
+		public virtual string OfficialName {
+			get { return officialName; }
+			set { SetField(ref officialName, value?.Trim()); }
+		}
+
 		private bool archival;
 		[Display(Name ="Архивная")]
 		public virtual bool Archival {
@@ -149,7 +157,7 @@ namespace Workwear.Domain.Regulations
 		public virtual void AddNomenclature(Nomenclature nomenclature) {
 			bool a = Nomenclatures.Any(x => x.Id != 0);
 			if(Nomenclatures.Any(p => DomainHelper.EqualDomainObjects(p, nomenclature))) {
-				logger.Warn("Номеклатура уже добавлена. Пропускаем...");
+				logger.Warn("Номенклатура уже добавлена. Пропускаем...");
 				return;
 			}
 			ProtectionToolsNomenclatures.Add(new ProtectionToolsNomenclature() {ProtectionTools = this, Nomenclature = nomenclature});
@@ -164,6 +172,12 @@ namespace Workwear.Domain.Regulations
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if(ProtectionToolsNomenclatures.Count(x => x.CanChoose) == 1)
 					yield return new ValidationResult($"Отмечен только 1 возможный вариант для выбора. Допустимо не менее 2.");
+			if(SupplyNomenclatureUnisex?.Archival == true)
+				yield return new ValidationResult($"Закупаемая номенклатура (унисекс) «{SupplyNomenclatureUnisex.Name}» архивная. Выберите другую.");
+			if(SupplyNomenclatureMale?.Archival == true)
+				yield return new ValidationResult($"Закупаемая номенклатура (мужская) «{SupplyNomenclatureMale.Name}» архивная. Выберите другую.");
+			if(SupplyNomenclatureFemale?.Archival == true)
+				yield return new ValidationResult($"Закупаемая номенклатура (женская) «{SupplyNomenclatureFemale.Name}» архивная. Выберите другую.");
 		}
 		#endregion
 	}

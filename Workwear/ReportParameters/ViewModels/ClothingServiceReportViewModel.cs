@@ -1,30 +1,57 @@
 ﻿using System;
+using System.Linq;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Report.ViewModels;
+using QS.ViewModels.Control;
 using QS.ViewModels.Extension;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using Gamma.Utilities;
+using QS.Cloud.Postomat.Client;
+using QS.Cloud.Postomat.Manage;
 using QS.Report;
 using Workwear.Domain.ClothingService;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
-	public class ClothingServiceReportViewModel: ReportParametersViewModelBase, IDialogDocumentation {
+	public class ClothingServiceReportViewModel: ReportParametersUowViewModelBase, IDialogDocumentation {
 
 		private readonly FeaturesService featuresService;
+		private readonly IList<FullnessInfo> postomats = new List<FullnessInfo>();
 		public ClothingServiceReportViewModel(
 			RdlViewerViewModel rdlViewerViewModel,
-			FeaturesService featuresService
-			) : base(rdlViewerViewModel) 
+			IUnitOfWorkFactory uowFactory,
+			FeaturesService featuresService,
+			PostomatManagerService postomatService
+			) : base(rdlViewerViewModel, uowFactory)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
+			OperationsTypeDuty = VisibleOperationsTypeDuty;
+			OperationsTypeOverNorm = VisibleOperationsTypeOverNorm;
+			if(postomatService == null) throw new ArgumentNullException(nameof(postomatService));
+
+			var serviceList = UoW.GetAll<Service>().ToList();
+			ChoiceServiceViewModel = new ChoiceListViewModel<Service>(
+				serviceList,
+				TitleFunc: s => string.IsNullOrWhiteSpace(s.AlternativeName) ? s.Name : $"({s.AlternativeName}) {s.Name}");
+
+			if(featuresService.Available(WorkwearFeature.Postomats))
+				postomats = postomatService.GetFullness(CancellationToken.None)
+					.Where(x => x.Type == PostomatType.Aso)
+					.ToList();
+			ChoiceTerminalViewModel = new ChoiceListViewModel<FullnessInfo>(
+				postomats,
+				IdFunc: x => (int)x.Id,
+				TitleFunc: x => $"{x.Name} ({x.Location})");
 
 			var hiddenReportTypes = new List<object>();
 			if(!featuresService.Available(WorkwearFeature.Postomats)) {
 				HiddenStates = new object[] { ClaimState.InDispenseTerminal, ClaimState.InReceiptTerminal, ClaimState.DeliveryToDispenseTerminal };
 				hiddenReportTypes.Add(ClothingServiceReportType.PostamatUse);
+				hiddenReportTypes.Add(ClothingServiceReportType.PostamatFullness);
             }
 			if(!featuresService.Available(WorkwearFeature.ReportServiceServiced))
 				hiddenReportTypes.Add(ClothingServiceReportType.Serviced);
@@ -32,7 +59,20 @@ namespace Workwear.ReportParameters.ViewModels {
 				HiddenReportType = hiddenReportTypes.ToArray();
 		}
 		#region IDialogDocumentation
-		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#report-service-claims");
+		public string DocumentationUrl => DocHelper.GetDocUrl("reports.html#" + DocumentationAnchor);
+		private string DocumentationAnchor {
+			get {
+				switch(ReportType) {
+					case ClothingServiceReportType.ClaimForStatus: return "report-service-claims-status";
+					case ClothingServiceReportType.ClaimMetric: return "report-service-claims-metric";
+					case ClothingServiceReportType.ClaimCount: return "report-service-claims-count";
+					case ClothingServiceReportType.PostamatUse: return "report-service-claims-postamat-use";
+					case ClothingServiceReportType.PostamatFullness: return "report-service-claims-postamat-fullness";
+					case ClothingServiceReportType.Serviced: return "report-service-claims-serviced";
+					default: return "report-service-claims";
+				}
+			}
+		}
 		public string ButtonTooltip => DocHelper.GetReportDocTooltip(Title);
 		#endregion
 		
@@ -51,6 +91,12 @@ namespace Workwear.ReportParameters.ViewModels {
 		[PropertyChangedAlso(nameof(VisibleSubdivisionAsMVZ))]
 		[PropertyChangedAlso(nameof(VisibleAlternativeName))]
 		[PropertyChangedAlso(nameof(VisibleSumCost))]
+		[PropertyChangedAlso(nameof(VisibleGroupClaim))]
+		[PropertyChangedAlso(nameof(VisibleChoiceService))]
+		[PropertyChangedAlso(nameof(VisibleChoiceTerminal))]
+		[PropertyChangedAlso(nameof(VisibleOperationsTypes))]
+		[PropertyChangedAlso(nameof(VisibleInfoLabel))]
+		[PropertyChangedAlso(nameof(InfoLabelText))]
 		[PropertyChangedAlso(nameof(Title))]
 		[PropertyChangedAlso(nameof(ShowClosedLabel))]
 		public virtual ClothingServiceReportType ReportType {
@@ -75,6 +121,8 @@ namespace Workwear.ReportParameters.ViewModels {
 				       ? $"Использование постаматов" : "") +
 			       (ReportType == ClothingServiceReportType.Serviced
 				       ? $"Оказанные услуги" : "") +
+			       (IsPostamatFullness
+				       ? $"Загрузка постаматов" : "") +
 			       (VisiblePeriodOfBegitn ? $" за ({StartDate.ToShortDateString()}-{EndDate.ToShortDateString()})" : "") +
 			       $" от {DateTime.Today.ToShortDateString()}";
 		}
@@ -83,6 +131,10 @@ namespace Workwear.ReportParameters.ViewModels {
 			switch(ReportType) {
 				case ClothingServiceReportType.ClaimForStatus :
 					return new Dictionary<string, object> {
+						{ "source_employee", OperationsTypeEmployee },
+						{ "source_duty", OperationsTypeDuty && VisibleOperationsTypeDuty },
+						{ "source_over_norm", OperationsTypeOverNorm && VisibleOperationsTypeOverNorm },
+						{ "source_warehouse", OperationsTypeWarehouse },
 						{ "report_name", Title },
 						{ "show_comment", ShowComments },
 						{ "show_phone", ShowEmployees && ShowPhone },
@@ -95,6 +147,10 @@ namespace Workwear.ReportParameters.ViewModels {
 					};
 				case ClothingServiceReportType.ClaimMetric:
 					return new Dictionary<string, object> {
+						{ "source_employee", OperationsTypeEmployee },
+						{ "source_duty", OperationsTypeDuty && VisibleOperationsTypeDuty },
+						{ "source_over_norm", OperationsTypeOverNorm && VisibleOperationsTypeOverNorm },
+						{ "source_warehouse", OperationsTypeWarehouse },
 						{ "report_name", Title },
 						{ "show_closed", ShowClosed },
 						{ "start_date", StartDate },
@@ -118,16 +174,43 @@ namespace Workwear.ReportParameters.ViewModels {
 					};
 			case ClothingServiceReportType.Serviced:
 				return new Dictionary<string, object> {
+					{ "source_employee", OperationsTypeEmployee },
+					{ "source_duty", OperationsTypeDuty && VisibleOperationsTypeDuty },
+					{ "source_over_norm", OperationsTypeOverNorm && VisibleOperationsTypeOverNorm },
+					{ "source_warehouse", OperationsTypeWarehouse },
 					{ "report_name", Title },
 					{ "start_date", StartDate },
 					{ "end_date", EndDate },
 					{ "use_subdivision", SubdivisionAsMVZ },
 					{ "show_alternative_name", ShowAlternativeName },
 					{ "sum_cost", SumCost },
+					{ "group_claim", GroupClaim },
+					{ "service_ids", ChoiceServiceViewModel.SelectedIdsMod },
 				};
+				case ClothingServiceReportType.PostamatFullness:
+					return new Dictionary<string, object> {
+						{ "report_name", Title },
+						{ "start_date", StartDate },
+						{ "finish_date", EndDate },
+						{ "postomats", GetPostomatsCapacity() },
+						{ "postomat_ids", ChoiceTerminalViewModel.SelectedIdsMod },
+					};
 				default: throw new InvalidOperationException(nameof(SetParameters));
 			}
 		}
+		//Получаем число ячеек
+		private string GetPostomatsCapacity() {
+			var postomatsInfo = postomats
+				.Select(x => $"{x.Id}|{x.Capacity};");
+			return ";" + String.Concat(postomatsInfo);
+		}
+
+		private bool IsPostamatFullness => reportType == ClothingServiceReportType.PostamatFullness;
+
+		//На windows целом до 120 дней различимо, но уже знатно плыёт. 90 подобрано экспериментально
+		private const int MaxPostamatFullnessDays = 90;
+		private bool PostamatFullnessPeriodTooLong =>
+			IsPostamatFullness && (EndDate.Date - StartDate.Date).TotalDays + 1 > MaxPostamatFullnessDays;
 		
 		public virtual object[] HiddenStates { get; }
 		
@@ -147,6 +230,30 @@ namespace Workwear.ReportParameters.ViewModels {
 			set => SetField(ref groupSubdivision, value);
 		}
 		
+		private bool operationsTypeEmployee = true;
+		public virtual bool OperationsTypeEmployee {
+			get => operationsTypeEmployee;
+			set => SetField(ref operationsTypeEmployee, value);
+		}
+
+		private bool operationsTypeDuty;
+		public virtual bool OperationsTypeDuty {
+			get => operationsTypeDuty;
+			set => SetField(ref operationsTypeDuty, value);
+		}
+
+		private bool operationsTypeWarehouse = true;
+		public virtual bool OperationsTypeWarehouse {
+			get => operationsTypeWarehouse;
+			set => SetField(ref operationsTypeWarehouse, value);
+		}
+
+		private bool operationsTypeOverNorm;
+		public virtual bool OperationsTypeOverNorm {
+			get => operationsTypeOverNorm;
+			set => SetField(ref operationsTypeOverNorm, value);
+		}
+
 		private bool showComments = false;
 		public virtual bool ShowComments {
 			get => showComments;
@@ -162,6 +269,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		public virtual string ShowClosedLabel => "Период" +
 			(reportType == ClothingServiceReportType.ClaimForStatus && status != null ? " перехода в статус:" : "") +
 			(reportType == ClothingServiceReportType.PostamatUse ? ":" : "") +
+			(IsPostamatFullness ? ":" : "") +
 			(reportType == ClothingServiceReportType.Serviced ? ":" : "") +
 			(reportType == ClothingServiceReportType.ClaimForStatus && status == null 
 			 || reportType == ClothingServiceReportType.ClaimCount
@@ -195,6 +303,7 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		private DateTime startDate = DateTime.Now.AddMonths(-1);
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(InfoLabelText))]
 		[PropertyChangedAlso(nameof(Title))]
 		public virtual DateTime StartDate {
 			get => startDate;
@@ -203,17 +312,20 @@ namespace Workwear.ReportParameters.ViewModels {
 		
 		private DateTime endDate =  DateTime.Now;
 		[PropertyChangedAlso(nameof(SensetiveLoad))]
+		[PropertyChangedAlso(nameof(InfoLabelText))]
 		[PropertyChangedAlso(nameof(Title))]
 		public virtual DateTime EndDate {
 			get => endDate;
 			set => SetField(ref endDate, value);
 		}
 
-		public bool SensetiveLoad => !ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate);
+		public bool SensetiveLoad => (!ShowClosed || (ShowClosed && StartDate != null && EndDate != null && startDate <= endDate))
+			&& !PostamatFullnessPeriodTooLong;
 		public bool VisiblePeriodOfBegitn =>
 			reportType == ClothingServiceReportType.ClaimCount ||
 			(VisibleShowClosed && ShowClosed) ||
 			reportType == ClothingServiceReportType.PostamatUse ||
+			IsPostamatFullness ||
 			reportType == ClothingServiceReportType.ClaimForStatus ||
 			reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleShowClosed => reportType == ClothingServiceReportType.ClaimMetric || reportType == ClothingServiceReportType.ClaimForStatus;
@@ -226,6 +338,20 @@ namespace Workwear.ReportParameters.ViewModels {
 		public bool VisibleSubdivisionAsMVZ => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleAlternativeName => reportType == ClothingServiceReportType.Serviced;
 		public bool VisibleSumCost => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleGroupClaim => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleChoiceService => reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleChoiceTerminal => IsPostamatFullness;
+		public bool VisibleOperationsTypes => reportType == ClothingServiceReportType.ClaimForStatus
+			|| reportType == ClothingServiceReportType.ClaimMetric
+			|| reportType == ClothingServiceReportType.Serviced;
+		public bool VisibleOperationsTypeDuty => featuresService.Available(WorkwearFeature.DutyNorms);
+		public bool VisibleOperationsTypeOverNorm => featuresService.Available(WorkwearFeature.OverNorm);
+		public bool VisibleInfoLabel => VisibleGroupClaim && (SumCost || GroupClaim)
+			|| IsPostamatFullness;
+		public string InfoLabelText => IsPostamatFullness
+			? "<i>Показывает наибольшую загруженность \nза день в процентах.</i>"
+			  + (PostamatFullnessPeriodTooLong ? $"\n<span foreground=\"red\">Период должен быть не больше {MaxPostamatFullnessDays} дней</span>" : "")
+			:"<i>При включённой группировке каждая строка считается 1 оказанной услугой</i>";
 
 		private bool showAlternativeName;
 		public virtual bool ShowAlternativeName {
@@ -234,10 +360,21 @@ namespace Workwear.ReportParameters.ViewModels {
 		}
 
 		private bool sumCost;
+		[PropertyChangedAlso(nameof(VisibleInfoLabel))]
 		public virtual bool SumCost {
 			get => sumCost;
 			set => SetField(ref sumCost, value);
 		}
+
+		private bool groupClaim;
+		[PropertyChangedAlso(nameof(VisibleInfoLabel))]
+		public virtual bool GroupClaim {
+			get => groupClaim;
+			set => SetField(ref groupClaim, value);
+		}
+
+		public ChoiceListViewModel<Service> ChoiceServiceViewModel { get; }
+		public ChoiceListViewModel<FullnessInfo> ChoiceTerminalViewModel { get; }
 	}
 	public enum ClothingServiceReportType {
 		[ReportIdentifier("ClothingService.ClothingServiceStatusReport")]
@@ -252,6 +389,9 @@ namespace Workwear.ReportParameters.ViewModels {
         [ReportIdentifier("ClothingService.ClothingServicePostamatReport")]
         [Display(Name = "Использование постаматов")]
         PostamatUse,
+		[ReportIdentifier("ClothingService.ClothingServicePostamatFullnessReport")]
+		[Display(Name = "Загруженность постаматов")]
+		PostamatFullness,
 		[ReportIdentifier("ClothingService.ClothingServiceServicedReport")]
 		[Display(Name = "Оказанные услуги")]
 		Serviced

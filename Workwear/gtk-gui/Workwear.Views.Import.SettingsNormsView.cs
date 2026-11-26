@@ -45,7 +45,7 @@ namespace Workwear.Views.Import
 			this.checkWearoutToName = new global::Gamma.GtkWidgets.yCheckButton();
 			this.checkWearoutToName.CanFocus = true;
 			this.checkWearoutToName.Name = "checkWearoutToName";
-			this.checkWearoutToName.Label = global::Mono.Unix.Catalog.GetString("Переносить \"до износа\" в имя номеклатуры");
+			this.checkWearoutToName.Label = global::Mono.Unix.Catalog.GetString("Переносить \"до износа\" в имя номенклатуры");
 			this.checkWearoutToName.DrawIndicator = true;
 			this.checkWearoutToName.UseUnderline = true;
 			this.ytable1.Add(this.checkWearoutToName);

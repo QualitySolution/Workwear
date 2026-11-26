@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.UoW;
 using QS.Testing.DB;
 using Workwear.Models.Import;
@@ -42,11 +42,11 @@ namespace Workwear.Test.Integration.Import {
 		}
 
 		void MakeDefaultData(IUnitOfWork uow) {
-			uow.Save(new MeasurementUnits {
+			uow.Save(new MeasurementUnit {
 				Name = "шт.",
 				OKEI = "796"
 			});
-			uow.Save(new MeasurementUnits {
+			uow.Save(new MeasurementUnit {
 				Name = "пара",
 				OKEI = "715"
 			});

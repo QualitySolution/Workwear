@@ -13,6 +13,10 @@ namespace Workwear.ReportParameters.Views {
 			ycheckShowDocWriteOff.Binding.AddBinding(ViewModel,v=>v.ShowDocWriteOff,w=>w.Active).InitializeFromSource();
 			ycheckShowAutoWriteOff.Binding.AddBinding(ViewModel,v=>v.ShowAutoWriteOff,w=>w.Active).InitializeFromSource();
 			ycheckShowIncome.Binding.AddBinding(ViewModel,v=>v.ShowIncome,w=>w.Active).InitializeFromSource();
+			ycheckShowServiceDetail.Binding.AddSource(ViewModel)
+				.AddBinding(v => v.ShowServiceDetail, w => w.Active)
+				.AddBinding(v => v.VisibleServiceDetail, w => w.Visible)
+				.InitializeFromSource();
 			buttonRun.Clicked += OnButtonRunClicked;
 			buttonRun.Binding.AddBinding(ViewModel,v=>v.SensitiveLoad,w=>w.Sensitive).InitializeFromSource();
 		}

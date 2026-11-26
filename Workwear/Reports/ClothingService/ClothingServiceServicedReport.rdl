@@ -22,44 +22,114 @@
       <Query >
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-    mvz_code,
-    mvz_name,
-    fio,
-    tabel,
-    barcode,
-    nomenclature,
-    type,
-    COUNT(*) as s,
-    1 as amount,
-    SUM(cost) as cost,
-    IF(@sum_cost, SUM(cost), cost) as sum_cost,
-    date
+	source_type,
+	mvz_code,
+	mvz_name,
+	fio,
+	tabel,
+	barcode,
+	nomenclature,
+	GROUP_CONCAT(DISTINCT type ORDER BY type SEPARATOR ', ') as type,
+	COUNT(*) as s,
+	IF(@sum_cost OR @group_claim, 1, SUM(amount)) as amount,
+	CAST(SUM(n_weight) / 1000.0 AS DECIMAL(10,3)) AS weight,
+	IF(@sum_cost OR @group_claim, SUM(cost * amount), cost) as cost,
+	IF(@sum_cost OR @group_claim, SUM(cost * amount), amount * cost) as sum_cost,
+	date
 FROM (
-    SELECT
-        IF(@use_subdivision, subdivisions.code, cost_center.code) as mvz_code,
-        IF(@use_subdivision, subdivisions.name, cost_center.name) as mvz_name,
-        CONCAT_WS(' ' ,employees.last_name, employees.first_name, employees.patronymic_name) as fio,
-        employees.personnel_number as tabel,
-        barcodes.title as barcode,
-        nomenclature.name as nomenclature,
-        IF(@show_alternative_name, COALESCE(clothing_service_services.alternative_name, clothing_service_services.name), clothing_service_services.name) as type,
-        clothing_service_services_claim.cost as cost,
-        clothing_service_services_claim.id as claim_row_id,
-        clothing_service_services_claim.claim_id as claim_id,
-        DATE_FORMAT(clothing_service_services_claim.service_date, '%d.%m.%Y') as date
-    FROM clothing_service_services_claim
-             LEFT JOIN clothing_service_claim on clothing_service_services_claim.claim_id = clothing_service_claim.id
-             LEFT JOIN clothing_service_services on clothing_service_services_claim.service_id = clothing_service_services.id
-             LEFT JOIN employees on clothing_service_claim.employee_id = employees.id
-             LEFT JOIN subdivisions on employees.subdivision_id = subdivisions.id
-             LEFT JOIN employees_cost_allocation on (employees.id = employees_cost_allocation.employee_id AND employees_cost_allocation.percent = 1)
-             LEFT JOIN cost_center on employees_cost_allocation.cost_center_id = cost_center.id
-             LEFT JOIN barcodes on clothing_service_claim.barcode_id = barcodes.id
-             LEFT JOIN nomenclature on barcodes.nomenclature_id = nomenclature.id
-    WHERE clothing_service_services_claim.service_date &gt;= @start_date AND clothing_service_services_claim.service_date &lt; @end_date
-) AS table1
-GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
+		 SELECT
+			 -- Источник вещи определяется последней операцией штрихкода.
+			 CASE
+				 WHEN warehouse.id IS NOT NULL THEN 'Warehouse'
+				 WHEN duty_norms.id IS NOT NULL THEN 'DutyNorm'
+				 WHEN over_norm.id IS NOT NULL THEN 'OverNorm'
+				 ELSE 'Employee'
+			 END AS source_type,
+			 IF(@use_subdivision, subdivisions.code, cost_center.code) as mvz_code,
+		     IF(@use_subdivision, subdivisions.name, cost_center.name) as mvz_name,
+		     CASE
+		         WHEN warehouse.id IS NOT NULL THEN CONCAT('Склад ', warehouse.name)
+		         WHEN duty_norms.id IS NOT NULL THEN TRIM(CONCAT('Дежурная №', duty_norms.id, ' ',
+		             CONCAT_WS(' ',
+		                 IF(duty_norms.responsible_employee_id IS NOT NULL, responsible_employee.last_name, responsible_leader.surname),
+		                 CONCAT_WS('',
+		                     CONCAT(NULLIF(LEFT(IF(duty_norms.responsible_employee_id IS NOT NULL, responsible_employee.first_name, responsible_leader.name), 1), ''), '.'),
+		                     CONCAT(NULLIF(LEFT(IF(duty_norms.responsible_employee_id IS NOT NULL, responsible_employee.patronymic_name, responsible_leader.patronymic), 1), ''), '.')))))
+		         WHEN over_norm.id IS NOT NULL THEN CONCAT_WS(' ',
+		             CASE over_norm.type
+		                 WHEN 'Guest' THEN 'Гостевая'
+		                 WHEN 'Substitute' THEN 'Подменная'
+		                 WHEN 'Simple' THEN 'Разовая'
+		                 ELSE over_norm.type END,
+		             employees.last_name,
+		             CONCAT_WS('',
+		                 CONCAT(NULLIF(LEFT(employees.first_name, 1), ''), '.'),
+		                 CONCAT(NULLIF(LEFT(employees.patronymic_name, 1), ''), '.')))
+		         ELSE CONCAT_WS(' ', employees.last_name, employees.first_name, employees.patronymic_name)
+		     END AS fio,
+		     employees.personnel_number as tabel,
+		     barcodes.title as barcode,
+		     nomenclature.name as nomenclature,
+		     nomenclature.weight as n_weight,
+		     IF(@show_alternative_name, COALESCE(clothing_service_services.alternative_name, clothing_service_services.name), clothing_service_services.name) as type,
+		     clothing_service_services_claim.cost as cost,
+		     clothing_service_services_claim.amount as amount,
+			 clothing_service_services_claim.id as claim_row_id,
+		     clothing_service_services_claim.claim_id as claim_id,
+		     DATE_FORMAT(clothing_service_services_claim.service_date, '%d.%m.%Y') as date
+	     FROM clothing_service_services_claim
+				  LEFT JOIN clothing_service_claim on clothing_service_services_claim.claim_id = clothing_service_claim.id
+		          LEFT JOIN clothing_service_services on clothing_service_services_claim.service_id = clothing_service_services.id
+		          LEFT JOIN barcodes on clothing_service_claim.barcode_id = barcodes.id
+		          LEFT JOIN operation_barcodes AS last_operation ON last_operation.id = (
+		              SELECT ob.id
+		              FROM operation_barcodes AS ob
+		                       LEFT JOIN operation_issued_by_employee AS oe ON oe.id = ob.employee_issue_operation_id
+		                       LEFT JOIN operation_issued_by_duty_norm AS od ON od.id = ob.duty_norm_issue_operation_id
+		                       LEFT JOIN operation_over_norm AS oo ON oo.id = ob.over_norm_operation_id
+		                       LEFT JOIN operation_warehouse AS ow ON ow.id = ob.warehouse_operation_id
+		              WHERE ob.barcode_id = barcodes.id
+		              ORDER BY COALESCE(oe.operation_time, od.operation_time, oo.operation_time, ow.operation_time) DESC, ob.id DESC
+		              LIMIT 1
+		          )
+		          LEFT JOIN operation_warehouse AS last_warehouse ON last_warehouse.id = last_operation.warehouse_operation_id
+		          LEFT JOIN warehouse ON warehouse.id = last_warehouse.warehouse_receipt_id
+		          LEFT JOIN operation_issued_by_duty_norm AS duty_operation ON duty_operation.id = last_operation.duty_norm_issue_operation_id
+		              AND duty_operation.issued &gt; 0 AND warehouse.id IS NULL
+		          LEFT JOIN duty_norms ON duty_norms.id = duty_operation.duty_norm_id
+		          LEFT JOIN leaders AS responsible_leader ON responsible_leader.id = duty_norms.responsible_leder_id
+		          LEFT JOIN employees AS responsible_employee ON responsible_employee.id = COALESCE(duty_norms.responsible_employee_id, responsible_leader.employee_id)
+		          LEFT JOIN operation_over_norm AS over_norm ON over_norm.id = last_operation.over_norm_operation_id
+		              AND warehouse.id IS NULL
+		          LEFT JOIN employees ON employees.id = CASE
+		              WHEN warehouse.id IS NOT NULL OR duty_norms.id IS NOT NULL THEN NULL
+		              WHEN over_norm.id IS NOT NULL THEN over_norm.employee_id
+		              ELSE clothing_service_claim.employee_id END
+		          LEFT JOIN subdivisions ON subdivisions.id = IF(duty_norms.id IS NOT NULL, duty_norms.subdivision_id, employees.subdivision_id)
+		          LEFT JOIN employees_cost_allocation on (employees.id = employees_cost_allocation.employee_id AND employees_cost_allocation.percent = 1)
+		          LEFT JOIN cost_center on employees_cost_allocation.cost_center_id = cost_center.id
+		          LEFT JOIN nomenclature on barcodes.nomenclature_id = nomenclature.id
+	     WHERE clothing_service_services_claim.service_date &gt;= CONVERT(@start_date, DATE) AND clothing_service_services_claim.service_date &lt; DATE_ADD(CONVERT(@end_date, DATE), INTERVAL 1 DAY)
+	       AND ((-1 IN (@service_ids)) OR (clothing_service_services_claim.service_id IN (@service_ids)))
+	 ) AS table1
+WHERE (source_type = 'Employee' AND @source_employee)
+   OR (source_type = 'DutyNorm' AND @source_duty)
+   OR (source_type = 'OverNorm' AND @source_over_norm)
+   OR (source_type = 'Warehouse' AND @source_warehouse)
+GROUP BY IF(@group_claim, claim_id, IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id))</CommandText>
         <QueryParameters>
+          <QueryParameter Name="source_employee">
+            <Value>=Parameters!source_employee</Value>
+          </QueryParameter>
+          <QueryParameter Name="source_duty">
+            <Value>=Parameters!source_duty</Value>
+          </QueryParameter>
+          <QueryParameter Name="source_over_norm">
+            <Value>=Parameters!source_over_norm</Value>
+          </QueryParameter>
+          <QueryParameter Name="source_warehouse">
+            <Value>=Parameters!source_warehouse</Value>
+          </QueryParameter>
           <QueryParameter Name="start_date">
             <Value>=Parameters!start_date</Value>
           </QueryParameter>
@@ -75,9 +145,19 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
           <QueryParameter Name="sum_cost">
             <Value>=Parameters!sum_cost</Value>
           </QueryParameter>
+          <QueryParameter Name="group_claim">
+            <Value>=Parameters!group_claim</Value>
+          </QueryParameter>
+          <QueryParameter Name="service_ids">
+            <Value>=Parameters!service_ids</Value>
+          </QueryParameter>
         </QueryParameters>
       </Query>
       <Fields >
+        <Field Name="source_type">
+          <DataField>source_type</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="mvz_code">
           <DataField>mvz_code</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -122,6 +202,10 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
           <DataField>date</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="weight">
+          <DataField>weight</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -139,6 +223,8 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
           <BorderStyle>
             <Default>Solid</Default>
           </BorderStyle>
+          <BorderColor />
+          <BorderWidth />
         </Style>
         <TableColumns>
           <TableColumn>
@@ -148,10 +234,10 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
             <Width>35.7pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>94.2pt</Width>
+            <Width>84.6pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>116.1pt</Width>
+            <Width>103.6pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>68.3pt</Width>
@@ -160,13 +246,13 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
             <Width>69.5pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>120.5pt</Width>
+            <Width>112.5pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>53.3pt</Width>
           </TableColumn>
           <TableColumn>
-            <Width>43.2pt</Width>
+            <Width>42.4pt</Width>
           </TableColumn>
           <TableColumn>
             <Width>54.8pt</Width>
@@ -176,6 +262,9 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
           </TableColumn>
           <TableColumn>
             <Width>64.1pt</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>29.6pt</Width>
           </TableColumn>
         </TableColumns>
         <Header>
@@ -352,6 +441,24 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                     <Textbox Name="Textbox40">
                       <Value>Дата
 оказания</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                        <VerticalAlign>Bottom</VerticalAlign>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox25">
+                      <Value>Вес</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -571,6 +678,23 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox26">
+                      <Value>кг.</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                          <Top>None</Top>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
             <TableRow>
@@ -756,6 +880,22 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                   <ReportItems>
                     <Textbox Name="Textbox39">
                       <Value>12</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <TextAlign>Center</TextAlign>
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <FontWeight>Bold</FontWeight>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox27">
+                      <Value>13</Value>
                       <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
                         <TextAlign>Center</TextAlign>
                         <BorderStyle>
@@ -988,12 +1128,246 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox45">
+                      <Value>=Fields!weight.Value</Value>
+                      <Style xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+                        <BorderStyle>
+                          <Default>Solid</Default>
+                        </BorderStyle>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <FontSize>9pt</FontSize>
+                        <BorderColor />
+                        <BorderWidth />
+                        <Format>0.000</Format>
+                      </Style>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
               </TableCells>
             </TableRow>
           </TableRows>
         </Details>
         <Left>0.0pt</Left>
         <Top>22.8pt</Top>
+        <Footer>
+          <TableRows>
+            <TableRow>
+              <Height>.2in</Height>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox46">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <Value></Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox47">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <Value></Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox48">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <Value></Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox49">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <Value></Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox50">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <Value></Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox51">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <Value></Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox52">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                      </Style>
+                      <Value></Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox53">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                      <Value>Сумма:</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox54">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                      <Value>=Sum({amount})</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox55">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontWeight>Bold</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <Format>0.00</Format>
+                      </Style>
+                      <Value>=Sum({sum_cost})</Value>
+                    </Textbox>
+                  </ReportItems>
+                  <ColSpan>2</ColSpan>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Textbox57">
+                      <Style>
+                        <BorderStyle>
+                          <Default>None</Default>
+                          <Left>None</Left>
+                          <Right>None</Right>
+                          <Top>None</Top>
+                          <Bottom>None</Bottom>
+                        </BorderStyle>
+                        <BorderColor />
+                        <BorderWidth />
+                        <FontWeight>Bold</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <Format>0.000</Format>
+                      </Style>
+                      <Value>=Sum({weight})</Value>
+                    </Textbox>
+                  </ReportItems>
+                  <ColSpan>2</ColSpan>
+                </TableCell>
+              </TableCells>
+            </TableRow>
+          </TableRows>
+        </Footer>
       </Table>
       <Textbox Name="Textbox18" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
         <Top>0.8pt</Top>
@@ -1012,7 +1386,7 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>93.2pt</Height>
+    <Height>118.1pt</Height>
     <Columns>1</Columns>
   </Body>
   <PageFooter>
@@ -1036,6 +1410,13 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
   <DataElementName>Report</DataElementName>
   <DataElementStyle>AttributeNormal</DataElementStyle>
   <ReportParameters>
+    <ReportParameter Name="report_name">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
     <ReportParameter Name="start_date">
       <DataType>String</DataType>
       <DefaultValue>
@@ -1089,6 +1470,78 @@ GROUP BY IF(@sum_cost, CONCAT(claim_id, '-', type), claim_row_id)</CommandText>
       <DefaultValue>
         <Values>
           <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="group_claim">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>false</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="service_ids">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>-1</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>true</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="source_employee">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="source_duty">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="source_over_norm">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
+        </Values>
+      </DefaultValue>
+      <Nullable>false</Nullable>
+      <AllowBlank>false</AllowBlank>
+      <MultiValue>false</MultiValue>
+      <Prompt></Prompt>
+    </ReportParameter>
+    <ReportParameter Name="source_warehouse">
+      <DataType>Boolean</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>true</Value>
         </Values>
       </DefaultValue>
       <Nullable>false</Nullable>

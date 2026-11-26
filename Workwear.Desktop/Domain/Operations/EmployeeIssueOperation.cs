@@ -24,7 +24,7 @@ namespace Workwear.Domain.Operations
 		Genitive ="операции выдачи сотруднику"
 	)]
 	[HistoryTrace]
-	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IGraphIssueOperation
+	public class EmployeeIssueOperation : PropertyChangedBase, IDomainObject, IValidatableObject, IEmployeeGraphIssueOperation
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -156,6 +156,7 @@ namespace Workwear.Domain.Operations
 			get => normItem;
 			set => SetField(ref normItem, value);
 		}
+		int? IGraphIssueOperation.NormAmount => NormItem?.Amount;
 
 		private string signCardKey;
 		[Display(Name = "UID карты доступа")]
@@ -243,9 +244,7 @@ namespace Workwear.Domain.Operations
 
 		#region Статические методы
 		public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0) {
-			if(startOfUse == null || expiryByNorm == null)
-				return 0;
-			if(beginWearPercent >= 1)
+			if(startOfUse == null || expiryByNorm == null || beginWearPercent >= 1)
 				return beginWearPercent;
 			
 			var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;
@@ -412,20 +411,20 @@ namespace Workwear.Domain.Operations
 		private bool CheckRecalculateCondition() {
 			if(FixedOperation) {
 				logger.Error(
-					$"Операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} помечена как непересчитываемая.");
+					$"Операция id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} помечена как непересчитываемая.");
 				return false;
 			}
 			
 			if(ProtectionTools == null) {
 				logger.Error(
-					$"Для операциия id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
-					$"'Номеклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
+					$"Для операция id:{Id} выдачи {Nomenclature?.Name} от {OperationTime} не указана " +
+					$"'Номенклатура нормы' поэтому прерасчет даты выдачи и использования не возможен.");
 				return false;
 			}
 
 			if(NormItem == null) {
 				logger.Error(
-					$"Для операциия id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} " +
+					$"Для операция id:{Id} выдачи {Nomenclature?.Name ?? ProtectionTools?.Name} " +
 					$"от {OperationTime} не установлена норма поэтому прерасчет даты выдачи и использования не возможен.");
 				return false;
 			}
@@ -447,7 +446,7 @@ namespace Workwear.Domain.Operations
 					.Where(x => x.StartDate.Date >= OperationTime.Date)
 					.OrderBy(x => x.StartDate)
 					.FirstOrDefault(x => graph.UsedAmountAtEndOfDay(x.StartDate, this) < NormItem.Amount);
-				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.ColDayAheadOfShedule) > OperationTime.Date) {
+				if(firstLessNorm != null && firstLessNorm.StartDate.AddDays(-baseParameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)) > OperationTime.Date) {
 					switch(baseParameters.ShiftExpluatacion) {
 						case AnswerOptions.Ask:
 							if(lastAnswerRecalculateStartOfUse == null)

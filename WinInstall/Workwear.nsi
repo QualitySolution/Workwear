@@ -1,7 +1,9 @@
 Unicode true
 ;--------------------------------
-!define PRODUCT_VERSION "2.10.11"
-!define NET_VERSION "4.6.2"
+SetCompressor /SOLID lzma
+SetDatablockOptimize on
+;--------------------------------
+!define PRODUCT_VERSION "2.10.18"
 !define EXE_NAME "workwear"
 !define PRODUCT_NAME "QS: Спецодежда"
 !define SHORTCUT_NAME "QS Спецодежда"
@@ -193,8 +195,9 @@ Section "${PRODUCT_NAME}" SecProgram
   CreateDirectory "$SMPROGRAMS\${MENU_DIR_NAME}"
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Удаление.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\${SHORTCUT_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe" "" "$INSTDIR\${EXE_NAME}.exe" 0
-  CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство пользователя.lnk" "$INSTDIR\user-guide.pdf"
-  CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство администратора.lnk" "$INSTDIR\admin-guide.pdf"
+  CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство пользователя.lnk" "$INSTDIR\руководство-пользователя.pdf"
+  CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Практическое руководство.lnk" "$INSTDIR\практическое-руководство.pdf"
+  CreateShortCut "$SMPROGRAMS\${MENU_DIR_NAME}\Руководство администратора.lnk" "$INSTDIR\руководство-администратора.pdf"
   
   ; Удяляем файлы ненужные после версии 1.2.4.2
   Delete $INSTDIR\gtk-databind-lib.dll
@@ -221,16 +224,20 @@ Section "${PRODUCT_NAME}" SecProgram
   
   ;Удаляем файлы не используемые после 2.8.9
   Delete $INSTDIR\System.Data.Bindings.dll
+
+  ; Удаляем PDF с английскими именами, использовавшимися до версии 2.10.14
+  Delete $INSTDIR\user-guide.pdf
+  Delete $INSTDIR\admin-guide.pdf
   
   ; Удаляем файлы до сокращения названия
   Delete "$DESKTOP\QS Спецодежда и имущество.lnk"
 
 SectionEnd
 
-Section "MS .NET Framework ${NET_VERSION}" SecFramework
+Section "MS .NET Framework 4.6.2" SecFramework
   SectionIn RO
 
-  !insertmacro CheckNetFramework 461
+  !insertmacro CheckNetFramework 462
  
 SectionEnd
 

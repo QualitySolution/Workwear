@@ -116,7 +116,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get {
 				List<Owner> owners = new List<Owner>() {
 					new Owner() { Id = -1, Name = "Все" }, 
-					new Owner() { Id = 0, Name = "Без собственика" }
+					new Owner() { Id = 0, Name = "Без собственника" }
 				}; 
 				owners.AddRange(UoW.GetAll<Owner>());
 				return owners;
@@ -149,7 +149,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			if(nomenclature != null)
 				this.nomenclature = UoW.GetById<Nomenclature>(nomenclature.Id);
 
-			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId, UoW);
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse).MakeByType().Finish();
 			EntryNomenclature = builder.ForProperty(x => x.Nomenclature).MakeByType().Finish();
 		}

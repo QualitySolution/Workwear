@@ -25,28 +25,6 @@ namespace Workwear.Domain.Regulations
 		#region Свойства
 		public virtual int Id { get; set; }
 
-		private RegulationDoc document;
-		[Display(Name = "Нормативный документ")]
-		public virtual RegulationDoc Document {
-			get => document;
-			set => SetField(ref document, value);
-		}
-
-		private RegulationDocAnnex annex;
-		[Display(Name = "Приложение нормативного документа")]
-		public virtual RegulationDocAnnex Annex {
-			get => annex;
-			set => SetField(ref annex, value);
-		}
-
-		string tonParagraph;
-		[Display(Name = "№ пункта приложения ТОН")]
-		[StringLength(15)]
-		public virtual string TONParagraph {
-			get => tonParagraph;
-			set => SetField(ref tonParagraph, value);
-		}
-
 		private string name;
 		[Display(Name = "Название")]
 		[StringLength(200)]
@@ -120,12 +98,10 @@ namespace Workwear.Domain.Regulations
 			}
 		}
 
-		public virtual string DocumentNumberText => document?.Number;
-		public virtual string AnnexNumberText => Annex?.Number.ToString();
 		public virtual bool IsActive => (DateFrom == null || DateFrom.Value <= DateTime.Today)
 		                                && (DateTo == null || DateTo >= DateTime.Today);
 
-		public virtual string Title => $"{Id} " + (String.IsNullOrWhiteSpace(Name) ? $"{DocumentNumberText} {AnnexNumberText} {TONParagraph}" : Name);
+		public virtual string Title => $"{Id} " + Name;
 		#endregion
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
@@ -148,6 +124,13 @@ namespace Workwear.Domain.Regulations
 						$"Количество у номенклатуры {item.ProtectionTools.Name} должно быть больше нуля.",
 					new[] { nameof(item.PeriodCount) });
 				}
+			}
+			for(int i = 0; i < items.Count; i++) {
+				var previousSame = items.Take(i).Count(x => DomainHelper.EqualDomainObjects(x.ProtectionTools, items[i].ProtectionTools));
+				if(previousSame == 1) 
+					yield return new ValidationResult(
+						$"Номенклатура нормы {items[i].ProtectionTools.Name} добавлена в норму несколько раз.",
+						new[] { this.GetPropertyName(o => o.Items) });
 			}
 		}
 
@@ -195,9 +178,6 @@ namespace Workwear.Domain.Regulations
 		/// Заполняет текущую норму данными из нормы, переданной в параметре. 
 		/// </summary>
 		public virtual void CopyFromNorm(Norm norm) {
-			Document = norm.Document;
-			Annex = norm.Annex;
-			TONParagraph= norm.tonParagraph;
 			Name = norm.name;
 			DateFrom = norm.dateFrom;
 			DateTo = norm.dateTo;
@@ -213,4 +193,3 @@ namespace Workwear.Domain.Regulations
 		}
 	}
 }
-

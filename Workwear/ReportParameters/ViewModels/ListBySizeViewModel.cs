@@ -15,7 +15,7 @@ using Workwear.Tools.Sizes;
 
 namespace workwear.ReportParameters.ViewModels
 {
-	public class ListBySizeViewModel : ReportParametersViewModelBase, IDialogDocumentation
+	public class ListBySizeViewModel : ReportParametersUowViewModelBase, IDialogDocumentation
 	{
 		private readonly SizeService sizeService;
 		private readonly FeaturesService featuresService;
@@ -28,12 +28,11 @@ namespace workwear.ReportParameters.ViewModels
 			SizeService sizeService,
 			FeaturesService featuresService,
 			IUnitOfWorkFactory uowFactory
-			) : base(rdlViewerViewModel)
+			) : base(rdlViewerViewModel, uowFactory)
 		{
 			this.sizeService = sizeService ?? throw new ArgumentNullException(nameof(sizeService));
 			this.featuresService=featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			Title = "Список по размерам";
-			var UoW = uowFactory.CreateWithoutRoot();
 			
 			var subdivisionsList = UoW.GetAll<Subdivision>().ToList();
 			ChoiceSubdivisionViewModel = new ChoiceListViewModel<Subdivision>(subdivisionsList);
@@ -56,20 +55,18 @@ namespace workwear.ReportParameters.ViewModels
 				{ "without_groups", ChoiceEmployeeGroupViewModel.NullIsSelected },
 				{ "employee_groups_ids", ChoiceEmployeeGroupViewModel.SelectedIdsMod },
 			};
-			using (var unitOfWork = UnitOfWorkFactory.CreateWithoutRoot()) {
-				var sizes = sizeService.GetSizeType(unitOfWork, onlyUseInEmployee: true).Take(6).ToList();
-				for (var count = 0; count < sizes.Count; count++) {
-					parameters.Add($"type_id_{count}", sizes[count].Id);
-					parameters.Add($"type_name_{count}", sizes[count].Name);
-				}
-				
-				var sizesData = sizeService.GetSizeType(unitOfWork, onlyUseInEmployee: false).Take(12).ToList();
-				for(var count = 0; count < sizesData.Count; count++) {
-					parameters.Add($"size_id_{count}", sizesData[count].Id);
-					parameters.Add($"size_name_{count}", sizesData[count].Name);
-				}
-				parameters.Add("printPromo", featuresService.Available(WorkwearFeature.PrintPromo));
+			var sizes = sizeService.GetSizeType(UoW, onlyUseInEmployee: true).Take(6).ToList();
+			for (var count = 0; count < sizes.Count; count++) {
+				parameters.Add($"type_id_{count}", sizes[count].Id);
+				parameters.Add($"type_name_{count}", sizes[count].Name);
 			}
+
+			var sizesData = sizeService.GetSizeType(UoW, onlyUseInEmployee: false).Take(12).ToList();
+			for(var count = 0; count < sizesData.Count; count++) {
+				parameters.Add($"size_id_{count}", sizesData[count].Id);
+				parameters.Add($"size_name_{count}", sizesData[count].Name);
+			}
+			parameters.Add("printPromo", featuresService.Available(WorkwearFeature.PrintPromo));
 			return parameters;
 		}
 		
@@ -94,7 +91,7 @@ namespace workwear.ReportParameters.ViewModels
 		}
 		
 		public bool VisibleChoiceEmployeeGroup => featuresService.Available(WorkwearFeature.EmployeeGroups);
-		
+
 		public enum SizeReportType {
 			[ReportIdentifier("ListBySize")]
 			[Display(Name = "Форматировано")]

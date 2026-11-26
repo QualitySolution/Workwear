@@ -7,6 +7,7 @@ using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
+using Workwear.Domain.ClothingService;
 using Workwear.Domain.Operations;
 using Workwear.Repository.Operations;
 
@@ -29,7 +30,7 @@ namespace Workwear.Domain.Stock.Documents
 			get => warehouse;
 			set { SetField(ref warehouse, value, () => Warehouse); }
 		}
-		
+
 		private IObservableList<ReturnItem> items = new ObservableList<ReturnItem>();
 		[Display (Name = "Строки документа")]
 		public virtual IObservableList<ReturnItem> Items {
@@ -38,26 +39,39 @@ namespace Workwear.Domain.Stock.Documents
 		}
 		#endregion
 		public virtual string Title => $"Возврат от работника №{DocNumberText} от {Date:d}";
-        		
+
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate (ValidationContext validationContext) {
 			if (Date < new DateTime(2008, 1, 1))
-				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)", 
+				yield return new ValidationResult ("Дата должны указана (не ранее 2008-го)",
 					new[] { this.GetPropertyName (o => o.Date)});
-			
+
 			if (DocNumber != null && DocNumber.Length > 15)
-				yield return new ValidationResult ("Номер документа должен быть не более 15 символов", 
+				yield return new ValidationResult ("Номер документа должен быть не более 15 символов",
 					new[] { this.GetPropertyName (o => o.DocNumber)});
 
 			if(Items.Count == 0)
-				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.", 
+				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку.",
 					new[] { this.GetPropertyName (o => o.Items)});
 
 			if(Items.Any (i => i.Amount <= 0))
-				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.", 
+				yield return new ValidationResult ("Документ не должен содержать строк с нулевым количеством.",
 					new[] { this.GetPropertyName (o => o.Items)});
+
+			var duplicateBarcodeTitles = Items
+				.SelectMany(i => i.Barcodes)
+				.Where(b => b != null)
+				.GroupBy(b => b.Id != 0 ? (object)b.Id : b)
+				.Where(g => g.Count() > 1)
+				.Select(g => g.First().Title)
+				.ToList();
+			if(duplicateBarcodeTitles.Any())
+				yield return new ValidationResult(
+					$"В документе несколько раз указана одна и та же метка: {string.Join(", ", duplicateBarcodeTitles)}.",
+					new[] { nameof(Items) });
+
 			foreach(var item in items) {
-				if(item.EmployeeCard == null) continue;
+				if(item.ReturnFrom != ReturnFrom.Employee || item.EmployeeCard == null) continue;
 				if(item.IssuedEmployeeOnOperation == null ||
 				   !DomainHelper.EqualDomainObjects(item.IssuedEmployeeOnOperation.Employee, item.EmployeeCard))
 					yield return new ValidationResult(
@@ -69,6 +83,11 @@ namespace Workwear.Domain.Stock.Documents
 				if(item.Nomenclature == null)
 					yield return new ValidationResult(
 						$"Для \"{item.ItemName}\" необходимо выбрать складскую номенклатуру.",
+						new[] { nameof(Items) });
+				var barcodesCount = GetReturnBarcodesCount(item);
+				if(barcodesCount > 0 && item.Amount != barcodesCount)
+					yield return new ValidationResult(
+						$"Для \"{item.ItemName}\" количество должно быть равно количеству выбранных штрихкодов.",
 						new[] { nameof(Items) });
 				switch(item.ReturnFrom) {
 					case ReturnFrom.Employee:
@@ -83,40 +102,90 @@ namespace Workwear.Domain.Stock.Documents
 								$" \"{item.ItemName}\" указано количество больше выданного по дежурной норме.",
 								new[] { nameof(Items) });
 						break;
+					case ReturnFrom.OverNorm:
+						if(item.Amount > item.MaxAmount)
+							yield return new ValidationResult(
+								$" \"{item.ItemName}\" указано количество больше выданного вне нормы.",
+								new[] { nameof(Items) });
+						break;
 				}
 			}
 		}
 
 		#endregion
 
+		private int GetReturnBarcodesCount(ReturnItem item) {
+			switch(item.ReturnFrom) {
+				case ReturnFrom.Employee:
+					return item.ReturnFromEmployeeOperation.BarcodeOperations.Count;
+				case ReturnFrom.DutyNorm:
+					return item.ReturnFromDutyNormOperation.BarcodeOperations.Count;
+				case ReturnFrom.OverNorm:
+					return item.ReturnFromOverNormOperation.BarcodeOperations.Count;
+				default:
+					return 0;
+			}
+		}
+
 		#region Строки документа
-		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count) {
+		public virtual ReturnItem AddItem(EmployeeIssueOperation issuedOperation, int count, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return null;
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
 
-			var newItem = new ReturnItem(this, issuedOperation, count);
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodeList);
 
 			Items.Add(newItem);
 			return newItem;
 		}
-		public virtual ReturnItem AddItem(DutyNormIssueOperation issuedOperation, int count) {
+		public virtual ReturnItem AddItem(DutyNormIssueOperation issuedOperation, int count, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
 			if(issuedOperation.Issued == 0)
 				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи.");
 
-			if(Items.Any(p => DomainHelper.EqualDomainObjects(p.IssuedEmployeeOnOperation, issuedOperation))) {
-				logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
-				return null;
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					DomainHelper.EqualDomainObjects(p.IssuedDutyNormOnOperation, issuedOperation) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn("Номенклатура из этой выдачи уже добавлена. Пропускаем...");
+					return existing;
+				}
 			}
-			var newItem = new ReturnItem(this, issuedOperation, count);
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodeList);
 
 			Items.Add(newItem);
 			return newItem;
 		}
+
+		public virtual ReturnItem AddItem(OverNormOperation issuedOperation, int count, ServiceClaim claim = null, IEnumerable<Barcode> barcodes = null) {
+			if(issuedOperation.WarehouseOperation?.ExpenseWarehouse == null)
+				throw new InvalidOperationException("Этот метод можно использовать только с операциями выдачи вне нормы.");
+
+			var barcodeList = barcodes?.ToList();
+			if(barcodeList == null || !barcodeList.Any()) {
+				var existing = Items.FirstOrDefault(p =>
+					DomainHelper.EqualDomainObjects(p.IssuedOverNormOperation, issuedOperation) && p.CanEditAmount);
+				if(existing != null) {
+					logger.Warn("Номенклатура из этой выдачи вне нормы уже добавлена. Пропускаем...");
+					return existing;
+				}
+			}
+
+			var newItem = new ReturnItem(this, issuedOperation, count, claim, barcodeList);
+
+			Items.Add(newItem);
+			return newItem;
+		}
+
 		public virtual void RemoveItem(ReturnItem item) {
 			Items.Remove (item);
 		}
@@ -128,17 +197,17 @@ namespace Workwear.Domain.Stock.Documents
 
 		public virtual void UpdateEmployeeWearItems(IUnitOfWork uow) {
 			foreach(var item in items) {
-				if(item.EmployeeCard!=null && item.DutyNorm==null) {
+				if(item.ReturnFrom == ReturnFrom.Employee && item.EmployeeCard != null) {
 					item.EmployeeCard.FillWearReceivedInfo(new EmployeeIssueRepository(uow));
-					item.EmployeeCard.UpdateNextIssue(Items.Where(i =>
-							DomainHelper.EqualDomainObjects(i.EmployeeCard, item.EmployeeCard))
+					item.EmployeeCard.UpdateNextIssue(uow, Items.Where(i =>
+							i.ReturnFrom == ReturnFrom.Employee
+							&& DomainHelper.EqualDomainObjects(i.EmployeeCard, item.EmployeeCard))
 						.Select(x => x.IssuedEmployeeOnOperation.ProtectionTools)
 						.Where(x => x != null).Distinct().ToArray());
 				}
 				// TODO Пересчитать start_of_use, autowriteoff в возврате, выдаче и списании деж. нормы
 			}
-			
+
 		}
 	}
 }
-

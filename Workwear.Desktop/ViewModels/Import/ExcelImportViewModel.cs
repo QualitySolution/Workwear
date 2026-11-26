@@ -13,6 +13,7 @@ using QS.Validation;
 using QS.ViewModels.Dialog;
 using QS.ViewModels.Extension;
 using Workwear.Models.Import;
+using Workwear.Models.Import.Employees;
 using Workwear.Repository.Company;
 using Workwear.Tools;
 using Workwear.Tools.Features;
@@ -88,7 +89,6 @@ namespace Workwear.ViewModels.Import
 		#endregion
 
 		#region private
-		protected readonly IInteractiveMessage interactiveMessage;
 		private readonly ProgressInterceptor progressInterceptor;
 		private readonly FeaturesService featuresService;
 		private readonly EmployeeRepository employeeRepository;
@@ -201,8 +201,8 @@ namespace Workwear.ViewModels.Import
 		#endregion
 		#region Сохранение
 		public new void Save() {
-			if(featuresService.Employees != 0) {
-				if(featuresService.Employees - employeeRepository.GetNumberOfEmployees() < CountersViewModel.Counters["NewEmployee"].Count) {
+			if(featuresService.Employees != 0 && ImportModel is ImportModelEmployee) {
+				if(featuresService.Employees - employeeRepository.GetNumberOfEmployees() < CountersViewModel.GetCount(CountersEmployee.NewEmployee)) {
 					interactive.ShowMessage(ImportanceLevel.Warning,$"Количество новых импортированных сотрудников превышает лимит Вашей лицензии.\n" +
 					                                                $"Лимит Вашей лицензии: {featuresService.Employees}", 
 						"Невозможно добавить сотрудников");
@@ -241,7 +241,7 @@ namespace Workwear.ViewModels.Import
 				ImportModel.FileName = Path.GetFileName(FileName);
 			}
 			catch(IOException ex) when(ex.HResult == -2147024864) {
-				interactiveMessage.ShowMessage(ImportanceLevel.Error, 
+				interactive.ShowMessage(ImportanceLevel.Error,
 					"Указанный файл уже открыт в другом приложении. Оно заблокировало доступ к файлу.");
 				return;
 			}

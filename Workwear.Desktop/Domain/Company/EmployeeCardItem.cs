@@ -97,8 +97,15 @@ namespace Workwear.Domain.Company
 		public virtual string SelectedNomenclatureText =>
 			ProtectionTools.ProtectionToolsNomenclatures.Any(x => x.CanChoose) && SelectedNomenclature != null 
 				? $"Предпочтительно: {SelectedNomenclature.Name} (ИД:{SelectedNomenclature.Id})" : null;
-		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters) 
-			=> (EmployeeIssueOperation)LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
+		/// <summary>
+		/// Возвращает операцию последней выдачи. Если она сейчас ДТО, подгрузит реальную из базы.
+		/// </summary>
+		public virtual EmployeeIssueOperation LastIssueOperation(DateTime onDate, BaseParameters baseParameters, IUnitOfWork uow) {
+			var lastOperation = LastIssued(onDate, baseParameters).LastOrDefault().item?.IssueOperation;
+			if(lastOperation == null)
+				return null;
+			return lastOperation as EmployeeIssueOperation ?? uow.GetById<EmployeeIssueOperation>(lastOperation.Id);
+		}
 		public virtual string AmountColor {
 			get {
 				var amount = Issued(DateTime.Today);
@@ -118,7 +125,7 @@ namespace Workwear.Domain.Company
 		{
 			if(DateTime.Today > NextIssue)
 					return "red";
-			if (DateTime.Today.AddDays(parameters.ColDayAheadOfShedule) > NextIssue)
+			if (DateTime.Today.AddDays(parameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)) > NextIssue)
 				return "darkgreen";
 			else
 				return "black";
@@ -162,8 +169,8 @@ namespace Workwear.Domain.Company
 			foreach(var interval in Graph.OrderedIntervalsReverse) {
 				if(interval.StartDate <= onDate 
 				   && showed.Count == 1 
-				   && showed.First().Value.amount == ((EmployeeIssueOperation)showed.First().Value.item.IssueOperation).NormItem?.Amount
-				                                      && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.ColDayAheadOfShedule), showed.First().Value.item.IssueOperation) == 0 )
+				   && showed.First().Value.amount == showed.First().Value.item.IssueOperation.NormAmount
+				                                      && interval.AmountAtEndOfDay(showed.First().Value.date.AddDays(baseParameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)), showed.First().Value.item.IssueOperation) == 0 )
 					break;
 				
 				foreach(var item in interval.ActiveIssues) {
@@ -218,7 +225,6 @@ namespace Workwear.Domain.Company
 				? NumberToTextRus.FormatCase((int)(DateTime.Today - NextIssue.Value).TotalDays, "{0} день", "{0} дня", "{0} дней")
 				: String.Empty;
 		public virtual string NextIssueText => ProtectionTools?.Dispenser ?? false ? String.Empty : $"{NextIssue:d}";
-		public virtual string TonText => ActiveNormItem?.Norm?.TONParagraph;
 		public virtual string NormLifeText => ActiveNormItem?.LifeText;
 		#endregion
 		public EmployeeCardItem () { }
@@ -250,7 +256,7 @@ namespace Workwear.Domain.Company
 					return 0;
 			}
 
-			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule), excludeOperationIds));
+			return Math.Max(0, ActiveNormItem.Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType)), excludeOperationIds));
 		}
 
 		public virtual bool MatchStockPosition(StockPosition stockPosition) {
@@ -306,9 +312,9 @@ namespace Workwear.Domain.Company
 				if(lastInterval.CurrentCount >= ActiveNormItem.Amount) {
 					//Если количество в последнем интервале достаточно, значит нет автосписания,
 					//следующая выдача чисто информативно проставляется по сроку носки
-					var expiredByNorm = lastInterval.ActiveItems.Where(x => ((EmployeeIssueOperation)x.IssueOperation).ExpiryByNorm != null);
+					var expiredByNorm = lastInterval.ActiveItems.Where(x => x.IssueOperation.ExpiryByNorm != null);
 					if(expiredByNorm.Any())
-						wantIssue = expiredByNorm.Max(x => ((EmployeeIssueOperation)x.IssueOperation).ExpiryByNorm.Value);
+						wantIssue = expiredByNorm.Max(x => x.IssueOperation.ExpiryByNorm.Value);
 					else
 						wantIssue = null;
 				}
@@ -387,6 +393,7 @@ namespace Workwear.Domain.Company
 		//Сортируем позиции по следующим критериям:
 		//-Сначала приоритетная номеннклатура, если задана
 		//-Позиция более приоритетного собственника
+		//-Сначала позиции с размером и ростом, затем с одним из них, затем безразмерные.
 		//-Была выбрана номенклатура прямо указанная в номенклатуре нормы, а уже затем аналоги. (Возможно текущий код не совсем это реализует. А привязывается к порядку номенклатур, скорей всего это не логично, наверно надо будет улучшить.)
 		//-Далее смотрим чтобы был меньший процент износа, то есть выдавалась новая.
 		//-Далее выдаем ту которой больше на складе, чтобы оставалось больше разнообразия(решение сомнительное, но какое есть)
@@ -398,8 +405,12 @@ namespace Workwear.Domain.Company
 					DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, priorityNomenclature) ||
 					DomainHelper.EqualDomainObjects(y.Position?.Nomenclature, priorityNomenclature)))
 				return DomainHelper.EqualDomainObjects(x.Position?.Nomenclature, priorityNomenclature) ? -1 : 1;
-			if(x.Position.Owner?.Priority != y.Position.Owner?.Priority)
+			if((x.Position.Owner?.Priority ?? 0) != (y.Position.Owner?.Priority ?? 0))
 				return (y.Position.Owner?.Priority ?? 0).CompareTo(x.Position.Owner?.Priority ?? 0);
+			var xSizesCount = (x.Position.WearSize != null ? 1 : 0) + (x.Position.Height != null ? 1 : 0);
+			var ySizesCount = (y.Position.WearSize != null ? 1 : 0) + (y.Position.Height != null ? 1 : 0);
+			if((x.Position.WearSize != null ? 1 : 0) + (x.Position.Height != null ? 1 : 0) != ySizesCount)
+				return ySizesCount.CompareTo(xSizesCount);
 			var xMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(x.Position.Nomenclature)).Count();
 			var yMatchedNomenclature = protectionTools.Nomenclatures.TakeWhile(n => !n.IsSame(y.Position.Nomenclature)).Count();
 			if(xMatchedNomenclature != yMatchedNomenclature)
@@ -412,4 +423,3 @@ namespace Workwear.Domain.Company
 		}
 	}
 }
-

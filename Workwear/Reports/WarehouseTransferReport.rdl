@@ -14,7 +14,7 @@
       <Query>
         <DataSourceName>DS1</DataSourceName>
         <CommandText>SELECT
-   TO_CHAR(operation_time, 'dd.mm.yyyy') AS 'operation_time',
+   DATE_FORMAT(operation_time, '%d.%m.%Y') AS 'operation_time',
     nomenclature.number AS 'nomenclature_number',
     nomenclature.name AS 'nomenclature_name',
     IF(heightAlias.name is null, sizeAlias.name, CONCAT(sizeAlias.name, '/',heightAlias.name)) AS 'size',

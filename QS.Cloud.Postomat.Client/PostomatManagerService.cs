@@ -6,7 +6,7 @@ using QS.Cloud.Postomat.Manage;
 namespace QS.Cloud.Postomat.Client {
 	public class PostomatManagerService : CloudClientServiceBase {
 		public PostomatManagerService(ISessionInfoProvider sessionInfoProvider)
-			: base(sessionInfoProvider, "postomat.cloud.qsolution.ru", 4204) { }
+			: base(sessionInfoProvider, "postomat.cloud.qsolution.ru", 443) { }
 		
 		#region Запросы
 		public IList<PostomatInfo> GetPostomatList(PostomatListType listType) {

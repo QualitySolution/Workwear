@@ -42,7 +42,7 @@ namespace Workwear.Test.Integration.Organization
 			var ask = Substitute.For<IInteractiveService>();
 			ask.Question(string.Empty).ReturnsForAnyArgs(true);
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 			baseParameters.ExtendPeriod.Returns(AnswerOptions.No);
 			baseParameters.ShiftExpluatacion.Returns(AnswerOptions.No);
 
@@ -119,10 +119,11 @@ namespace Workwear.Test.Integration.Organization
 
 				//Обновление операций
 				expense.UpdateOperations(uow, baseParameters, ask);
+				expense.SaveOperations(uow);
 				uow.Save(expense);
 				uow.Commit();
 
-				expense.UpdateEmployeeWearItems();
+				expense.UpdateEmployeeWearItems(uow);
 				uow.Commit();
 
 				Assert.That(employee.WorkwearItems.First(i => i.ProtectionTools == protectionTools).NextIssue,

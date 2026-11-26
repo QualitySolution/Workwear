@@ -78,6 +78,8 @@ namespace workwear.Journal.ViewModels.Stock
 				query.Where(x => !x.Archival);
 			if(Filter.OnlyWithRating)
 				query.Where(x => x.Rating != null);
+			if(Filter.OnlyMarking)
+				query.Where(x => x.UseBarcode);
 			if(Filter.ProtectionTools != null)
 				query.Left.JoinAlias(n => n.ProtectionTools, () => protectionToolsAlias)
 					.Where(() => protectionToolsAlias.Id == Filter.ProtectionTools.Id);
@@ -102,6 +104,7 @@ namespace workwear.Journal.ViewModels.Stock
 					.Select(x => x.SaleCost).WithAlias(() => resultAlias.SaleCost)
 					.Select(x => x.Rating).WithAlias(() => resultAlias.Rating)
 					.Select(x => x.RatingCount).WithAlias(() => resultAlias.RatingCount)
+					.Select(x => x.CatalogId).WithAlias(() => resultAlias.CatalogId)
 				).OrderBy(x => x.Name).Asc
 				.TransformUsing(Transformers.AliasToBean<NomenclatureJournalNode>());
 		}
@@ -193,6 +196,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public string SaleCostText => SaleCost > 0 ? CurrencyWorks.GetShortCurrencyString (SaleCost) : String.Empty;
 		public float? Rating { get; set; }
 		public int? RatingCount { get; set; }
+		public string CatalogId { get; set; }
 
 		public string RatingText => Rating == null ? null : $"{Rating:F1} ({RatingCount})";
 		public string UseBarcodeText => UseBarcode ? "Используется" : String.Empty;

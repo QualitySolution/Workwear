@@ -242,7 +242,7 @@ namespace Workwear.ViewModels.Export {
 				new ColumnInfo() {
 					Label = "Цена",
 					Visible = () => ExportCost != FutureIssueExportCost.None,
-					FillCell = (cell, item) => {cell.SetCellValue((double)((GetCost(item) ?? 0) * 1.2M));},
+					FillCell = (cell, item) => {cell.SetCellValue((double)((GetCost(item) ?? 0) * 1.22M));},
 					Type = CellType.Numeric,
 					Style = cellStyleFinance,
 					Wight = -1},
@@ -262,7 +262,7 @@ namespace Workwear.ViewModels.Export {
 				new ColumnInfo() {
 					Label = "Сумма",
 					Visible = () => ExportCost != FutureIssueExportCost.None,
-					FillCell = (cell, item) => {cell.SetCellValue((double)((GetCost(item) ?? 0) * item.Amount * 1.2M));},
+					FillCell = (cell, item) => {cell.SetCellValue((double)((GetCost(item) ?? 0) * item.Amount * 1.22M));},
 					Type = CellType.Numeric,
 					Style = cellStyleFinance,
 					Wight = -1},

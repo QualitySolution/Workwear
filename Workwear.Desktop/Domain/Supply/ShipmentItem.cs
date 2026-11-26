@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.DomainModel.Entity;
 using QS.HistoryLog;
 using Workwear.Domain.Sizes;
@@ -67,6 +67,20 @@ namespace Workwear.Domain.Supply{
 		public virtual int Received {
 			get => received;
             set => SetField(ref received, value);
+		}
+
+		private int? inStockOnCreate;
+		[Display (Name = "На складе при создании")]
+		public virtual int? InStockOnCreate {
+			get => inStockOnCreate;
+			set => SetField(ref inStockOnCreate, value);
+		}
+
+		private DateTime? creationDate = DateTime.Now;
+		[Display (Name = "Дата добавления")]
+		public virtual DateTime? CreationDate {
+			get => creationDate;
+			set => SetField(ref creationDate, value);
 		}
 
 		private decimal cost;
@@ -144,7 +158,7 @@ namespace Workwear.Domain.Supply{
 		public virtual SizeType WearSizeType => nomenclature?.Type.SizeType;
 
 		[Display(Name = "Единица измерения")]
-		public virtual MeasurementUnits Units => nomenclature?.Type.Units;
+		public virtual MeasurementUnit Units => nomenclature?.Type.Units;
 
 		#endregion
 		public ShipmentItem(){ }

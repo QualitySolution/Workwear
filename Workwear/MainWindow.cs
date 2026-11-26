@@ -9,7 +9,7 @@ using Autofac;
 using Gtk;
 using MySqlConnector;
 using NLog;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Journal.ViewModels;
 using QS.Configuration;
 using QS.Dialog;
 using QS.DomainModel.Entity;
@@ -38,13 +38,11 @@ using QS.Utilities;
 using QS.Utilities.Processes;
 using QS.ViewModels.Control.EEVM;
 using QS.ViewModels.Control.ESVM;
-using QSOrmProject;
 using QSProjectsLib;
 using QSTelemetry;
 using workwear;
 using Workwear;
 using Workwear.Domain.Company;
-using Workwear.Domain.Regulations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Users;
 using workwear.Journal.Filter.ViewModels.Stock;
@@ -56,6 +54,7 @@ using workwear.Journal.ViewModels.Postomats;
 using workwear.Journal.ViewModels.Regulations;
 using workwear.Journal.ViewModels.Statements;
 using workwear.Journal.ViewModels.Stock;
+using Workwear.Journal.ViewModels.Stock;
 using workwear.Journal.ViewModels.Supply;
 using workwear.Journal.ViewModels.Tools;
 using workwear.Journal.ViewModels.Visits;
@@ -66,7 +65,6 @@ using Workwear.Models.Import.Norms;
 using workwear.Models.WearLk;
 using workwear.ReportParameters.ViewModels;
 using Workwear.ReportParameters.ViewModels;
-using workwear.ReportsDlg;
 using Workwear.Repository.Company;
 using Workwear.Repository.Stock;
 using Workwear.Tools;
@@ -93,24 +91,24 @@ public partial class MainWindow : Gtk.Window {
 	public readonly IApplicationQuitService quitService;
 	public readonly IInteractiveService interactive;
 	public readonly IGuiDispatcher dispatcher;
-	
+
 	public FeaturesService FeaturesService { get; private set; }
-	
+
 	// Информация о статусе подписки
 	private SubscriptionStatus currentSubscriptionStatus = SubscriptionStatus.None;
 	private string subscriptionStatusTitle = string.Empty;
 	private string subscriptionStatusMessage = string.Empty;
-	
+
 	public MainWindow(UnhandledExceptionHandler unhandledExceptionHandler, bool isDemo) : base(Gtk.WindowType.Toplevel) {
 		Build();
+		toolbarMain.Sensitive = false;
+		menubar1.Sensitive = false;
+		entitySearchEmployee.Sensitive = false;
 		ProgressBar = progresswidget1;
 		var progress = new ProgressPerformanceHelper(ProgressBar, 34, "Подготовка статусной строк", logger, showProgressText: true);
 		//Передаем лебл
 		QSMain.StatusBarLabel = labelStatus;
 		QSMain.MakeNewStatusTargetForNlog();
-		toolbarMain.Sensitive = false;
-		menubar1.Sensitive = false;
-		entitySearchEmployee.Sensitive = false;
 
 		progress.StartGroup("Настройка базы");
 		MainClass.CreateBaseConfig(progress);
@@ -169,7 +167,7 @@ public partial class MainWindow : Gtk.Window {
 				quitService.Quit();
 				return;
 			}
-			
+
 			var appUpdater = (ApplicationUpdater)checker.ApplicationUpdater;
 			if(appUpdater.LastResponse != null) {
 				if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked) {
@@ -178,7 +176,8 @@ public partial class MainWindow : Gtk.Window {
 					appUpdater.CheckUpdate();
 					if(appUpdater.LastResponse.SubscriptionStatus == SubscriptionStatus.Blocked)
 						quitService.Quit();
-				} else 
+				}
+				else
 					SetSubscriptionStatusInStatusBar(appUpdater.LastResponse);
 			}
 		}
@@ -264,10 +263,8 @@ public partial class MainWindow : Gtk.Window {
 				baseParam.Dynamic.BaseGuid = Guid.NewGuid();
 
 			//Уведомление о скором истечении срока действия серийного номера
-			if (FeaturesService.ExpiryDate != null) 
-			{
-				if (FeaturesService.ExpiryDate < DateTime.Now) 
-				{
+			if(FeaturesService.ExpiryDate != null) {
+				if(FeaturesService.ExpiryDate < DateTime.Now) {
 					interactive.ShowMessage(ImportanceLevel.Error, "Срок действия серийного номера истек. Введите новый серийный номер для продолжения работы.", "Серийный номер истек");
 					EnterNewSN();
 				}
@@ -304,7 +301,7 @@ public partial class MainWindow : Gtk.Window {
 
 		//Дополнительные параметры в телеметрию
 		progress.CheckPoint("Запускаем телеметрию");
-		#if !DEBUG
+#if !DEBUG
 			//Инициализируем телеметрию
 			using(var telemetryScope = AutofacScope.BeginLifetimeScope()) {
 				var applicationInfo = telemetryScope.Resolve<IApplicationInfo>();
@@ -318,9 +315,9 @@ public partial class MainWindow : Gtk.Window {
 				NavigationManager.ViewModelOpened += NavigationManager_ViewModelOpened;
 				tdiMain.DocumentationOpened += (sender, e) => MainTelemetry.AddCount("DocumentationButton");
 			}
-		#else
+#else
 		MainTelemetry.DoNotTrack = true;
-		#endif
+#endif
 		if(!MainTelemetry.DoNotTrack)
 			Task.Run(FillTelemetry);
 
@@ -353,13 +350,12 @@ public partial class MainWindow : Gtk.Window {
 		UoW.Session.Save(warehouse);
 	}
 
-	private void EnterNewSN() 
-	{
+	private void EnterNewSN() {
 		IPage<SerialNumberViewModel> page = NavigationManager.OpenViewModel<SerialNumberViewModel>(null);
 		bool isClosed = false;
 		page.PageClosed += (sender, closedArgs) => {
 			isClosed = true;
-			if (closedArgs.CloseSource == CloseSource.Save) 
+			if(closedArgs.CloseSource == CloseSource.Save)
 				FeaturesService.UpdateSerialNumber();
 			else
 				quitService.Quit();
@@ -402,6 +398,7 @@ public partial class MainWindow : Gtk.Window {
 		ActionMenuRatings.Visible = FeaturesService.Available(WorkwearFeature.Ratings);
 		ActionNotificationTemplates.Visible = FeaturesService.Available(WorkwearFeature.Communications);
 		ActionOwner.Visible = FeaturesService.Available(WorkwearFeature.Owners);
+		ActionOverNormIssuedReport.Visible = FeaturesService.Available(WorkwearFeature.OverNorm);
 		ActionPostomatDocs.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionPostomatDocsWithdraw.Visible = FeaturesService.Available(WorkwearFeature.Postomats);
 		ActionProvision.Visible = FeaturesService.Available(WorkwearFeature.ReportSupply);
@@ -411,11 +408,14 @@ public partial class MainWindow : Gtk.Window {
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.ReportStockOperations);
 		ActionStockOperations.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionVacationTypes.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
+		ActionVacationsReport.Visible = FeaturesService.Available(WorkwearFeature.Vacation);
 		ActionVisits.Visible = FeaturesService.Available(WorkwearFeature.Visits);
 		ActionWarehouse.Visible = FeaturesService.Available(WorkwearFeature.Warehouses);
 		ActionWarehouseForecasting.Visible = FeaturesService.Available(WorkwearFeature.StockForecasting);
 		ActionWearCardsReport.Visible = FeaturesService.Available(WorkwearFeature.ReportWearCard);
 		ActionWriteOffAct.Visible = FeaturesService.Available(WorkwearFeature.ReportWrittenOff);
+		ActionRentAct.Visible = FeaturesService.Available(WorkwearFeature.Rent);
+		ActionRentMovements.Visible = FeaturesService.Available(WorkwearFeature.Rent);
 
 		ActionServices.Visible = FeaturesService.Available(WorkwearFeature.Communications)
 						 || FeaturesService.Available(WorkwearFeature.Claims)
@@ -485,10 +485,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnAction7Activated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("MeasurementUnits");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<MeasurementUnits>(),
-						() => new OrmReference(typeof(MeasurementUnits))
-					   );
+		NavigationManager.OpenViewModel<MeasurementUnitJournalViewModel>(null);
 	}
 
 	protected void OnAction8Activated(object sender, EventArgs e) {
@@ -521,12 +518,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnAction10Activated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("ReportWearStatement");
-		WearStatement widget = new WearStatement();
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(WearStatementViewModel));
 	}
 
 	protected void OnAction12Activated(object sender, EventArgs e) =>
@@ -535,7 +527,19 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnHelpActionActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenUserGuide");
 		try {
-			OpenHelper.OpenUrl("user-guide.pdf");
+			OpenHelper.OpenUrl("руководство-пользователя.pdf");
+		}
+		catch(System.ComponentModel.Win32Exception ex) {
+			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
+			$"При открытии PDF файла с документацией произошла ошибка:\n{ex.Message}\n" +
+				"Возможно на компьютере не установлена или неисправна программа для открытия PDF");
+		}
+	}
+
+	protected void OnActionPracticalGuideActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenPracticalGuide");
+		try {
+			OpenHelper.OpenUrl("практическое-руководство.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -591,7 +595,7 @@ public partial class MainWindow : Gtk.Window {
 				builder.RegisterInstance<Action<StockBalanceFilterViewModel>>(
 					filter => {
 						filter.ShowNegativeBalance = true;
-						filter.Warehouse = new StockRepository().GetDefaultWarehouse(UoW, FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
+						filter.Warehouse = new StockRepository(UoW).GetDefaultWarehouse(FeaturesService, AutofacScope.Resolve<IUserService>().CurrentUserId);
 					});
 			});
 	}
@@ -749,13 +753,6 @@ public partial class MainWindow : Gtk.Window {
 		OpenHelper.OpenUrl("https://workwear.qsolution.ru/?utm_source=qs&utm_medium=app_workwear&utm_campaign=help_open_site");
 	}
 
-	protected void OnActionRegulationDocActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("RegulationDoc");
-		tdiMain.OpenTab(OrmReference.GenerateHashName<RegulationDoc>(),
-						() => new OrmReference(typeof(RegulationDoc))
-			   );
-	}
-
 	protected void OnActionBaseSettingsActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("DataBaseSettings");
 		NavigationManager.OpenViewModel<DataBaseSettingsViewModel>(null);
@@ -790,12 +787,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	protected void OnActionAmountEmployeeGetWearActivated(object sender, EventArgs e) {
-		MainTelemetry.AddCount("ReportAmountEmployeeGetWear");
-		AmountEmployeeGetWearDlg widget = new AmountEmployeeGetWearDlg("AmountEmployeeGetWear", "Количество сотрудников получивших СИЗ");
-		tdiMain.OpenTab(
-			QSReport.ReportViewDlg.GenerateHashName(widget),
-			() => new QSReport.ReportViewDlg(widget)
-		);
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountEmployeeGetWearViewModel));
 	}
 
 	protected void OnActionAmountIssuedWearActivated(object sender, EventArgs e) {
@@ -862,7 +854,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionAdminGuideActivated(object sender, EventArgs e) {
 		MainTelemetry.AddCount("OpenAdminGuide");
 		try {
-			OpenHelper.OpenUrl("admin-guide.pdf");
+			OpenHelper.OpenUrl("руководство-администратора.pdf");
 		}
 		catch(System.ComponentModel.Win32Exception ex) {
 			AutofacScope.Resolve<IInteractiveMessage>().ShowMessage(ImportanceLevel.Error,
@@ -967,6 +959,10 @@ public partial class MainWindow : Gtk.Window {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(BarcodeCompletenessReportViewModel));
 	}
 
+	protected void OnActionOverNormIssuedReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(OverNormIssuedReportViewModel));
+	}
+
 	protected void OnActionPostomatDocsWithdrawActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<PostomatDocumentsWithdrawJournalViewModel>(null);
 	}
@@ -1006,7 +1002,7 @@ public partial class MainWindow : Gtk.Window {
 	protected void OnActionShipmentActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ShipmentJournalViewModel>(null);
 	}
-	
+
 	protected void OnActionClothingServicesActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<ServicesJournalViewModel>(null);
 	}
@@ -1024,7 +1020,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	#region Обработка статуса подписки
-	
+
 	/// <summary>
 	/// Устанавливает статус подписки в строке состояния на основе ответа от сервера обновлений
 	/// </summary>
@@ -1032,10 +1028,10 @@ public partial class MainWindow : Gtk.Window {
 		currentSubscriptionStatus = response.SubscriptionStatus;
 		subscriptionStatusTitle = response.Title;
 		subscriptionStatusMessage = response.Message;
-		
+
 		string statusText = string.Empty;
 		string color = "black";
-		
+
 		switch(currentSubscriptionStatus) {
 			case SubscriptionStatus.None:
 				statusText = "Бесплатная версия";
@@ -1043,59 +1039,61 @@ public partial class MainWindow : Gtk.Window {
 				subscriptionStatusTitle = "Бесплатная версия";
 				subscriptionStatusMessage = "Вы используете бесплатную версию программы. Для получения доступа к дополнительным функциям и поддержке приобретите расширенную редакцию.";
 				break;
-				
+
 			case SubscriptionStatus.Active:
 				// Проверяем, не истекает ли подписка в ближайшие 30 дней
 				if(response.SubscriptionActiveUntil != null) {
 					var expirationDate = response.SubscriptionActiveUntil.ToDateTime();
 					var daysLeft = (expirationDate - DateTime.UtcNow).Days;
-					
+
 					if(daysLeft <= 30 && daysLeft > 0) {
 						statusText = $"Активно ещё {daysLeft} {NumberToTextRus.Case(daysLeft, "день", "дня", "дней")}";
 						color = "green";
 						subscriptionStatusTitle = "Подписка скоро истекает";
 						subscriptionStatusMessage = $"До окончания подписки осталось {daysLeft} {NumberToTextRus.Case(daysLeft, "день", "дня", "дней")}. Рекомендуем продлить подписку заранее.";
-					} else {
+					}
+					else {
 						// Подписка активна и не истекает в ближайшее время - ничего не показываем
 						labelSubscriptionStatus.Visible = false;
 						eventboxSubscriptionStatus.Visible = false;
 						return;
 					}
-				} else {
+				}
+				else {
 					// Нет информации о дате окончания - не показываем статус
 					labelSubscriptionStatus.Visible = false;
 					eventboxSubscriptionStatus.Visible = false;
 					return;
 				}
 				break;
-				
+
 			case SubscriptionStatus.Expired:
 				statusText = "(!) Подписка истекла";
 				color = "orange";
 				break;
-				
+
 			case SubscriptionStatus.ExpiredUnsupported:
 				statusText = "(!) Не поддерживается";
 				color = "red";
 				break;
-				
+
 			case SubscriptionStatus.ExpiredSupported:
 				statusText = "(!) Поддержка ограничена";
 				color = "orange";
 				break;
-				
+
 			default:
 				// Для неизвестных статусов ничего не показываем
 				labelSubscriptionStatus.Visible = false;
 				eventboxSubscriptionStatus.Visible = false;
 				return;
 		}
-		
+
 		labelSubscriptionStatus.Markup = $"<span foreground=\"{color}\" weight=\"bold\"> {statusText}</span>";
 		labelSubscriptionStatus.Visible = true;
 		eventboxSubscriptionStatus.Visible = true;
 	}
-	
+
 	/// <summary>
 	/// Обработчик клика по статусу подписки
 	/// </summary>
@@ -1103,9 +1101,9 @@ public partial class MainWindow : Gtk.Window {
 		// Показываем сообщение для всех статусов, кроме случая когда статус не установлен
 		if(string.IsNullOrEmpty(subscriptionStatusMessage))
 			return;
-			
+
 		interactive.ShowMessage(ImportanceLevel.Warning, subscriptionStatusMessage, subscriptionStatusTitle);
-		
+
 		// Открываем страницу покупки
 		try {
 			string url = "https://workwear.qsolution.ru/stoimost/";
@@ -1120,7 +1118,7 @@ public partial class MainWindow : Gtk.Window {
 	}
 
 	#endregion
-	
+
 	protected void OnActionOffAutoUpdateToggled(object sender, EventArgs e) {
 		if(ActionOffAutoUpdate.Active)
 			SetChannel(UpdateChannel.Off);
@@ -1132,5 +1130,39 @@ public partial class MainWindow : Gtk.Window {
 
 	protected void OnActionDutyNormIssuedReportActivated(object sender, EventArgs e) {
 		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(AmountIssuedDutyNormsViewModel));
+	}
+
+	protected void OnActionNotIssuedDutyNormsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(NotIssuedDutyNormsViewModel));
+	}
+
+	protected void OnActionRentMovementsActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(RentMovementsViewModel));
+	}
+
+	protected void OnActionRentActActivated(object sender, EventArgs e) {
+	}
+
+	protected void OnActionCausesIssueActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<CauseIssueJournalViewModel>(null);
+	}
+
+	protected void OnTelegramActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenTelegram");
+		OpenHelper.OpenUrl("https://t.me/qs_specodezhda");
+	}
+
+	protected void OnMAXActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenMax");
+		OpenHelper.OpenUrl("https://max.ru/id7810524703_biz");
+	}
+
+	protected void OnEmailActionActivated(object sender, EventArgs e) {
+		MainTelemetry.AddCount("OpenEmail");
+		OpenHelper.OpenUrl("https://forms.msndr.net/subscriptions/3db9fe188746bac0e094a6a715d45444/form");
+	}
+
+	protected void OnActionVacationsReportActivated(object sender, EventArgs e) {
+		NavigationManager.OpenViewModel<RdlViewerViewModel, Type>(null, typeof(VacationsReportViewModel));
 	}
 }

@@ -18,10 +18,12 @@ using workwear.Journal.ViewModels.Regulations;
 using Workwear.Models.Operations;
 using workwear.Models.Stock;
 using Workwear.Repository.Operations;
+using Workwear.Repository.Stock.Documents;
 using Workwear.ViewModels.Operations;
 using Workwear.ViewModels.Regulations;
 using Workwear.Tools;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 using Workwear.Tools.Features;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren
@@ -36,10 +38,12 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
 		private readonly EmployeeIssueRepository employeeIssueRepository;
+		private readonly StockDocumentRepository stockDocumentRepository;
 		private readonly IInteractiveService interactive;
 		private readonly INavigationManager navigation;
 		private readonly OpenStockDocumentsModel stockDocumentsModel;
 		private readonly IProgressBarDisplayable progress;
+		private EmployeeCard subscribedEmployee;
 
 		public readonly BaseParameters BaseParameters;
 		public EmployeeWearItemsViewModel(
@@ -47,30 +51,37 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			EmployeeIssueModel issueModel,
 			StockBalanceModel stockBalanceModel,
 			EmployeeIssueRepository employeeIssueRepository,
+			StockDocumentRepository stockDocumentRepository,
 			BaseParameters baseParameters,
 			IInteractiveService interactive,
 			INavigationManager navigation,
 			OpenStockDocumentsModel stockDocumentsModel,
 			FeaturesService featuresService,
+			IEntityChangeWatcher changeWatcher,
 			IProgressBarDisplayable progress)
 		{
 			this.employeeViewModel = employeeViewModel ?? throw new ArgumentNullException(nameof(employeeViewModel));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
 			this.employeeIssueRepository = employeeIssueRepository ?? throw new ArgumentNullException(nameof(employeeIssueRepository));
+			this.stockDocumentRepository = stockDocumentRepository ?? throw new ArgumentNullException(nameof(stockDocumentRepository));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.stockDocumentsModel = stockDocumentsModel ?? throw new ArgumentNullException(nameof(stockDocumentsModel));
 			this.progress = progress ?? throw new ArgumentNullException(nameof(progress));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
+			if(changeWatcher == null) throw new ArgumentNullException(nameof(changeWatcher));
 			
-			NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeCardItem, EmployeeIssueOperation>(HandleEntityChangeEvent);
+			changeWatcher.BatchSubscribe(HandleEntityChangeEvent)
+				.ExcludeUow(UoW)
+				.IfEntity<EmployeeCardItem>()
+				.Or.IfEntity<EmployeeIssueOperation>();
 		}
 
 		#region Хелперы
 
-		private IUnitOfWork UoW => employeeViewModel.UoW;
+		public IUnitOfWork UoW => employeeViewModel.UoW;
 		private EmployeeCard Entity => employeeViewModel.Entity;
 
 		#endregion
@@ -80,21 +91,27 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void OnShow()
 		{
-			if (IsConfigured) return;
+			if(IsConfigured || employeeViewModel.IsBusy)
+				return;
+
 			IsConfigured = true;
-			var performance = new ProgressPerformanceHelper(progress, 9, nameof(issueModel.PreloadWearItems), logger: logger);
-			issueModel.PreloadWearItems(Entity.Id);
-			performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
-			stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
-			issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
-			performance.EndGroup();
-			performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
-			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			performance.CheckPoint("Обновление таблицы");
-			OnPropertyChanged(nameof(ObservableWorkwearItems));
-			Entity.PropertyChanged += EntityOnPropertyChanged;
-			performance.End();
-			logger.Info($"Таблица «Спецодежда по нормам» заполена за {performance.TotalTime.TotalSeconds} сек." );
+			using(employeeViewModel.BeginBusyOperation("Загрузка спецодежды")) {
+				var performance = new ProgressPerformanceHelper(progress, 9, nameof(issueModel.PreloadWearItems), logger: logger);
+				var ownersQuery = UoW.Session.QueryOver<Owner>().Future();
+				issueModel.PreloadWearItems(Entity.Id);
+				performance.StartGroup(nameof(issueModel.FillWearInStockInfo));
+				stockBalanceModel.Warehouse = Entity.Subdivision?.Warehouse;
+				issueModel.FillWearInStockInfo(Entity, stockBalanceModel, progressStep: (step) => performance.CheckPoint(step));
+				performance.EndGroup();
+				performance.CheckPoint(nameof(Entity.FillWearReceivedInfo));
+				Entity.FillWearReceivedInfo(employeeIssueRepository);
+				performance.CheckPoint("Обновление таблицы");
+				OnPropertyChanged(nameof(ObservableWorkwearItems));
+				subscribedEmployee = Entity;
+				subscribedEmployee.PropertyChanged += EntityOnPropertyChanged;
+				performance.End();
+				logger.Info($"Таблица «Спецодежда по нормам» заполнена за {performance.TotalTime.TotalSeconds} сек." );
+			}
 		}
 
 		#endregion
@@ -113,7 +130,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		}
 		#endregion
 
-		#region Sensetive And Visibility
+		#region Sensitive And Visibility
 		public bool VisibleEmployeeChoose => FeaturesService.Available(WorkwearFeature.EmployeeChoose);
 		public bool SensitiveManualIssueOnRow => SelectedWorkwearItem != null && !SelectedWorkwearItem.ProtectionTools.Dispenser;
 
@@ -124,9 +141,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!IsConfigured)
 				return;
-			bool isMySession = changeEvents.First().Session == UoW.Session;
-			//Ничего не делаем если это наше собственное изменение.
-			if(!isMySession && changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
+
+			if(!UoW.IsAlive)
+				return;
+
+			if(changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Delete)
 				.Select(e => e.Entity).OfType<EmployeeCardItem>()
 				.Any(x => x.EmployeeCard.IsSame(Entity))) {
 				//Если сделано удаление строк, просто закрываем диалог,
@@ -146,10 +165,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				        .Where(x => x.Employee.IsSame(Entity))) {
 				
 				var myOP = UoW.Session.Get<EmployeeIssueOperation>(op.Id);
-				UoW.Session.Refresh(myOP);
+				if(myOP != null)
+					UoW.Session.Refresh(myOP);
 			}
 
-			if(!isMySession && changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
+			if(changeEvents.Select(e => e.Entity).OfType<EmployeeCardItem>().Any(x => x.EmployeeCard.IsSame(Entity))) {
 				RefreshWorkItems();
 			}
 		}
@@ -174,6 +194,13 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!employeeViewModel.Save())
 				return;
+
+			var draft = stockDocumentRepository.GetDraftExpenseForEmployee(Entity, UoW).Take(1).SingleOrDefault();
+			if(draft != null) {
+				interactive.ShowMessage(ImportanceLevel.Info, "Будет открыта предварительно подготовленная для сотрудника выдача");
+				navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder>(employeeViewModel, EntityUoWBuilder.ForOpen(draft.Id));
+				return;
+			}
 			navigation.OpenViewModel<ExpenseEmployeeViewModel, IEntityUoWBuilder, EmployeeCard>(employeeViewModel, EntityUoWBuilder.ForCreate(), Entity);
 		}
 
@@ -193,9 +220,8 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void UpdateWorkwearItems()
 		{
-			Entity.UpdateWorkwearItems();
+			issueModel.UpdateWorkwearItems(new[] { Entity }, UoW);
 			issueModel.FillWearInStockInfo(Entity, stockBalanceModel);
-			Entity.UpdateNextIssueAll();
 		}
 
 		#region Ручные операции
@@ -225,8 +251,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionTools);
-			UoW.Save();
+			Entity.UpdateNextIssue(UoW, protectionTools);
+			UoW.Save(Entity);
+			UoW.Commit();
 		}
 
 		public void SetIssueDateManual() {
@@ -259,7 +286,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void OpenLastIssue(EmployeeCardItem row)
 		{
-			var referencedoc = employeeIssueRepository.GetReferencedDocuments(row.LastIssueOperation(DateTime.Today, BaseParameters).Id);
+			var referencedoc = employeeIssueRepository.GetReferencedDocuments(row.LastIssueOperation(DateTime.Today, BaseParameters, UoW).Id);
 			if (!referencedoc.Any() || referencedoc.First().DocumentType == null) {
 				interactive.ShowMessage(ImportanceLevel.Error, "Не найдена ссылка на документ выдачи");
 				return;
@@ -269,7 +296,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public void RecalculateLastIssue(EmployeeCardItem row)
 		{
-			var operation = row.LastIssueOperation(DateTime.Today, BaseParameters);
+			var operation = row.LastIssueOperation(DateTime.Today, BaseParameters, UoW);
 			//Если строку нормы по которой выдавали удалили, пытаемся пере-подвязать к имеющийся совпадающей по СИЗ 
 			if (!row.EmployeeCard.WorkwearItems.Any(x => x.ActiveNormItem.IsSame(operation.NormItem))) {
 				if (row.EmployeeCard.WorkwearItems.Any(x => x.ProtectionTools.Id == operation.ProtectionTools.Id)) {
@@ -306,18 +333,25 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#endregion
 		protected void RefreshWorkItems()
 		{
-			if(!NHibernateUtil.IsInitialized(Entity.WorkwearItems))
+			if(!UoW.IsAlive || !NHibernateUtil.IsInitialized(Entity.WorkwearItems))
 				return;
 
 			foreach(var item in Entity.WorkwearItems) {
 				UoW.Session.Refresh(item);
 			}
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
+			foreach(var item in Entity.WorkwearItems) {
+				item.UpdateNextIssue(UoW);
+			}
 		}
 
 		public void Dispose()
 		{
-			NotifyConfiguration.Instance.UnsubscribeAll(this);
+			if(subscribedEmployee == null)
+				return;
+
+			subscribedEmployee.PropertyChanged -= EntityOnPropertyChanged;
+			subscribedEmployee = null;
 		}
 	}
 }

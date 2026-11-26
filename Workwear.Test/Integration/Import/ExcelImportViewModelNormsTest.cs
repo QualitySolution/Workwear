@@ -1,7 +1,7 @@
 using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
-using QS.BusinessCommon.Domain;
+using QS.Measurement.Domain;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using QS.Navigation;
@@ -39,7 +39,7 @@ namespace Workwear.Test.Integration.Import
 		{
 			NewSessionWithSameDB();
 			using(var uowSaveSize = UnitOfWorkFactory.CreateWithoutRoot()) {
-				MakeMeasurementUnits(uowSaveSize);
+				MakeMeasurementUnit(uowSaveSize);
 				
 				var navigation = Substitute.For<INavigationManager>();
 				var interactive = Substitute.For<IInteractiveMessage>();
@@ -95,13 +95,13 @@ namespace Workwear.Test.Integration.Import
 
 		#region Helpers
 
-		private void MakeMeasurementUnits(IUnitOfWork uow)
+		private void MakeMeasurementUnit(IUnitOfWork uow)
 		{
-			uow.Save(new MeasurementUnits {
+			uow.Save(new MeasurementUnit {
 				Name = "шт.",
 				OKEI = "796"
 			});
-			uow.Save(new MeasurementUnits {
+			uow.Save(new MeasurementUnit {
 				Name = "пара",
 				OKEI = "715"
 			});

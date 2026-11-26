@@ -74,7 +74,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		public string BarcodesString {
 			get {
-				if(!NHibernateUtil.IsInitialized(Barcodes) || !Barcodes.Any())
+				if(Operation?.BarcodeOperations == null 
+					|| !NHibernateUtil.IsInitialized(Operation.BarcodeOperations) 
+					|| !Operation.BarcodeOperations.Any())
 					return String.Empty;
 				return Barcodes.DefaultIfEmpty().Select(bc => bc.Title).Aggregate((a,b) => a + "\n" + b);
 			}

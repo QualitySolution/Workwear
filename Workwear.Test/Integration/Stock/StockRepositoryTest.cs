@@ -36,7 +36,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(warehouse2);
 				uow.Commit();
 
-				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, featuresService, 0);
+				var defaultWarehouse = new StockRepository(uow).GetDefaultWarehouse(featuresService, 0);
 				Assert.That(defaultWarehouse, Is.Null);
 			}
 		}
@@ -55,7 +55,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(warehouse2);
 				uow.Commit();
 
-				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, featuresService, 0);
+				var defaultWarehouse = new StockRepository(uow).GetDefaultWarehouse(featuresService, 0);
 				Assert.That(defaultWarehouse, Is.Not.Null);
 			}
 		}
@@ -72,7 +72,7 @@ namespace Workwear.Test.Integration.Stock
 				uow.Save(warehouse1);
 				uow.Commit();
 
-				var defaultWarehouse = new StockRepository().GetDefaultWarehouse(uow, new FeaturesService(), 0);
+				var defaultWarehouse = new StockRepository(uow).GetDefaultWarehouse(new FeaturesService(), 0);
 				Assert.That(defaultWarehouse.Name, Is.EqualTo("Единственный"));
 			}
 		}
@@ -123,7 +123,7 @@ namespace Workwear.Test.Integration.Stock
 				
 				uow.Commit();
 
-				var balance = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2022, 10, 5));
+				var balance = new StockRepository(uow).StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2022, 10, 5));
 				Assert.That(balance, Has.Count.EqualTo(2));
 				var itemWithSize = balance.First(x => x.WearSize == size);
 				Assert.That(itemWithSize.Amount, Is.EqualTo(66));
@@ -193,7 +193,7 @@ namespace Workwear.Test.Integration.Stock
 				
 				uow.Commit();
 
-				var balance = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2022, 10, 10));
+				var balance = new StockRepository(uow).StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2022, 10, 10));
 				Assert.That(balance, Has.Count.EqualTo(3));
 				var itemOwner1 = balance.First(x => x.Owner == owner);
 				Assert.That(itemOwner1.Amount, Is.EqualTo(6));
@@ -245,16 +245,17 @@ namespace Workwear.Test.Integration.Stock
 
 				uow.Commit();
 
-				var balance1 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 1));
+				var stockRepository = new StockRepository(uow);
+				var balance1 = stockRepository.StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 1));
 				var item1 = balance1.First();
 				Assert.That(item1.Amount, Is.EqualTo(10));
-				var balance2 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 2));
+				var balance2 = stockRepository.StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 2));
 				var item2 = balance2.First();
 				Assert.That(item2.Amount, Is.EqualTo(15));
-				var balance3 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 3));
+				var balance3 = stockRepository.StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 3));
 				var item3 = balance3.First();
 				Assert.That(item3.Amount, Is.EqualTo(15));
-				var balance4 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 17));
+				var balance4 = stockRepository.StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 17));
 				var item4 = balance4.First();
 				Assert.That(item4.Amount, Is.EqualTo(13));
 			}
@@ -301,14 +302,15 @@ namespace Workwear.Test.Integration.Stock
 
 				uow.Commit();
 
-				var balance1 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5));
+				var stockRepository = new StockRepository(uow);
+				var balance1 = stockRepository.StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5));
 				Assert.That(balance1.First().Amount, Is.EqualTo(9));
 				
-				var balance2 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5),
+				var balance2 = stockRepository.StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5),
 					new List<WarehouseOperation>(){operation1});
 				Assert.That(balance2.First().Amount, Is.EqualTo(8));
 				
-				var balance3 = new StockRepository().StockBalances(uow, warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5),
+				var balance3 = stockRepository.StockBalances(warehouse, new List<Nomenclature>{nomenclature}, new DateTime(2024, 10, 5),
 					new List<WarehouseOperation>(){operation1,operation2,operation3});
 				Assert.That(balance3.FirstOrDefault(), Is.Null);
 			}

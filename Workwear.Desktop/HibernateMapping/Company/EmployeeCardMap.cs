@@ -33,7 +33,7 @@ namespace Workwear.HibernateMapping.Company
 			Map(x => x.PhoneNumber).Column("phone_number");
 			Map(x => x.LkRegistered).Column("lk_registered");
 
-			Map(x => x.Photo).Column("photo").LazyLoad().CustomSqlType("BinaryBlob");
+			Map(x => x.Photo).Column("photo").LazyLoad().CustomSqlType("LONGBLOB");
 			Map(x => x.Sex).Column("sex").CustomType<SexStringType>();
 
 			References(x => x.Subdivision).Column("subdivision_id");

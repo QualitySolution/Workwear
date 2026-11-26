@@ -1291,15 +1291,19 @@
         WHEN 'Duty' THEN 'Дежурный'
         ELSE ' '
         END as period_specificity,
-    COALESCE(old_issuse.issued, old_duty_issued.issued) as amount_issuse,
-    COALESCE(this_issuse.returned, this_duty_issued.returned) as amount_return,
-    COALESCE(this_issuse.wear_percent, this_duty_issued.wear_percent)  * 100 as wear_percent
+    COALESCE(old_issuse.issued, old_duty_issued.issued, old_over_norm_warehouse.amount) as amount_issuse,
+    return_warehouse.amount as amount_return,
+    return_warehouse.wear_percent  * 100 as wear_percent
 FROM stock_return_items
-         LEFT JOIN nomenclature on nomenclature.id = stock_return_items.nomenclature_id
+         LEFT JOIN operation_warehouse as return_warehouse on return_warehouse.id = stock_return_items.warehouse_operation_id
+         LEFT JOIN nomenclature on nomenclature.id = return_warehouse.nomenclature_id
          LEFT JOIN operation_issued_by_employee as this_issuse on this_issuse.id = stock_return_items.employee_issue_operation_id
          LEFT JOIN operation_issued_by_duty_norm as this_duty_issued ON this_duty_issued.id = stock_return_items.duty_norm_issue_operation_id
+         LEFT JOIN operation_over_norm as this_over_norm ON this_over_norm.id = stock_return_items.over_norm_operation_id
          LEFT JOIN operation_issued_by_employee as old_issuse on old_issuse.id = this_issuse.issued_operation_id
          LEFT JOIN operation_issued_by_duty_norm as old_duty_issued ON old_duty_issued.id = this_duty_issued.issued_operation_id
+         LEFT JOIN operation_over_norm as old_over_norm ON old_over_norm.id = this_over_norm.return_from_operation
+         LEFT JOIN operation_warehouse as old_over_norm_warehouse ON old_over_norm_warehouse.id = old_over_norm.operation_warehouse_id
          LEFT JOIN norms_item on norms_item.id = old_issuse.norm_item_id
          LEFT JOIN duty_norm_items ON old_duty_issued.duty_norm_item_id = duty_norm_items.id
 WHERE stock_return_items.stock_return_id = @id</CommandText>

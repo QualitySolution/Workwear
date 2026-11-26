@@ -52,7 +52,7 @@ namespace Workwear.Views.Stock.Widgets {
 			var items = ViewModel.SizeItems;
 			for(uint i = 1; i <= rows; i++) {
 				var item = items[(int)i - 1];
-				var label = new Label { LabelProp = item.Size.Name };
+				var label = new Label { LabelProp = item.Title };
 				CheckBoxPlace.Attach(label, 1, 2, i, i + 1, AttachOptions.Expand, AttachOptions.Shrink, 0, 0);
 
 				var check = new yCheckButton();

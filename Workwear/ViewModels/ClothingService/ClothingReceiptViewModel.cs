@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using QS.Cloud.Postomat.Client;
@@ -54,9 +54,17 @@ namespace Workwear.ViewModels.ClothingService {
 					return;
 				}
 				var activeClaim = barcodeRepository.GetActiveServiceClaimFor(BarcodeInfoViewModel.Barcode);
-				SensitiveAccept = activeClaim == null;
-				if(activeClaim != null)
+				if(activeClaim != null) {
+					SensitiveAccept = false;
 					BarcodeInfoViewModel.LabelInfo = $"Спецодежда уже в работе по заявке №{activeClaim.Id}";
+					return;
+				}
+				if(BarcodeInfoViewModel.Employee == null && BarcodeInfoViewModel.Warehouse == null && BarcodeInfoViewModel.DutyNorm == null) {
+					SensitiveAccept = false;
+					BarcodeInfoViewModel.LabelInfo = "Спецодежда не привязана ни к чему.";
+					return;
+				}
+				SensitiveAccept = true;
 			}
 		}
 

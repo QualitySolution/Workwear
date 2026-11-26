@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using QS.DomainModel.Entity;
 using QS.Dialog;
 using Workwear.Domain.Company;
 using Workwear.Domain.Regulations;
@@ -23,7 +24,7 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		}
 
 		public List<WarehouseForecastingItem> MakeForecastingItems(IProgressBarDisplayable progress, List<FutureIssue> futureIssues) {
-			progress.Start(4, text: "Группировка потребностей");
+			progress.Start(3, text: "Группировка потребностей");
 			var allNomenclatureSizes = sizeService.GetNomenclatureSizesCached().ToList();
 			var groupsByProtectionTools = futureIssues.GroupBy(x => (x.ProtectionTools, x.Size, x.Height)).ToList();
 			var result = new List<WarehouseForecastingItem>();
@@ -108,7 +109,10 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 		private void AddForecastingItem(List<WarehouseForecastingItem> list, ProtectionTools protectionTools, Nomenclature nomenclature, Size size, Size height, IEnumerable<FutureIssue> futureIssues, SizeMatchStatus sizeStatus = SizeMatchStatus.Green) {
 			if(RestrictNomenclatures != null && !RestrictNomenclatures.Contains(nomenclature))
 				return;
-			var item = list.FirstOrDefault(x => x.Nomenclature == nomenclature && x.Size == size && x.Height == height);
+			var item = list.FirstOrDefault(x =>
+				DomainHelper.EqualDomainObjectsOrNull(x.Nomenclature, nomenclature) &&
+				DomainHelper.EqualDomainObjectsOrNull(x.Size, size) &&
+				DomainHelper.EqualDomainObjectsOrNull(x.Height, height));
 			if(item == null) {
 				item = new WarehouseForecastingItem(columnsModel) {
 					Nomenclature = nomenclature,
@@ -134,18 +138,29 @@ namespace Workwear.Models.Analytics.WarehouseForecasting {
 			IEnumerable<FutureIssue> futureIssues, ClothesSex sex, SizeMatchStatus sizeStatus = SizeMatchStatus.Green) {
 			if(RestrictNomenclatures != null)
 				return;
-			var item = new WarehouseForecastingItem(columnsModel) {
-				ProtectionTool = protectionTools,
-				Size = size,
-				Height = height,
-				StocksExact = Array.Empty<StockBalance>(),
-				InStock = 0,
-				Name = protectionTools.Name,
-				Sex = sex,
-				SupplyNomenclatureNotSet = true,
-				SizeMatchStatus = sizeStatus
-			};
-			list.Add(item);
+			var item = list.FirstOrDefault(x =>
+				DomainHelper.EqualDomainObjectsOrNull(x.ProtectionTool, protectionTools) &&
+				DomainHelper.EqualDomainObjectsOrNull(x.Size, size) &&
+				DomainHelper.EqualDomainObjectsOrNull(x.Height, height) &&
+				x.Sex == sex);
+			if(item == null) {
+				item = new WarehouseForecastingItem(columnsModel) {
+					ProtectionTool = protectionTools,
+					Size = size,
+					Height = height,
+					StocksExact = Array.Empty<StockBalance>(),
+					InStock = 0,
+					Name = protectionTools.Name,
+					Sex = sex,
+					SupplyNomenclatureNotSet = true,
+					SizeMatchStatus = sizeStatus
+				};
+				list.Add(item);
+			} else {
+				// Берём наихудший статус: Red > Orange > Green
+				if(sizeStatus > item.SizeMatchStatus)
+					item.SizeMatchStatus = sizeStatus;
+			}
 			item.AddFutureIssue(futureIssues);
 			item.AddSuitableStock(stockBalance, protectionTools);
 		}

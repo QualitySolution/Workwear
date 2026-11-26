@@ -28,6 +28,7 @@ using Workwear.Tools;
 using Workwear.Tools.Features;
 using Workwear.Tools.Sizes;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Statements
 {
@@ -88,7 +89,7 @@ namespace Workwear.ViewModels.Statements
 			if (Entity.Id == 0 )
 				GetDefualtSetting();
 
-			if(!UoW.IsNew)
+			if(Entity.Id != 0)
 				AutoDocNumber = String.IsNullOrWhiteSpace(Entity.DocNumber);
 			
 			Entity.Items.ContentChanged += (sender, args) => OnPropertyChanged(nameof(Sum));
@@ -274,6 +275,9 @@ namespace Workwear.ViewModels.Statements
 
 		void Expense_Changed(EntityChangeEvent[] changeEvents)
 		{
+			if(!UoW.IsAlive)
+				return;
+
 			if(changeEvents.Any(x => (x.Entity as ExpenseItem).ExpenseDoc.Id == Entity.Expense?.Id)){
 				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
 			}
@@ -281,6 +285,9 @@ namespace Workwear.ViewModels.Statements
 
 		void CollectiveExpense_Changed(EntityChangeEvent[] changeEvents)
 		{
+			if(!UoW.IsAlive)
+				return;
+
 			if(changeEvents.Any(x => (x.Entity as CollectiveExpenseItem).Document.Id == Entity.CollectiveExpense?.Id)) {
 				Entity.ReloadChildCollection(x => x.Items, x => x.IssuanceSheet, UoW.Session);
 			}

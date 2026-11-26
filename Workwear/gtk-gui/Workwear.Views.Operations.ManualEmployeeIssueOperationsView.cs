@@ -52,7 +52,7 @@ namespace Workwear.Views.Operations
 
 		private global::Gamma.GtkWidgets.yLabel ylabel6;
 
-		private global::Gamma.GtkWidgets.yButton buttonCalculateExpence;
+		private global::Gamma.GtkWidgets.yButton buttonCalculateExpense;
 
 		private global::Gtk.Label label3;
 
@@ -342,13 +342,13 @@ namespace Workwear.Views.Operations
 			w25.Expand = false;
 			w25.Fill = false;
 			// Container child hboxManualCalculate.Gtk.Box+BoxChild
-			this.buttonCalculateExpence = new global::Gamma.GtkWidgets.yButton();
-			this.buttonCalculateExpence.CanFocus = true;
-			this.buttonCalculateExpence.Name = "buttonCalculateExpence";
-			this.buttonCalculateExpence.UseUnderline = true;
-			this.buttonCalculateExpence.Label = global::Mono.Unix.Catalog.GetString("Рассчитать");
-			this.hboxManualCalculate.Add(this.buttonCalculateExpence);
-			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.hboxManualCalculate[this.buttonCalculateExpence]));
+			this.buttonCalculateExpense = new global::Gamma.GtkWidgets.yButton();
+			this.buttonCalculateExpense.CanFocus = true;
+			this.buttonCalculateExpense.Name = "buttonCalculateExpense";
+			this.buttonCalculateExpense.UseUnderline = true;
+			this.buttonCalculateExpense.Label = global::Mono.Unix.Catalog.GetString("Рассчитать");
+			this.hboxManualCalculate.Add(this.buttonCalculateExpense);
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.hboxManualCalculate[this.buttonCalculateExpense]));
 			w26.Position = 3;
 			w26.Expand = false;
 			w26.Fill = false;

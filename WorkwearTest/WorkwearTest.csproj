@@ -47,10 +47,13 @@
   <ItemGroup>
     <Compile Include="ConfigureOneTime.cs" />
     <Compile Include="Integration\ReportExportTest.cs" />
+    <Compile Include="Testing\WorkwearMariaDbTestFixtureBase.cs" />
     <Compile Include="ViewModels\Company\EmployeeChildren\EmployeeMovementItemTest.cs" />
     <Compile Include="ViewModels\Company\EmployeeViewModelTest.cs" />
+    <Compile Include="ViewModels\ClothingService\ClothingAddViewModelTest.cs" />
     <Compile Include="ViewModels\EntityViewModelsTests.cs" />
     <Compile Include="ViewModels\Regulations\NormViewModelTest.cs" />
+    <Compile Include="ViewModels\Stock\CollectiveExpenseViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\ExpenseEmployeeViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\IssueByIdentifierViewModelTest.cs" />
     <Compile Include="ViewModels\Stock\WriteOffViewModelTest.cs" />
@@ -101,6 +104,10 @@
       <Project>{b0f853e4-43c9-4c7e-8812-2060fa43b5fe}</Project>
       <Name>QS.Cloud.WearLk.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QS.Cloud.WorkwearDictionary.Client\QS.Cloud.WorkwearDictionary.Client.csproj">
+      <Project>{562724e7-aa46-4093-a00e-46fe9c6ec443}</Project>
+      <Name>QS.Cloud.WorkwearDictionary.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Workwear.Core\Workwear.Core.csproj">
       <Project>{8c8e9ac8-13c1-4b54-b4f4-9f8cd62a5744}</Project>
       <Name>Workwear.Core</Name>
@@ -121,9 +128,9 @@
       <Project>{E2228A2B-4883-4DD8-8A05-23501F7B8A33}</Project>
       <Name>QS.Utilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\QSProjects\Modules\QS.BusinessCommon\QS.BusinessCommon.csproj">
+    <ProjectReference Include="..\QSProjects\Modules\QS.Measurement\QS.Measurement.csproj">
       <Project>{F22749B2-E35B-455D-BD8D-081373B16FC7}</Project>
-      <Name>QS.BusinessCommon</Name>
+      <Name>QS.Measurement</Name>
     </ProjectReference>
     <ProjectReference Include="..\RusGuardSharp\rglib.interop\rglib.interop.csproj">
       <Project>{0E323FF2-0E3E-4AF7-AB38-C8DB4B644D40}</Project>
@@ -154,7 +161,7 @@
     <PackageReference Include="NUnit.Extension.VSProjectLoader" Version="3.9.0" />
     <PackageReference Include="Remotion.Linq" Version="2.2.0" />
     <PackageReference Include="Remotion.Linq.EagerFetching" Version="2.2.0" />
-    <PackageReference Include="SharpZipLib" Version="1.3.3" />
+    <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.1" />
     <PackageReference Include="System.Memory" Version="4.5.5" />

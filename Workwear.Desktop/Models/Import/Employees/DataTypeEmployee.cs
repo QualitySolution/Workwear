@@ -39,6 +39,10 @@ namespace Workwear.Models.Import.Employees
 		[Display(Name = "Должность")]
 		Post,
 		[Display(Name = "Размер/Рост")]
-		SizeAndHeight
+		SizeAndHeight,
+		[Display(Name = "МВЗ")]
+		CostCenter,
+		[Display(Name = "Код МВЗ")]
+		CostCenterNumber
 	}
 }

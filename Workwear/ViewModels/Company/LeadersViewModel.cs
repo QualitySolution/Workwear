@@ -22,6 +22,15 @@ namespace Workwear.ViewModels.Company
 			var builder = new CommonEEVMBuilderFactory<Leader>(this, Entity, UoW, NavigationManager, autofacScope);
 
 			EntryEmployee = builder.ForProperty(x => x.Employee).MakeByType().Finish();
+			EntryEmployee.ChangedByUser += (sender, args) => {
+				if(Entity.Id != 0 || EntryEmployee.Entity == null)
+					return;
+
+				Entity.Surname = EntryEmployee.Entity.LastName;
+				Entity.Name = EntryEmployee.Entity.FirstName;
+				Entity.Patronymic = EntryEmployee.Entity.Patronymic;
+				Entity.Position = EntryEmployee.Entity.Post?.Name;
+			};
 		}
 		
 		#region IDialogDocumentation

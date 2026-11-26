@@ -37,7 +37,6 @@ namespace Workwear.ViewModels.Stock.NomenclatureChildren {
 		public void Add() {
 			var page = navigation.OpenViewModel<SizeWidgetViewModel,IDocItemSizeInfo, IUnitOfWork, IList<IDocItemSizeInfo>>
 				(null, new NomenclatureSizes(){Nomenclature = parent.Entity}, UoW, Items.Cast<IDocItemSizeInfo>().ToList());
-//// Возможно, имеет смысл передавать через Autofac			
 			page.ViewModel.VisibleAmount = false;
 			page.ViewModel.AddedSizes += (i, args) => AddResultSizes(args);
 		}

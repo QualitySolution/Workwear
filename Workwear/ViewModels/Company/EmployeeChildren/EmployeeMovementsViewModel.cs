@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamma.Utilities;
 using NHibernate;
+using NHibernate.SqlCommand;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.NotifyChange;
@@ -41,7 +42,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		private readonly BaseParameters baseParameters;
 		private readonly ITdiCompatibilityNavigation navigation;
 		private readonly IInteractiveService interactive;
+		private readonly IEntityChangeWatcher changeWatcher;
 		List<EmployeeMovementItem> movements;
+		private bool isDisposed;
 
 		public EmployeeMovementsViewModel(EmployeeViewModel employeeViewModel, 
 			OpenStockDocumentsModel openStockDocumentsModel,  
@@ -49,7 +52,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			FeaturesService featuresService, 
 			EmployeeIssueModel issueModel,
 			BaseParameters baseParameters,
-			
+			IEntityChangeWatcher changeWatcher,
 			IInteractiveService interactive,
 			ITdiCompatibilityNavigation navigation)
 		{
@@ -59,6 +62,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			this.issueModel = issueModel ?? throw new ArgumentNullException(nameof(issueModel));
 			this.baseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
+			this.changeWatcher = changeWatcher ?? throw new ArgumentNullException(nameof(changeWatcher));
 			this.navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 
@@ -85,7 +89,10 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		{
 			if(!isConfigured) {
 				isConfigured = true;
-				NotifyConfiguration.Instance.BatchSubscribeOnEntity<EmployeeIssueOperation>(HandleManyEntityChangeEventMethod);
+				changeWatcher.BatchSubscribe(HandleManyEntityChangeEventMethod)
+					.ExcludeUow(UoW)
+					.IfEntity<EmployeeIssueOperation>()
+					.AndWhere(x => x.Employee.Id == Entity.Id);
 				UpdateMovements();
 			}
 		}
@@ -93,6 +100,11 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		#region Контекстное меню
 		
 		public void RecalculateIssue(EmployeeMovementItem item) {
+			if(isDisposed || item?.Operation == null) {
+				logger.Warn("Невозможно пересчитать срок носки: карточка закрыта или операция не выбрана.");
+				return;
+			}
+
 			issueModel.RecalculateDateOfIssue(new List<EmployeeIssueOperation>() {item.Operation}, baseParameters, interactive);
 		}
 
@@ -126,6 +138,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		public List<ProtectionTools> ProtectionToolsForChange => Entity.WorkwearItems.Select(x => x.ProtectionTools).ToList();
 
 		public void ChangeProtectionTools(EmployeeMovementItem item, ProtectionTools protectionTools) {
+			LogOperationReference("Операция в строке истории до замены номенклатуры нормы", item.Operation);
 			List<ProtectionTools> protectionToolsForUpdate = new List<ProtectionTools> { protectionTools };
 			if (item.Operation.ProtectionTools != null) 
 				protectionToolsForUpdate.Add(item.Operation.ProtectionTools);
@@ -143,11 +156,13 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			switch(item.EmployeeIssueReference.DocumentType) {
 				case StockDocumentType.ExpenseEmployeeDoc:
 					var docI =  UoW.GetById<ExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+					LogOperationReference("Операция в строке персональной выдачи", docI.EmployeeIssueOperation, item.Operation);
 					docI.ProtectionTools = protectionTools;
 					UoW.Save(docI);
 					break;
 				case StockDocumentType.CollectiveExpense:
 					var docC =  UoW.GetById<CollectiveExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+					LogOperationReference("Операция в строке коллективной выдачи", docC.EmployeeIssueOperation, item.Operation);
 					docC.ProtectionTools = protectionTools;
 					UoW.Save(docC);
 					break;
@@ -161,7 +176,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			}
 
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionToolsForUpdate.ToArray());
+			Entity.UpdateNextIssue(UoW, protectionToolsForUpdate.ToArray());
 		}
 
 		public void OpenJournalChangeProtectionTools(EmployeeMovementItem item) {
@@ -178,15 +193,24 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 		}
 
 		public void MakeEmptyProtectionTools(EmployeeMovementItem item) {
+			if(item.Operation.Nomenclature == null) {
+				interactive.ShowMessage(ImportanceLevel.Warning,
+					"Нельзя очистить номенклатуру нормы: у операции не указана обычная номенклатура, " +
+					"после очистки её будет невозможно идентифицировать. Сначала укажите номенклатуру.");
+				return;
+			}
+			LogOperationReference("Операция в строке истории до очистки номенклатуры нормы", item.Operation);
 			if(item.EmployeeIssueReference?.DocumentType != null) {
 				switch(item.EmployeeIssueReference.DocumentType) {
 					case StockDocumentType.ExpenseEmployeeDoc:
 						var docPerItem =  UoW.GetById<ExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+						LogOperationReference("Операция в строке персональной выдачи", docPerItem.EmployeeIssueOperation, item.Operation);
 						docPerItem.ProtectionTools = null;
 						UoW.Save(docPerItem);
 						break;
 					case StockDocumentType.CollectiveExpense:
 						var docColItem =  UoW.GetById<CollectiveExpenseItem>(item.EmployeeIssueReference.ItemId.Value);
+						LogOperationReference("Операция в строке коллективной выдачи", docColItem.EmployeeIssueOperation, item.Operation);
 						docColItem.ProtectionTools = null;
 						UoW.Save(docColItem);
 						break;
@@ -203,11 +227,25 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			UoW.Save(item.Operation);
 		}
 
+		// FIXME Временная диагностика для поиска причины NonUniqueObjectException при замене номенклатуры нормы из истории выдач.
+		private void LogOperationReference(string message, EmployeeIssueOperation operation, EmployeeIssueOperation expectedOperation = null)
+		{
+			if(operation == null) {
+				logger.Debug($"{message}: операция не указана.");
+				return;
+			}
+
+			logger.Debug(
+				$"{message}: id={operation.Id}, hash={operation.GetHashCode()}, " +
+				$"inSession={UoW.Session.Contains(operation)}, " +
+				$"sameAsExpected={(expectedOperation == null ? "-" : ReferenceEquals(operation, expectedOperation).ToString())}");
+		}
+
 		#endregion
 		void SetIssueDateManual_PageClosed(ProtectionTools protectionTools) {
 			UoW.Commit();
 			Entity.FillWearReceivedInfo(employeeIssueRepository);
-			Entity.UpdateNextIssue(protectionTools);
+			Entity.UpdateNextIssue(UoW, protectionTools);
 		}
 
 		#endregion
@@ -219,6 +257,7 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 			logger.Info("Обновляем историю выдачи...");
 			var performance = new PerformanceHelper(logger: logger);
 			var prepareMovements = new List<EmployeeMovementItem>();
+			BarcodeOperation barcodeOperationAlias = null;
 
 			var list = employeeIssueRepository.AllOperationsForEmployee(Entity, query => query
 				.Fetch(SelectMode.Fetch, x => x.Nomenclature)
@@ -226,7 +265,9 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools)
 				.Fetch(SelectMode.Fetch, x => x.ProtectionTools.Type)
 				.Fetch(SelectMode.Fetch, x => x.WarehouseOperation)
+				.JoinAlias(x => x.BarcodeOperations, () => barcodeOperationAlias, JoinType.LeftOuterJoin)
 				.Fetch(SelectMode.Fetch, x => x.BarcodeOperations)
+				.Fetch(SelectMode.Fetch, () => barcodeOperationAlias.Barcode)
 			).Distinct();
 			performance.CheckPoint("Получение операций");
 			var docs = employeeIssueRepository.GetReferencedDocuments(list.Select(x => x.Id).ToArray());
@@ -257,16 +298,26 @@ namespace Workwear.ViewModels.Company.EmployeeChildren
 
 		void HandleManyEntityChangeEventMethod(EntityChangeEvent[] changeEvents)
 		{
-			var updatedOperations = changeEvents.Where(x => x.GetEntity<EmployeeIssueOperation>().Employee.IsSame(employeeViewModel.Entity)).ToList();
-			if(updatedOperations.Count > 0) {
-				Movements.ForEach(m => UoW.Session.Evict(m.Operation));
-				UpdateMovements();
+			if(isDisposed || !UoW.IsAlive)
+				return;
+
+			foreach(var changeEvent in changeEvents.Where(x => x.EventType == TypeOfChangeEvent.Update)) {
+				var operationId = changeEvent.GetEntity<EmployeeIssueOperation>().Id;
+				var operation = Movements
+					.FirstOrDefault(x => x.Operation.Id == operationId)
+					?.Operation;
+				if(operation != null && UoW.Session.Contains(operation))
+					UoW.Session.Refresh(operation);
 			}
+
+			// Не отсоединяем операции массово: на них могут ссылаться уже загруженные строки документов
+			// с Cascade.All. Повторный запрос вернет для существующих записей те же экземпляры из сессии.
+			UpdateMovements();
 		}
 
 		public void Dispose()
 		{
-			NotifyConfiguration.Instance.UnsubscribeAll(this);
+			isDisposed = true;
 		}
 	}
 }

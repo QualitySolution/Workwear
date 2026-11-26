@@ -1220,7 +1220,7 @@ ORDER BY subdivision_code, duty_norm_name, nomenclature, size, growth</CommandTe
       <DataType>Integer</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>false</AllowBlank>
-      <MultiValue>false</MultiValue>
+      <MultiValue>true</MultiValue>
       <Prompt></Prompt>
     </ReportParameter>
     <ReportParameter Name="withoutsub">

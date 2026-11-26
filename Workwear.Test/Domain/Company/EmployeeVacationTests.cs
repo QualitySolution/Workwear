@@ -69,7 +69,7 @@ namespace Workwear.Test.Domain.Company
 			ask.Question(string.Empty).ReturnsForAnyArgs(false);
 
 			var baseParameters = Substitute.For<BaseParameters>();
-			baseParameters.ColDayAheadOfShedule.Returns(0);
+			baseParameters.GetColDayAheadOfShedule(Arg.Any<IssueType>()).Returns(0);
 
 			employee.RecalculateDatesOfIssueOperations(uow, employeeIssueRepository, baseParameters, ask, vacation);
 

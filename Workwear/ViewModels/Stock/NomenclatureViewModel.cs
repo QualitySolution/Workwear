@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Autofac;
 using QS.Cloud.WearLk.Client;
 using QS.Cloud.WearLk.Manage;
@@ -19,6 +20,7 @@ using Workwear.Domain.Sizes;
 using Workwear.Domain.Stock;
 using Workwear.Journal.ViewModels.Catalog;
 using Workwear.Models.Sizes;
+using Workwear.Repository.Regulations;
 using Workwear.Tools.Features;
 using Workwear.Tools;
 using Workwear.ViewModels.Communications;
@@ -33,6 +35,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly IInteractiveService interactive;
 		private readonly ModalProgressCreator progressCreator;
 		private readonly SizeTypeReplaceModel sizeTypeReplaceModel;
+		private readonly ProtectionToolsRepository protectionToolsRepository;
 
 		public NomenclatureViewModel(
 			BaseParameters baseParameters,
@@ -45,6 +48,7 @@ namespace Workwear.ViewModels.Stock
 			ProductsManagerService productsService,
 			ModalProgressCreator progressCreator,
 			SizeTypeReplaceModel sizeTypeReplaceModel,
+			ProtectionToolsRepository protectionToolsRepository,
 			IValidator validator = null) : base(uowBuilder, unitOfWorkFactory, navigation, validator)
 		{
 			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
@@ -52,6 +56,7 @@ namespace Workwear.ViewModels.Stock
 			this.interactive = interactive ?? throw new ArgumentNullException(nameof(interactive));
 			this.progressCreator = progressCreator ?? throw new ArgumentNullException(nameof(progressCreator));
 			this.sizeTypeReplaceModel = sizeTypeReplaceModel ?? throw new ArgumentNullException(nameof(sizeTypeReplaceModel));
+			this.protectionToolsRepository = protectionToolsRepository ?? throw new ArgumentNullException(nameof(protectionToolsRepository));
 			
 			var entryBuilder = 
 				new CommonEEVMBuilderFactory<Nomenclature>(this, Entity, UoW, navigation, autofacScope);
@@ -116,6 +121,41 @@ namespace Workwear.ViewModels.Stock
 			get => currentTab;
 			set => SetField(ref currentTab, value);
 		}
+
+		public string UsedCurrency => CurrencyWorks.CurrencyShortName;
+
+		public virtual bool Archival {
+			get => Entity.Archival;
+			set {
+				if(Entity.Archival == value)
+					return;
+				if(value && Entity.Id != 0) {
+					var supplyProtectionTools = protectionToolsRepository.GetProtectionToolsWithSupplyNomenclature(UoW, Entity);
+					if(supplyProtectionTools.Any()) {
+						//Если пользователь может менять закупаемые номенклатуры явно запрещаем архивировать
+						if(featuresService.Available(WorkwearFeature.StockForecasting) || featuresService.Available(WorkwearFeature.ExportExcel)) {
+							interactive.ShowMessage(ImportanceLevel.Warning,
+								"Номенклатура указана закупаемой в номенклатурах нормы:" +
+								String.Concat(supplyProtectionTools.Select(x => $"\n* {x.Name}")) +
+								"\nПеред архивацией выберите в них другую закупаемую номенклатуру.");
+							OnPropertyChanged();
+							return;
+						}
+						//Если пользователю сейчас функция недоступна просто очищаем, чтобы не блочить архивацию
+						foreach(var protectionTools in supplyProtectionTools) {
+							if(DomainHelper.EqualDomainObjects(protectionTools.SupplyNomenclatureUnisex, Entity))
+								protectionTools.SupplyNomenclatureUnisex = null;
+							if(DomainHelper.EqualDomainObjects(protectionTools.SupplyNomenclatureMale, Entity))
+								protectionTools.SupplyNomenclatureMale = null;
+							if(DomainHelper.EqualDomainObjects(protectionTools.SupplyNomenclatureFemale, Entity))
+								protectionTools.SupplyNomenclatureFemale = null;
+							UoW.Save(protectionTools);
+						}
+					}
+				}
+				Entity.Archival = value;
+			}
+		}
 		#endregion
 		#region ChildrenViewModels	
 		public NomenclatureProtectionToolsViewModel ProtectionToolsViewModel;
@@ -126,6 +166,7 @@ namespace Workwear.ViewModels.Stock
 		public bool VisibleClothesSex => true; //Поле стало в базе обязательным для всех номенклатур.
 
 		public bool VisibleSaleCost => featuresService.Available(WorkwearFeature.Selling);
+		public bool VisibleRentCost => featuresService.Available(WorkwearFeature.Rent);
 		public bool VisibleRating => Entity.Rating != null && featuresService.Available(WorkwearFeature.Ratings);
 		public bool VisibleBarcode => featuresService.Available(WorkwearFeature.Barcodes);
 		public bool VisibleWashable => featuresService.Available(WorkwearFeature.ClothingService);
@@ -164,17 +205,20 @@ namespace Workwear.ViewModels.Stock
 			if(!Validate())
 				return false;
 			//Обрабатываем размеры
-			if(!UoW.IsNew && ((lastSizeType != null && !lastSizeType.IsSame(Entity.Type.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.Type.HeightType)))) {
+			if(Entity.Id != 0 && ((lastSizeType != null && !lastSizeType.IsSame(Entity.Type.SizeType)) || (lastHeightType != null && !lastHeightType.IsSame(Entity.Type.HeightType)))) {
 				if(!sizeTypeReplaceModel.TryReplaceSizes(UoW, interactive, progressCreator, new []{Entity}, Entity.Type.SizeType, Entity.Type.HeightType))
 					return false;
 			}
 			
-			UoW.Save();
+			UoW.Save(Entity);
+			UoW.Commit();
 			lastSizeType = Entity.Type.SizeType;
 			lastHeightType = Entity.Type.HeightType;
 			return true;
 		}
 		private void Entity_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if(e.PropertyName == nameof(Entity.Archival))
+				OnPropertyChanged(nameof(Archival));
 			if (e.PropertyName != nameof(Entity.Type)) return;
 			if (Entity.Type != null && String.IsNullOrWhiteSpace(Entity.Name))
 				Entity.Name = Entity.Type.Name;

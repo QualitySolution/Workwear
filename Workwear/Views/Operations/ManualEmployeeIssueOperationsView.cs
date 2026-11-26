@@ -17,7 +17,7 @@ namespace Workwear.Views.Operations
 			
 			ybuttonAdd.Clicked += ButtonAddOnClicked;
 			ybuttonDelete.Clicked += ButtonDeleteOnClicked;
-			buttonCalculateExpence.Clicked += (sender, args) => ViewModel.CalculateExpense();
+			buttonCalculateExpense.Clicked += (sender, args) => ViewModel.CalculateExpense();
 
 			ytableSelectedOPeration.Binding.AddBinding(ViewModel, vm => vm.VisibleSelectOperation, w => w.Visible).InitializeFromSource();
 			

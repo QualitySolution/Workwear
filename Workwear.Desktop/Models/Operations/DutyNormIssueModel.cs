@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NHibernate;
+using NHibernate.SqlCommand;
 using QS.Dialog;
 using QS.DomainModel.UoW;
 using Workwear.Domain.Operations;
@@ -37,6 +39,22 @@ namespace Workwear.Models.Operations {
 			progress?.Add(text: "Подгружаем операции");
 			if(items.All(i => i?.Id == 0))
 				return;
+
+			// Батчим с последующим запросом AllIssueOperationForItems через Future,
+			// чтобы оба запроса ушли в БД одним round-trip.
+			if(UoW != null) {
+				var ptIds = items.Select(x => x.ProtectionTools.Id).Distinct().ToArray();
+				if(ptIds.Any()) {
+					ProtectionToolsNomenclature ptnAlias = null;
+					UoW.Session.QueryOver<ProtectionTools>()
+						.WhereRestrictionOn(p => p.Id).IsIn(ptIds)
+						.JoinAlias(p => p.ProtectionToolsNomenclatures, () => ptnAlias, JoinType.LeftOuterJoin)
+						.Fetch(SelectMode.Fetch, p => p.ProtectionToolsNomenclatures)
+						.Fetch(SelectMode.Fetch, () => ptnAlias.Nomenclature)
+						.Future();
+				}
+			}
+
 			var ops1 = dutyNormRepository.AllIssueOperationForItems(items);
 			var operations = ops1.ToList();
 			progress?.Add(text: "Добавляем несохранённые");

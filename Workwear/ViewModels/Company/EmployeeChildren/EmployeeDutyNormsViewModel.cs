@@ -15,6 +15,7 @@ using Workwear.Repository.Regulations;
 using Workwear.Tools.Features;
 using Workwear.ViewModels.Regulations;
 using Workwear.ViewModels.Stock;
+using Workwear.ViewModels.Stock.Documents;
 
 namespace Workwear.ViewModels.Company.EmployeeChildren {
 	/// <summary>

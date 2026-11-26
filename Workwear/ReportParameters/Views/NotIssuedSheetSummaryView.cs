@@ -25,6 +25,7 @@ namespace workwear.ReportParameters.Views
 			ycheckShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployees, w => w.Visible).InitializeFromSource();
 			ylabelShowEmployees.Binding.AddBinding(ViewModel, v => v.VisibleShowEmployees, w => w.Visible).InitializeFromSource();
 			ycheckExcludeInVacation.Binding.AddBinding(ViewModel, v => v.ExcludeInVacation, w => w.Active).InitializeFromSource();
+			ycheckExcludeDismissAfter.Binding.AddBinding(ViewModel, v => v.ExcludeDismissAfter, w => w.Active).InitializeFromSource();
 			ycheckCondition.Binding.AddBinding(ViewModel, v => v.Condition, w => w.Active).InitializeFromSource();
 			ycheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
 			ylabelcheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
@@ -37,6 +38,9 @@ namespace workwear.ReportParameters.Views
 				.InitializeFromSource();
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
 			ycheckGroupBySubdivision.Binding.AddBinding(ViewModel, v => v.GroupByElementSensetive, w => w.Sensitive).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.ShowShipment, w => w.Active).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.VisibleShowShipment, w => w.Visible).InitializeFromSource();
 			
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 			

@@ -38,27 +38,6 @@ if [ ! -f "gtk-sharp-2.12.21.msi" ]; then
 fi
 
 # Сборка документации
-if command -v asciidoctor-pdf 2>/dev/null; then
-	BuildDoc=asciidoctor-pdf
-elif command -v asciidoctor-pdf.ruby3.2 2>/dev/null; then
-        BuildDoc=asciidoctor-pdf.ruby3.2 
-elif command -v asciidoctor-pdf.ruby3.1 2>/dev/null; then
-        BuildDoc=asciidoctor-pdf.ruby3.1 
-elif command -v asciidoctor-pdf.ruby2.7 2>/dev/null; then
-        BuildDoc=asciidoctor-pdf.ruby2.7 
-elif command -v asciidoctor-pdf.ruby2.6 2>/dev/null; then
-        BuildDoc=asciidoctor-pdf.ruby2.6
-elif command -v asciidoctor-pdf.ruby2.5 2>/dev/null; then
-	BuildDoc=asciidoctor-pdf.ruby2.5
-else
-	echo "asciidoctor-pdf не установлен."
-	exit 1
-fi
-
-${BuildDoc} ../docs/modules/ROOT/user-guide.adoc
-cp -v ../docs/modules/ROOT/user-guide.pdf ./Files
-
-${BuildDoc} ../docs/modules/ROOT/admin-guide.adoc
-cp -v ../docs/modules/ROOT/admin-guide.pdf ./Files
+../docs/build-pdf.sh ../WinInstall/Files
 
 wine ~/.wine/drive_c/Program\ Files\ \(x86\)/NSIS/makensis.exe /INPUTCHARSET UTF8 ${NsisOptions} ${ProjectName}.nsi

@@ -24,6 +24,7 @@ namespace workwear.ReportParameters.Views
 			buttonRun.Binding.AddBinding(ViewModel, v => v.SensetiveLoad, w => w.Sensitive).InitializeFromSource();
 
 			ycheckExcludeInVacation.Binding.AddBinding(ViewModel, w => w.ExcludeInVacation, v => v.Active).InitializeFromSource();
+			ycheckExcludeDismissAfter.Binding.AddBinding(ViewModel, v => v.ExcludeDismissAfter, w => w.Active).InitializeFromSource();
 			
 			ycheckCondition.Binding.AddBinding(ViewModel, w => w.Condition, v => v.Active).InitializeFromSource();
 			ycheckCondition.Binding.AddBinding(ViewModel, v => v.VisibleCondition, w => w.Visible).InitializeFromSource();
@@ -34,6 +35,9 @@ namespace workwear.ReportParameters.Views
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.HideWorn, w => w.Active).InitializeFromSource();
 			ycheckHideWorn.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
 			ycheckViewPhones.Binding.AddBinding(ViewModel, v => v.ViewPhones, w => w.Active).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.ShowShipment, w => w.Active).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.StockElementsSensetive, w => w.Sensitive).InitializeFromSource();
+			ycheckShowShipment.Binding.AddBinding(ViewModel, v => v.VisibleShowShipment, w => w.Visible).InitializeFromSource();
 			
 			comboReportType.ItemsEnum = typeof(NotIssuedSheetReportType);
 			comboReportType.Binding.AddBinding(ViewModel, v => v.ReportType, w => w.SelectedItem).InitializeFromSource();

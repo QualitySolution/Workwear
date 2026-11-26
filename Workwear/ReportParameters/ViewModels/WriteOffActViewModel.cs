@@ -3,11 +3,15 @@ using QS.ViewModels.Extension;
 using System.Collections.Generic;
 using System;
 using Workwear.Tools;
+using Workwear.Tools.Features;
 
 namespace Workwear.ReportParameters.ViewModels {
 	public class WriteOffActViewModel: ReportParametersViewModelBase, IDialogDocumentation {
-		public WriteOffActViewModel(RdlViewerViewModel rdlViewerViewModel) : base(rdlViewerViewModel) 
+		private readonly FeaturesService featuresService;
+		
+		public WriteOffActViewModel(RdlViewerViewModel rdlViewerViewModel, FeaturesService featuresService) : base(rdlViewerViewModel) 
 		{
+			this.featuresService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			Title = "Справка по списаниям";
 			Identifier = "WriteOffAct";
 		}
@@ -23,7 +27,8 @@ namespace Workwear.ReportParameters.ViewModels {
 			{ "report_date", ReportDate},
 			{"doc_write_off", ShowDocWriteOff},
 			{"auto_write_off", ShowAutoWriteOff},
-			{"income", ShowIncome}
+			{"income", ShowIncome},
+			{"service_detail", ShowServiceDetail}
 		};
 		
 		private DateTime? startDate=  DateTime.Today.AddMonths(-1);
@@ -69,6 +74,14 @@ namespace Workwear.ReportParameters.ViewModels {
 					OnPropertyChanged(nameof(SensitiveLoad));
 			}
 		}
+
+		private bool showServiceDetail = false;
+		public virtual bool ShowServiceDetail {
+			get => showServiceDetail;
+			set => SetField(ref showServiceDetail, value);
+		}
+
+		public bool VisibleServiceDetail => featuresService.Available(WorkwearFeature.ClothingService);
 
 		public bool SensitiveLoad => (StartDate != null && EndDate != null && startDate <= endDate) && ReportDate != null && 
 		                             (showDocWriteOff || showIncome || showAutoWriteOff);

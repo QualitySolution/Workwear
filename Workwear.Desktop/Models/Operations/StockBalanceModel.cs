@@ -65,14 +65,14 @@ namespace Workwear.Models.Operations {
 		public IEnumerable<WarehouseOperation> ExcludeOperations { get; set; }
 		#endregion
 
-		#region Номеклатура
+		#region Номенклатура
 		public HashSet<Nomenclature> Nomenclatures { get; } = new HashSet<Nomenclature>();
 		
 		public void AddNomenclatures(IEnumerable<Nomenclature> nomenclatures) {
 			var newNomenclatures = nomenclatures.Except(Nomenclatures).ToList();
 			if (newNomenclatures.Any()) {
 				Nomenclatures.UnionWith(newNomenclatures);
-				stockBalances.AddRange(stockRepository.StockBalances(UoW, Warehouse, newNomenclatures, OnDate?.Date ?? DateTime.Today, ExcludeOperations)
+				stockBalances.AddRange(stockRepository.StockBalances(Warehouse, newNomenclatures, OnDate?.Date ?? DateTime.Today, ExcludeOperations)
 					.Select(sto => new StockBalance(sto.StockPosition, sto.Amount)));
 			}
 			
@@ -85,7 +85,7 @@ namespace Workwear.Models.Operations {
 		/// </summary>
 		public void Refresh() {
 			if(Nomenclatures.Any())
-				stockBalances = stockRepository.StockBalances(UoW, Warehouse, Nomenclatures, OnDate?.Date ?? DateTime.Today, ExcludeOperations)
+				stockBalances = stockRepository.StockBalances(Warehouse, Nomenclatures, OnDate?.Date ?? DateTime.Today, ExcludeOperations)
 					.Select(sto => new StockBalance(sto.StockPosition, sto.Amount)).ToList();
 		}
 		#endregion

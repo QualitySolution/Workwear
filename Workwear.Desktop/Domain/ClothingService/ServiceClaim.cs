@@ -1,11 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using QS.DomainModel.Entity;
+using QS.DomainModel.UoW;
 using QS.Extensions.Observable.Collections.List;
 using QS.HistoryLog;
 using QS.Project.Domain;
 using Workwear.Domain.Company;
 using Workwear.Domain.Stock;
+using Workwear.Domain.Stock.Documents;
 
 namespace Workwear.Domain.ClothingService {
 	[HistoryTrace]
@@ -83,7 +86,12 @@ namespace Workwear.Domain.ClothingService {
 		#endregion
 
 		#region Статусы
-		public virtual void ChangeState(ClaimState state, uint? terminalId = null, UserBase user = null, string comment = null) {
+		//Если статус и комментарий не изменились - новую запись не добавляем
+		public virtual StateOperation ChangeState(ClaimState state, uint? terminalId = null, UserBase user = null, string comment = null) {
+			var last = States.OrderBy(x => x.OperationTime).LastOrDefault();
+			if(last != null && last.State == state && last.Comment == comment)
+				return null;
+
 			var stateOperation = new StateOperation {
 				Claim = this,
 				OperationTime = DateTime.Now,
@@ -93,11 +101,24 @@ namespace Workwear.Domain.ClothingService {
 				Comment = comment
 			};
 			States.Add(stateOperation);
+			return stateOperation;
 		}
 		#endregion
 		
 		#region Вычисляемые
 		public virtual string Title => $"Заявка на обслуживание №{Id}";
+
+		#endregion
+
+		#region Методы
+
+		public virtual void Update(IUnitOfWork uow, ReturnItem item) {
+			Barcode.Nomenclature = item.Nomenclature;
+			Barcode.Size = item.WearSize;
+			Barcode.Height = item.Height;
+			ChangeState(ClaimState.Returned);
+			IsClosed = true;
+		}
 
 		#endregion
 	}

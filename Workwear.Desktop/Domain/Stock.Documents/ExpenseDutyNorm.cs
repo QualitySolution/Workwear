@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using NHibernate.Criterion;
 using QS.Dialog;
 using QS.DomainModel.Entity;
 using QS.DomainModel.UoW;
@@ -109,6 +108,8 @@ namespace Workwear.Domain.Stock.Documents {
 		
 		public virtual void RemoveItem(ExpenseDutyNormItem item) {
 			Items.Remove(item);
+			if(item.IssuanceSheetItem != null) 
+				IssuanceSheet.Items.Remove(item.IssuanceSheetItem);
 		}
 		
 		#region Ведомость
@@ -163,23 +164,32 @@ namespace Workwear.Domain.Stock.Documents {
 				yield return new ValidationResult ("Норма должна быть указана", 
 					new[] { nameof (DutyNorm)});
 			if(Warehouse == null)
-				yield return new ValidationResult ("Склад должен быть указан", 
+				yield return new ValidationResult ("Склад должен быть указан",
 					new[] { nameof (Warehouse)});
+			if(IssuanceSheet != null && ResponsibleEmployee == null)
+				yield return new ValidationResult ("Для документа с привязанной складской ведомостью ответственный сотрудник должен быть указан.",
+					new[] { nameof (ResponsibleEmployee)});
 			if(Items.All(i => i.Amount <= 0))
 				yield return new ValidationResult ("Документ должен содержать хотя бы одну строку с количеством больше 0.", 
 					new[] { nameof (Items)});
-			if(Items.Any (i => i.ProtectionTools == null))
-				yield return new ValidationResult ("Документ не должен содержать строки с неуказанной потребностью (Номенклатурой нормы).", 
+			if(Items.Any(i => i.Id != 0 && i.Amount <= 0))
+				yield return new ValidationResult ("Нельзя в сохранённом документе изменить в строке количество на 0. Но строку можно удалить.",
 					new[] { nameof (Items)});
-			
+			if(Items.Any (i => i.ProtectionTools == null))
+				yield return new ValidationResult ("Документ не должен содержать строки с неуказанной потребностью (Номенклатурой нормы).",
+					new[] { nameof (Items)});
+			if(Items.Any (i => i.Amount > 0 && i.Nomenclature == null))
+				yield return new ValidationResult ("Документ не должен содержать строки без выбранной номенклатуры и с указанным количеством.",
+					new[] { nameof (Items)});
+
 			//Проверка наличия на складе
 			var baseParameters = (BaseParameters)validationContext.Items[nameof(BaseParameters)];
-			if(UoW != null && baseParameters.CheckBalances) {
-				var repository = new StockRepository();
-				var nomenclaturesIds = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature.Id).Distinct().ToList();
-				var nomenclatures = UoW.Session.QueryOver<Nomenclature>().Where(x => x.Id.IsIn(nomenclaturesIds)).List();
+			validationContext.Items.TryGetValue(nameof(StockRepository), out var repositoryObject);
+			var repository = repositoryObject as StockRepository;
+			if(repository != null && baseParameters.CheckBalances) {
+				var nomenclatures = Items.Where(x => x.Nomenclature != null).Select(x => x.Nomenclature).Distinct().ToList();
 				var excludeOperations = Items.Where(x => x.WarehouseOperation?.Id > 0).Select(x => x.WarehouseOperation).ToList();
-				var balance = repository.StockBalances(UoW, Warehouse, nomenclatures, Date, excludeOperations);
+				var balance = repository.StockBalances(Warehouse, nomenclatures, Date, excludeOperations);
 
 				var positionGroups = Items.Where(x => x.Nomenclature != null).GroupBy(x => x.StockPosition);
 				foreach(var position in positionGroups) {

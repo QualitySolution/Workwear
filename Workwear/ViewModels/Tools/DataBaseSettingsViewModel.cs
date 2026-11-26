@@ -17,8 +17,10 @@ namespace Workwear.ViewModels.Tools
 
 		#region Ограниения версии
 		public bool CollectiveIssueWithPersonalVisible { get; }
+		public bool AheadOfSheduleCollectiveVisible { get; }
 		public bool EditLockDateVisible { get; }
 		public bool MarkingVisible { get; }
+		public bool ConditionGroupVisible { get; }
 		public bool CanEdit { get; }
 		public bool StartDateOfOperationsVisible { get; } = true;
 		#endregion
@@ -37,9 +39,12 @@ namespace Workwear.ViewModels.Tools
 			EditLockDate = baseParameters.EditLockDate;
 			EditLockDateVisible = featuresService.Available(WorkwearFeature.EditLockDate);
 			MarkingVisible = featuresService.Available(WorkwearFeature.Barcodes);
+			ConditionGroupVisible = featuresService.Available(WorkwearFeature.ConditionNorm);
 			DefaultAutoWriteoff = baseParameters.DefaultAutoWriteoff;
 			CheckBalances = baseParameters.CheckBalances;
-			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedule;
+			ColDayAheadOfShedule = baseParameters.ColDayAheadOfShedulePersonal;
+			ColDayAheadOfSheduleCollective = baseParameters.ColDayAheadOfSheduleCollective;
+			AheadOfSheduleCollectiveVisible = featuresService.Available(WorkwearFeature.CollectiveExpense);
 			ShiftExpluatacion = baseParameters.ShiftExpluatacion;
 			ExtendPeriod = baseParameters.ExtendPeriod;
 			CollectiveIssueWithPersonal = baseParameters.CollectiveIssueWithPersonal;
@@ -51,6 +56,8 @@ namespace Workwear.ViewModels.Tools
 			ClothingMarkingType = baseParameters.ClothingMarkingType;
 			StartDateOfOperations = baseParameters.StartDateOfOperations;
 			IsGenericName = baseParameters.IsGenericName;
+			KitNumberingMode = baseParameters.KitNumberingMode;
+			ConditionGroupInPersonalCard = baseParameters.ConditionGroupInPersonalCard;
 		}
 		
 		#region IDialogDocumentation
@@ -61,7 +68,8 @@ namespace Workwear.ViewModels.Tools
 		public override bool HasChanges => EditLockDate != baseParameters.EditLockDate
 										   || DefaultAutoWriteoff != baseParameters.DefaultAutoWriteoff
 		                                   || CheckBalances != baseParameters.CheckBalances
-		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule
+		                                   || ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedulePersonal
+		                                   || ColDayAheadOfSheduleCollective != baseParameters.ColDayAheadOfSheduleCollective
 		                                   || ShiftExpluatacion != baseParameters.ShiftExpluatacion
 		                                   || CollectiveIssueWithPersonal != baseParameters.CollectiveIssueWithPersonal
 		                                   || CollapseDuplicateIssuanceSheet != baseParameters.CollapseDuplicateIssuanceSheet
@@ -71,13 +79,16 @@ namespace Workwear.ViewModels.Tools
 		                                   || IsDocNumberInReturnSign != baseParameters.IsDocNumberInReturnSign
 		                                   || StartDateOfOperations != baseParameters.StartDateOfOperations
 		                                   || ClothingMarkingType != baseParameters.ClothingMarkingType
-										   || IsGenericName != baseParameters.IsGenericName;
+										   || IsGenericName != baseParameters.IsGenericName
+										   || KitNumberingMode != baseParameters.KitNumberingMode
+										   || ConditionGroupInPersonalCard != baseParameters.ConditionGroupInPersonalCard;
 
 		#region Parameters
 		public DateTime? EditLockDate { get; set; }
 		public bool DefaultAutoWriteoff { get; set; }
 		public bool CheckBalances { get; set; }
 		public int ColDayAheadOfShedule { get; set; }
+		public int ColDayAheadOfSheduleCollective { get; set; }
 		public AnswerOptions ShiftExpluatacion { get; set; }
 		public AnswerOptions ExtendPeriod { get; set; }
 		public BarcodeTypes ClothingMarkingType { get; set; }
@@ -89,6 +100,8 @@ namespace Workwear.ViewModels.Tools
 		public bool IsDocNumberInReturnSign { get; set; }
 		public DateTime? StartDateOfOperations { get; set; }
 		public bool IsGenericName { get; set; }
+		public KitNumberingMode KitNumberingMode { get; set; }
+		public bool ConditionGroupInPersonalCard { get; set; }
 		#endregion
 
 		public override bool Save()
@@ -97,8 +110,10 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.DefaultAutoWriteoff = DefaultAutoWriteoff;
 			if(CheckBalances != baseParameters.CheckBalances)
 				baseParameters.CheckBalances = CheckBalances;
-			if(ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedule)
-				baseParameters.ColDayAheadOfShedule = ColDayAheadOfShedule;
+			if(ColDayAheadOfShedule != baseParameters.ColDayAheadOfShedulePersonal)
+				baseParameters.ColDayAheadOfShedulePersonal = ColDayAheadOfShedule;
+			if(ColDayAheadOfSheduleCollective != baseParameters.ColDayAheadOfSheduleCollective)
+				baseParameters.ColDayAheadOfSheduleCollective = ColDayAheadOfSheduleCollective;
 			if(ShiftExpluatacion != baseParameters.ShiftExpluatacion)
 				baseParameters.ShiftExpluatacion = ShiftExpluatacion;
 			if(ExtendPeriod != baseParameters.ExtendPeriod)
@@ -121,6 +136,10 @@ namespace Workwear.ViewModels.Tools
 				baseParameters.StartDateOfOperations = StartDateOfOperations;
 			if(IsGenericName != baseParameters.IsGenericName)
 				baseParameters.IsGenericName = IsGenericName;
+			if(KitNumberingMode != baseParameters.KitNumberingMode)
+				baseParameters.KitNumberingMode = KitNumberingMode;
+			if(ConditionGroupInPersonalCard != baseParameters.ConditionGroupInPersonalCard)
+				baseParameters.ConditionGroupInPersonalCard = ConditionGroupInPersonalCard;
 			return true;
 		}
 	}

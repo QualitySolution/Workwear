@@ -146,8 +146,10 @@ namespace Workwear.Domain.Regulations {
 		public virtual int CalculateRequiredIssue(BaseParameters parameters, DateTime onDate) {
 			if(Graph == null)
 				throw new NullReferenceException($"Перед выполнением расчета {nameof(CalculateRequiredIssue)}, Graph должен быть заполнен!");
+			if(!DutyNorm.IsActiveOn(onDate))
+				return 0;
 			
-			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.ColDayAheadOfShedule)));
+			return Math.Max(0, Amount - Graph.UsedAmountAtEndOfDay(onDate.AddDays(parameters.GetColDayAheadOfShedule(ProtectionTools.Type.IssueType))));
 		}
 
 		public virtual void UpdateNextIssue() {
@@ -179,6 +181,10 @@ namespace Workwear.Domain.Regulations {
 
 			if(wantIssue == default(DateTime))
 				wantIssue = DutyNorm.DateFrom ?? DateTime.Now;
+			if(wantIssue.HasValue && DutyNorm.DateFrom.HasValue && wantIssue.Value.Date < DutyNorm.DateFrom.Value.Date)
+				wantIssue = DutyNorm.DateFrom;
+			if(wantIssue.HasValue && DutyNorm.DateTo.HasValue && wantIssue.Value.Date > DutyNorm.DateTo.Value.Date)
+				wantIssue = null;
 			return wantIssue;
 		}
 

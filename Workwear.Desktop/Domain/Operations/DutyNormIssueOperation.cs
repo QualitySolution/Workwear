@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QS.DomainModel.Entity;
@@ -45,6 +45,7 @@ namespace Workwear.Domain.Operations {
 			get => dutyNormItem;
 			set => SetField(ref dutyNormItem, value);
 		}
+		int? IGraphIssueOperation.NormAmount => DutyNormItem?.Amount;
 		
 		DateTime operationTime = DateTime.Now;
 		[Display(Name = "Время операции")]
@@ -238,7 +239,7 @@ namespace Workwear.Domain.Operations {
 	        Issued = 0;
 	        Returned = item.Amount;
 	        WarehouseOperation = item.WarehouseOperation;
-	        DutyNormItem = null;
+	        DutyNormItem = IssuedOperation?.DutyNormItem;
 	        ExpiryByNorm = null;
 	        AutoWriteoffDate = null;
 	        WearSize = item.WearSize;
@@ -254,7 +255,7 @@ namespace Workwear.Domain.Operations {
 	        Issued = 0;
 	        Returned = item.Amount;
 	        WarehouseOperation = item.WarehouseOperation;
-	        DutyNormItem = null;
+	        DutyNormItem = item.IssuedDutyNormOnOperation?.DutyNormItem;
 	        ExpiryByNorm = null;
 	        AutoWriteoffDate = null;
 	        WearSize = item.WearSize;
@@ -282,11 +283,9 @@ namespace Workwear.Domain.Operations {
 
         #region Статические методы
 
-        public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0) 
+        public static decimal CalculatePercentWear(DateTime atDate, DateTime? startOfUse, DateTime? expiryByNorm, decimal beginWearPercent = 0)
         {
-	        if(startOfUse == null || expiryByNorm == null)
-		        return 0;
-	        if(beginWearPercent >= 1)
+	        if(startOfUse == null || expiryByNorm == null || beginWearPercent >= 1)
 		        return beginWearPercent;
 			
 	        var addPercent = (atDate - startOfUse.Value).TotalDays / (expiryByNorm.Value - startOfUse.Value).TotalDays;

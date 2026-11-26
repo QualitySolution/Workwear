@@ -13,7 +13,7 @@ namespace Workwear.Views.ClothingService {
 			set {
 				viewModel = value;
 				labelEmployee.Binding
-					.AddFuncBinding(ViewModel, e => e.LabelEmployee, w => w.LabelProp)
+					.AddFuncBinding(ViewModel, e => e.LabelCurrent, w => w.LabelProp)
 					.InitializeFromSource();
 
 				labelNomenclature.Binding

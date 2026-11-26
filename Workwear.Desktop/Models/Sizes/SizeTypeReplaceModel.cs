@@ -67,7 +67,7 @@ namespace Workwear.Models.Sizes {
 				text += " и ростов: " + String.Join(", ", usedHeights.Select(x => x.Name));
 			text += " складских операциях. Продолжить?";
 			if(interactive.Question(text)) {
-				progress.Start(usedSizesAll.Count * 10);
+				progress.Start(usedSizesAll.Count * 11);
 				ReplaceSize(uow, progress, usedSizes, nomenclatures, newSizeType);
 				ReplaceHeight(uow, progress, usedHeights, nomenclatures, newHeight);
 				progress.Close();
@@ -158,6 +158,14 @@ namespace Workwear.Models.Sizes {
 					.Update();
 
 				progress.Add();
+				uow.GetAll<OverNormOperation>()
+					.Where(x => x.WearSize.Id == size.Id)
+					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
+					.UpdateBuilder()
+					.Set(x => x.WearSize, newSize)
+					.Update();
+
+				progress.Add();
 				uow.GetAll<ReturnItem>()
 					.Where(x => x.WearSize.Id == size.Id)
 					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
@@ -239,6 +247,14 @@ namespace Workwear.Models.Sizes {
 				
 				progress.Add();
 				uow.GetAll<DutyNormIssueOperation>()
+					.Where(x => x.Height.Id == height.Id)
+					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
+					.UpdateBuilder()
+					.Set(x => x.Height, newHeight)
+					.Update();
+
+				progress.Add();
+				uow.GetAll<OverNormOperation>()
 					.Where(x => x.Height.Id == height.Id)
 					.Where(x => nomenclaturesIds.Contains(x.Nomenclature.Id))
 					.UpdateBuilder()

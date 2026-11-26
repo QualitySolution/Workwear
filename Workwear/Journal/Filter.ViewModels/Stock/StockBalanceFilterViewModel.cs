@@ -36,6 +36,12 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			set => SetField(ref owners, value);
 		}
 		
+		private List<Nomenclature>nomenclaturesWithBarcodes = new List<Nomenclature>();
+		public List<Nomenclature> NomenclaturesWithBarcodes {
+			get => nomenclaturesWithBarcodes;
+			set => SetField(ref nomenclaturesWithBarcodes, value);
+		}
+		
 		private object selectOwner = SpecialComboState.All;
 		public object SelectOwner {
 			get => selectOwner;
@@ -76,14 +82,41 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			get => sensitiveDate;
 			set => SetField(ref sensitiveDate, value);
 		}
-		#endregion
+
+		//Только маркируемые номенклатуры (useBarcode)
+		private bool showWithUseBarcodes;
+		public virtual bool ShowWithUseBarcodes {
+			get => showWithUseBarcodes;
+			set => SetField(ref showWithUseBarcodes, value);
+		}
+
+		private bool canChangeShowWithBarcodes = true;
+		public virtual bool CanChangeShowWithBarcodes {
+			get => canChangeShowWithBarcodes;
+			set => SetField(ref canChangeShowWithBarcodes, value);
+		}
+
+		//Есть невыданные промаркированные позиции
+		private bool showOnlyWithBarcodeInStock;
+		public virtual bool ShowOnlyWithBarcodeInStock {
+			get => showOnlyWithBarcodeInStock;
+			set => SetField(ref showOnlyWithBarcodeInStock, value);
+		}
+	
+		private ItemsType itemsType;
+        public virtual ItemsType ItemsType {
+	        get => itemsType;
+	        set => SetField(ref itemsType, value);
+        }
+        #endregion
 
 		public readonly FeaturesService FeaturesService;
 
-		#region Visible
-
+		#region Visible and Sensetive
 		public bool VisibleWarehouse => FeaturesService.Available(WorkwearFeature.Warehouses);
+		public bool SensetiveWarehouse { get; set; } = true;
 		public bool VisibleOwners => FeaturesService.Available(WorkwearFeature.Owners) && owners.Any();
+		public bool VisibleBarcodes => FeaturesService.Available(WorkwearFeature.Barcodes) && NomenclaturesWithBarcodes.Any();
 		private bool canChooseAmount = false;
 		public bool CanChooseAmount {
 			get => canChooseAmount;
@@ -110,7 +143,7 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 
 			var builder = new CommonEEVMBuilderFactory<StockBalanceFilterViewModel>(journal, this, UoW, navigation, autofacScope);
 
-			warehouse = stockRepository.GetDefaultWarehouse(UoW, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId, UoW);
 			addAmount = currentUserSettings.Settings.DefaultAddedAmount;
 			
 			WarehouseEntry = builder.ForProperty(x => x.Warehouse)
@@ -120,6 +153,8 @@ namespace workwear.Journal.Filter.ViewModels.Stock
 			
 			if(FeaturesService.Available(WorkwearFeature.Owners))
 				owners = UoW.GetAll<Owner>().ToList();
+			if(FeaturesService.Available(WorkwearFeature.Owners))
+				nomenclaturesWithBarcodes = UoW.GetAll<Nomenclature>().Where(n => n.UseBarcode).ToList();
 			
 			CanNotify = false;
 			setFilterParameters?.Invoke(this);

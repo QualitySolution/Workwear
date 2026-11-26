@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Timers;
 using Autofac;
@@ -30,7 +31,7 @@ using Workwear.Tools.Sizes;
 
 namespace Workwear.ViewModels.Stock
 {
-	public class IssueByIdentifierViewModel : WindowDialogViewModelBase, IDialogDocumentation
+	public class IssueByIdentifierViewModel : WindowDialogViewModelBase, IDialogDocumentation, IDisposable
 	{
 		private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 		private readonly IUnitOfWorkFactory unitOfWorkFactory;
@@ -38,6 +39,7 @@ namespace Workwear.ViewModels.Stock
 		private readonly IUserService userService;
 		private readonly EmployeeIssueModel issueModel;
 		private readonly StockBalanceModel stockBalanceModel;
+		private readonly StockRepository stockRepository;
 		private readonly EmployeeRepository employeeRepository;
 		private readonly IValidator validator;
 		public readonly BaseParameters BaseParameters;
@@ -71,6 +73,7 @@ namespace Workwear.ViewModels.Stock
 			this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
 			this.issueModel = employeeIssueModel ?? throw new ArgumentNullException(nameof(employeeIssueModel));
 			this.stockBalanceModel = stockBalanceModel ?? throw new ArgumentNullException(nameof(stockBalanceModel));
+			this.stockRepository = stockRepository ?? throw new ArgumentNullException(nameof(stockRepository));
 			this.employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository));
 			this.validator = validator ?? throw new ArgumentNullException(nameof(validator));
 			this.BaseParameters = baseParameters ?? throw new ArgumentNullException(nameof(baseParameters));
@@ -83,6 +86,7 @@ namespace Workwear.ViewModels.Stock
 			Title = "Выдача по картам СКУД";
 
 			unitOfWorkProvider.UoW = UowOfDialog = unitOfWorkFactory.CreateWithoutRoot();
+			this.stockRepository.RepoUow = UowOfDialog;
 			var entryBuilder = new CommonEEVMBuilderFactory<IssueByIdentifierViewModel>(this, this, UowOfDialog, navigation, autofacScope);
 
 			if(cardReaderService != null) {
@@ -94,7 +98,7 @@ namespace Workwear.ViewModels.Stock
 
 
 			WarehouseEntryViewModel = entryBuilder.ForProperty(x => x.Warehouse).MakeByType().Finish();
-			Warehouse = stockRepository.GetDefaultWarehouse(UowOfDialog, featuresService, autofacScope.Resolve<IUserService>().CurrentUserId);
+			Warehouse = stockRepository.GetDefaultWarehouse(featuresService, autofacScope.Resolve<IUserService>().CurrentUserId, UowOfDialog);
 			stockBalanceModel.Warehouse = Warehouse;
 
 			//Настройка таймера сброса
@@ -400,7 +404,11 @@ namespace Workwear.ViewModels.Stock
 		{
 			if(Employee == null)
 				return;
+			//Выбор складской позиции учитывает приоритет владельца и показывает его имя.
+			//Загружаем справочник заранее, чтобы Owner из остатков не загружались по одному.
+			uow.Session.QueryOver<Owner>().List();
 			Expense = new Expense();
+			Expense.IssueDate = Expense.Date;
 			Expense.CreatedbyUser = userService.GetCurrentUser();
 			Expense.Employee = Employee;
 			Expense.Warehouse = Warehouse;
@@ -416,15 +424,19 @@ namespace Workwear.ViewModels.Stock
 
 		private void AcceptIssue()
 		{
-			if(!validator.Validate(Expense))
+			if(!validator.Validate(Expense, new ValidationContext(Expense, new Dictionary<object, object> {
+				{ nameof(BaseParameters), BaseParameters },
+				{ nameof(StockRepository), stockRepository }
+			})))
 				return;
 
 			Expense.CleanupItems();
 			Expense.UpdateOperations(uow, BaseParameters, interactive, CardUidCompact);
+			Expense.SaveOperations(uow);
 			uow.Save(Expense);
 
 			logger.Debug("Обновляем записи о выданной одежде в карточке сотрудника...");
-			Expense.UpdateEmployeeWearItems();
+			Expense.UpdateEmployeeWearItems(uow);
 			uow.Commit();
 			logger.Info($"Записан документ выдачи №{Expense.Id} на {Employee.ShortName}");
 			SuccessfullyText = MakeConfirmText();
@@ -456,6 +468,18 @@ namespace Workwear.ViewModels.Stock
 			return null;
 		}
 		#endregion
+
+		public void Dispose()
+		{
+			if(cardReaderService != null) {
+				cardReaderService.CardStatusRead -= RusGuardService_CardStatusRead;
+				cardReaderService.CardFamilies.ListChanged -= CardFamilies_ListChanged;
+			}
+
+			timerCleanSuccessfullyText?.Dispose();
+			uow?.Dispose();
+			UowOfDialog?.Dispose();
+		}
 	}
 }
 	

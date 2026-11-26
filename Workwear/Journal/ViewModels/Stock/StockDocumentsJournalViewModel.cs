@@ -16,7 +16,6 @@ using QS.Project.Domain;
 using QS.Project.Journal;
 using QS.Project.Journal.DataLoader;
 using QS.Project.Services;
-using QS.Utilities.Text;
 using QS.ViewModels.Extension;
 using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
@@ -24,8 +23,11 @@ using Workwear.Domain.Regulations;
 using Workwear.Domain.Statements;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Domain.Supply;
 using workwear.Journal.Filter.ViewModels.Stock;
+using workwear.Journal.ViewModels.Regulations;
 using workwear.Models.Stock;
+using Workwear.Models.Regulations;
 using Workwear.Tools;
 using Workwear.Tools.Features;
 
@@ -35,6 +37,7 @@ namespace workwear.Journal.ViewModels.Stock
 	{
 		public readonly FeaturesService FeaturesService;
 		private readonly OpenStockDocumentsModel openStockDocumentsModel;
+		private readonly NormToDutyNormModel normToDutyNormModel;
 
 		public StockDocumentsFilterViewModel Filter { get; private set; }
 		#region IDialogDocumentation
@@ -42,13 +45,14 @@ namespace workwear.Journal.ViewModels.Stock
 		public string ButtonTooltip => DocHelper.GetDialogDocTooltip(Title);
 		#endregion
 		public StockDocumentsJournalViewModel(
-			IUnitOfWorkFactory unitOfWorkFactory, 
-			IInteractiveService interactiveService, 
+			IUnitOfWorkFactory unitOfWorkFactory,
+			IInteractiveService interactiveService,
 			INavigationManager navigation,
 			OpenStockDocumentsModel openStockDocumentsModel,
-			ILifetimeScope autofacScope, 
+			NormToDutyNormModel normToDutyNormModel,
+			ILifetimeScope autofacScope,
 			FeaturesService featuresService,
-			ICurrentPermissionService currentPermissionService = null, 
+			ICurrentPermissionService currentPermissionService = null,
 			IDeleteEntityService deleteEntityService = null)
 			: base(unitOfWorkFactory, interactiveService, navigation)
 		{
@@ -56,6 +60,7 @@ namespace workwear.Journal.ViewModels.Stock
 			CurrentPermissionService = currentPermissionService;
 			DeleteEntityService = deleteEntityService;
 			this.openStockDocumentsModel = openStockDocumentsModel ?? throw new ArgumentNullException(nameof(openStockDocumentsModel));
+			this.normToDutyNormModel = normToDutyNormModel ?? throw new ArgumentNullException(nameof(normToDutyNormModel));
 			FeaturesService = featuresService ?? throw new ArgumentNullException(nameof(featuresService));
 			JournalFilter = Filter = autofacScope.Resolve<StockDocumentsFilterViewModel>(
 				new TypedParameter(typeof(JournalViewModelBase), this));
@@ -70,15 +75,18 @@ namespace workwear.Journal.ViewModels.Stock
 			dataLoader.AddQuery(QueryTransferDoc);
 			dataLoader.AddQuery(QueryCompletionDoc);
 			dataLoader.AddQuery(QueryInspectionDoc);
+			dataLoader.AddQuery(QueryOverNormDoc);
+			dataLoader.AddQuery(QueryBarcoding);
 			dataLoader.MergeInOrderBy(x => x.Date, true);
 			dataLoader.MergeInOrderBy(x => x.CreationDate, true);
 			DataLoader = dataLoader;
 
 			CreateNodeActions();
 			CreateDocumentsActions();
+			CreatePopupActions();
 
-			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Return),
-				typeof(Writeoff), typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(ExpenseDutyNorm));
+			UpdateOnChanges(typeof(Expense), typeof(CollectiveExpense), typeof(Income), typeof(Return), typeof(Writeoff),
+				typeof(Transfer), typeof(Completion), typeof(Inspection), typeof(ExpenseDutyNorm), typeof(OverNorm), typeof(Barcoding));
 		}
 
 		#region Опциональные зависимости
@@ -103,6 +111,7 @@ namespace workwear.Journal.ViewModels.Stock
 				return null;
 
 			Income incomeAlias = null;
+			Shipment shipmentAlias = null;
 
 			var incomeQuery = uow.Session.QueryOver<Income>(() => incomeAlias);
 			if(Filter.StartDate.HasValue)
@@ -115,13 +124,16 @@ namespace workwear.Journal.ViewModels.Stock
 			incomeQuery.Where(GetSearchCriterion(
 				() => incomeAlias.Id,
 				() => incomeAlias.DocNumber,
+				() => incomeAlias.Number,
 				() => incomeAlias.Comment,
-				() => authorAlias.Name
+				() => authorAlias.Name,
+				() => shipmentAlias.Id
 			));
 
 			incomeQuery
 				.JoinAlias(() => incomeAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 				.JoinAlias(() => incomeAlias.Warehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => incomeAlias.Shipment, () => shipmentAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
 			.SelectList(list => list
 			   			.Select(() => incomeAlias.Id).WithAlias(() => resultAlias.Id)
 						.Select(() => incomeAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
@@ -132,6 +144,7 @@ namespace workwear.Journal.ViewModels.Stock
 			            .Select(() => StockDocumentType.Income).WithAlias(() => resultAlias.DocTypeEnum)
 			            .Select(() => incomeAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
 			            .Select(() => incomeAlias.Number).WithAlias(() => resultAlias.IncomeDocNubber)
+			            .Select(() => shipmentAlias.Id).WithAlias(() => resultAlias.ShipmentId)
 					)
 			.OrderBy(() => incomeAlias.Date).Desc
 			.ThenBy(() => incomeAlias.CreationDate).Desc
@@ -415,8 +428,15 @@ namespace workwear.Journal.ViewModels.Stock
 				writeoffQuery.Where(o => o.Date >= Filter.StartDate.Value);
 			if(Filter.EndDate.HasValue)
 				writeoffQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
-			if(Filter.Warehouse != null)
-				writeoffQuery.Where(() => writeoffItemAlias.Warehouse == Filter.Warehouse);
+			if(Filter.Warehouse != null) {
+				if(isCounting)
+					writeoffQuery.WithSubquery.WhereExists(QueryOver.Of<WriteoffItem>()
+						.Where(x => x.Document.Id == writeoffAlias.Id)
+						.Where(x => x.Warehouse == Filter.Warehouse)
+						.Select(x => x.Id));
+				else
+					writeoffQuery.Where(() => writeoffItemAlias.Warehouse == Filter.Warehouse);
+			}
 
 			writeoffQuery.Where(GetSearchCriterion(
 				() => writeoffAlias.Id,
@@ -442,9 +462,9 @@ namespace workwear.Journal.ViewModels.Stock
 				NHibernateUtil.String,
 				Projections.Property(() => dutyNormAlias.Name));
 
+			writeoffQuery.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin);
 			if(!isCounting) {
 				writeoffQuery
-					.JoinAlias(() => writeoffAlias.CreatedbyUser, () => authorAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => writeoffAlias.Items, () => writeoffItemAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => writeoffItemAlias.Warehouse, () => warehouseExpenseAlias, JoinType.LeftOuterJoin)
 					.JoinAlias(() => writeoffItemAlias.EmployeeWriteoffOperation, () => employeeIssueOperationAlias, JoinType.LeftOuterJoin)
@@ -549,7 +569,94 @@ namespace workwear.Journal.ViewModels.Stock
 
 			return inspectionQuery;
 		}
+
+		protected IQueryOver<OverNorm> QueryOverNormDoc(IUnitOfWork uow) 
+		{
+			if (Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.OverNormDoc) 
+				return null;
+
+			OverNorm ondAlias = null;
+			OverNormItem ondiAlias = null;
+			OverNormOperation onAlias = null;
+			WarehouseOperation woAlias = null;
+			
+			var query = uow.Session.QueryOver(() => ondAlias);
+			if (Filter.StartDate.HasValue)
+				query.Where(x => x.Date >= Filter.StartDate.Value);
+			if (Filter.EndDate.HasValue)
+				query.Where(x => x.Date < Filter.EndDate.Value.AddDays(1));
+			if (Filter.Warehouse != null) 
+				query.Where(x => x.Warehouse == Filter.Warehouse);
+
+			query.JoinAlias(() => ondAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => ondAlias.Items, () => ondiAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => ondiAlias.OverNormOperation, () => onAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => onAlias.WarehouseOperation, () => woAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => woAlias.ReceiptWarehouse, () => warehouseReceiptAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.JoinAlias(() => woAlias.ExpenseWarehouse, () => warehouseExpenseAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.Where(GetSearchCriterion(
+					() => ondAlias.Id, 
+					() => authorAlias.Name)
+				)
+				.SelectList(list => list
+					.SelectGroup(() => ondAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => ondAlias.Date).WithAlias(() => resultAlias.Date)
+					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+					.Select(() => warehouseReceiptAlias.Name).WithAlias(() => resultAlias.ReceiptWarehouse)
+					.Select(() => warehouseExpenseAlias.Name).WithAlias(() => resultAlias.ExpenseWarehouse)
+					.Select(() => ondAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+					.Select(() => ondAlias.Comment).WithAlias(() => resultAlias.Comment)
+					.Select(() => StockDocumentType.OverNormDoc).WithAlias(() => resultAlias.DocTypeEnum)
+					.Select(() => ondAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+				)
+			.OrderBy(() => ondAlias.Date).Desc
+			.ThenBy(() => ondAlias.CreationDate).Desc
+			.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return query;
+		}
+		
+		protected IQueryOver<Barcoding> QueryBarcoding(IUnitOfWork uow) {
+			if(Filter.StockDocumentType != null && Filter.StockDocumentType != StockDocumentType.BarcodingDoc)
+				return null;
+
+			Barcoding barcodingAlias = null;
+			
+			var barcodingQuery = uow.Session.QueryOver<Barcoding>(() => barcodingAlias);
+			if(Filter.StartDate.HasValue)
+				barcodingQuery.Where(o => o.Date >= Filter.StartDate.Value);
+			if(Filter.EndDate.HasValue)
+				barcodingQuery.Where(o => o.Date < Filter.EndDate.Value.AddDays(1));
+			if (Filter.Warehouse != null) 
+				barcodingQuery.Where(x => x.Warehouse == Filter.Warehouse);
+				
+			
+			barcodingQuery.Where(GetSearchCriterion(
+				() => barcodingAlias.Id,
+				() => barcodingAlias.DocNumber,
+				() => barcodingAlias.Comment,
+				() => authorAlias.Name
+			));
+
+			barcodingQuery
+				.JoinAlias(() => barcodingAlias.CreatedbyUser, () => authorAlias, NHibernate.SqlCommand.JoinType.LeftOuterJoin)
+				.SelectList(list => list
+					.SelectGroup(() => barcodingAlias.Id).WithAlias(() => resultAlias.Id)
+					.Select(() => barcodingAlias.DocNumber).WithAlias(() => resultAlias.DocNumber)
+					.Select(() => barcodingAlias.Date).WithAlias(() => resultAlias.Date)
+					.Select(() => authorAlias.Name).WithAlias(() => resultAlias.Author)
+					.Select(() => StockDocumentType.BarcodingDoc).WithAlias(() => resultAlias.DocTypeEnum)
+					.Select(() => barcodingAlias.Comment).WithAlias(() => resultAlias.Comment)
+					.Select(() => barcodingAlias.CreationDate).WithAlias(() => resultAlias.CreationDate)
+				)
+				.OrderBy(() => barcodingAlias.Date).Desc
+				.ThenBy(() => barcodingAlias.CreationDate).Desc
+				.TransformUsing(Transformers.AliasToBean<StockDocumentsJournalNode>());
+
+			return barcodingQuery;
+		}
 		#endregion
+		
 		#region Действия
 		void CreateDocumentsActions()
 		{
@@ -567,6 +674,8 @@ namespace workwear.Journal.ViewModels.Stock
 					case StockDocumentType.TransferDoc when !FeaturesService.Available(WorkwearFeature.Warehouses):
 					case StockDocumentType.Completion when !FeaturesService.Available(WorkwearFeature.Completion):
 					case StockDocumentType.ExpenseDutyNormDoc when !FeaturesService.Available(WorkwearFeature.DutyNorms):
+					case StockDocumentType.OverNormDoc when !FeaturesService.Available(WorkwearFeature.OverNorm):
+					case StockDocumentType.BarcodingDoc when !FeaturesService.Available(WorkwearFeature.Barcodes):
 						continue;
 					default:
 					{
@@ -603,9 +712,64 @@ namespace workwear.Journal.ViewModels.Stock
 			);
 			NodeActionsList.Add(deleteAction);
 		}
-		
-		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes)
-		{
+
+		protected override void CreatePopupActions() {
+			PopupActionsList.Add(new JournalAction("Перенести на дежурную норму",
+				arg => true,
+				arg => FeaturesService.Available(WorkwearFeature.DutyNorms) &&
+					arg.Length == 1 &&
+					((StockDocumentsJournalNode)arg[0]).DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc,
+				TransferExpenseToDutyNorm));
+
+			PopupActionsList.Add(new JournalAction("Перенести на дежурную норму",
+				arg => true,
+				arg => FeaturesService.Available(WorkwearFeature.DutyNorms) &&
+					arg.Length == 1 &&
+					((StockDocumentsJournalNode)arg[0]).DocTypeEnum == StockDocumentType.CollectiveExpense,
+				TransferCollectiveExpenseToDutyNorm));
+		}
+
+		private void TransferExpenseToDutyNorm(object[] nodes) {
+			if(nodes.Length != 1)
+				return;
+			int expenseId = ((StockDocumentsJournalNode)nodes[0]).Id;
+
+			var selectJournal = NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.Tag = expenseId;
+			selectJournal.ViewModel.OnSelectResult += TransferExpenseToDutyNorm_OnSelectResult;
+		}
+
+		private void TransferExpenseToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((QS.ViewModels.Dialog.DialogViewModelBase)sender);
+			var expenseId = (int)page.Tag;
+			var node = e.GetSelectedObjects<DutyNormsJournalNode>().FirstOrDefault();
+			if(node == null)
+				return;
+			normToDutyNormModel.CopyExpenseToDutyNorm(expenseId, node.Id);
+		}
+
+		private void TransferCollectiveExpenseToDutyNorm(object[] nodes) {
+			if(nodes.Length != 1)
+				return;
+			int collectiveExpenseId = ((StockDocumentsJournalNode)nodes[0]).Id;
+
+			var selectJournal = NavigationManager.OpenViewModel<DutyNormsJournalViewModel>(this, OpenPageOptions.AsSlave);
+			selectJournal.ViewModel.SelectionMode = JournalSelectionMode.Single;
+			selectJournal.Tag = collectiveExpenseId;
+			selectJournal.ViewModel.OnSelectResult += TransferCollectiveExpenseToDutyNorm_OnSelectResult;
+		}
+
+		private void TransferCollectiveExpenseToDutyNorm_OnSelectResult(object sender, JournalSelectedEventArgs e) {
+			var page = NavigationManager.FindPage((QS.ViewModels.Dialog.DialogViewModelBase)sender);
+			var collectiveExpenseId = (int)page.Tag;
+			var node = e.GetSelectedObjects<DutyNormsJournalNode>().FirstOrDefault();
+			if(node == null)
+				return;
+			normToDutyNormModel.CopyCollectiveExpenseToDutyNorm(collectiveExpenseId, node.Id);
+		}
+
+		protected virtual void DeleteEntities(StockDocumentsJournalNode[] nodes) {
 			foreach(var node in nodes) {
 				var doctype = StockDocument.GetDocClass(node.DocTypeEnum);
 				DeleteEntityService.DeleteEntity(doctype, DomainHelper.GetId(node));
@@ -636,11 +800,13 @@ namespace workwear.Journal.ViewModels.Stock
 				if(!String.IsNullOrWhiteSpace(EmployeeFio))
 					text += $"Сотрудник: {EmployeeFio} ";
 				if(!String.IsNullOrWhiteSpace(DutyNormName))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"Дежурное: {DutyNormName} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"Дежурное: {DutyNormName}";
 				if(!String.IsNullOrWhiteSpace(IncomeDocNubber))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $" TН №: {IncomeDocNubber} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $"TН №:{IncomeDocNubber}";
+				if(ShipmentId.HasValue)
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") + $"К поставке №{ShipmentId}";
 				if(DocTypeEnum == StockDocumentType.WriteoffDoc && !String.IsNullOrWhiteSpace(ExpenseWarehouse))
-					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $" Со склада: {ExpenseWarehouse} ";
+					text += (String.IsNullOrWhiteSpace(text) ? "" : "\n") +  $"Со склада: {ExpenseWarehouse}";
 				return text;
 			}
 		}
@@ -655,6 +821,7 @@ namespace workwear.Journal.ViewModels.Stock
 		public DateTime? IssueDate { get; set; }
 		public string Color => DocTypeEnum == StockDocumentType.ExpenseEmployeeDoc && IssueDate == null ? "purple" : "black";
 		public string IncomeDocNubber { get; set; }
+		public int? ShipmentId { get; set; }
 		public string DutyNormName { get; set; }
 		public string Comment { get; set; }
 

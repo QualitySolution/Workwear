@@ -95,7 +95,7 @@ namespace Workwear.Domain.Supply {
 		}
 		
 		private bool hasReceive;
-		[Display(Name = "Поставлены все заказанные позиции")]
+		[Display(Name = "Есть поступления")]
 		public virtual bool HasReceive {
 			get => hasReceive;
 			set { SetField(ref hasReceive, value); }
@@ -128,8 +128,11 @@ namespace Workwear.Domain.Supply {
 		#region IValidatableObject implementation
 		public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext) {
 			if ((Status == ShipmentStatus.Ordered || Status == ShipmentStatus.Received) && (StartPeriod == null || EndPeriod == null))
-				yield return new ValidationResult ("Для статусов заказано и оприходовано должен быть указан период поставки.", 
+				yield return new ValidationResult ("Для статусов заказано и оприходовано должен быть указан период поставки.",
 					new[] { this.GetPropertyName (o => o.StartPeriod)});
+			if(Status == ShipmentStatus.Ordered && !Items.Any(i => i.Ordered > 0))
+				yield return new ValidationResult("Для статуса «Заказано» укажите заказанное количество.",
+					new[] { this.GetPropertyName(o => o.Items) });
 			if (StartPeriod < new DateTime(2025, 1, 1))
 				yield return new ValidationResult ("Период должен быть указан (не ранее 2025-го).", 
 					new[] { this.GetPropertyName (o => o.StartPeriod)});
@@ -194,6 +197,18 @@ namespace Workwear.Domain.Supply {
 
 		public virtual ShipmentItem FindItem(Nomenclature nomenclature, Size size, Size height) =>Items.
 			FirstOrDefault(i=>i.Nomenclature.Id == nomenclature.Id && i.Height==height&&i.WearSize==size);
+
+		#endregion
+
+		#region Статус
+		public virtual void UpdateStatus() {
+			HasReceive = Items.Any(i => i.Received > 0);
+			FullReceived = Items.All(i => i.Received >= i.Ordered);
+			if(HasReceive && FullReceived)
+				Status = ShipmentStatus.Received;
+			else if(Status == ShipmentStatus.Received)
+				Status = Items.Any(i => i.Ordered > 0) ? ShipmentStatus.Ordered : ShipmentStatus.New;
+		}
 
 		#endregion
 	}

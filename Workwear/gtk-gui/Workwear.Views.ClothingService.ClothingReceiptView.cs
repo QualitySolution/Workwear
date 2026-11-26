@@ -125,7 +125,7 @@ namespace Workwear.Views.ClothingService
 			this.ylabel4.Name = "ylabel4";
 			this.ylabel4.Xpad = 20;
 			this.ylabel4.Xalign = 1F;
-			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Отписание дефекта:");
+			this.ylabel4.LabelProp = global::Mono.Unix.Catalog.GetString("Описание дефекта:");
 			this.hbox3.Add(this.ylabel4);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.ylabel4]));
 			w9.Position = 1;

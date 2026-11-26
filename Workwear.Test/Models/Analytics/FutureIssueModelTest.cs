@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using QS.Extensions.Observable.Collections.List;
@@ -23,6 +24,7 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
 				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
 					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
 				}
@@ -74,6 +76,7 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
 				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
 					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
 				}
@@ -136,9 +139,9 @@ namespace Workwear.Test.Models.Analytics {
 			};
 			employee.AddVacation(vacation);
 			
-			var protectionTools1 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
-			var protectionTools2 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
-			var protectionTools3 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
+			var protectionTools1 = new ProtectionTools { Type = new ItemsType(),  ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
+			var protectionTools2 = new ProtectionTools { Type = new ItemsType(),  ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
+			var protectionTools3 = new ProtectionTools { Type = new ItemsType(),  ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}}};
 			
 			var norm = new Norm();
 			
@@ -242,6 +245,7 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
 				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
 					new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature()}
 				}
@@ -296,10 +300,10 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 
-			var protectionTools1 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 1" }}}};
-			var protectionTools2 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 2" }}}};
-			var protectionTools3 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 3" }}}};
-			var protectionTools4 = new ProtectionTools { ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 4" }}}};
+			var protectionTools1 = new ProtectionTools { Type = new ItemsType(),  ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 1" }}}};
+			var protectionTools2 = new ProtectionTools { Type = new ItemsType(),  ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 2" }}}};
+			var protectionTools3 = new ProtectionTools { Type = new ItemsType(),  ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 3" }}}};
+			var protectionTools4 = new ProtectionTools { Type = new ItemsType(),  ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() { new ProtectionToolsNomenclature() {Nomenclature = new Nomenclature(){ Name = "Средство 4" }}}};
 
 			var norm = new Norm();
 
@@ -362,6 +366,7 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
 				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
 					new ProtectionToolsNomenclature() { Nomenclature = new Nomenclature() }
 				}
@@ -403,6 +408,190 @@ namespace Workwear.Test.Models.Analytics {
 			Assert.That(result[3].Amount, Is.EqualTo(5));
 		}
 
+		[Test(Description = "Прогноз по дежурной норме включает выдачи в первый и последний дни её действия")]
+		public void CalculateDutyNormIssues_NormPeriod_OnlyIncludesActiveDates() {
+			var model = new FutureIssueModel(Substitute.For<BaseParameters>());
+			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature> {
+					new ProtectionToolsNomenclature { Nomenclature = new Nomenclature() }
+				}
+			};
+			var norm = new DutyNorm {
+				Name = "Дежурная норма",
+				DateFrom = new DateTime(2024, 2, 10),
+				DateTo = new DateTime(2024, 3, 10)
+			};
+			var item = new DutyNormItem {
+				DutyNorm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 1,
+				NormPeriod = DutyNormPeriodType.Month,
+				PeriodCount = 1,
+				Graph = new IssueGraph(new List<IGraphIssueOperation>())
+			};
+
+			var result = model.CalculateDutyNormIssues(
+				new DateTime(2024, 1, 1), new DateTime(2024, 4, 1), false, new[] { item });
+
+			Assert.That(result.Select(x => x.OperationDate), Is.EqualTo(new[] {
+				new DateTime(2024, 2, 10), new DateTime(2024, 3, 10)
+			}));
+		}
+
+		[Test(Description = "Пустые даты действия дежурки не ограничивают прогноз выдач по дежурной норме")]
+		public void CalculateDutyNormIssues_NoNormDates_DoesNotRestrictForecast() {
+			var model = new FutureIssueModel(Substitute.For<BaseParameters>());
+			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature> {
+					new ProtectionToolsNomenclature { Nomenclature = new Nomenclature() }
+				}
+			};
+			var norm = new DutyNorm { Name = "Без дат действия" };
+			var item = new DutyNormItem {
+				DutyNorm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 1,
+				NormPeriod = DutyNormPeriodType.Month,
+				PeriodCount = 1,
+				Graph = new IssueGraph(new List<IGraphIssueOperation> {
+					new DutyNormIssueOperation {
+						OperationTime = new DateTime(2024, 1, 10),
+						Issued = 1,
+						AutoWriteoffDate = new DateTime(2024, 2, 10),
+						ExpiryByNorm = new DateTime(2024, 2, 10)
+					}
+				})
+			};
+
+			var result = model.CalculateDutyNormIssues(
+				new DateTime(2024, 2, 1), new DateTime(2024, 2, 29), false, new[] { item });
+
+			Assert.That(result, Has.Count.EqualTo(1));
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2024, 2, 10)));
+		}
+
+		[Test(Description = "Без даты начала и истории выдач потребность попадает в прогноз как долг")]
+		public void CalculateDutyNormIssues_NoStartDateAndNoHistory_IncludesDebtAtForecastStart() {
+			var model = new FutureIssueModel(Substitute.For<BaseParameters>());
+			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature> {
+					new ProtectionToolsNomenclature { Nomenclature = new Nomenclature() }
+				}
+			};
+			var norm = new DutyNorm { Name = "Без дат действия" };
+			var item = new DutyNormItem {
+				DutyNorm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 2,
+				NormPeriod = DutyNormPeriodType.Year,
+				PeriodCount = 1,
+				Graph = new IssueGraph(new List<IGraphIssueOperation>())
+			};
+
+			var result = model.CalculateDutyNormIssues(
+				new DateTime(2024, 2, 1), new DateTime(2024, 2, 29), false, new[] { item });
+
+			Assert.That(result, Has.Count.EqualTo(1));
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2024, 2, 1)));
+			Assert.That(result[0].Amount, Is.EqualTo(2));
+		}
+
+		[Test(Description = "Перенос задолженности не создаёт выдачу после окончания дежурной нормы")]
+		public void CalculateDutyNormIssues_ExpiredNorm_DoesNotMoveDebt() {
+			var model = new FutureIssueModel(Substitute.For<BaseParameters>());
+			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature> {
+					new ProtectionToolsNomenclature { Nomenclature = new Nomenclature() }
+				}
+			};
+			var norm = new DutyNorm {
+				Name = "Дежурная норма",
+				DateFrom = new DateTime(2024, 1, 1),
+				DateTo = new DateTime(2024, 1, 31)
+			};
+			var item = new DutyNormItem {
+				DutyNorm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 1,
+				NormPeriod = DutyNormPeriodType.Month,
+				PeriodCount = 1,
+				Graph = new IssueGraph(new List<IGraphIssueOperation>())
+			};
+
+			var result = model.CalculateDutyNormIssues(
+				new DateTime(2024, 2, 1), new DateTime(2024, 3, 1), true, new[] { item });
+
+			Assert.That(result, Is.Empty);
+		}
+
+		[Test(Description = "Без переноса долга экспорт прогнозирует выдачи внутри выбранного и действующего периодов")]
+		public void CalculateDutyNormIssues_WithoutMovingDebt_UsesIntersectionOfPeriods() {
+			var model = new FutureIssueModel(Substitute.For<BaseParameters>());
+			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature> {
+					new ProtectionToolsNomenclature { Nomenclature = new Nomenclature() }
+				}
+			};
+			var norm = new DutyNorm {
+				Name = "Дежурная норма",
+				DateFrom = new DateTime(2024, 1, 10),
+				DateTo = new DateTime(2024, 3, 10)
+			};
+			var item = new DutyNormItem {
+				DutyNorm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 1,
+				NormPeriod = DutyNormPeriodType.Month,
+				PeriodCount = 1,
+				Graph = new IssueGraph(new List<IGraphIssueOperation>())
+			};
+
+			var result = model.CalculateDutyNormIssues(
+				new DateTime(2024, 2, 1), new DateTime(2024, 3, 31), false, new[] { item });
+
+			Assert.That(result.Select(x => x.OperationDate), Is.EqualTo(new[] {
+				new DateTime(2024, 2, 10), new DateTime(2024, 3, 10)
+			}));
+			Assert.That(result.All(x => x.DutyNorm == norm && x.Amount == 1), Is.True);
+		}
+
+		[Test(Description = "Долг можно перенести на последний день действия дежурной нормы")]
+		public void CalculateDutyNormIssues_MoveDebtToLastActiveDay() {
+			var model = new FutureIssueModel(Substitute.For<BaseParameters>());
+			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
+				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature> {
+					new ProtectionToolsNomenclature { Nomenclature = new Nomenclature() }
+				}
+			};
+			var norm = new DutyNorm {
+				Name = "Дежурная норма",
+				DateFrom = new DateTime(2024, 1, 1),
+				DateTo = new DateTime(2024, 3, 10)
+			};
+			var item = new DutyNormItem {
+				DutyNorm = norm,
+				ProtectionTools = protectionTools,
+				Amount = 1,
+				NormPeriod = DutyNormPeriodType.Month,
+				PeriodCount = 1,
+				NextIssue = new DateTime(2024, 1, 1),
+				Graph = new IssueGraph(new List<IGraphIssueOperation>())
+			};
+
+			var result = model.CalculateDutyNormIssues(
+				new DateTime(2024, 3, 10), new DateTime(2024, 4, 10), true, new[] { item });
+
+			Assert.That(result, Has.Count.EqualTo(1));
+			Assert.That(result[0].OperationDate, Is.EqualTo(new DateTime(2024, 3, 10)));
+			Assert.That(result[0].DelayIssueDate, Is.EqualTo(new DateTime(2024, 1, 1)));
+		}
+
 		[Category("Real case")]
 		[Test(Description = "Убеждаемся что просроченный долг по дежурной норме переносится на начало периода прогнозирования при moveDebt=true")]
 		public void CalculateDutyNormIssues_ExpiredIssue_DebtMovedToStartDate()
@@ -411,6 +600,7 @@ namespace Workwear.Test.Models.Analytics {
 			var baseParameters = Substitute.For<BaseParameters>();
 			var model = new FutureIssueModel(baseParameters);
 			var protectionTools = new ProtectionTools {
+				Type = new ItemsType(),
 				ProtectionToolsNomenclatures = new ObservableList<ProtectionToolsNomenclature>() {
 					new ProtectionToolsNomenclature() { Nomenclature = new Nomenclature() }
 				}
