@@ -16,6 +16,3 @@
 * xref:visits.adoc[Посещение склада]
 * xref:clothing-service.adoc[Обслуживание спецодежды]
 * xref:postomat.adoc[Постаматы]
-
-* xref:install.adoc[Установка на Windows]
-* xref:install_linux.adoc[Установка на Linux]
