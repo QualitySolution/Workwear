@@ -319,6 +319,11 @@ namespace Workwear.ViewModels.Stock.Documents
 				interactive.ShowMessage(ImportanceLevel.Warning, "Нельзя выбрать позицию без штрихкода.");
 				return;
 			}
+			if(node.UseBarcode && node.BarcodeCount == 0) {
+				interactive.ShowMessage(ImportanceLevel.Warning,
+					"Эта номенклатура не может быть выдана без штрихкода. Сначала промаркируйте её с помощью документа «Маркировка».");
+				return;
+			}
 
 			StockPosition stockPosition = node.GetStockPosition(UoW);
 			IPage page = NavigationManager.FindPage((StockBalanceJournalViewModel)sender);

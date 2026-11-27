@@ -7,6 +7,7 @@ using Workwear.Domain.Company;
 using Workwear.Domain.Operations;
 using Workwear.Domain.Stock;
 using Workwear.Domain.Stock.Documents;
+using Workwear.Repository.Operations;
 using Workwear.Repository.Stock;
 using Workwear.Tools.OverNorms;
 
@@ -83,6 +84,58 @@ namespace Workwear.Test.Integration.Stock {
 					.StockBalances(warehouse, new[] { nomenclature }, document.Date)
 					.SingleOrDefault(x => x.NomenclatureId == nomenclature.Id);
 				Assert.That(balance?.Amount ?? 0, Is.EqualTo(2), "После гостевой выдачи 1 шт. из 3 на складе должно остаться 2.");
+			}
+		}
+
+		[Test(Description = "При гостевой выдаче без штрихкодов после возврата 1 из 2 единиц за сотрудником остаётся числиться 1 единица.")]
+		[Category("Integrated")]
+		public void Save_GuestModeWithoutBarcodes_PartialReturnLeavesBalanceWithEmployee()
+		{
+			NewSessionWithSameDB();
+			using(var uow = UnitOfWorkFactory.CreateWithoutRoot()) {
+				var warehouse = new Warehouse { Name = "Гостевой склад" };
+				var employee = new EmployeeCard { FirstName = "Пётр", LastName = "Гостев" };
+				var itemsType = new ItemsType { Name = "Куртки" };
+				var nomenclature = new Nomenclature { Name = "Куртка гостевая", Type = itemsType, UseBarcode = false };
+				uow.Save(warehouse);
+				uow.Save(employee);
+				uow.Save(itemsType);
+				uow.Save(nomenclature);
+
+				var model = new OverNormFactory().CreateModel(uow, OverNormType.Guest);
+				var document = new OverNorm { Type = OverNormType.Guest, Warehouse = warehouse, Date = new DateTime(2026, 8, 20) };
+				var item = document.AddItem(new OverNormOperation { Employee = employee });
+
+				Assert.That(model.CanUseWithoutBarcodes, Is.True);
+				model.UpdateOperation(item, new OverNormParam(employee, nomenclature, 2));
+				Assert.That(item.CanEditAmount, Is.True);
+				Assert.That(item.Barcodes, Is.Empty);
+
+				var issuedOperation = item.OverNormOperation;
+				issuedOperation.OperationTime = document.Date;
+				issuedOperation.WarehouseOperation.OperationTime = document.Date;
+				uow.Save(issuedOperation.WarehouseOperation);
+				uow.Save(issuedOperation);
+				uow.Save(document);
+				uow.Commit();
+
+				var returnDocument = new Return { Warehouse = warehouse, Date = document.Date.AddDays(1) };
+				returnDocument.AddItem(issuedOperation, 1);
+				returnDocument.UpdateOperations(uow);
+				uow.Save(returnDocument);
+				uow.Commit();
+
+				using(var readUow = UnitOfWorkFactory.CreateWithoutRoot()) {
+					var repository = new OverNormOperationRepository();
+					var savedIssue = repository.GetIssuedOperation(issuedOperation.Id, readUow);
+					var returnedAmounts = repository.GetReturnedAmounts(new[] { savedIssue }, uow: readUow);
+
+					Assert.That(savedIssue.Employee.Id, Is.EqualTo(employee.Id));
+					Assert.That(savedIssue.Nomenclature.Id, Is.EqualTo(nomenclature.Id));
+					Assert.That(savedIssue.WarehouseOperation.Amount, Is.EqualTo(2));
+					Assert.That(returnedAmounts.TryGetValue(savedIssue.Id, out var returnedAmount), Is.True);
+					Assert.That(savedIssue.WarehouseOperation.Amount - returnedAmount, Is.EqualTo(1));
+				}
 			}
 		}
 
