@@ -59,10 +59,33 @@ sudo apt-get install qs-workwear
 == Astra Linux Special Edition
 
 Пакет предназначен для Astra Linux Special Edition 1.8 x86_64.
-Для установки зависимостей подключите расширенный репозиторий Astra Linux, который соответствует версии вашей системы.
-Порядок подключения приведён в https://docs.astralinux.ru/latest/guide/compound/repo/add_install/[документации Astra Linux].
 
-=== Подключение репозитория
+=== Подключение репозиториев Astra Linux
+
+Для установки зависимостей подключите основной и расширенный репозитории Astra Linux для установленной версии ОС. Расширенный репозиторий содержит пакеты Mono и GTK#, которых может не быть на установочном DVD.
+
+Если в APT подключён только установочный диск (`cdrom:`), откройте список источников:
+
+[source,bash]
+----
+sudoedit /etc/apt/sources.list
+----
+
+Обычно достаточно убрать символ `#` в начале строк основного и расширенного репозиториев и поставить `#` перед строкой `deb cdrom:` с установочным диском.
+
+Для Astra Linux 1.8.6 строки сетевых репозиториев должны выглядеть так. Если их в файле нет, добавьте их:
+
+[source,text]
+----
+deb https://download.astralinux.ru/astra/frozen/1.8_x86-64/1.8.6/main-repository/ 1.8_x86-64 main contrib non-free non-free-firmware
+deb https://download.astralinux.ru/astra/frozen/1.8_x86-64/1.8.6/extended-repository/ 1.8_x86-64 main contrib non-free non-free-firmware
+----
+
+Если у вас другая версия ОС, выберите адреса репозиториев для неё по https://docs.astralinux.ru/latest/guide/compound/repo/add_install/[инструкции Astra Linux].
+
+Сохраните файл.
+
+=== Подключение репозитория Quality Solution
 
 Загрузите открытый ключ репозитория и добавьте источник пакетов.
 
@@ -78,7 +101,7 @@ echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/qsolution-astra.gpg] https://r
 
 === Установка и обновление
 
-Выполните эти команды для установки или обновления пакета.
+После подключения репозиториев обновите списки пакетов и установите программу. Для обновления программы используйте те же команды.
 
 [source,bash]
 ----
