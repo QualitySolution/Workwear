@@ -56,3 +56,4 @@ done
 
 mv "$metadata/Packages" "$metadata/Packages.gz" "$metadata/keyring.gpg" .
 mv "$metadata/InRelease" .
+ln -sfn "${PWD##*/}/$package_name" ../qs-workwear-latest.deb

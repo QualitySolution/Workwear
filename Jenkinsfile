@@ -88,6 +88,8 @@ node {
                genbasedir --create --topdir=/repo x86_64 workwear
             "'
          '''
+         def rpm = "qs-workwear-${version}-alt1.x86_64.rpm"
+         sh "ssh root@odysseus.srv.qsolution.ru 'cd /var/www/repo/alt && test -f workwear/x86_64/RPMS.workwear/${rpm} && ln -sfn workwear/x86_64/RPMS.workwear/${rpm} qs-workwear-latest.rpm'"
       }
    }
    if (params.PublishAstraLinuxDeb) {
